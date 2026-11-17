@@ -1,5 +1,9 @@
 {
   "@@locale": "ml",
+  "appName": "തോട്ടം",
+  "@appName": {
+    "description": "App name, shown in the title bar and launcher."
+  },
   "absent": "ഇല്ല",
   "actSub": "വേണ്ടാത്തവ ഓഫ് ചെയ്യാം",
   "activities": "പണികൾ",

@@ -51,8 +51,8 @@ Malayalam line height 1.45 to 1.5. Large-text mode scales content by 1.12.
 
 - Screen padding 20; gap between cards 14; card padding 14 to 18.
 - Radius: cards 18 to 22, buttons 16, chips 999, small tiles 12 to 15, bottom sheet 28 (top corners).
-- Touch targets: minimum 44, primary buttons 58, list rows 56 to 68.
-- Bottom nav 78 high, four tabs plus a centre add button (62, raised 34).
+- Touch targets: minimum 48, primary buttons 58, list rows 56 to 68.
+- Bottom nav 78 high, four tabs plus a centre add button (62, raised 34); three tabs when the user's role cannot open Money.
 
 ## Components
 
@@ -60,9 +60,9 @@ Malayalam line height 1.45 to 1.5. Large-text mode scales content by 1.12.
 - **Outline button:** 1.5 border primary, text primaryDark.
 - **Chip (choice):** pill, selected = primary fill and white text, unselected = white with #C3CBC1 border.
 - **Segmented control:** track #E3E8E0, selected segment white with primaryDark text.
-- **Switch:** 54 × 34, knob 28, track primary when on.
-- **Stepper:** two 46 round outline buttons with a 26/700 number between.
-- **Tint icon tile:** 40 to 52 square, radius 13 to 16, tinted background with matching dark icon.
+- **Switch:** 54 × 34, knob 28, track primary when on. Hit area at least 48: the whole switch row is tappable.
+- **Stepper:** two 48 round outline buttons with a 26/700 number between.
+- **Tint icon tile:** 40 to 52 square, radius 13 to 16, tinted background with matching dark icon. A tappable tile has a hit area of at least 48.
 - **Icons:** one line set, 24 grid, stroke 1.9 to 2, round caps and joins. Use an equivalent Flutter line icon set consistently.
 
 ## Motion

@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "appName": "Thottam",
   "absent": "Absent",
   "actSub": "Turn off what you don’t use",
   "activities": "Activities",
