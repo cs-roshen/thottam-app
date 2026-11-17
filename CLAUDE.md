@@ -6,6 +6,7 @@ Offline-first, Malayalam-first farm management app for Kerala farmers. It replac
 
 - `docs/product-spec.md` — what the app does, module by module, and the rules that cut across modules.
 - `docs/phase-1-tasks.md` — the ordered backlog. Work top to bottom; one task per branch/PR.
+- `docs/implementation-plan.md` — phases, exit checks, review process, UI and UX bar, and the performance, offline and database rules.
 - `docs/screens.md` — every screen, its fields, behaviour and acceptance checks.
 - `docs/design-tokens.md` — colours, type, spacing, motion. Do not invent new values.
 - `design/prototype/` — the interactive HTML prototype. It is the visual and behavioural reference, not code to port line by line.

@@ -18,6 +18,7 @@ This repository currently holds the starter kit: specifications, design referenc
 | `docs/product-spec.md` | Modules and cross-cutting rules |
 | `docs/screens.md` | Screen-by-screen behaviour and acceptance checks |
 | `docs/phase-1-tasks.md` | Ordered backlog for the first release |
+| `docs/implementation-plan.md` | Detailed phase plan, review process, performance and offline rules |
 | `docs/design-tokens.md` | Colours, type, spacing, motion |
 | `docs/kickoff-prompt.md` | First prompt to paste into Claude Code |
 | `design/prototype/` | Interactive HTML prototype source (reference only) |

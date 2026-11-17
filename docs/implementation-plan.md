@@ -1,0 +1,886 @@
+# Thottam implementation plan
+
+This plan turns `docs/phase-1-tasks.md` into phases with exit checks, and adds the rules for
+review, UI and UX quality, app performance, and offline and database performance. It is written
+so that any Claude Code session, on any model, can pick up the next task without earlier context.
+
+Where this plan and `docs/product-spec.md` or `docs/screens.md` disagree, those docs win and this
+plan should be corrected. Package names here are the planned choices; check each package's
+current docs for versions and setup before adding it. No version numbers are fixed in this plan.
+
+Contents
+
+1. How to work through the plan
+2. Where to spend the strongest model
+3. Architecture in one page
+4. Phase 0: settle the starter
+5. Phase 1: foundation (A1 to A5)
+6. Phase 2: data core (B1 to B7)
+7. Phase 3: daily entries (C1 to C4, quick add)
+8. Phase 4: harvest to profit (C5 to C8)
+9. Phase 5: home, lists and prices (C9 to C11, admin console)
+10. Phase 6: release readiness (D1 to D5)
+11. Phase 7: later modules
+12. Local database and offline performance
+13. Sync and server performance
+14. App performance budgets and how to measure them
+15. UI and UX quality bar
+16. Code review process
+17. Risks and open questions
+
+---
+
+## 1. How to work through the plan
+
+**One task, one branch, one pull request.** Branch names: `a1-flutter-project`, `b4-event-log`,
+`c3-labour`. Never mix two backlog tasks in one branch.
+
+**Every task follows the same loop.**
+
+1. Read the task here, its section in `docs/screens.md`, and the worked examples in
+   `docs/product-spec.md`.
+2. Write the acceptance checks as failing tests. Commit them alone ("tests for C4").
+3. Build the pure calculation functions in `domain/` until the unit tests pass.
+4. Build the repository (`data/`), then the screen (`ui/`).
+5. Run the gates in section 16. Fix everything they report.
+6. Run the self-review checklist in section 16 and write the result in the pull request.
+7. Tick the task in `docs/phase-1-tasks.md` in the same pull request.
+
+**Definition of done for any task.**
+
+- `flutter analyze` has no issues; `flutter test` passes.
+- All gates in section 16 pass.
+- Every new string is in both ARB files; no user-facing text in Dart.
+- Every write goes through a repository that records the event log and the outbox.
+- The screen works in flight mode, in Malayalam, and in large-text mode.
+- The budgets in section 14 that apply to the task are measured and met, with the numbers in
+  the pull request.
+
+**Owner checkpoints.** Stop and wait for the owner at the end of every phase, and wherever a
+task says "owner check". At a checkpoint, give the owner: what was built, how to run it, what to
+look at on the phone, and any decision that is waiting.
+
+**When something is unclear.** If the docs are silent or contradict each other, ask. Do not
+guess a business rule (rounding, who may see what, what counts as profit).
+
+**Session start prompt** (paste for any task):
+
+```
+Read CLAUDE.md and docs/implementation-plan.md sections 1, 3 and 12 to 16.
+Then do task <ID> following the task loop in section 1. Show me the failing
+tests before you write the implementation. Stop when the definition of done
+is met and give me the pull request summary with measured numbers.
+```
+
+---
+
+## 2. Where to spend the strongest model
+
+The owner has the strongest model for a limited number of days. Spend it on work where a design
+mistake is expensive to undo, and leave repetitive screens for later. In priority order:
+
+1. **Phase 0 decisions and doc fixes.** Small, but everything else rests on them.
+2. **B1 schema rework** (section 6). Security rules, uniqueness, sync columns, indexes.
+3. **B7 sync design and its two-device test harness**, and the server-side batch function.
+   This is the hardest part of the app.
+4. **B4 event log and B5 override resolver.** Every feature depends on both.
+5. **All `domain/` calculation functions with their unit tests**, for every phase 1 feature
+   (wages, splits, harvest rates, sale profit, lot cost, profit and loss). These are pure Dart
+   and can be written before any screen exists.
+6. **A4 shared widgets** and **one complete reference feature: C4 Expenses**, built end to end
+   as the pattern (tests, domain, repository, screen, golden tests, performance numbers).
+7. **The benchmark seed generator and the gates** in sections 14 and 16.
+
+After that, the remaining features (C1 to C3, C5 to C11) are mostly "follow the Expenses
+pattern" and are safer to hand to any model, provided the gates and review process are in place.
+
+A possible order for the days available: phase 0 and A1 to A3; then A4, A5 and B1; then B2 to
+B5; then B7 and the domain functions; then C4 as the reference feature. Adjust to what is
+actually finished each day; do not skip the gates to keep to the order.
+
+---
+
+## 3. Architecture in one page
+
+```
+Screen (ui/)  --watches-->  Riverpod provider  --watches-->  Drift query stream
+     |                                                             ^
+     | user action                                                 |
+     v                                                             |
+Repository (data/)  --one local transaction-->  1. write the row
+                                                 2. write event_log (old and new values)
+                                                 3. write outbox (what to upload)
+                                                                    |
+Sync engine (core/sync), background only  <-------------------------+
+     |  upload outbox in batches  -->  Supabase function (one transaction per batch)
+     |  pull changes since cursor <--  Supabase tables (row-level security)
+     v
+Applies pulled rows to Drift; the screens update by themselves through the streams.
+```
+
+Rules that follow from this picture:
+
+- **Screens never call Supabase.** Only the sync engine and auth do.
+- **Screens never wait for the network.** No spinner on any data screen.
+- **Screens never write to Drift directly.** Only repositories write, so the event log and the
+  outbox cannot be skipped.
+- **Calculations are pure functions** in `domain/`, taking plain values and returning plain
+  values. No database, no clock, no locale inside them; pass those in.
+- **One source of time and ids.** A `Clock` and an `IdGenerator` are injected, so tests are
+  repeatable.
+
+Planned packages: Riverpod (state), go_router (navigation), Drift (local SQLite),
+supabase_flutter (auth, sync, storage), flutter_localizations and intl (strings, numbers,
+dates), a connectivity package (to trigger sync, never to block screens), and a background-work
+package for periodic sync. Ask before adding anything else.
+
+---
+
+## 4. Phase 0: settle the starter
+
+No app code. The output is corrected docs and answered decisions.
+
+### Owner decisions
+
+| Decision | Needed by |
+| --- | --- |
+| App id (package name) and store account | A1 |
+| Supabase project (new or existing) and region | B1 |
+| SMS provider for phone OTP and its registration (see section 17) | B6 |
+| Pilot district, crops and partner organisation | B1 seed data |
+| Which price sources are licensed for use | C11 |
+
+### Doc contradictions to settle
+
+Each has a recommended answer. The owner confirms or changes it, then the doc is edited.
+
+| Question | Recommended answer | Doc to edit |
+| --- | --- | --- |
+| Minimum touch target: 48 or 44? | 48, as in `CLAUDE.md` | `design-tokens.md` |
+| Does sale profit per kg subtract deductions? | Yes: net amount per kg minus lot cost per kg. The spec example becomes 35,080 / 50 − 238 = ₹463.60. Show the deductions line so the farmer sees why. | `product-spec.md` |
+| Where do leftover paise go in a split? | Largest-remainder method: give each crop its rounded-down share, then hand out the remaining paise one at a time to the largest fractional parts; ties go to the crop cycle listed first. | `product-spec.md`, `screens.md` |
+| How are per-kg and per-person figures rounded? | Keep full precision in calculation; round only for display, to one decimal for quantities and to whole paise for money. | `product-spec.md` |
+| What does "mixed" language show? | Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin. | `product-spec.md`, `screens.md` |
+| Who owns the record `version`? | The device increments `version` on every local write. The server never changes it. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
+| Which tables carry the common columns? | Every farm-owned, synced table. Master data (`crops`, `template_items`) and `event_log` are exempt, and say so. | `CLAUDE.md` |
+
+### Backlog fixes
+
+- Add task **C12. Admin console (minimal)**: seed SQL plus one web page to edit and publish
+  template items. It is in phase 1 scope but has no task.
+- Add task **A6. Gates and benchmark seed** (sections 14 and 16), done before B1.
+- Note in A3 that ARB placeholders must be added, not only keys renamed.
+
+**Exit check:** the owner has answered the decisions needed for A1 and B1, and a reviewer
+session finds no remaining contradiction between the five docs.
+
+---
+
+## 5. Phase 1: foundation (A1 to A5)
+
+Goal: an empty app that already looks and reads right on a real low-end Android phone.
+
+### A1. Flutter project
+
+- Create the project in the repository root, Android and iOS, keeping `docs/`, `design/`,
+  `supabase/` and `lib/l10n/`.
+- Set the minimum Android version to whatever current Flutter stable supports that still covers
+  low-end phones in the pilot district; record the choice in `README.md`.
+- Add strict analysis options (strict casts, strict inference, no implicit dynamic) from day one.
+- Add `l10n.yaml` with `app_ml.arb` as the template.
+
+### A2. Theme and tokens
+
+- One `ThottamTokens` class holding every value in `docs/design-tokens.md`; one `ThemeData`
+  built from it. Widgets read tokens from the theme, never literal colours or sizes.
+- Bundle fonts as assets. Include only the weights the tokens list. Measure what the fonts add
+  to the app size and report it; Malayalam fonts are large.
+- Tabular figures on every amount.
+- Unit test: every text and background pair in the tokens meets 4.5:1 contrast.
+
+### A3. Localisation
+
+- Wire both ARB files. Language choice: Malayalam, English, mixed. Large-text switch scales
+  content by 1.12 on top of the system text size, not instead of it.
+- Rename the 166 indexed keys from the prototype export (`tplActs2x3`, `evT4`) to meaningful
+  names with descriptions.
+- Remove sample data from the ARB files (worker names, post authors, sample plot names, later
+  phase screens). Sample data belongs in seed data, not strings.
+- Add placeholders and plural rules for every string that carries a number, amount, date or
+  name. No string concatenation in Dart.
+- Money formatter: integer paise in, Indian grouping out (₹1,84,500). Date formatter with the
+  Malayalam month beside the Gregorian date.
+
+### A4. Shared widgets
+
+Build each widget once, with all its states, before any feature uses it: primary and outline
+button, choice chip, segmented control, switch row, stepper, tint icon tile, card, toast with
+undo, bottom sheet, bottom navigation with the centre add button, amount input, empty state,
+"last time" banner, stale-data tag.
+
+- Each widget has a semantic label, a 48 dp touch target, and a pressed, disabled and focused
+  state.
+- Golden tests for each widget in four variants: Malayalam, English, Malayalam with large text,
+  Malayalam with the longest realistic label.
+- A widget gallery screen in debug builds, so the owner can review them all in one place.
+
+### A5. Router and shell
+
+- Four tabs plus the add sheet, with placeholder screens. Each tab keeps its own navigation
+  stack and scroll position when the user switches tabs.
+- Android back button behaves predictably: closes a sheet, then goes back, then goes to Home,
+  then leaves the app.
+
+### A6. Gates and benchmark seed
+
+- The check scripts and CI workflow in section 16.
+- A seed generator (debug builds and tests only) that fills the local database with three years
+  of realistic data for one farm: see section 14 for sizes.
+
+**Owner check:** install on a phone. Check the theme against the prototype, read every
+Malayalam label for clipping, switch language and large text, and try the navigation.
+
+**Exit check:** cold start within budget on the test phone with an empty database; all golden
+tests pass; the owner has approved the look.
+
+---
+
+## 6. Phase 2: data core (B1 to B7)
+
+Goal: data that is correct, private, fast and impossible to lose, before any feature exists.
+
+### B1. Server schema rework
+
+Start a local Supabase instance, run the migration, and fix it. Write changes as new migration
+files after `0001`, or rewrite `0001` since it has never been run; say which in the pull request.
+
+Fixes to make:
+
+| Area | Change |
+| --- | --- |
+| History | `event_log` is insert-only for clients: no update or delete policy. |
+| Deletes | Split every `for all` policy into select, insert and update. No client delete policy on any table; deleting means setting `deleted_at`. |
+| Farm creation | One security-definer function `create_farm(...)` that inserts the farm and the owner's `farm_members` row in one transaction and returns the farm. Clients do not insert into `farms` directly. |
+| Profiles | Create the `profiles` row automatically when an auth user is created. |
+| Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
+| Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
+| Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)`. Add `sale_payments` for part payments. Keep `sales.received_paise` only if it is derived. |
+| Payables | Add a payments table for expenses bought on credit, so a payable can be part-paid. |
+| Labour | Payment kinds and wage types match the spec exactly (settle the half-day question: attendance value, not a wage type, is recommended). Add check constraints to `labour_entries.wage_type` and `sales.mode`. |
+| Units | Remove hard-coded unit lists from check constraints; units come from templates. |
+| Common columns | Add the missing ones to `expense_allocations` and `price_alerts`. Give `farm_members` and `labour_group_members` an `id`, `version` and `deleted_at` so membership changes sync and can be undone. |
+| Versions | Remove the version increment from the `set_updated` trigger (see section 13). |
+| Sync columns and indexes | Section 13. |
+| Roles | Section 13, "Row-level security". Tighten now so D3 is a check, not a rewrite. |
+| Template updates | Record which template version each farm has accepted, so "update available" can be computed. |
+
+Seed data: wave 1 crop templates (coconut, rubber, pepper, banana, paddy) with activities,
+expense categories, units, grades, labour tasks, rate classes and default splits, in Malayalam
+and English. Malayalam wording is marked for native-speaker review.
+
+Tests (run against the local instance): for each role, a table of "can read / can insert / can
+update" per table; a user from farm A can never read farm B; history cannot be changed; nothing
+can be hard-deleted by a client.
+
+### B2. Local schema (Drift)
+
+- Mirror the phase 1 tables with the common columns, plus local-only tables: `outbox`,
+  `sync_state` (one cursor per table), `conflicts`, `photo_uploads`, `app_settings`.
+- Open the database with the settings in section 12. Create every index in section 12.
+- Export the schema for each version and add migration tests from the start, so a later schema
+  change cannot lose a farmer's data.
+
+### B3. Money and units
+
+- `Money` as integer paise: add, subtract, multiply by a quantity or ratio with a stated
+  rounding rule, split by weights using the largest-remainder rule from phase 0, format and
+  parse with Indian grouping.
+- Units with conversions from templates, including local units and custom ratios.
+- Property-style tests: a split always sums to the original for random amounts and weights;
+  formatting then parsing returns the same value.
+
+### B4. Event log
+
+- A single `writeWithHistory` path used by every repository: inside one local transaction it
+  writes the row, an `event_log` row, and an `outbox` row.
+- Store **only the changed fields** in old and new values for updates (full row for create and
+  delete). This keeps the log small and makes "old → new" display direct.
+- `summary` holds the few display fields the timeline needs (plot, crop, amount, quantity), so
+  the History screen never has to join to render a row.
+- Restore: applies the old values as a new write, which is itself logged.
+- Tests: create, edit, delete and restore each leave the expected log rows; a failed
+  transaction leaves nothing behind in any of the three tables.
+
+### B5. Override resolver
+
+- One function: given a key and a context (farm, plot, crop cycle, entry), return the value and
+  which level it came from. The level is needed to show the "overridden" mark and the reset
+  action.
+- Load a farm's templates and overrides into memory once and refresh when they change; resolve
+  from memory. Do not query the database per field.
+- Tests: each level wins over the ones above it; reset falls back one level; an admin update
+  never changes a value the farmer edited or hid.
+
+### B6. Auth
+
+- Phone OTP through Supabase. After the first sign-in the app opens and works with no network,
+  for as long as the farmer likes; a refresh that fails offline must never sign the farmer out
+  or hide their data.
+- Session stored in secure storage. The local database is tied to the signed-in user; signing
+  in as someone else on the same phone must not show the first user's data.
+- Owner check: OTP arrives on a real Indian number on at least two mobile networks.
+
+### B7. Sync
+
+Build to the design in section 13. Deliverables:
+
+- Outbox upload with coalescing, batching and retry.
+- Pull by cursor per table, applied in dependency order inside local transactions.
+- Conflict rules from the spec: different fields merge; the same field takes the latest; money
+  and quantity conflicts are put in `conflicts` and shown to the user to choose.
+- A test harness with two simulated devices and a fake or local server, covering: both offline
+  then both sync; the same row edited on both; delete on one and edit on the other; upload
+  interrupted halfway; the same batch sent twice; clock on one device wrong by a day.
+- A small sync status element (last synced time, items waiting) for Settings. Never a blocking
+  dialog.
+
+**Exit check:** the two-device tests pass; the role tests pass; the benchmark seed loads and
+every query budget in section 14 is met on the test phone.
+
+---
+
+## 7. Phase 3: daily entries (C1 to C4, quick add)
+
+Goal: a farmer can set up and record a normal working day, offline, in about 20 seconds per
+entry. Build **C4 Expenses first** as the reference feature, then the others to the same shape.
+
+### C4. Expenses (reference feature)
+
+- Domain: split by template share, by area, by plant count, equal, or custom; manual edit of
+  any share re-balances the rest; the total always equals the amount.
+- Screen: large amount input opens with the numeric keypad already up; category chips ordered
+  by most used; plot and date default to the last used and today; split shown collapsed with
+  "edit manually"; payment mode; save with undo toast.
+- Tests: the ₹3,600 example; awkward amounts (₹100 across three equal crops); manual edit then
+  amount change; credit creates a payable.
+- Record in the pull request: taps to save a typical expense, time from opening to saved, and
+  the query timings. Later features copy this structure and this report.
+
+### C1. Welcome, language and set-up
+
+- Three steps, each skippable except name and farm name. Finishing creates the farm, one plot
+  and the crop cycles from templates in a single local transaction.
+- Works fully offline after the OTP step; templates needed for set-up ship inside the app as a
+  bundled seed so the first run does not depend on a download.
+
+### C2. Land
+
+- Plot list, add and edit plot, crop cycles with area share or plant count, plot detail with
+  stats, tabs and recent history.
+- Check: plot totals equal the sum of the plot's crop cycles; closing a season makes its
+  entries read-only.
+
+### C3. Labour
+
+- Named workers with "same as yesterday", and groups by head count per rate class. Payments,
+  advances and balances.
+- Domain functions: attendance wage, group wage, balance per worker and per group.
+- Check: the ₹2,150 and ₹5,200 examples; an unnamed group can be named later without losing
+  its entries; wage cost posts to the chosen crop cycle.
+
+### Quick add sheet (part of C9, brought forward)
+
+- The centre button opens the sheet from any tab. Tiles follow the enabled pages. Voice and
+  bill scan are hidden in phase 1.
+
+**Owner check:** record a real day from the paper notebook into the app, in flight mode, and
+note anything that took more than 20 seconds or needed explaining.
+
+**Exit check:** all worked examples for these features pass; each entry screen meets the tap
+and time budgets; everything entered appears in the event log.
+
+---
+
+## 8. Phase 4: harvest to profit (C5 to C8)
+
+Goal: the full chain from harvest to stock to sale to profit, with history visible.
+
+### C5. Harvest
+
+- Any number of teams (unnamed group, named group, named worker), each with its own rate;
+  per-team quantity on or off; piece-rate teams beside daily-rate teams.
+- Saving creates the harvest, the team labour entries and the lot in one transaction.
+- Lot cost: define the rule in `product-spec.md` before coding (recommended: harvest wages plus
+  the crop cycle's allocated costs for the period, per unit harvested) and test it by hand-worked
+  example.
+- Check: the harvest example with the switch on and off; removing a team recalculates.
+
+### C6. Selling
+
+- Sell from one or more lots; rate prefilled from the latest price; deductions; net; profit per
+  kg shown before saving; part payments and receivables; buyer book.
+- Check: cannot sell more than stock, including when two devices sell from the same lot while
+  offline (this becomes a quantity conflict for the user to settle).
+
+### C7. History
+
+- Farm diary grouped by day with filters, per-entity timelines, old → new on edits, restore,
+  "this week last year", export.
+- Reads only from `event_log` using its `summary` column; keyset pagination (section 12).
+- Check: every create, edit and delete from every screen appears; scrolling stays smooth with
+  the benchmark seed loaded.
+
+### C8. Profit and loss
+
+- By farm, plot, crop, season or period; family-labour switch; share report.
+- Totals come from SQL aggregates over indexed columns, not from loading rows into Dart.
+- Check: the profit example in both switch positions; totals match the sum of the parts at
+  every level.
+
+**Exit check:** one scripted season (set-up, labour, expenses, harvest, sale) produces the
+expected profit to the paisa; History shows every step; budgets met with the seed loaded.
+
+---
+
+## 9. Phase 5: home, lists and prices (C9 to C11, admin console)
+
+- **C9. Home dashboard and tasks.** Each card has its own provider and query, so one card
+  changing does not rebuild the others. Ticking a task writes to history. Weather needs a data
+  source decision; show the card only when data exists.
+- **C10. Settings and My lists.** Pages and home cards on or off; reset to default; farmer
+  templates with "new items available" for admin updates. Check: an admin update never changes
+  an item the farmer edited or switched off.
+- **C11. Prices.** Table and manual entry first. Prices older than one day are marked stale.
+  Source integration only after licensing is confirmed. Cache the latest prices locally so the
+  screen works offline and says how old the data is.
+- **C12. Admin console (minimal).** One web page behind admin sign-in to edit template items
+  in both languages and publish a new version. Service-role access stays on the server side.
+- **Report export** (from C8): PDF and Excel generated on the device, off the main thread.
+
+**Exit check:** hiding a page removes it from More and quick add; a published template update
+arrives as "update available" and leaves farmer changes untouched.
+
+---
+
+## 10. Phase 6: release readiness (D1 to D5)
+
+- **D1. Offline soak.** Seven days of scripted entries in flight mode on two devices, then
+  sync. Compare row counts and totals on both devices and the server: no loss, no duplicates.
+- **D2. Malayalam pass.** A native speaker reviews every string in context on a low-end phone,
+  in normal and large text. Fix clipping, awkward wording and wrong farming terms.
+- **D3. Role checks.** Supervisor cannot see profit or money screens; accountant and viewer
+  limits; per-person permission overrides. Checked in the app and against the server directly.
+- **D4. Backup and full export.** Excel and PDF of everything, and restore onto a new phone by
+  signing in (first sync, section 13).
+- **D5. Closed beta.** Release build with obfuscation and split per CPU type; crash reporting
+  only with the owner's approval (CLAUDE.md forbids adding SDKs without asking).
+- **Field test.** Five to ten farmers in the pilot district use it for two weeks. Watch at
+  least three of them do a first entry without help. Record where they hesitate.
+- **Store requirements.** Privacy policy, data deletion request path, permissions explained in
+  Malayalam.
+
+**Exit check:** soak test clean; all budgets met on the test phone with the seed loaded; no
+open correctness bugs; native-speaker review signed off.
+
+---
+
+## 11. Phase 7: later modules
+
+Scope each after beta feedback. Suggested order by farmer value and dependency:
+
+1. Inputs and stock (purchases, applications, safe-to-harvest countdown).
+2. Processing (batches, ratios, lot traceability).
+3. Crop doctor (disease records with photos, remedies, send to expert).
+4. Loans and full money module (schedules, cash flow, budgets, recurring expenses).
+5. Voice entry and bill scan.
+6. Community, schemes, documents, equipment, livestock, web dashboard.
+
+Each one needs its own additions to `product-spec.md`, `screens.md`, the schema and the ARB
+files before coding, following the same task loop.
+
+---
+
+## 12. Local database and offline performance
+
+The local database is what every screen reads, so its speed is the app's speed.
+
+### Opening the database
+
+- Run the database on a background isolate so queries never block the interface thread. Use
+  the setup Drift's current docs recommend for Flutter.
+- At open: write-ahead logging on, synchronous set to normal, foreign keys on, a busy timeout,
+  and a moderate cache size. Verify each setting took effect in a test.
+- One database connection for writes. Add read isolates only if measurements show reads
+  waiting behind writes.
+
+### Column types
+
+- Money: integer paise. Never floating point.
+- Quantities: fixed-point integers (thousandths of the unit) so sums are exact.
+- Dates of work (`work_date`, `spent_on`): stored as a sortable day value, separate from
+  timestamps, so day and month ranges use an index.
+- Ids: UUID text. Generate time-ordered UUIDs (version 7) on the device so new rows land at the
+  end of indexes instead of at random places.
+
+### Indexes (create with the tables, check with the query plan)
+
+| Table | Index | Serves |
+| --- | --- | --- |
+| every entry table | `(farm_id, <date column>, id)` | Day and period lists |
+| every entry table | `(crop_cycle_id, <date column>)` | Plot and crop totals, profit and loss |
+| `labour_entries` | `(worker_id, work_date)`, `(group_id, work_date)`, `(harvest_id)` | Balances, "same as yesterday", harvest teams |
+| `labour_payments` | `(worker_id, paid_on)`, `(group_id, paid_on)` | Balances |
+| `expense_allocations` | `(expense_id)`, `(crop_cycle_id)` | Splits and crop costs |
+| `lots` | `(crop_cycle_id)`, and a partial index on lots with stock left | Selling from stock |
+| `sale_lots` | `(sale_id)`, `(lot_id)` | Sales and lot history |
+| `event_log` | `(farm_id, occurred_on, created_at, id)`, `(entity, entity_id, created_at)` | Diary and timelines |
+| `outbox` | `(status, created_at)` | Upload queue |
+| `crop_cycles` | `(plot_id, status)` | Plot screens |
+
+Most lists show only rows that are not deleted; where the database supports it, make these
+partial indexes on `deleted_at is null`.
+
+For every list and total query, add a test that asserts the query plan uses an index and does
+not scan the whole table.
+
+### Query rules
+
+- **Totals in SQL.** Sums and groupings run in the database. Never load rows into Dart to add
+  them up.
+- **Keyset pagination.** Long lists (History, entries) page by "rows after this date and id",
+  about 50 at a time. Never use a growing offset.
+- **No query inside a loop.** One query per screen section, with joins or a batched `in` list.
+- **Narrow streams.** A watched query should cover only what its widget shows, so a write to
+  one table does not re-run every stream on screen. Debounce streams that feed charts.
+- **Totals are derived first, cached only if needed.** Start with aggregate queries on good
+  indexes. Add a summary table (for example per crop cycle per month) only if a budget in
+  section 14 is missed with the seed loaded, and then update it inside the same transaction as
+  the entry.
+- **Batch writes.** Any multi-row write (set-up, harvest with teams, applying pulled rows) is
+  one transaction using batch inserts.
+
+### Search
+
+- Store a normalised search text per searchable row: Malayalam name, English name and a
+  Manglish transliteration, lower-cased. Phase 1 lists are small enough for a prefix match on
+  an indexed column. Add full-text search only if a list grows past what that handles.
+
+### Event log growth
+
+- Changed fields only for updates (B4). Paginate. Keep everything locally for the current and
+  previous two seasons; older events stay on the server and are fetched on demand when the
+  farmer scrolls that far back. Decide this cut-off with the owner before B7.
+
+### Photos
+
+- Resize on the device (longest side about 1600 px) and compress before saving. Keep a small
+  thumbnail for lists.
+- Photos upload from their own queue, separate from data sync, so a large photo never delays
+  the entries. Offer "upload photos on Wi-Fi only".
+
+### Migrations and safety
+
+- Every schema change has a migration and a migration test from each earlier version.
+- Before a migration runs on a farmer's phone, copy the database file; delete the copy only
+  after the app has opened successfully on the new version.
+- Run an integrity check after a crash during a write, and periodically; if it fails, keep the
+  file, tell the user plainly, and restore from the server.
+
+### Storage budget
+
+- With the benchmark seed loaded, the database file should stay under 60 MB. Report the size
+  in the B2 pull request and again at D1.
+
+---
+
+## 13. Sync and server performance
+
+### Upload (outbox)
+
+- **Coalesce before sending.** If a row was edited five times offline, send one upsert with the
+  final state. The event log still carries all five changes.
+- **Order by dependency.** Farms, then plots, crop cycles, parties, workers and groups, then
+  entries, then allocations and payments, then event log.
+- **Batches.** About 200 rows or 256 KB per request, whichever comes first. Tune with
+  measurements on a slow connection.
+- **One server function per batch**, running in one transaction: it checks permissions, applies
+  the conflict rules, and returns the accepted rows and any conflicts. This replaces many small
+  requests and keeps a batch all-or-nothing.
+- **Idempotent.** Rows are keyed by their device-generated id, and each batch carries its own
+  id. Sending the same batch twice changes nothing.
+- **Retry.** Exponential backoff with random jitter, capped. A permanent rejection (permission,
+  validation) is moved out of the queue and surfaced to the user; it must not block later rows.
+
+### Download (pull)
+
+- **Cursor per table on a server-assigned sequence.** Add a `server_seq` column filled from a
+  sequence by a trigger on every insert and update. The device pulls "rows with `server_seq`
+  greater than my cursor, ordered by `server_seq`, limit N" and stores the last value. This
+  avoids missed rows from clock differences, which a timestamp cursor is prone to.
+- Take care with rows committed out of order at the moment of the pull; the usual remedy is to
+  pull only up to a safe point slightly behind the newest value. Design and test this
+  explicitly in B7.
+- Deleted rows travel as normal rows with `deleted_at` set.
+- Apply each page inside one local transaction, in dependency order.
+- Send only the columns the app uses.
+
+### When sync runs
+
+- A few seconds after a local write (debounced), when the app comes to the foreground, when
+  connectivity returns, and periodically in the background. Skip or defer on very low battery.
+- No realtime subscriptions in phase 1. Pull on the triggers above is enough and far cheaper
+  on battery and data.
+
+### Conflicts
+
+- Detect with the device-owned `version`: the upload says "I changed version N". If the server
+  row is still at N, accept. If not, compare changed fields: different fields merge; the same
+  field takes the later change; money and quantity fields go to the user.
+- Stock is a special case: two devices selling from the same lot offline can oversell. The
+  server function detects it and returns a conflict for the user to settle.
+
+### First sync and restore on a new phone
+
+- Pull master data and the current season first, so the app is usable within seconds; then
+  older seasons in the background with a quiet progress line in Settings.
+
+### Server schema for speed
+
+- Index `(farm_id, server_seq)` on every synced table.
+- Index `farm_members (user_id)` and every column a policy filters on.
+- Keep the indexes that serve reports small in number; this server mostly stores and relays,
+  the phone does the reporting.
+
+### Row-level security
+
+Supabase's guidance for fast policies, to follow in B1:
+
+- Call auth functions as `(select auth.uid())` inside policies so the value is computed once
+  per statement, not once per row.
+- Index the columns that policies compare against.
+- Name the role on every policy (`to authenticated`).
+- Keep membership lookups in security-definer functions and call those wrapped in `select` too.
+- Add the farm filter in the query as well as relying on the policy.
+
+Role rules to encode (D3 then only verifies them): supervisor cannot read money tables or
+profit; accountant can read everything and write money entries but not daily work entries;
+viewer cannot write; per-person `permissions` override the role defaults.
+
+Check policies with `explain analyze` on a seeded local instance, as a signed-in user, before
+B1 is called done.
+
+---
+
+## 14. App performance budgets and how to measure them
+
+**Test phone.** Pick one low-end Android phone typical of the pilot district (the owner
+decides; something with 2 to 3 GB of memory). All numbers are measured on it, in a profile or
+release build. Debug-build numbers do not count.
+
+**Benchmark seed (task A6).** One farm, three years: 8 plots, 20 crop cycles, 40 workers,
+10 groups, about 15,000 labour entries, 6,000 expenses with allocations, 1,500 harvests and
+lots, 1,200 sales, and the roughly 50,000 event-log rows these produce.
+
+| Budget | Target |
+| --- | --- |
+| Cold start to usable Home | under 2.5 s |
+| Open any entry screen | under 300 ms |
+| Save an entry (tap to toast) | under 150 ms |
+| Any list or dashboard query, seed loaded | under 50 ms |
+| Profit and loss for a full season, seed loaded | under 150 ms |
+| Scrolling History, seed loaded | no dropped frames worth noticing; 99th-percentile frame under 16 ms |
+| Taps to save a typical entry | 6 or fewer after opening the add sheet |
+| Download size per CPU type | under 30 MB |
+| Database file, seed loaded | under 60 MB |
+| Sync of one day's entries on a slow mobile connection | under 5 s, in the background |
+| First sync on a new phone to usable | under 10 s for the current season |
+
+These are starting targets. If the test phone cannot meet one, report the measured number and
+the reason, and let the owner decide whether to change the design or the target.
+
+**How to measure.**
+
+- Query timings: a benchmark test that loads the seed and times each repository query. Runs on
+  the device for release decisions and in CI to catch large regressions.
+- Frames and start-up: Flutter's performance tools in profile mode on the test phone, and an
+  integration test that scrolls History and opens each entry screen while recording frame times.
+- App size: the size analysis output of a release build. Record it in every phase's last pull
+  request.
+
+**Interface rules that keep it fast.**
+
+- `const` constructors wherever possible; small widgets rather than large `build` methods.
+- Lists are built lazily, with a fixed item height where the design allows.
+- A provider exposes only what its widget needs; select single fields rather than whole
+  objects, so typing an amount does not rebuild the screen.
+- Animate with transforms and opacity on small subtrees. No animation of layout on long lists.
+  Isolate animated parts so the rest of the screen is not repainted.
+- Nothing heavy on the interface thread: export, image resizing, large JSON encoding and the
+  database all run off it.
+- Load the first screen first: defer anything Home does not need (templates for other screens,
+  price history, old seasons) until after the first frame.
+- Decode images at the size they are shown.
+- Respect "reduce motion": all motion in the tokens is switched off.
+
+---
+
+## 15. UI and UX quality bar
+
+The prototype is the visual reference and `design-tokens.md` is the source of values. "Best"
+here means a farmer with little app experience can record a day's work quickly, in Malayalam,
+outdoors, on a cheap phone, without fear of losing or breaking anything.
+
+### Checklist for every screen (goes in the pull request)
+
+**States**
+
+- [ ] Empty state says what the screen is for and offers the first action.
+- [ ] Offline looks identical to online. No spinner, no "no connection" wall.
+- [ ] Read-only state (closed season, viewer role) is clear and explains why.
+- [ ] Errors say what happened and what to do, in plain Malayalam, next to the field.
+- [ ] Long content, many items and zero items all look right.
+
+**Speed of entry**
+
+- [ ] Opens with the most likely field focused and the right keyboard (numeric for amounts).
+- [ ] Defaults filled: today, last plot, last rate, most used category first.
+- [ ] "Last time" hint shown where the spec asks for it.
+- [ ] Typical entry saved within the tap budget.
+- [ ] Save shows a toast with undo; undo really restores the previous state.
+- [ ] Leaving a half-filled form asks once, or keeps a draft.
+
+**Touch and layout**
+
+- [ ] Every target at least 48 dp, with spacing so neighbours are not hit by mistake.
+- [ ] Main action reachable with one thumb, and never hidden under the keyboard.
+- [ ] No text clipped or overlapping in Malayalam, in large-text mode, or at the system's
+      largest font size.
+- [ ] Works on a small screen (about 360 dp wide) without horizontal scrolling.
+
+**Language and numbers**
+
+- [ ] All text from ARB keys, Malayalam and English both present.
+- [ ] Amounts in Indian grouping with tabular figures; units always shown.
+- [ ] Dates show the Malayalam month where the design does.
+
+**Accessibility**
+
+- [ ] Contrast at least 4.5:1, checked outdoors on the test phone at low brightness.
+- [ ] Every icon button has a label for screen readers; reading order is sensible.
+- [ ] Colour never the only signal: income and expense carry a sign or label.
+- [ ] Motion off when the system asks for reduced motion.
+
+**Trust**
+
+- [ ] Computed values show how they were worked out and can be edited by hand.
+- [ ] Overridden values are marked and can be reset.
+- [ ] Destructive actions are undoable instead of asking "are you sure?" wherever possible.
+
+### Automated UI checks
+
+- Golden tests per screen in four variants: Malayalam, English, Malayalam with large text, and
+  the empty state.
+- A test that pumps each screen at the largest text scale and fails on any overflow.
+- A test that every tappable widget meets the minimum size.
+- Screenshots of each finished screen beside the prototype screen in the pull request.
+
+### Owner and farmer review
+
+- At each phase checkpoint the owner uses the build on the test phone, outdoors, and records a
+  real day's entries.
+- In phase 6, farmers are observed, not interviewed: note where they stop, mis-tap, or ask.
+  Each observation becomes a backlog item with the screen and step.
+
+---
+
+## 16. Code review process
+
+Three layers: automated gates, a self-review, and an independent review. The owner reviews on
+the phone, not line by line.
+
+### Gates (task A6; run locally and in CI on every pull request)
+
+| Gate | Fails when |
+| --- | --- |
+| `dart format` | Any file is unformatted |
+| `flutter analyze` | Any issue, with the strict options from A1 |
+| `flutter test` | Any unit, widget, golden or migration test fails |
+| String check | A user-facing string literal appears in `lib/` outside `l10n/` |
+| ARB check | Keys differ between `app_ml.arb` and `app_en.arb`, a key lacks a description, or placeholders differ |
+| Token check | A colour literal or font name appears outside the theme and tokens files |
+| Layering check | `ui/` imports Drift or Supabase; `domain/` imports Flutter, Drift or Supabase; anything outside `core/sync` and auth imports Supabase |
+| Write-path check | An insert, update or delete on a synced table happens outside `writeWithHistory` |
+| Query-plan tests | A listed query scans a whole table |
+| Benchmark test | A query exceeds twice its budget (CI machines differ from phones, so the margin is wide) |
+| Schema check | `supabase/migrations` and the Drift schema disagree on a synced table's columns |
+
+Keep the checks as small scripts in `tool/` so they run the same way locally and in CI.
+
+### Self-review (the author fills this in on every pull request)
+
+1. Which backlog task and which screen sections this covers.
+2. The acceptance checks, each mapped to a test name.
+3. The eight non-negotiable rules in `CLAUDE.md`, each answered "met" with where, or "not
+   applicable" with why.
+4. The screen checklist from section 15.
+5. Measured numbers against section 14.
+6. Anything guessed, skipped or left for later, stated plainly.
+
+### Independent review
+
+Run in a **fresh session** that has not seen the implementation being written, so the work is
+not marking itself. Prompt:
+
+```
+Review the diff of branch <name> against main. You did not write this code.
+Read CLAUDE.md, docs/implementation-plan.md sections 12 to 16, and the
+sections of docs/screens.md and docs/product-spec.md for task <ID>.
+
+Report, most serious first:
+1. Wrong results: any calculation that does not match the worked examples
+   or mishandles rounding, zero, empty or very large values.
+2. Data safety: any write that skips the event log or outbox, any hard
+   delete, any path that could lose or duplicate data on sync.
+3. Offline: anything that waits on the network or fails without it.
+4. Privacy: any way one farm or role could read another's data.
+5. Performance: queries in loops, unindexed queries, whole-screen rebuilds,
+   work on the interface thread.
+6. UI and UX: items on the section 15 checklist that are not met.
+7. Tests that would still pass if the feature were broken.
+
+For each finding give the file and line, a concrete failing example, and the
+smallest fix. Do not report style preferences.
+```
+
+Fix every finding in categories 1 to 4 before merging. Categories 5 to 7 are fixed or recorded
+as backlog items with the owner's agreement.
+
+**Second reviewer for the risky tasks.** B1 (security rules), B4, B7 and C6 (stock) get the
+independent review twice, the second with the question "how could this lose or expose a
+farmer's data?" only.
+
+### Commit and merge rules
+
+- Small commits, described by what changed for the farmer.
+- A pull request merges only with gates green, self-review filled in, and independent review
+  findings resolved.
+- `main` always builds and runs.
+
+---
+
+## 17. Risks and open questions
+
+| Risk | Why it matters | What to do |
+| --- | --- | --- |
+| SMS OTP delivery in India | Commercial SMS in India needs sender and template registration under the telecom regulator's rules; Supabase needs a third-party SMS provider configured. Unregistered messages may not arrive. | Choose the provider and start registration during phase 1, well before B6. Check current Supabase and provider docs. Budget for per-message cost. |
+| Price data licensing | "Live prices" depends on a source that may not permit reuse. | C11 ships with manual entry; integrate a source only after written confirmation. |
+| Malayalam rendering and wording | Clipped conjuncts or wrong farming terms destroy trust quickly. | Golden tests from A4; native-speaker review at D2; test on the low-end phone throughout. |
+| Sync correctness | The hardest part; errors here lose data silently. | Two-device harness in B7, soak test in D1, double review. |
+| Overselling stock offline | Two devices can sell the same lot. | Server-side check and a user-facing conflict (section 13). |
+| Local data loss before first sync | A phone lost before syncing loses that data. | Sync soon after writes when online; show "items waiting to sync" in Settings. |
+| App size from fonts | Three font families with Malayalam glyphs are heavy. | Measure in A2; drop weights or a family if the budget is missed. |
+| Hosted database limits | Plan limits (pausing, storage, connections) differ by tier and change over time. | Check the current terms of the chosen plan before beta. |
+| Scope growth | The spec lists many later modules. | Phase 1 scope is fixed by `docs/phase-1-tasks.md`; anything else waits for phase 7. |
+
+Open questions for the owner beyond phase 0: weather data source for the Home card; how long
+history stays on the phone (section 12); whether crash reporting is allowed in the beta.
