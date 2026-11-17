@@ -45,8 +45,8 @@ Amount (large input), category chips, split across the plot's crops (default by 
 
 ### 12. Harvest
 "Last time" banner. Total quantity with unit chips. Switch: log quantity for each team. Team cards: name, tag (group or named), remove; head-count stepper for groups; wage per person; quantity when the switch is on, and always for a piece-rate team; computed line. Buttons to add a group or a named worker. Summary: quantity per person per day, labour cost per unit, total wages (paid), and family labour on its own marked line. Save creates a lot and goes to history; "sell now" opens selling.
-- Saved lot: its stored cost and cost per unit, or "not yet worked out" when saved by someone who cannot read money; edit and recalculate. An edited cost is marked and can be reset.
-- Check: the harvest example in the spec, with the switch on and off; removing a team recalculates; with the switch off a piece-rate team still enters its quantity; editing a team recalculates the lot unless its cost was edited by hand; a supervisor's harvest saves with the cost not yet worked out, and the cost appears after an owner's, manager's or accountant's phone syncs.
+- Saved lot: its stored cost and cost per unit, or "not yet worked out" when saved or edited by someone who cannot write money; edit and recalculate. An edited cost is marked and can be reset.
+- Check: the harvest example in the spec, with the switch on and off; removing a team recalculates; with the switch off a piece-rate team still enters its quantity; editing a team recalculates the lot unless its cost was edited by hand; a supervisor's harvest saves with the cost not yet worked out, and the cost appears after an owner's, manager's or accountant's phone syncs; a supervisor's edit to the teams marks it not yet worked out again; a supervisor's phone never holds the lot cost.
 
 ### 13. Sell
 Today's price banner with source and time (links to prices). Lots to sell from (one or more), quantity and rate (rate prefilled from price), buyer and buyer type, gross, deductions (editable), net, payment mode and status (paid, part paid with the amount received, due), profit per sale unit (net per unit minus lot cost per unit in the sale unit, `product-spec.md` rule 9). Save reduces stock.
@@ -70,7 +70,7 @@ Crop chips; activity list with on/off switches; "new items available" banner for
 
 ### 6. More, and 7. Settings
 More: tiles for every enabled page, then Settings. Settings: language, large text, pages on/off (drives More and quick add), home cards on/off, reset to default, farms, members, account, sync status.
-- Farms: the farms this account belongs to, with its role on each; switch farm; add a farm (set-up steps 2 and 3). An accepted invite to another farm adds it here.
+- Farms: the farms this account belongs to, with its role on each; switch farm; add a farm (set-up steps 2 and 3). An invite to another farm adds it here at the next sign-in or sync.
 - Members (owner only): add a person by their Google email, choose a role, change per-person permissions, remove a person. The person sees the farm after their first sign-in and sync; a removed person loses access at once on the server.
 - Sync status: last synced time and items waiting to sync. Never a blocking dialog.
 - Account: the signed-in Google account, and sign out. Signing out with items waiting to sync warns first; those items stay on the phone, tied to that user, until they sync.

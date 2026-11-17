@@ -127,7 +127,8 @@ Applies pulled rows to Drift; the screens update by themselves through the strea
 Rules that follow from this picture:
 
 - **Screens never call Supabase.** Only the sync engine and auth do.
-- **Screens never wait for the network.** No spinner on any data screen.
+- **Screens never wait for the network.** No spinner on any data screen. The one exception is
+  the first sign-in and first sync (`CLAUDE.md` rule 1).
 - **Screens never write to Drift directly.** Only repositories write, so the event log and the
   outbox cannot be skipped.
 - **Calculations are pure functions** in `domain/`, taking plain values and returning plain
@@ -179,7 +180,11 @@ user, overtime columns, the switch hit area, and the column and naming notes in 
 A third review found 21 more; the owner settled four rules on the same day (a supervisor also
 writes workers and groups; on a mixed plot labour either splits or posts to one crop cycle, as
 set under the override model; one account can belong to several farms, with a switcher; family
-labour is a separate line on the harvest) and the rest were fixed as recommended.
+labour is a separate line on the harvest) and the rest were fixed as recommended. A fourth
+review found 9 more, fixed as recommended: lot cost moves to its own money table, a
+supervisor's team edit marks the cost pending again, equal values are not a conflict, group
+leaders are workers, invites apply at the next sync, labour splits default to the expense
+split, and the upload order, indexes and network exception were corrected.
 
 | Question | Recommended answer | Doc to edit |
 | --- | --- | --- |
@@ -291,14 +296,14 @@ Fixes to make:
 | Deletes | Split every `for all` policy into select, insert and update. No client delete policy on any table; deleting means setting `deleted_at`. |
 | Farm creation | One security-definer function `create_farm(...)` that inserts the farm and the owner's `farm_members` row in one transaction and returns the farm. Clients do not insert into `farms` directly. |
 | Profiles | Create the `profiles` row automatically when an auth user is created. |
-| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account first signs in. `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
+| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account next signs in or syncs. `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
 | Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
 | Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)` and drop `sales.lot_id`. Add `sale_payments` for part payments. Both new tables carry the common columns. Keep `sales.received_paise` only if it is derived. |
-| Lots | Add `lots.cost_overridden`, and allow a "not yet worked out" lot cost (null `cost_paise`) for harvests saved by a role that cannot read money. |
+| Lots | Supervisors read `lots` (stock), and row-level security cannot hide one column, so move the cost out: add `lot_costs (lot_id, cost_paise, cost_overridden)` with the common columns, as a money table, and drop `lots.cost_paise`. Add `lots.cost_pending`, set when a role that cannot write money saves the harvest or edits its teams; the next money phone works out the cost and clears it. |
 | Payables | Add a payments table, with the common columns, for expenses bought on credit, so a payable can be part-paid. |
 | Notes | Add `notes` (text, date, optional plot and crop cycle) with the common columns. |
-| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. Add `overtime_hours` and `overtime_rate_paise` to `labour_entries` (the overtime rate defaults from templates); `hours` stays for the hourly wage type. Add `labour_allocations` (like `expense_allocations`, with the common columns) so wage cost can split across a mixed plot's crop cycles. |
+| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. Add `overtime_hours` and `overtime_rate_paise` to `labour_entries` (the overtime rate defaults from templates); `hours` stays for the hourly wage type. Add `labour_allocations` (like `expense_allocations`, with the common columns) so wage cost can split across a mixed plot's crop cycles. Replace `labour_groups.leader_party_id` with `leader_worker_id`, so a supervisor can name a group leader without touching parties. |
 | Units | Remove hard-coded unit lists from check constraints; units come from templates. |
 | Common columns | Add the missing ones to `expense_allocations`, `price_alerts`, farmer-owned `crops` rows and locally entered `market_prices` rows. Give `farm_members` and `labour_group_members` the full common columns so membership changes sync and can be undone. |
 | Versions | Remove the version increment from the `set_updated` trigger (see section 13). |
@@ -459,7 +464,8 @@ Goal: the full chain from harvest to stock to sale to profit, with history visib
   does not change until the farmer recalculates). Also: an edited cost is marked and can be
   reset; editing a team recalculates the lot unless the cost was edited by hand; a supervisor's
   harvest saves with the cost not yet worked out, and the next owner, manager or accountant
-  phone works it out.
+  phone works it out; a supervisor's team edit marks it pending again; two money phones that
+  save the same cost make no conflict.
 - Piece-rate teams enter their own quantity even with per-team quantity off.
 - Check: the harvest example with the switch on and off; removing a team recalculates.
 
@@ -897,6 +903,8 @@ The local database is what every screen reads, so its speed is the app's speed.
 | `labour_entries` | `(worker_id, work_date)`, `(group_id, work_date)`, `(harvest_id)` | Balances, "same as yesterday", harvest teams |
 | `labour_payments` | `(worker_id, paid_on)`, `(group_id, paid_on)` | Balances |
 | `expense_allocations` | `(expense_id)`, `(crop_cycle_id)` | Splits and crop costs |
+| `labour_allocations` | `(labour_entry_id)`, `(crop_cycle_id)` | Splits and crop costs |
+| `lot_costs` | unique `(lot_id)` | Lot cost and sale profit |
 | `lots` | `(crop_cycle_id)`, and a partial index on lots with stock left | Selling from stock |
 | `sale_lots` | `(sale_id)`, `(lot_id)` | Sales and lot history |
 | `event_log` | `(farm_id, occurred_on, created_at, id)`, `(entity, entity_id, created_at)` | Diary and timelines |
@@ -966,8 +974,9 @@ not scan the whole table.
 - **Coalesce before sending.** If a row was edited five times offline, send one upsert with the
   final state. The event log still carries all five changes.
 - **Order by dependency.** Farms, then members and invites, a farmer's own crops, template
-  overrides, plots, crop cycles, parties, workers and groups, then entries (labour, expenses,
-  harvests, notes, tasks, local prices, price alerts), then lots, then sales and sale lots, then
+  overrides, plots, crop cycles, parties, workers and groups, then entries (harvests, labour,
+  expenses, notes, tasks, local prices, price alerts), then lots and lot costs, then sales and
+  sale lots, then
   allocations and payments, then event log.
 - **Batches.** About 200 rows or 256 KB per request, whichever comes first. Tune with
   measurements on a slow connection.
@@ -1007,7 +1016,7 @@ not scan the whole table.
   not, compare changed fields: different fields merge; on the same field the upload that reaches the
   server later wins (server order, never the device clock); money and quantity fields, and a
   delete against an edit, go to the user. A new row whose parent was deleted on another device
-  also goes to the user.
+  also goes to the user. Two changes that set a field to the same value are not a conflict.
 - Settling a conflict is the one case where the server sets `version`: any row it writes after
   a conflict (a merge, or a same-field change accepted over another device's) is stored at the
   highest version seen plus one and returned, so no two different row states share a version.
@@ -1040,8 +1049,8 @@ Supabase's guidance for fast policies, to follow in B1:
 
 Role rules to encode (D3 then only verifies them), as listed in `product-spec.md` rule 7:
 supervisor cannot read money tables (including parties and lot cost) or profit, and its read of
-`event_log` leaves out rows whose entity is a money table; supervisor writes daily work, workers
-and groups; set-up records are written by owner and manager; accountant can read everything and
+`event_log` leaves out rows whose entity is a money table; supervisor writes daily work
+(labour allocations included), workers and groups; lot costs are money; set-up records are written by owner and manager; accountant can read everything and
 write money entries but not daily work entries; viewer cannot write; per-person `permissions`
 override the role defaults. Roles are per farm.
 
@@ -1114,7 +1123,8 @@ outdoors, on a cheap phone, without fear of losing or breaking anything.
 **States**
 
 - [ ] Empty state says what the screen is for and offers the first action.
-- [ ] Offline looks identical to online. No spinner, no "no connection" wall.
+- [ ] Offline looks identical to online. No spinner, no "no connection" wall (except the first
+      sign-in and first sync, `CLAUDE.md` rule 1).
 - [ ] Read-only state (closed season, or a role that cannot write it) is clear and explains why;
       what the role cannot open is hidden.
 - [ ] Errors say what happened and what to do, in plain Malayalam, next to the field.
