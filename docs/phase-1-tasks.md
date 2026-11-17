@@ -4,7 +4,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 
 ## A. Foundation
 
-- [ ] A1. Create the Flutter project in this repository (app id to be confirmed with the owner), Android and iOS targets, stable channel. Keep existing `docs/`, `design/`, `supabase/` and `lib/l10n/`.
+- [ ] A1. Create the Flutter project in this repository (app id `app.thottam`), Android and iOS targets, stable channel. Keep existing `docs/`, `design/`, `supabase/` and `lib/l10n/`.
 - [ ] A2. Theme and tokens from `docs/design-tokens.md`; load fonts (Anek Malayalam, Inter, Noto Sans Malayalam) as bundled assets so they work offline.
 - [ ] A3. Localisation: wire ARB files, language switch (ml, en, mixed), large-text mode. Clean up ARB keys from the prototype export (rename indexed keys, add descriptions). Add placeholders and plural rules for every string that carries a number, amount, date or name; renaming keys alone is not enough.
 - [ ] A4. Shared widgets: primary and outline buttons, choice chip, segmented control, switch row, stepper, tint icon tile, card, toast with undo, bottom sheet, bottom nav with centre add button, amount input, empty state, "last time" banner, stale-data tag.
@@ -45,13 +45,19 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [ ] D5. Closed beta build.
 - [ ] D6. Phone OTP sign-in as a second method beside Google, once everything above works. Same offline and per-user database rules as B6. Decide with the owner whether one account can have both phone and Google linked.
 
-## Open decisions for the owner
+## Owner decisions
 
-- App id / package name and store account.
-- Supabase project (new or existing) and region.
+Decided (2026-11-17):
+
+- App id: `app.thottam`. Store account: the owner's existing Google Play developer account.
+- Supabase: the owner's existing project, in its current region.
+- Pilot district: Idukki. Crops: wave 1 (coconut, rubber, pepper, banana, paddy).
+
+Open:
+
 - Google Cloud project and OAuth client ids for Google sign-in (needed by B6).
 - SMS provider for phone OTP, and sender and template registration (needed by D6).
 - Whether one account can have both Google and phone sign-in linked (needed by D6).
-- Pilot district, crops and partner organisation.
-- Which price sources are licensed for use.
+- Partner organisation for the pilot (needed by the field test).
+- Which price sources are licensed for use (needed by C11).
 - Test phone: one low-end Android phone typical of the pilot district, for all performance budgets (needed by A6).

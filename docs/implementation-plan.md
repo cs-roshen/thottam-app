@@ -146,16 +146,17 @@ No app code. The output is corrected docs and answered decisions.
 
 ### Owner decisions
 
-| Decision | Needed by |
-| --- | --- |
-| App id (package name) and store account | A1 |
-| Supabase project (new or existing) and region | B1 |
-| Google Cloud project and OAuth client ids for Google sign-in | B6 |
-| SMS provider for phone OTP and its registration (see section 17) | D6 |
-| Whether one account can have both Google and phone sign-in linked | D6 |
-| Test phone: one low-end Android phone typical of the pilot district | A6 |
-| Pilot district, crops and partner organisation | B1 seed data |
-| Which price sources are licensed for use | C11 |
+| Decision | Needed by | Answer (2026-11-17) |
+| --- | --- | --- |
+| App id (package name) and store account | A1 | `app.thottam`; the owner's existing Google Play developer account |
+| Supabase project (new or existing) and region | B1 | The owner's existing project, in its current region |
+| Google Cloud project and OAuth client ids for Google sign-in | B6 | Open |
+| SMS provider for phone OTP and its registration (see section 17) | D6 | Open |
+| Whether one account can have both Google and phone sign-in linked | D6 | Open |
+| Test phone: one low-end Android phone typical of the pilot district | A6 | Open |
+| Pilot district and crops | B1 seed data | Idukki; wave 1 crops (coconut, rubber, pepper, banana, paddy) |
+| Partner organisation for the pilot | Field test (phase 6) | Open |
+| Which price sources are licensed for use | C11 | Open |
 
 ### Doc contradictions to settle
 
