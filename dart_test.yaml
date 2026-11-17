@@ -1,0 +1,4 @@
+tags:
+  # Golden images are rendered on Windows, where they were created; see
+  # tool/README.md for how CI treats them.
+  golden:

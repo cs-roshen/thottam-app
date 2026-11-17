@@ -815,5 +815,22 @@
         "type": "int"
       }
     }
+  },
+  "actionUndo": "Undo",
+  "@actionUndo": {
+    "description": "Undo button on the toast after a save or delete."
+  },
+  "staleDataTag": "Old price · {date}",
+  "@staleDataTag": {
+    "description": "Tag on data older than one day, such as a price; date formatted in code.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "amountInputHint": "Amount in rupees",
+  "@amountInputHint": {
+    "description": "Screen reader hint on the large amount input."
   }
 }

@@ -41,7 +41,8 @@ void main() {
     addTearDown(container.dispose);
 
     double scaleOf10() {
-      final context = tester.element(find.text('തോട്ടം'));
+      // The app bar clamps its title, so read the body's scale.
+      final context = tester.element(find.byType(Scaffold).first);
       return MediaQuery.textScalerOf(context).scale(10);
     }
 

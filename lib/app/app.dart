@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -5,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import 'settings.dart';
 import 'theme/theme.dart';
 import 'theme/tokens.dart';
+import 'widgets/widget_gallery.dart';
 
 class ThottamApp extends ConsumerWidget {
   const ThottamApp({super.key});
@@ -34,7 +36,8 @@ class ThottamApp extends ConsumerWidget {
           child: child!,
         );
       },
-      home: const _Placeholder(),
+      // The widget gallery stands in for the shell until A5 adds the tabs.
+      home: kDebugMode ? const WidgetGalleryScreen() : const _Placeholder(),
     );
   }
 }
