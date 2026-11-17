@@ -8,6 +8,10 @@ Where this plan and `docs/product-spec.md` or `docs/screens.md` disagree, those 
 plan should be corrected. Package names here are the planned choices; check each package's
 current docs for versions and setup before adding it. No version numbers are fixed in this plan.
 
+"Phase 1" in `CLAUDE.md`, `docs/phase-1-tasks.md` and `docs/screens.md` means the whole first
+release (tasks A1 to D6). This plan splits that release into its phases 1 to 6; its own
+"Phase 1" (section 5) is the foundation only.
+
 Contents
 
 1. How to work through the plan
@@ -163,6 +167,11 @@ A review of those edits then found more gaps; the owner accepted the recommended
 same day: a role table (`product-spec.md` rule 7), stored-amount rounding (rule 8), lot cost
 (rule 9), overtime, conflicts settled in server order, a merge being the one case where the
 server sets `version`, profit per sale unit, and a Google sign-in step in `screens.md`.
+A second review found 13 more gaps; the owner accepted those fixes on the same day too: split
+parts always follow the split rule, a lot stores its total cost when the harvest is saved and
+leaves out family labour, members and account in Settings, the first sign-in as the one step
+that needs the network, the base version on uploads, a delete against an edit going to the
+user, overtime columns, the switch hit area, and the column and naming notes in `CLAUDE.md`.
 
 | Question | Recommended answer | Doc to edit |
 | --- | --- | --- |
@@ -274,11 +283,12 @@ Fixes to make:
 | Deletes | Split every `for all` policy into select, insert and update. No client delete policy on any table; deleting means setting `deleted_at`. |
 | Farm creation | One security-definer function `create_farm(...)` that inserts the farm and the owner's `farm_members` row in one transaction and returns the farm. Clients do not insert into `farms` directly. |
 | Profiles | Create the `profiles` row automatically when an auth user is created. |
+| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account first signs in. |
 | Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
 | Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)`. Add `sale_payments` for part payments. Keep `sales.received_paise` only if it is derived. |
 | Payables | Add a payments table for expenses bought on credit, so a payable can be part-paid. |
-| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. |
+| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. Add `overtime_hours` and `overtime_rate_paise` to `labour_entries` (the overtime rate defaults from templates); `hours` stays for the hourly wage type. |
 | Units | Remove hard-coded unit lists from check constraints; units come from templates. |
 | Common columns | Add the missing ones to `expense_allocations`, `price_alerts`, farmer-owned `crops` rows and locally entered `market_prices` rows. Give `farm_members` and `labour_group_members` the full common columns so membership changes sync and can be undone. |
 | Versions | Remove the version increment from the `set_updated` trigger (see section 13). |
@@ -353,8 +363,8 @@ Build to the design in section 13. Deliverables:
 - Outbox upload with coalescing, batching and retry.
 - Pull by cursor per table, applied in dependency order inside local transactions.
 - Conflict rules from the spec: different fields merge; the same field takes the change the
-  server accepted last; money and quantity conflicts are put in `conflicts` and shown to the
-  user to choose.
+  server accepted last; money and quantity conflicts, and a delete against an edit, are put in
+  `conflicts` and shown to the user to choose.
 - A test harness with two simulated devices and a fake or local server, covering: both offline
   then both sync; the same row edited on both; delete on one and edit on the other; upload
   interrupted halfway; the same batch sent twice; clock on one device wrong by a day.
@@ -427,7 +437,9 @@ Goal: the full chain from harvest to stock to sale to profit, with history visib
 - Any number of teams (unnamed group, named group, named worker), each with its own rate;
   per-team quantity on or off; piece-rate teams beside daily-rate teams.
 - Saving creates the harvest, the team labour entries and the lot in one transaction.
-- Lot cost: `product-spec.md` rule 9; test with its two lot-cost examples.
+- Lot cost: `product-spec.md` rule 9; test with its two lot-cost examples, a family worker on
+  a team (left out of the total), and a cost entered later with an earlier date (a saved lot
+  does not change until the farmer recalculates).
 - Check: the harvest example with the switch on and off; removing a team recalculates.
 
 ### C6. Selling
@@ -462,9 +474,11 @@ expected profit to the paisa; History shows every step; budgets met with the see
 - **C9. Home dashboard and tasks.** Each card has its own provider and query, so one card
   changing does not rebuild the others. Ticking a task writes to history. Weather needs a data
   source decision; show the card only when data exists.
-- **C10. Settings and My lists.** Pages and home cards on or off; reset to default; farmer
-  templates with "new items available" for admin updates. Check: an admin update never changes
-  an item the farmer edited or switched off.
+- **C10. Settings and My lists.** Pages and home cards on or off; reset to default; members and
+  roles (owner only, added by Google email); account and sign out, with a warning when items
+  are waiting to sync; farmer templates with "new items available" for admin updates. Check: an
+  admin update never changes an item the farmer edited or switched off; a member added as
+  supervisor cannot open money or profit.
 - **C11. Prices.** Table and manual entry first. Prices older than one day are marked stale.
   Source integration only after licensing is confirmed. Cache the latest prices locally so the
   screen works offline and says how old the data is.
@@ -715,8 +729,8 @@ extended exports.
 **Tasks:** H1 docs and schema; H2 loan domain with tests; H3 loans screens; H4 unified ledgers;
 H5 budgets; H6 recurring; H7 assets and depreciation; H8 cash flow and report updates.
 
-**Owner decisions:** which loan types to support first; whether the accountant role can edit
-loans.
+**Owner decisions:** which loan types to support first. The accountant can edit loans, as money
+entries (`product-spec.md` rule 7).
 
 **Exit check:** a season with a loan, a credit purchase, a part-paid sale and a recurring lease
 payment produces the expected ledgers, cash flow and profit in every switch position.
@@ -962,10 +976,12 @@ not scan the whole table.
 
 ### Conflicts
 
-- Detect with the device-owned `version`: the upload says "I changed version N". If the server
-  row is still at N, accept. If not, compare changed fields: different fields merge; the same
-  field takes the change the server accepted last (server order, never the device clock); money
-  and quantity fields go to the user.
+- Detect with the device-owned `version`: the upload carries the base version N (the last
+  version this device received from the server) with the new row, so "I changed version N"
+  holds however many local edits were coalesced. If the server row is still at N, accept. If
+  not, compare changed fields: different fields merge; the same field takes the change the
+  server accepted last (server order, never the device clock); money and quantity fields, and a
+  delete against an edit, go to the user.
 - A merge is the one case where the server sets `version`: it stores the merged row at the
   highest version seen plus one and returns it, so no two different row states share a version.
 - Stock is a special case: two devices selling from the same lot offline can oversell. The
@@ -978,7 +994,7 @@ not scan the whole table.
 
 ### Server schema for speed
 
-- Index `(farm_id, server_seq)` on every synced table.
+- Index `(farm_id, server_seq)` on every synced table (`owner_farm_id` on `crops`).
 - Index `farm_members (user_id)` and every column a policy filters on.
 - Keep the indexes that serve reports small in number; this server mostly stores and relays,
   the phone does the reporting.
@@ -1145,7 +1161,7 @@ the phone, not line by line.
 | Write-path check | An insert, update or delete on a synced table happens outside `writeWithHistory` |
 | Query-plan tests | A listed query scans a whole table |
 | Benchmark test | A query exceeds twice its budget (CI machines differ from phones, so the margin is wide) |
-| Schema check | `supabase/migrations` and the Drift schema disagree on a synced table's columns |
+| Schema check | `supabase/migrations` and the Drift schema disagree on a synced table's columns (apart from the server-only `server_seq`) |
 
 Keep the checks as small scripts in `tool/` so they run the same way locally and in CI.
 
@@ -1205,7 +1221,7 @@ farmer's data?" only.
 
 | Risk | Why it matters | What to do |
 | --- | --- | --- |
-| SMS OTP delivery in India | Commercial SMS in India needs sender and template registration under the telecom regulator's rules; Supabase needs a third-party SMS provider configured. Unregistered messages may not arrive. | Phase 1 signs in with Google; phone OTP is task D6. Choose the provider and start registration during phase 1, well before D6. Check current Supabase and provider docs. Budget for per-message cost. |
+| SMS OTP delivery in India | Commercial SMS in India needs sender and template registration under the telecom regulator's rules; Supabase needs a third-party SMS provider configured. Unregistered messages may not arrive. | Phase 1 signs in with Google; phone OTP is task D6. Choose the provider and start registration during the foundation phase (section 5), well before D6. Check current Supabase and provider docs. Budget for per-message cost. |
 | Price data licensing | "Live prices" depends on a source that may not permit reuse. | C11 ships with manual entry; integrate a source only after written confirmation. |
 | Malayalam rendering and wording | Clipped conjuncts or wrong farming terms destroy trust quickly. | Golden tests from A4; native-speaker review at D2; test on the low-end phone throughout. |
 | Sync correctness | The hardest part; errors here lose data silently. | Two-device harness in B7, soak test in D1, double review. |

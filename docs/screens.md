@@ -4,7 +4,7 @@ Reference: the interactive prototype in `design/prototype/` and at https://claud
 
 Navigation: bottom bar with Home, My land, centre Add button, Money, More. Sub-screens have a back button and highlight their parent tab. The bar is hidden during set-up.
 
-Every data screen must handle: empty state, offline (no spinner, just works), read-only (closed season), and large-text mode.
+Every data screen must handle: empty state, offline (no spinner, just works), read-only (closed season, or a role that cannot write it), and large-text mode. Anything the user's role cannot open (`product-spec.md` rule 7) is hidden, including Home cards, quick add tiles and buttons such as "sell now".
 
 ## Phase 1
 
@@ -12,6 +12,7 @@ Every data screen must handle: empty state, offline (no spinner, just works), re
 Choose Malayalam, English or mixed; large-text switch. Continue → Google sign-in → set-up. Mixed: Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin.
 - Check: choice persists and applies immediately across the app.
 - Check: after the first sign-in the app opens and works in flight mode; signing in as another user on the same phone shows none of the first user's data.
+- Check: offline at first launch, the sign-in step says once that a connection is needed and continues by itself when one returns. This is the only step in the app that needs the network.
 
 ### 17. Set-up (3 steps)
 Name (prefilled from the Google account) and phone (optional) → first farm (name, area, unit, owned or leased) → crops (multi-select). Finish creates farm, plot and crop cycles from templates, then opens Home.
@@ -63,7 +64,10 @@ Crop chips; activity list with on/off switches; "new items available" banner for
 - Check: an admin update never changes an item the farmer has edited or switched off.
 
 ### 6. More, and 7. Settings
-More: tiles for every enabled page, then Settings. Settings: language, large text, pages on/off (drives More and quick add), home cards on/off, reset to default.
+More: tiles for every enabled page, then Settings. Settings: language, large text, pages on/off (drives More and quick add), home cards on/off, reset to default, members, account.
+- Members (owner only): add a person by their Google email, choose a role, change per-person permissions, remove a person. The person sees the farm after their first sign-in and sync.
+- Account: the signed-in Google account, and sign out. Signing out with items waiting to sync warns first; those items stay on the phone, tied to that user, until they sync.
+- Check: a supervisor added here cannot open money screens or profit and loss; signing out with items waiting to sync shows the warning and loses nothing.
 
 ### 23. Admin console (web, may start minimal)
 Crop chips, list type (activities, inputs, harvest grades), table with Malayalam and English names, source tag, shown-to-farmers switch, add item, publish with version number.
