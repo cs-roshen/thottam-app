@@ -20,7 +20,7 @@ Contents
 8. Phase 4: harvest to profit (C5 to C8)
 9. Phase 5: home, lists and prices (C9 to C11, admin console)
 10. Phase 6: release readiness (D1 to D5)
-11. Phase 7: later modules
+11. Phases 7 to 13: later modules
 12. Local database and offline performance
 13. Sync and server performance
 14. App performance budgets and how to measure them
@@ -484,19 +484,329 @@ open correctness bugs; native-speaker review signed off.
 
 ---
 
-## 11. Phase 7: later modules
+## 11. Phases 7 to 13: later modules
 
-Scope each after beta feedback. Suggested order by farmer value and dependency:
+These start after the closed beta. The order below is by farmer value and by what each module
+depends on; re-order after beta feedback, but keep the dependencies. Each module is its own
+phase with its own exit check and owner checkpoint.
 
-1. Inputs and stock (purchases, applications, safe-to-harvest countdown).
-2. Processing (batches, ratios, lot traceability).
-3. Crop doctor (disease records with photos, remedies, send to expert).
-4. Loans and full money module (schedules, cash flow, budgets, recurring expenses).
-5. Voice entry and bill scan.
-6. Community, schemes, documents, equipment, livestock, web dashboard.
+| Phase | Module | Depends on |
+| --- | --- | --- |
+| 7 | Inputs and stock | Expenses, parties, templates |
+| 8 | Processing | Harvest lots, selling |
+| 9 | Crop doctor | Photos queue, tasks, inputs (for treatments) |
+| 10 | Full money: loans, budgets, recurring and capital costs, cash flow | Expenses, sales, profit and loss |
+| 11 | Faster entry: voice and bill scan | All entry screens stable |
+| 12 | Organisations and web dashboard | Templates, roles, sync |
+| 13 | Community, schemes, documents, equipment, livestock, custom records | Organisations (for moderation and content) |
 
-Each one needs its own additions to `product-spec.md`, `screens.md`, the schema and the ARB
-files before coding, following the same task loop.
+### Rules for every later module
+
+- **Docs first.** Before any code: add the module's rules and hand-worked examples to
+  `product-spec.md`, its screens and acceptance checks to `screens.md`, its tables to a new
+  migration and the Drift schema, and its strings to both ARB files. One pull request for the
+  docs, reviewed by the owner, then the build tasks.
+- **Same loop, same gates.** The task loop in section 1, the gates and reviews in section 16,
+  the screen checklist in section 15 and the budgets in section 14 all apply unchanged.
+- **Switchable.** Each module is a page the farmer can turn off in Settings. A module that is
+  off adds no tiles, no home cards and no background work.
+- **Offline first still holds.** Anything that truly needs the network (expert replies, voice
+  recognition on a server, scheme lists) must let the farmer finish the entry offline and
+  complete the network part later from a queue, with a visible "waiting to send" state.
+- **Additive schema only.** New tables and new nullable columns. Never change the meaning of a
+  phase 1 column. Every change ships with a local migration test from every earlier version.
+- **Re-measure.** Extend the benchmark seed with the module's data and re-run all budgets; a
+  new module must not slow down an old screen.
+- **Backlog ids.** Tasks are numbered by phase: E for phase 7, F for 8, G for 9, H for 10,
+  J for 11, K for 12, L for 13. Add them to a new `docs/later-phases-tasks.md` when the phase
+  starts, not before, so the list reflects what beta taught.
+
+### Phase 7: inputs and stock (screen 19)
+
+**Goal:** the farmer knows what fertiliser, pesticide and seed is on hand, what was applied
+where, what it cost each crop, and when it is safe to harvest after a spray.
+
+**Schema additions**
+
+- `input_items` (farm's own list, linked to a template item where one exists; unit, pack size,
+  reorder level, waiting period in days).
+- `input_purchases` (item, quantity, unit, price, vendor, batch, expiry date, link to the
+  expense row it creates).
+- `input_applications` (item, quantity, method, plot, crop cycle, worker or group, date,
+  computed cost, link to a disease record when it is a treatment).
+- `stock_movements` (one row per purchase, application, adjustment or loss; the stock level is
+  the sum of movements, never a stored number that can drift).
+- `soil_tests` (plot, date, values, lab, photo of the report).
+
+**Rules and tests**
+
+- A purchase creates one expense, so money is never entered twice. Decide and document when
+  the cost reaches a crop: recommended is at application, not at purchase, with unapplied
+  stock shown as an asset.
+- Cost of an application: weighted average cost of the item at that date. Hand-worked example
+  in the spec: two purchases at different prices, then an application.
+- Stock cannot go negative without the farmer confirming an adjustment.
+- Safe-to-harvest date = application date plus the item's waiting period, per crop cycle,
+  taking the latest of all recent applications. Logging a harvest inside the period shows a
+  warning that can be overridden with a reason, and the override is recorded in history.
+- Low-stock and expiry alerts are computed locally and work offline.
+
+**Screens:** stock list with used and bought and a low-stock tag; add purchase; log application
+(reachable from quick add and from plot detail); item history; soil test record; the
+safe-to-harvest countdown on plot detail and on the harvest screen.
+
+**Performance notes:** index `stock_movements (item_id, moved_on)`. Stock level per item is an
+aggregate; cache it in a summary table only if the stock list misses its budget.
+
+**Tasks:** E1 docs and schema; E2 domain (average cost, stock, waiting period) with tests;
+E3 purchases and stock list; E4 applications and cost posting; E5 safe-to-harvest and alerts;
+E6 soil tests.
+
+**Owner decisions:** source and review of waiting periods and label doses (these are safety
+information; they must come from product labels or an agricultural authority, with the source
+shown, and never be invented).
+
+**Exit check:** a scripted season with purchases and applications gives the expected stock,
+crop costs and safe dates; profit and loss matches the phase 1 result plus input costs.
+
+### Phase 8: processing (screen 20)
+
+**Goal:** follow produce from harvest lot through drying, curing or milling to a sellable lot,
+with the true cost per kg and full traceability.
+
+**Schema additions**
+
+- `process_batches` (crop, started and finished dates, status, storage location).
+- `batch_inputs` (batch, source lot, quantity taken).
+- `batch_steps` (batch, step from template, started and finished, weight in, weight out, cost,
+  labour entries linked to the step).
+- `batch_outputs` (batch, new lot, quantity, grade).
+- `storage_locations`, and a `location_id` on `lots`.
+- `lots.parent_batch_id` so a lot knows where it came from.
+
+**Rules and tests**
+
+- Conversion ratio and loss per step and overall; the spec example (100 kg in, 33 kg out, 33%,
+  loss 67 kg) is the first test. Expected ratio comes from the template and is overridable.
+- Output lot cost = cost of the input lots used + processing costs + step labour, divided
+  across outputs by weight (or by value when grades differ; decide and document).
+- Taking from a lot reduces its stock exactly as a sale does, with the same oversell conflict
+  handling in sync.
+- Traceability query: from any sold lot back to batches, harvests, plot and dates, and forward
+  from a harvest to where it was sold.
+- A batch can be left open for days; partial progress is saved at every step.
+
+**Screens:** batch list with progress; new batch (pick lots); step entry with weights; move to
+stock; lot detail showing its origin; stock ageing view.
+
+**Performance notes:** traceability is a recursive query; keep the chain shallow by storing
+`root_harvest_ids` on each lot at creation, and index `batch_inputs (lot_id)` and
+`batch_outputs (lot_id)`.
+
+**Tasks:** F1 docs and schema; F2 domain (ratio, loss, cost roll-up) with tests; F3 batch
+creation and steps; F4 outputs, storage and ageing; F5 traceability and selling from processed
+lots.
+
+**Exit check:** a harvest processed in two steps and sold in two part sales gives the expected
+cost per kg and profit, and the sale traces back to the plot.
+
+### Phase 9: crop doctor (screen 10)
+
+**Goal:** the farmer records a problem with photos in under a minute, sees vetted remedies, can
+ask an expert in one tap, and keeps the outcome as history for next season.
+
+Build in three steps. Do not start with the diagnosis model.
+
+**9a. Disease records and remedy library**
+
+- Schema: `disease_records` (crop cycle, plot, affected part, severity, area affected, note,
+  status: open, awaiting expert, treated, resolved; suggested and corrected diagnosis),
+  `disease_photos` (several per record, with follow-up photos dated), `remedies` as template
+  content (crop, disease, organic and chemical options, label dose, waiting period, source).
+- Photos use the phase 1 upload queue and the resize rules in section 12.
+- A remedy can become a task, and a treatment logs an input application (phase 7) so cost and
+  safe-to-harvest follow automatically.
+- Content rules: label doses only, source shown on every remedy, reviewed by a qualified
+  person before publishing, and a plain statement that it is guidance, not a prescription.
+  The owner must name who reviews this content.
+
+**9b. Send to expert**
+
+- Schema: `expert_requests` and `expert_replies`, visible only to the farm and the assigned
+  expert. A new `expert` role with access limited to records shared with them.
+- Works offline: the request is queued and sent on the next sync; the record shows "awaiting
+  expert" and a notification arrives with the reply.
+- Needs: a partner organisation that supplies experts, a response-time promise shown to the
+  farmer, and a simple expert view (part of the web dashboard, phase 12, or a minimal page
+  first).
+
+**9c. Photo diagnosis (suggestion only)**
+
+- Start only when there are enough expert-confirmed records for the pilot crops to evaluate a
+  model honestly. Until then, the farmer picks from a short illustrated symptom list.
+- Decide on-device or server by measurement on the test phone (size, speed, accuracy offline).
+- Always shown as a suggestion with a confidence level; the farmer can correct it; corrections
+  and expert confirmations are stored for evaluation.
+- Never suggest a chemical treatment from the model alone; link to the vetted remedy library.
+- Exit only on a measured accuracy the owner and the expert partner accept, per crop.
+
+**Tasks:** G1 docs, schema and content review process; G2 record with photos; G3 remedy
+library and remedy-to-task; G4 treatment, follow-up and outcome; G5 expert requests; G6 symptom
+picker; G7 diagnosis model evaluation and integration (separate decision).
+
+**Privacy:** photos and locations are the farmer's data. Use for model training only with
+explicit, separate consent, recorded per farm.
+
+**Exit check (9a and 9b):** a record created offline with three photos syncs, reaches an
+expert, the reply appears on the record, the treatment posts its cost, and the plot shows the
+safe-to-harvest date.
+
+### Phase 10: full money
+
+**Goal:** the complete financial picture: loans, what is owed both ways, budgets, repeating and
+long-life costs, and cash flow by month.
+
+**Schema additions**
+
+- `loans` (lender party, principal, rate, type, start date, terms), `loan_schedule`,
+  `loan_payments` (split into principal and interest).
+- A single `ledger_entries` view or table that unifies receivables (sales), payables (credit
+  expenses, wages due) and loans per party, so the buyer book, vendor book and worker balances
+  read the same way.
+- `budgets` (crop cycle, category, amount).
+- `recurring_rules` (what to create, how often, until when).
+- `assets` (capital expense, purchase value, useful life, method) for depreciation.
+
+**Rules and tests**
+
+- Interest methods used locally (simple, reducing balance, flat, gold loan and Kisan Credit
+  Card style terms): get the exact rules from the owner or a banker, write hand-worked
+  schedules into the spec, and test to the paisa. Every schedule line is editable, because
+  real lenders differ.
+- Recurring entries are created as drafts for the farmer to confirm, never silently.
+- Depreciation and loan interest appear in profit and loss only when their switches are on,
+  matching the family-labour switch pattern from phase 1.
+- Cash flow is by payment date; profit is by entry date. Show both and say which is which.
+- Break-even price and cost per acre and per kg, with hand-worked examples.
+
+**Screens:** loans list and detail with schedule; party ledgers; budget against actual per crop
+cycle; recurring items; assets; cash flow by month; extended profit and loss switches;
+extended exports.
+
+**Tasks:** H1 docs and schema; H2 loan domain with tests; H3 loans screens; H4 unified ledgers;
+H5 budgets; H6 recurring; H7 assets and depreciation; H8 cash flow and report updates.
+
+**Owner decisions:** which loan types to support first; whether the accountant role can edit
+loans.
+
+**Exit check:** a season with a loan, a credit purchase, a part-paid sale and a recurring lease
+payment produces the expected ledgers, cash flow and profit in every switch position.
+
+### Phase 11: faster entry (voice and bill scan)
+
+**Goal:** cut entry time further for farmers who find typing slow, without ever saving
+something the farmer did not confirm.
+
+**Voice entry**
+
+- The farmer speaks ("five workers at eight hundred for pepper weeding today"); the app fills
+  the normal entry form for review. Voice never saves directly.
+- Parsing from text to fields is a pure, tested function with a large table of real Malayalam,
+  English and mixed phrases collected during the beta. Numbers, units, crops, tasks and names
+  resolve against the farm's own lists.
+- Speech recognition for Malayalam: evaluate on-device and server options on the test phone
+  with recordings from real farmers in the pilot district, measuring word accuracy on numbers
+  and crop names specifically. Dialects vary; test more than one.
+- If recognition needs the network, the feature is simply unavailable offline, and says so
+  briefly. Do not queue audio without the farmer knowing.
+- Ask for microphone permission only at first use, with the reason in Malayalam. Do not keep
+  audio after parsing unless the farmer has opted in to help improve it.
+
+**Bill scan**
+
+- Photograph a shop bill; the app proposes vendor, date, items and total as a draft expense or
+  input purchase for review. The photo is kept with the entry.
+- Printed and handwritten bills in Malayalam and English behave very differently; measure both
+  and promise only what works. Total and date are the minimum useful result.
+- Matching scanned items to the farm's input list uses the search text from section 12.
+
+**Tasks:** J1 phrase collection and parser with tests; J2 recognition evaluation and choice;
+J3 voice in quick add; J4 bill capture and extraction evaluation; J5 bill draft review screen.
+
+**Exit check:** on a held-back set of real recordings and bills, the measured accuracy meets a
+target the owner sets after J2 and J4; in every failure the farmer lands on a normal form with
+whatever was understood, never an error wall.
+
+### Phase 12: organisations and web dashboard
+
+**Goal:** farmer producer organisations, estates with several farms, and extension officers can
+manage templates and see what members choose to share.
+
+**Schema additions**
+
+- `organisations`, `organisation_members` (with roles), `organisation_farms` (membership of a
+  farm in an organisation, with the farm owner's consent and the list of what is shared).
+- Organisation-level templates, completing the three levels in the spec (app admin,
+  organisation admin, farmer).
+- Aggregated, read-only views for organisation reports.
+
+**Rules**
+
+- **Consent is explicit and granular.** A farm owner chooses what an organisation can see
+  (for example crops and harvest quantities, but not money), can change it at any time, and
+  every change is in history. The default is nothing shared.
+- Organisation staff never get write access to a farm's entries through the organisation.
+- Organisation template updates arrive as "update available", exactly like admin updates.
+- Row-level security for organisation access is written and tested with the same per-role
+  table as B1, and reviewed twice.
+
+**Web dashboard**
+
+- A separate web app that talks to Supabase directly. Read-mostly: multi-farm overview for an
+  owner or manager, organisation reports (area by crop, expected and actual harvest, input
+  demand), the full admin template console replacing the minimal page from C12, the expert
+  view for crop doctor, and exports.
+- Not offline. Choose the web framework at the start of the phase from current options and
+  record the decision; share types with the schema, not code with the phone app.
+- Large tables are paged on the server; reports use database views or scheduled summaries, not
+  client-side adding up.
+
+**Tasks:** K1 docs, consent model and schema; K2 security rules and tests; K3 organisation
+templates; K4 sharing settings in the app; K5 dashboard shell and sign-in; K6 multi-farm
+overview; K7 organisation reports; K8 full admin console; K9 expert view.
+
+**Owner decisions:** the first partner organisation and what it needs to see; pricing or
+licensing for organisations; who administers app-level templates.
+
+**Exit check:** an organisation sees only what each farm shared, loses access the moment
+sharing is withdrawn, and can publish a template update that leaves farmer changes intact.
+
+### Phase 13: community, schemes and other records
+
+Smaller modules, each independent. Build only those the beta and partners ask for.
+
+| Module | What it does | Main additions | Watch out for |
+| --- | --- | --- | --- |
+| Schemes and insurance (screen 22) | Lists government schemes and insurance relevant to the farmer's crops and district, with deadlines as tasks and a record of applications | Scheme content as templates with source and "last checked" date; `scheme_applications` | Content goes stale fast and wrong information costs farmers money: show the source and date, link to the official page, and name who keeps it current |
+| Documents | Stores land records, lease papers, soil reports, bills and certificates against a farm, plot or loan | `documents` with the photo queue from section 12 | Sensitive papers: private by default, never shared with organisations unless chosen, excluded from any model training |
+| Equipment | Machines and tools, service due dates, fuel and repair costs, hire in and hire out | `equipment`, `equipment_logs`; costs post as expenses, hire income as other income | Depreciation reuses phase 10 assets; do not build it twice |
+| Livestock | Animals or groups, feed, health, milk or egg output, sales | `livestock_units`, `livestock_events`, output as lots so selling and profit reuse phase 1 | A large area on its own; scope tightly to what pilot farmers keep |
+| Custom records | The farmer or organisation defines their own form (fields from a fixed set of types) for anything not covered | `custom_forms`, `custom_entries` with values in a JSON column | Keep field types few; custom data appears in history and export but not in profit and loss |
+| Community and case studies (screen 21) | Posts, questions, local case studies, shop rates shared by farmers | `posts`, `comments`, `reports`; online only, cached for reading offline | Needs moderation, a reporting path and clear rules before launch; unvetted farming advice can cause real harm, so label farmer posts as opinion and keep expert content separate. Launch only with a named moderator |
+
+**Tasks:** one docs task and two to four build tasks per module, numbered L1 onward when the
+module is chosen.
+
+**Exit check per module:** its acceptance checks pass, it can be switched off cleanly, and all
+section 14 budgets still hold with its data added to the benchmark seed.
+
+### What stays out until there is evidence
+
+- Payments inside the app, marketplace or buyer matching, and credit scoring. Each brings
+  regulatory duties and changes what the app is; decide only with legal advice and partner
+  demand.
+- More languages. The localisation setup supports them, but each needs its own templates and
+  native review, not only translated strings.
 
 ---
 
@@ -880,7 +1190,7 @@ farmer's data?" only.
 | Local data loss before first sync | A phone lost before syncing loses that data. | Sync soon after writes when online; show "items waiting to sync" in Settings. |
 | App size from fonts | Three font families with Malayalam glyphs are heavy. | Measure in A2; drop weights or a family if the budget is missed. |
 | Hosted database limits | Plan limits (pausing, storage, connections) differ by tier and change over time. | Check the current terms of the chosen plan before beta. |
-| Scope growth | The spec lists many later modules. | Phase 1 scope is fixed by `docs/phase-1-tasks.md`; anything else waits for phase 7. |
+| Scope growth | The spec lists many later modules. | Phase 1 scope is fixed by `docs/phase-1-tasks.md`; anything else waits for phases 7 to 13. |
 
 Open questions for the owner beyond phase 0: weather data source for the Home card; how long
 history stays on the phone (section 12); whether crash reporting is allowed in the beta.
