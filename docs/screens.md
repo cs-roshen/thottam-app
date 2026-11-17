@@ -9,7 +9,7 @@ Every data screen must handle: empty state, offline (no spinner, just works), re
 ## Phase 1
 
 ### 1. Welcome and language
-Choose Malayalam, English or mixed; large-text switch. Continue → set-up.
+Choose Malayalam, English or mixed; large-text switch. Continue → set-up. Mixed: Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin.
 - Check: choice persists and applies immediately across the app.
 
 ### 17. Set-up (3 steps)
@@ -35,14 +35,14 @@ Segmented switch: named workers | group (head count).
 
 ### 9. Add expense
 Amount (large input), category chips, split across the plot's crops (default by template share, "edit manually"), payment mode, save with undo.
-- Check: split always sums to the amount, including after manual edits and rounding.
+- Check: split always sums to the amount, including after manual edits and rounding. Leftover paise follow the largest-remainder rule in `product-spec.md` (₹100 across three equal crops → ₹33.34, ₹33.33, ₹33.33).
 
 ### 12. Harvest
 "Last time" banner. Total quantity with unit chips. Switch: log quantity for each team. Team cards: name, tag (group or named), remove; head-count stepper for groups; wage per person; quantity when the switch is on; computed line. Buttons to add a group or a named worker. Summary: quantity per person per day, labour cost per unit, total wages. Save creates a lot and goes to history; "sell now" opens selling.
 - Check: the harvest example in the spec, with the switch on and off; removing a team recalculates.
 
 ### 13. Sell
-Today's price banner with source and time (links to prices). Quantity and rate (rate prefilled from price), buyer type, gross, deductions (editable), net, profit per kg against lot cost. Save reduces stock.
+Today's price banner with source and time (links to prices). Quantity and rate (rate prefilled from price), buyer type, gross, deductions (editable), net, profit per kg (net per kg minus lot cost per kg). Save reduces stock.
 - Check: cannot sell more than stock; part sale leaves the remainder.
 
 ### 14. Prices

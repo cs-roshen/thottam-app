@@ -51,7 +51,7 @@ Malayalam line height 1.45 to 1.5. Large-text mode scales content by 1.12.
 
 - Screen padding 20; gap between cards 14; card padding 14 to 18.
 - Radius: cards 18 to 22, buttons 16, chips 999, small tiles 12 to 15, bottom sheet 28 (top corners).
-- Touch targets: minimum 44, primary buttons 58, list rows 56 to 68.
+- Touch targets: minimum 48, primary buttons 58, list rows 56 to 68.
 - Bottom nav 78 high, four tabs plus a centre add button (62, raised 34).
 
 ## Components

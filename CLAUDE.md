@@ -17,7 +17,7 @@ Offline-first, Malayalam-first farm management app for Kerala farmers. It replac
 - Flutter (stable channel), Android first, iOS from the same code.
 - State: Riverpod. Navigation: go_router.
 - Local database: Drift (SQLite). The local DB is the source of truth for the UI.
-- Backend: Supabase (Postgres with row-level security, auth by phone OTP, storage for photos).
+- Backend: Supabase (Postgres with row-level security, auth by Google sign-in, storage for photos). Phone OTP is added as a second sign-in method at the end of phase 1 (task D6), once the app works.
 - Localisation: `flutter_localizations` + ARB files in `lib/l10n/` (`app_ml.arb` is the template, `app_en.arb` the second language).
 
 Check current package versions and APIs in their docs before adding a dependency; do not rely on memory for version numbers or setup steps.
@@ -29,7 +29,7 @@ Check current package versions and APIs in their docs before adding a dependency
 3. **Everything overridable.** Resolution order: app default → farm → plot or crop → single entry. Computed values (amount = qty × rate, splits, conversion ratios) always have a manual-edit path. Never hard-code a list, unit, rate or category in Dart; they come from templates.
 4. **Malayalam first.** No user-facing string in Dart code. Every string is an ARB key with both `ml` and `en`. Test layouts with Malayalam text and with large-text mode (1.12 scale).
 5. **Money is integer paise**, quantities are numeric with a unit code. Format with Indian grouping (₹1,84,500).
-6. **Ids are UUIDs generated on the device.** Every table has `id, farm_id, created_at, created_by, updated_at, updated_by, version, deleted_at`.
+6. **Ids are UUIDs generated on the device.** Every farm-owned, synced table has `id, farm_id, created_at, created_by, updated_at, updated_by, version, deleted_at`. Exempt: master data (`crops`, `template_items`) and `event_log`, which is insert-only. The device increments `version` on every local write; the server never changes it. The server keeps its own `server_seq` for pulling changes.
 7. **20-second entries.** Smart defaults (today, last plot, last rate). Touch targets at least 48 dp. Undo after every save.
 8. **Accessibility.** Contrast 4.5:1, labels on every icon button, colour never the only signal.
 

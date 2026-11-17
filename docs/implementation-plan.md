@@ -146,13 +146,17 @@ No app code. The output is corrected docs and answered decisions.
 | --- | --- |
 | App id (package name) and store account | A1 |
 | Supabase project (new or existing) and region | B1 |
-| SMS provider for phone OTP and its registration (see section 17) | B6 |
+| Google Cloud project and OAuth client ids for Google sign-in | B6 |
+| SMS provider for phone OTP and its registration (see section 17) | D6 |
 | Pilot district, crops and partner organisation | B1 seed data |
 | Which price sources are licensed for use | C11 |
 
 ### Doc contradictions to settle
 
 Each has a recommended answer. The owner confirms or changes it, then the doc is edited.
+
+**Settled 2026-11-17:** the owner accepted every recommended answer below, plus one more found
+during phase 0: half-day is an attendance value (0.5), not a wage type. The docs are edited.
 
 | Question | Recommended answer | Doc to edit |
 | --- | --- | --- |
@@ -266,7 +270,7 @@ Fixes to make:
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
 | Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)`. Add `sale_payments` for part payments. Keep `sales.received_paise` only if it is derived. |
 | Payables | Add a payments table for expenses bought on credit, so a payable can be part-paid. |
-| Labour | Payment kinds and wage types match the spec exactly (settle the half-day question: attendance value, not a wage type, is recommended). Add check constraints to `labour_entries.wage_type` and `sales.mode`. |
+| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. |
 | Units | Remove hard-coded unit lists from check constraints; units come from templates. |
 | Common columns | Add the missing ones to `expense_allocations` and `price_alerts`. Give `farm_members` and `labour_group_members` an `id`, `version` and `deleted_at` so membership changes sync and can be undone. |
 | Versions | Remove the version increment from the `set_updated` trigger (see section 13). |
@@ -323,12 +327,16 @@ can be hard-deleted by a client.
 
 ### B6. Auth
 
-- Phone OTP through Supabase. After the first sign-in the app opens and works with no network,
-  for as long as the farmer likes; a refresh that fails offline must never sign the farmer out
-  or hide their data.
+- Google sign-in through Supabase (owner decision, phase 0). Phone OTP is added later as a
+  second method in D6, once the app works. After the first sign-in the app opens and works with
+  no network, for as long as the farmer likes; a refresh that fails offline must never sign the
+  farmer out or hide their data.
 - Session stored in secure storage. The local database is tied to the signed-in user; signing
   in as someone else on the same phone must not show the first user's data.
-- Owner check: OTP arrives on a real Indian number on at least two mobile networks.
+- Owner check: sign-in works on the test phone with a real Google account, and the app still
+  opens with its data after a week in flight mode.
+- D6 (phone OTP) reuses the same session and per-user database rules. Its owner check: OTP
+  arrives on a real Indian number on at least two mobile networks.
 
 ### B7. Sync
 
@@ -370,7 +378,7 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
 
 - Three steps, each skippable except name and farm name. Finishing creates the farm, one plot
   and the crop cycles from templates in a single local transaction.
-- Works fully offline after the OTP step; templates needed for set-up ship inside the app as a
+- Works fully offline after the sign-in step; templates needed for set-up ship inside the app as a
   bundled seed so the first run does not depend on a download.
 
 ### C2. Land
@@ -1182,7 +1190,7 @@ farmer's data?" only.
 
 | Risk | Why it matters | What to do |
 | --- | --- | --- |
-| SMS OTP delivery in India | Commercial SMS in India needs sender and template registration under the telecom regulator's rules; Supabase needs a third-party SMS provider configured. Unregistered messages may not arrive. | Choose the provider and start registration during phase 1, well before B6. Check current Supabase and provider docs. Budget for per-message cost. |
+| SMS OTP delivery in India | Commercial SMS in India needs sender and template registration under the telecom regulator's rules; Supabase needs a third-party SMS provider configured. Unregistered messages may not arrive. | Phase 1 signs in with Google; phone OTP is task D6. Choose the provider and start registration during phase 1, well before D6. Check current Supabase and provider docs. Budget for per-message cost. |
 | Price data licensing | "Live prices" depends on a source that may not permit reuse. | C11 ships with manual entry; integrate a source only after written confirmation. |
 | Malayalam rendering and wording | Clipped conjuncts or wrong farming terms destroy trust quickly. | Golden tests from A4; native-speaker review at D2; test on the low-end phone throughout. |
 | Sync correctness | The hardest part; errors here lose data silently. | Two-device harness in B7, soak test in D1, double review. |
