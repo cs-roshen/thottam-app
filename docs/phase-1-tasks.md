@@ -13,7 +13,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 
 ## B. Data core
 
-- [ ] B1. Validate `supabase/migrations/0001_init.sql` on a local Supabase instance; fix errors; add seed data for wave 1 crop templates (coconut, rubber, pepper, banana, paddy).
+- [ ] B1. Validate `supabase/migrations/0001_init.sql` on a local Supabase instance; fix errors; add seed data for wave 1 crop templates (coconut, rubber, pepper, banana, paddy, cardamom).
 - [ ] B2. Drift schema mirroring the phase 1 tables, with the common columns and an outbox table.
 - [ ] B3. Money (integer paise, Indian formatting) and unit conversion helpers, with tests.
 - [ ] B4. Event log: every repository write records old and new values; restore function; tests.
@@ -51,7 +51,7 @@ Decided (2026-11-17):
 
 - App id: `app.thottam`. Store account: the owner's existing Google Play developer account.
 - Supabase: the owner's existing project, in its current region.
-- Pilot district: Idukki. Crops: wave 1 (coconut, rubber, pepper, banana, paddy).
+- Pilot district: Idukki. Crops: wave 1 (coconut, rubber, pepper, banana, paddy, cardamom).
 
 Open:
 

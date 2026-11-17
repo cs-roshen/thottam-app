@@ -154,7 +154,7 @@ No app code. The output is corrected docs and answered decisions.
 | SMS provider for phone OTP and its registration (see section 17) | D6 | Open |
 | Whether one account can have both Google and phone sign-in linked | D6 | Open |
 | Test phone: one low-end Android phone typical of the pilot district | A6 | Open |
-| Pilot district and crops | B1 seed data | Idukki; wave 1 crops (coconut, rubber, pepper, banana, paddy) |
+| Pilot district and crops | B1 seed data | Idukki; wave 1 crops (coconut, rubber, pepper, banana, paddy, cardamom) |
 | Partner organisation for the pilot | Field test (phase 6) | Open |
 | Which price sources are licensed for use | C11 | Open |
 
@@ -297,7 +297,7 @@ Fixes to make:
 | Roles | Section 13, "Row-level security". Tighten now so D3 is a check, not a rewrite. |
 | Template updates | Record which template version each farm has accepted, so "update available" can be computed. |
 
-Seed data: wave 1 crop templates (coconut, rubber, pepper, banana, paddy) with activities,
+Seed data: wave 1 crop templates (coconut, rubber, pepper, banana, paddy, cardamom) with activities,
 expense categories, units, grades, labour tasks, rate classes and default splits, in Malayalam
 and English. Malayalam wording is marked for native-speaker review.
 
