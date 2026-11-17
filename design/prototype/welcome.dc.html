@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<title>Welcome and language</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#FFFFFF;text-decoration:none}a:hover{color:#FFFFFF}
+@keyframes scr{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.stg>*{animation:scr .5s cubic-bezier(.2,.8,.2,1) both}.stg>*:nth-child(2){animation-delay:.08s}.stg>*:nth-child(3){animation-delay:.16s}.stg>*:nth-child(4){animation-delay:.24s}.stg>*:nth-child(5){animation-delay:.32s}.stg>*:nth-child(n+6){animation-delay:.4s}
+.drift{animation:drift 3s ease-in-out infinite}
+label{cursor:pointer;transition:border-color .2s}label:has(input[type=radio]:checked){border-color:#1B6B3A!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: {{accent}}; font-family: 'Inter', 'Noto Sans Malayalam', sans-serif; color: #14201A; display: flex; flex-direction: column">
+<div class="stg" style="padding: 72px 28px 36px; display: flex; flex-direction: column; gap: 18px; color: #FFFFFF">
+<div class="drift" style="width: 72px; height: 72px; border-radius: 20px; background: #F2B01E; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0F3D22" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8"></path></svg>
+</div>
+<h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 52px; font-weight: 700; line-height: 1.15">തോട്ടം</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.5; color: #E4F1E7">നിങ്ങളുടെ കൃഷി, നിങ്ങളുടെ കണക്ക് — എല്ലാം ഒരിടത്ത്.</p>
+</div>
+<div class="stg" style="flex: 1; background: #F4F6F1; border-radius: 28px 28px 0 0; padding: 28px 24px 28px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 22px; font-weight: 600">ഭാഷ തിരഞ്ഞെടുക്കുക</h2>
+<label style="display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 0 18px; background: #FFFFFF; border: 2px solid #DDE3DA; border-radius: 16px">
+<input type="radio" name="lang" checked style="width: 22px; height: 22px; accent-color: #1B6B3A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 19px; font-weight: 600">മലയാളം</span><span style="font-size: 13px; color: #56635B">എല്ലാം മലയാളത്തിൽ</span></span>
+</label>
+<label style="display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 0 18px; background: #FFFFFF; border: 2px solid #DDE3DA; border-radius: 16px">
+<input type="radio" name="lang" style="width: 22px; height: 22px; accent-color: #1B6B3A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 19px; font-weight: 600">English</span><span style="font-size: 13px; color: #56635B">Everything in English</span></span>
+</label>
+<label style="display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 0 18px; background: #FFFFFF; border: 2px solid #DDE3DA; border-radius: 16px">
+<input type="radio" name="lang" style="width: 22px; height: 22px; accent-color: #1B6B3A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 19px; font-weight: 600">മലയാളം + English</span><span style="font-size: 13px; color: #56635B">പേരുകൾ മലയാളത്തിൽ, അക്കങ്ങൾ English</span></span>
+</label>
+<label style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 0 4px">
+<span style="font-size: 16px">വലിയ അക്ഷരം (എളുപ്പ മോഡ്)</span>
+<input type="checkbox" style="width: 24px; height: 24px; accent-color: #1B6B3A">
+</label>
+<div style="flex: 1"></div>
+<a href="Onboard.dc.html" style="height: 60px; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center">തുടരുക</a>
+<p style="margin: 0; text-align: center; font-size: 14px; color: #56635B">ഭാഷ എപ്പോൾ വേണമെങ്കിലും മാറ്റാം</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1B6B3A"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#1B6B3A' };
+}
+}
+</script>
+</body>
+</html>

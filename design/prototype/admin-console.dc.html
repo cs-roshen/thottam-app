@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin console: templates</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1B6B3A}a:hover{color:#0F3D22}
+@keyframes scr{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.row{animation:scr .3s cubic-bezier(.2,.8,.2,1) both}
+.knob{transition:left .22s cubic-bezier(.2,.8,.2,1)}
+button{cursor:pointer;transition:transform .12s,background-color .2s,color .2s,border-color .2s}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible{outline:3px solid #F2B01E;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height: 860px; box-sizing: border-box; background: #F4F6F1; font-family: 'Inter', 'Noto Sans Malayalam', sans-serif; color: #14201A; display: flex; flex-wrap: wrap">
+<aside style="flex: 1 1 200px; background: #0F3D22; color: #FFFFFF; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 10px; background: #F2B01E; color: #0F3D22; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8"></path></svg></span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 20px; font-weight: 700">Thottam Admin</span></div>
+<nav aria-label="Admin sections" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="7"><button aria-pressed="{{n.on}}" onClick="{{n.pick}}" style="flex: 1 1 160px; min-height: 44px; border: 0; border-radius: 10px; padding: 0 14px; text-align: left; font-family: inherit; font-size: 15px; font-weight: 600; background: {{n.bg}}; color: {{n.fg}}">{{n.label}}</button></sc-for>
+</nav>
+</aside>
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 30px; font-weight: 700">Crop templates</h1><span style="font-size: 15px; color: #56635B">Predefined lists every farmer starts from. Farmers can adjust their own copy.</span></div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px"><span role="status" style="padding: 8px 14px; border-radius: 999px; background: {{verBg}}; color: {{verFg}}; font-size: 14px; font-weight: 700">{{verTxt}}</span><button onClick="{{publish}}" style="min-height: 46px; padding: 0 22px; border: 0; border-radius: 12px; background: #1B6B3A; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700">Publish to all farmers</button></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{crops}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for>
+<button onClick="{{newCrop}}" style="min-height: 44px; padding: 0 18px; border-radius: 999px; border: 2px dashed #9FAE9F; background: transparent; color: #14201A; font-family: inherit; font-size: 15px; font-weight: 600">+ New crop (copy from similar)</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; background: #E3E8E0; border-radius: 14px; padding: 4px; align-self: flex-start">
+<sc-for list="{{types}}" as="o" hint-placeholder-count="3"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 44px; padding: 0 20px; border: 0; border-radius: 11px; font-family: inherit; font-size: 15px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for>
+</div>
+<section style="background: #FFFFFF; border-radius: 18px; padding: 8px 20px 20px; overflow-x: auto">
+<table style="width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px">
+<thead><tr><th scope="col" style="text-align: left; padding: 14px 8px; font-size: 13px; color: #56635B; border-bottom: 1px solid #DDE3DA">Malayalam name</th><th scope="col" style="text-align: left; padding: 14px 8px; font-size: 13px; color: #56635B; border-bottom: 1px solid #DDE3DA">English name</th><th scope="col" style="text-align: left; padding: 14px 8px; font-size: 13px; color: #56635B; border-bottom: 1px solid #DDE3DA">Source</th><th scope="col" style="text-align: right; padding: 14px 8px; font-size: 13px; color: #56635B; border-bottom: 1px solid #DDE3DA">Shown to farmers</th></tr></thead>
+<tbody>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6"><tr class="row"><td style="padding: 12px 8px; border-bottom: 1px solid #ECEFEA; font-weight: 600">{{r.ml}}</td><td style="padding: 12px 8px; border-bottom: 1px solid #ECEFEA">{{r.en}}</td><td style="padding: 12px 8px; border-bottom: 1px solid #ECEFEA"><span style="padding: 4px 10px; border-radius: 999px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 12px; font-weight: 700">{{r.tag}}</span></td><td style="padding: 8px; border-bottom: 1px solid #ECEFEA; text-align: right"><button role="switch" aria-checked="{{r.on}}" aria-label="{{r.en}}" onClick="{{r.toggle}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; background: {{r.track}}"><span class="knob" style="position: absolute; top: 3px; left: {{r.left}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button></td></tr></sc-for>
+</tbody>
+</table>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; padding-top: 18px">
+<label style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #56635B">New item in Malayalam<input type="text" value="{{newMl}}" onChange="{{setMl}}" style="height: 46px; border: 1.5px solid #C3CBC1; border-radius: 10px; padding: 0 12px; font-family: inherit; font-size: 15px; color: #14201A"></label>
+<label style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #56635B">New item in English<input type="text" value="{{newEn}}" onChange="{{setEn}}" style="height: 46px; border: 1.5px solid #C3CBC1; border-radius: 10px; padding: 0 12px; font-family: inherit; font-size: 15px; color: #14201A"></label>
+<button onClick="{{addRow}}" style="min-height: 46px; padding: 0 22px; border: 1.5px solid #1B6B3A; border-radius: 12px; background: #E9F3EB; color: #0F3D22; font-family: inherit; font-size: 15px; font-weight: 700">Add item</button>
+</div>
+</section>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<div style="background: #E4ECF7; color: #14335E; border-radius: 16px; padding: 16px 18px; font-size: 14px; line-height: 1.55"><strong>Farmers' changes are safe.</strong> A published update never overwrites a farmer's own edits. They see "update available" and choose what to take.</div>
+<div style="background: #FFF6DC; color: #3D2A00; border-radius: 16px; padding: 16px 18px; font-size: 14px; line-height: 1.55"><strong>Promote custom items.</strong> Items many farmers add themselves appear here as suggestions, so the standard list keeps improving.</div>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; font-size: 14px; line-height: 1.55"><strong>Every version is kept.</strong> Each publish is saved with who changed what, and can be rolled back.</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+var DATA = {
+0: [[['വള്ളി കെട്ടൽ', 'Tying vines'], ['തണൽ ക്രമീകരണം', 'Shade regulation'], ['പുതയിടൽ', 'Mulching'], ['ബോർഡോ തളിക്കൽ', 'Bordeaux spray'], ['വിളവെടുപ്പ്', 'Harvest'], ['ഉണക്കൽ', 'Drying']], [['വേപ്പിൻപിണ്ണാക്ക്', 'Neem cake'], ['ബോർഡോ മിശ്രിതം', 'Bordeaux mixture'], ['ട്രൈക്കോഡെർമ', 'Trichoderma']], [['ഗാർബിൾഡ്', 'Garbled'], ['അൺഗാർബിൾഡ്', 'Ungarbled'], ['പച്ച', 'Green']]],
+1: [[['തടം തുറക്കൽ', 'Opening basins'], ['വളമിടൽ', 'Fertilising'], ['നനയ്ക്കൽ', 'Irrigation'], ['തെങ്ങ് കയറ്റം', 'Palm climbing'], ['കൊപ്ര ഉണക്കൽ', 'Copra drying']], [['ജൈവവളം', 'Organic manure'], ['പൊട്ടാഷ്', 'Potash'], ['കുമ്മായം', 'Lime']], [['തേങ്ങ', 'Whole nut'], ['കൊപ്ര', 'Copra'], ['ഇളനീർ', 'Tender coconut']]],
+2: [[['ടാപ്പിംഗ്', 'Tapping'], ['ഷീറ്റ് അടിക്കൽ', 'Sheet rolling'], ['പുകയ്ക്കൽ', 'Smoking'], ['റെയിൻ ഗാർഡ്', 'Rain guarding'], ['കള വെട്ടൽ', 'Weeding']], [['റബ്ബർ മിശ്രിത വളം', 'Rubber mixture fertiliser'], ['ഫോർമിക് ആസിഡ്', 'Formic acid'], ['റെയിൻ ഗാർഡ്', 'Rain guard']], [['RSS-4', 'RSS-4'], ['RSS-5', 'RSS-5'], ['ലാറ്റെക്സ്', 'Latex'], ['ഒട്ടുപാൽ', 'Scrap']]]
+};
+class Component extends DCLogic {
+g(k, d) { var s = this.state || {}; return s[k] === undefined ? d : s[k]; }
+renderVals() {
+var self = this;
+var crop = this.g('crop', 0), type = this.g('type', 0), off = this.g('off', {}), added = this.g('added', {}), changes = this.g('changes', 0), ver = this.g('ver', 12), sec = this.g('sec', 0);
+var newMl = this.g('newMl', ''), newEn = this.g('newEn', '');
+var key = crop + '-' + type; var extra = added[key] || [];
+var all = DATA[crop][type].map(function (r) { return { ml: r[0], en: r[1], custom: false }; }).concat(extra.map(function (r) { return { ml: r[0], en: r[1], custom: true }; }));
+var chip = function (on) { return { bg: on ? '#1B6B3A' : '#FFFFFF', fg: on ? '#FFFFFF' : '#14201A', bd: on ? '#1B6B3A' : '#C3CBC1' }; };
+return {
+nav: ['Templates', 'Content and diseases', 'Price sources', 'Users and roles', 'Insights', 'Moderation', 'Support'].map(function (l, i) { var on = sec === i; return { label: l, on: on, bg: on ? '#F2B01E' : 'transparent', fg: on ? '#0F3D22' : '#E4F1E7', pick: function () { self.setState({ sec: i }); } }; }),
+crops: ['Pepper · കുരുമുളക്', 'Coconut · തെങ്ങ്', 'Rubber · റബ്ബർ'].map(function (l, i) { var s = chip(crop === i); return { label: l, on: crop === i, bg: s.bg, fg: s.fg, bd: s.bd, pick: function () { self.setState({ crop: i }); } }; }),
+types: ['Activities', 'Inputs', 'Harvest grades'].map(function (l, i) { var on = type === i; return { label: l, on: on, bg: on ? '#FFFFFF' : 'transparent', fg: on ? '#0F3D22' : '#56635B', pick: function () { self.setState({ type: i }); } }; }),
+rows: all.map(function (r, i) { var k2 = key + '-' + i; var on = !off[k2]; return { ml: r.ml, en: r.en, tag: r.custom ? 'New, unpublished' : 'Standard', tagBg: r.custom ? '#FFF1C7' : '#ECEFEA', tagFg: r.custom ? '#3D2A00' : '#3C4A42', on: on, track: on ? '#1B6B3A' : '#8B978D', left: on ? '23px' : '3px', toggle: function () { var n = Object.assign({}, off); n[k2] = on; self.setState({ off: n, changes: changes + 1 }); } }; }),
+newMl: newMl, newEn: newEn, setMl: function (e) { self.setState({ newMl: e.target.value.slice(0, 40) }); }, setEn: function (e) { self.setState({ newEn: e.target.value.slice(0, 40) }); },
+addRow: function () { if (!newMl.trim() || !newEn.trim()) return; var n = Object.assign({}, added); n[key] = extra.concat([[newMl.trim(), newEn.trim()]]); self.setState({ added: n, newMl: '', newEn: '', changes: changes + 1 }); },
+newCrop: function () { self.setState({ changes: changes + 1 }); },
+publish: function () { if (changes === 0) return; self.setState({ ver: ver + 1, changes: 0 }); },
+verTxt: changes > 0 ? changes + ' unpublished change' + (changes > 1 ? 's' : '') + ' · live is v' + ver : 'Published v' + ver + ' · no pending changes',
+verBg: changes > 0 ? '#FFF1C7' : '#D5EBDA', verFg: changes > 0 ? '#3D2A00' : '#0F3D22'
+};
+}
+}
+</script>
+</body>
+</html>

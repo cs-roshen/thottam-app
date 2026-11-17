@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<title>Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#1B6B3A;text-decoration:none}a:hover{color:#0F3D22}
+@keyframes scr{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes pop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(242,176,30,.65)}100%{box-shadow:0 0 0 16px rgba(242,176,30,0)}}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.stg>*{animation:scr .42s cubic-bezier(.2,.8,.2,1) both}
+.stg>*:nth-child(2){animation-delay:.05s}.stg>*:nth-child(3){animation-delay:.1s}.stg>*:nth-child(4){animation-delay:.15s}.stg>*:nth-child(5){animation-delay:.2s}.stg>*:nth-child(6){animation-delay:.25s}.stg>*:nth-child(7){animation-delay:.3s}
+.sheet{animation:up .36s cubic-bezier(.2,.8,.2,1) both}
+.scrim{animation:fade .22s both}
+.bar{transform-origin:left;animation:grow .8s cubic-bezier(.2,.8,.2,1) both;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.toast{animation:pop .32s both}
+.pulse{animation:pulse 1.6s infinite}
+.drift{animation:drift 3s ease-in-out infinite}
+.knob{transition:left .24s cubic-bezier(.2,.8,.2,1)}
+button{cursor:pointer;transition:transform .12s,background-color .22s,color .22s,border-color .22s}
+button:active{transform:scale(.95)}
+button:focus-visible,input:focus-visible{outline:3px solid #F2B01E;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F6F1; font-family: 'Inter', 'Noto Sans Malayalam', sans-serif; color: #14201A; display: flex; flex-direction: column; position: relative; overflow: hidden; font-feature-settings: 'tnum'">
+<div style="flex: 1; overflow-y: auto; zoom: {{zoom}}">
+
+<sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #56635B">{{t.date}}</span><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700">{{t.hello}}</h1></div>
+<div style="display: flex; gap: 8px">
+<button onClick="{{toggleLang}}" aria-label="{{t.lang}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{langBadge}}</button>
+<button onClick="{{goSettings}}" aria-label="{{t.settings}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4"></path></svg></button>
+</div>
+</header>
+<sc-if value="{{cards.weather}}" hint-placeholder-val="{{true}}">
+<section style="background: #0F3D22; color: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; align-items: center; gap: 14px">
+<svg class="drift" aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2B01E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16a4 4 0 1 1 1-7.9A5 5 0 0 1 18 9a3.5 3.5 0 0 1 0 7zM9 19v2M13 19v2M17 19v2"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 600">{{t.rain}}</span><span style="font-size: 14px; color: #CFE5D5">{{t.rainTip}}</span></div>
+</section>
+</sc-if>
+<sc-if value="{{cards.profit}}" hint-placeholder-val="{{true}}">
+<section style="background: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><h2 style="margin: 0; font-size: 14px; font-weight: 600; color: #56635B">{{t.seasonProfit}}</h2><button onClick="{{goMoney}}" style="border: 0; background: transparent; min-height: 44px; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{t.details}}</button></div>
+<div style="font-family: 'Anek Malayalam', sans-serif; font-size: 40px; font-weight: 700; color: {{accent}}; line-height: 1">{{profitTxt}}</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="background: #E9F3EB; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #33503E">{{t.income}}</span><span style="font-size: 18px; font-weight: 700">{{incomeTxt}}</span></div>
+<div style="background: #FBEEDD; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #6E4310">{{t.expense}}</span><span style="font-size: 18px; font-weight: 700">{{expenseTxt}}</span></div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{cards.price}}" hint-placeholder-val="{{true}}">
+<button onClick="{{goPrices}}" style="border: 0; background: #FFFFFF; border-radius: 18px; padding: 12px 16px; min-height: 64px; display: flex; align-items: center; gap: 12px; text-align: left; font-family: inherit; color: #14201A"><span style="width: 40px; height: 40px; border-radius: 13px; background: #FFF1C7; color: #6B4A00; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l5-6 4 3 7-9M15 6h5v5"></path></svg></span><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #56635B">{{t.todayPrice}}</span><span style="font-size: 16px; font-weight: 700">{{homePrice}}</span></span><span style="padding: 5px 10px; border-radius: 999px; background: #E9F3EB; color: #0F3D22; font-size: 13px; font-weight: 700">{{homePriceChg}}</span></button>
+</sc-if>
+<sc-if value="{{cards.tasks}}" hint-placeholder-val="{{true}}">
+<section style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.tasks}}</h2><span style="font-size: 14px; color: #56635B">{{taskCount}}</span></div>
+<sc-for list="{{tasks}}" as="task" hint-placeholder-count="3">
+<label style="display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 0 16px; background: #FFFFFF; border-radius: 16px; cursor: pointer">
+<input type="checkbox" checked="{{task.done}}" onChange="{{task.toggle}}" style="width: 24px; height: 24px; accent-color: #1B6B3A">
+<span style="display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 600; color: {{task.color}}; text-decoration: {{task.deco}}">{{task.title}}</span><span style="font-size: 13px; color: #56635B">{{task.sub}}</span></span>
+</label>
+</sc-for>
+</section>
+</sc-if>
+<sc-if value="{{cards.dues}}" hint-placeholder-val="{{true}}">
+<section style="background: #FFF6DC; border: 1px solid #EBCB73; border-radius: 16px; padding: 8px 8px 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="font-size: 15px; line-height: 1.45">{{t.due}}</span>
+<button onClick="{{goLabour}}" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: 12px; background: #1B6B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700">{{t.pay}}</button>
+</section>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isLand}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; justify-content: space-between"><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 28px; font-weight: 700">{{t.landTitle}}</h1><span style="font-size: 14px; color: #56635B">{{t.landSub}}</span></div>
+<button onClick="{{toggleLang}}" aria-label="{{t.lang}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{langBadge}}</button></header>
+<sc-for list="{{plots}}" as="p" hint-placeholder-count="3">
+<article style="background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<button onClick="{{p.open}}" style="border: 0; background: transparent; padding: 0; text-align: left; font-family: inherit; color: inherit; display: flex; align-items: center; gap: 12px; min-height: 52px">
+<span style="width: 52px; height: 52px; border-radius: 16px; background: {{p.bg}}; color: {{p.fg}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 18px; font-weight: 700">{{p.name}}</span><span style="font-size: 14px; color: #56635B">{{p.area}} · {{p.tenure}}</span></span>
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#56635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{p.crops}}" as="c" hint-placeholder-count="2"><span style="padding: 6px 12px; border-radius: 999px; background: #E9F3EB; color: #0F3D22; font-size: 14px; font-weight: 600">{{c}}</span></sc-for>
+<sc-if value="{{p.mixed}}" hint-placeholder-val="{{false}}"><span style="padding: 6px 12px; border-radius: 999px; background: #FFF1C7; color: #6B4A00; font-size: 14px; font-weight: 600">{{t.mixed}}</span></sc-if>
+</div>
+<div style="font-size: 14px; color: #56635B; border-top: 1px solid #ECEFEA; padding-top: 10px">{{p.next}}</div>
+</article>
+</sc-for>
+<button onClick="{{soon}}" style="min-height: 60px; border: 2px dashed #9FAE9F; border-radius: 18px; background: transparent; color: #14201A; font-family: inherit; font-size: 16px; font-weight: 600">+ {{t.addPlot}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isMoney}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; justify-content: space-between"><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 28px; font-weight: 700">{{t.moneyTitle}}</h1><span style="font-size: 14px; color: #56635B">{{t.season}}</span></div>
+<button onClick="{{toggleLang}}" aria-label="{{t.lang}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{langBadge}}</button></header>
+<section style="background: #0F3D22; color: #FFFFFF; border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 14px; color: #CFE5D5">{{t.profit}}</span>
+<div style="font-family: 'Anek Malayalam', sans-serif; font-size: 44px; font-weight: 700; line-height: 1; color: #F2B01E">{{profitTxt}}</div>
+<div style="display: flex; gap: 20px; font-size: 15px"><span>{{t.income}} <strong>{{incomeTxt}}</strong></span><span>{{t.expense}} <strong>{{expenseTxt}}</strong></span></div>
+</section>
+<section style="background: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.byCrop}}</h2>
+<sc-for list="{{crops}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 16px; font-weight: 600">{{c.name}}</span><span style="font-size: 16px; font-weight: 700; color: #1B6B3A">{{c.profit}}</span></div>
+<div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #ECEFEA"><div class="bar" style="height: 10px; border-radius: 5px; background: #1B6B3A; width: {{c.incW}}"></div></div>
+<div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #ECEFEA"><div class="bar" style="height: 10px; border-radius: 5px; background: #E08A1E; width: {{c.expW}}"></div></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #56635B"><span>{{t.income}} {{c.inc}}</span><span>{{t.expense}} {{c.exp}}</span></div>
+</div>
+</sc-for>
+</section>
+<section style="background: #FFFFFF; border-radius: 18px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">{{t.family}}</span><span style="font-size: 13px; color: #56635B">{{t.familySub}}</span></div>
+<button role="switch" aria-checked="{{family}}" aria-label="{{t.family}}" onClick="{{toggleFamily}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{familyBg}}"><span class="knob" style="position: absolute; top: 3px; left: {{familyLeft}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button>
+</section>
+<button onClick="{{shareReport}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.share}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isMore}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+<header style="display: flex; align-items: center; justify-content: space-between"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 28px; font-weight: 700">{{t.more}}</h1>
+<button onClick="{{toggleLang}}" aria-label="{{t.lang}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{langBadge}}</button></header>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{tiles}}" as="m" hint-placeholder-count="6">
+<button onClick="{{m.open}}" style="min-height: 108px; border: 1px solid #DDE3DA; border-radius: 18px; background: #FFFFFF; color: #14201A; font-family: inherit; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 4px"><span style="width: 46px; height: 46px; border-radius: 15px; background: {{m.bg}}; color: {{m.fg}}; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.d}}"></path></svg></span>{{m.label}}</button>
+</sc-for>
+</div>
+<button onClick="{{goSettings}}" style="min-height: 68px; border: 0; border-radius: 18px; background: #FFFFFF; color: #14201A; font-family: inherit; padding: 0 16px; display: flex; align-items: center; gap: 14px; text-align: left"><span style="width: 44px; height: 44px; border-radius: 14px; background: #ECEFEA; color: #3C4A42; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4"></path></svg></span><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 700">{{t.settings}}</span><span style="font-size: 13px; color: #56635B">{{t.managePages}}</span></span><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#56635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+</sc-if>
+
+<sc-if value="{{isLabour}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.labourTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.labourSub}}</span></div></header>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; background: #E3E8E0; border-radius: 14px; padding: 4px"><sc-for list="{{labTabs}}" as="o" hint-placeholder-count="2"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 44px; border: 0; border-radius: 11px; font-family: inherit; font-size: 15px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for></div>
+<sc-if value="{{labNamed}}" hint-placeholder-val="{{true}}"><div style="display: flex; flex-direction: column; gap: 14px">
+<button onClick="{{sameAsYesterday}}" style="min-height: 48px; border: 1px solid #1B6B3A; border-radius: 14px; background: #E9F3EB; color: #0F3D22; font-family: inherit; font-size: 15px; font-weight: 700">{{t.sameY}}</button>
+<sc-for list="{{workers}}" as="w" hint-placeholder-count="4">
+<div style="background: #FFFFFF; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 17px; font-weight: 700">{{w.name}}</span><span style="font-size: 14px; color: #56635B">{{w.rate}}</span></div>
+<div role="group" aria-label="{{w.name}}" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: #ECEFEA; border-radius: 14px; padding: 4px">
+<sc-for list="{{w.opts}}" as="o" hint-placeholder-count="3"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 44px; border: 0; border-radius: 11px; font-family: inherit; font-size: 15px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for>
+</div>
+</div>
+</sc-for>
+</div></sc-if>
+<sc-if value="{{labGroup}}" hint-placeholder-val="{{false}}"><div style="display: flex; flex-direction: column; gap: 14px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><label for="gname" style="font-size: 14px; font-weight: 600; color: #56635B">{{t.gName}}</label><input id="gname" type="text" value="{{gName}}" onChange="{{setGName}}" style="height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: inherit; font-size: 18px; font-weight: 600; color: #14201A; padding: 0"></div>
+<sc-for list="{{gRows}}" as="r" hint-placeholder-count="2"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 700">{{r.label}}</span><span style="font-size: 14px; color: #56635B">{{r.rate}}</span></div><div style="display: flex; align-items: center; gap: 12px"><button onClick="{{r.minus}}" aria-label="{{t.less}} {{r.label}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1.5px solid #1B6B3A; background: #FFFFFF; color: #0F3D22; font-family: inherit; font-size: 24px; font-weight: 700; line-height: 1">−</button><span style="min-width: 36px; text-align: center; font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700">{{r.n}}</span><button onClick="{{r.plus}}" aria-label="{{t.moreN}} {{r.label}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1.5px solid #1B6B3A; background: #FFFFFF; color: #0F3D22; font-family: inherit; font-size: 24px; font-weight: 700; line-height: 1">+</button></div></div></sc-for>
+<div style="background: #E9F3EB; border-radius: 16px; padding: 12px 16px; font-size: 14px; line-height: 1.5; color: #0F3D22">{{t.gHint}}</div>
+</div>
+</sc-if>
+<div style="background: #0F3D22; color: #FFFFFF; border-radius: 18px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; color: #CFE5D5">{{t.totalWage}}</span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 28px; font-weight: 700; color: #F2B01E">{{wageTotal}}</span></div>
+<button onClick="{{saveLabour}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.save}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isExpense}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.expTitle}}</h1></header>
+<div style="background: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<label for="amt" style="font-size: 14px; font-weight: 600; color: #56635B">{{t.amount}}</label>
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 40px; font-weight: 700; color: #56635B">₹</span><input id="amt" type="text" inputMode="numeric" value="{{amount}}" onChange="{{setAmount}}" style="flex: 1; min-width: 0; height: 60px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 40px; font-weight: 700; color: #14201A; padding: 0"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.category}}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{cats}}" as="c" hint-placeholder-count="5"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 700">{{t.split}}</span><button onClick="{{soon}}" style="min-height: 44px; border: 0; background: transparent; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{t.splitHint}}</button></div>
+<sc-for list="{{splits}}" as="s" hint-placeholder-count="3"><div style="display: flex; justify-content: space-between; font-size: 15px"><span>{{s.label}} · {{s.pct}}</span><strong>{{s.amt}}</strong></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.payBy}}</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px"><sc-for list="{{pays}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 48px; border-radius: 14px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div>
+<button onClick="{{saveExpense}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.save}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isDoctor}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.doctorTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.dSub}}</span></div></header>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px"><sc-for list="{{dPhotos}}" as="ph" hint-placeholder-count="2"><div style="height: 104px; border-radius: 16px; background: #DCE5D8; border: 2px dashed #9FAE9F; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #33503E; font-size: 13px; font-weight: 600"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>{{ph.label}}</div></sc-for><sc-if value="{{canAddPhoto}}" hint-placeholder-val="{{true}}"><button onClick="{{addPhoto}}" style="height: 104px; border-radius: 16px; border: 2px solid #1B6B3A; background: #E9F3EB; color: #0F3D22; font-family: inherit; font-size: 13px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px"><span style="font-size: 26px; line-height: 1">+</span>{{t.addPhoto}}</button></sc-if></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.dPart}}</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{dParts}}" as="c" hint-placeholder-count="4"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.dSev}}</span><div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: #E3E8E0; border-radius: 14px; padding: 4px"><sc-for list="{{dSevs}}" as="o" hint-placeholder-count="3"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 44px; border: 0; border-radius: 11px; font-family: inherit; font-size: 15px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for></div></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px"><button onClick="{{suggest}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600; font-size: 16px">{{t.suggest}}</button><button onClick="{{sendExpert}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700; min-height: 58px">{{t.sendExpert}}</button></div>
+<sc-if value="{{dSent}}" hint-placeholder-val="{{false}}"><div role="status" style="background: #E4ECF7; color: #14335E; border-radius: 16px; padding: 12px 16px; font-size: 14px; line-height: 1.5">{{t.dSentMsg}}</div></sc-if>
+<sc-if value="{{dShow}}" hint-placeholder-val="{{false}}"><div class="stg" style="display: flex; flex-direction: column; gap: 14px"><section style="background: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px"><h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 22px; font-weight: 700">{{t.diag}}</h2><span style="padding: 6px 12px; border-radius: 999px; background: #FFF1C7; color: #6B4A00; font-size: 13px; font-weight: 700; white-space: nowrap">{{t.conf}}</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #ECEFEA"><div class="bar" style="height: 8px; border-radius: 4px; background: #E08A1E; width: 86%"></div></div>
+<button onClick="{{soon}}" style="align-self: flex-start; min-height: 44px; border: 0; background: transparent; padding: 0; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{t.wrong}}</button>
+</section>
+<section style="background: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #56635B">{{t.remedy}}</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; background: #ECEFEA; border-radius: 14px; padding: 4px"><sc-for list="{{remTabs}}" as="o" hint-placeholder-count="2"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 44px; border: 0; border-radius: 11px; font-family: inherit; font-size: 15px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for></div>
+<sc-for list="{{remedies}}" as="r" hint-placeholder-count="3"><div style="display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B6B3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M5 12l5 5 9-10"></path></svg><span>{{r}}</span></div></sc-for>
+</section>
+<button onClick="{{addTask}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.addTask}}</button>
+</div></sc-if>
+<button onClick="{{saveRecord}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700">{{t.dSave}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isHarvest}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.hvTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.hvSub}}</span></div></header>
+<div style="background: #FFF6DC; border: 1px solid #EBCB73; border-radius: 16px; padding: 10px 14px; font-size: 14px; line-height: 1.5">{{t.hvLast}}</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.hvTotal}}</span><sc-if value="{{hNoSplit}}" hint-placeholder-val="{{false}}"><div style="display: flex; align-items: center; gap: 10px"><input type="text" inputMode="numeric" aria-label="{{t.hvTotal}}" value="{{hQty}}" onChange="{{setHQty}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 40px; font-weight: 700; color: #14201A; padding: 0"><span style="font-size: 20px; font-weight: 700; color: #56635B">{{hUnit}}</span></div></sc-if><sc-if value="{{hSplit}}" hint-placeholder-val="{{true}}"><div style="font-family: 'Anek Malayalam', sans-serif; font-size: 40px; font-weight: 700; line-height: 1.1">{{hTotalTxt}}</div></sc-if><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{units}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">{{t.hvSplit}}</span><span style="font-size: 13px; color: #56635B">{{t.hvSplitSub}}</span></div><button role="switch" aria-checked="{{hSplit}}" aria-label="{{t.hvSplit}}" onClick="{{toggleSplit}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{splitBg}}"><span class="knob" style="position: absolute; top: 3px; left: {{splitLeft}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button></div>
+<h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.hvTeams}}</h2>
+<sc-for list="{{teams}}" as="tm" hint-placeholder-count="3"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: 1; font-size: 17px; font-weight: 700">{{tm.name}}</span><span style="padding: 4px 10px; border-radius: 999px; background: {{tm.tagBg}}; color: {{tm.tagFg}}; font-size: 12px; font-weight: 700">{{tm.tag}}</span><button onClick="{{tm.remove}}" aria-label="{{t.remove}} {{tm.name}}" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #ECEFEA; color: #14201A; font-family: inherit; font-size: 22px; line-height: 1">×</button></div><div style="display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap"><sc-if value="{{tm.isGroup}}" hint-placeholder-val="{{true}}"><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.heads}}</span><div style="display: flex; align-items: center; gap: 10px"><button onClick="{{tm.minus}}" aria-label="{{t.less}} {{tm.name}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1.5px solid #1B6B3A; background: #FFFFFF; color: #0F3D22; font-family: inherit; font-size: 24px; font-weight: 700; line-height: 1">−</button><span style="min-width: 32px; text-align: center; font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700">{{tm.n}}</span><button onClick="{{tm.plus}}" aria-label="{{t.moreN}} {{tm.name}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1.5px solid #1B6B3A; background: #FFFFFF; color: #0F3D22; font-family: inherit; font-size: 24px; font-weight: 700; line-height: 1">+</button></div></div></sc-if><label style="flex: 1; min-width: 84px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.ratePer}}</span><input type="text" inputMode="numeric" value="{{tm.rate}}" onChange="{{tm.setRate}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 22px; font-weight: 700; color: #14201A; padding: 0"></label><sc-if value="{{tm.showQty}}" hint-placeholder-val="{{true}}"><label style="flex: 1; min-width: 84px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{tm.qtyLabel}}</span><input type="text" inputMode="numeric" value="{{tm.qty}}" onChange="{{tm.setQty}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 22px; font-weight: 700; color: #14201A; padding: 0"></label></sc-if></div><div style="font-size: 14px; line-height: 1.45; color: #0F3D22; background: #E9F3EB; border-radius: 10px; padding: 8px 10px">{{tm.calc}}</div></div></sc-for>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px"><button onClick="{{addGroup}}" style="min-height: 52px; border: 2px dashed #9FAE9F; border-radius: 16px; background: transparent; color: #14201A; font-family: inherit; font-size: 15px; font-weight: 600">+ {{t.addGroup}}</button><button onClick="{{addNamed}}" style="min-height: 52px; border: 2px dashed #9FAE9F; border-radius: 16px; background: transparent; color: #14201A; font-family: inherit; font-size: 15px; font-weight: 600">+ {{t.addNamed}}</button></div>
+<div style="background: #0F3D22; color: #FFFFFF; border-radius: 20px; padding: 16px 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px"><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #CFE5D5">{{t.perHead}}</span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700; font-size: 22px; color: #F2B01E">{{hRate}}</span></div><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #CFE5D5">{{t.costPer}}</span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700; font-size: 22px">{{hCost}}</span></div><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #CFE5D5">{{t.totalWage}}</span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700; font-size: 22px">{{hWage}}</span></div></div>
+<button onClick="{{saveHarvest}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.save}}</button>
+<button onClick="{{goSell}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700">{{t.sellNow}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isSell}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.slTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.slSub}}</span></div></header>
+<button onClick="{{goPrices}}" style="border: 0; background: #FFF1C7; border-radius: 16px; padding: 10px 14px; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; font-family: inherit; color: #3D2A00"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 700">{{t.slToday}}</span><span style="font-size: 13px">{{t.priceSrc}}</span></span><span style="font-size: 14px; font-weight: 700; color: #0F3D22">{{t.seePrices}}</span></button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><label for="sq" style="font-size: 14px; font-weight: 600; color: #56635B">{{t.qtyKg}}</label><input id="sq" type="text" inputMode="numeric" value="{{sQty}}" onChange="{{setSQty}}" style="flex: 1; min-width: 0; width: 100%; box-sizing: border-box; height: 52px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 30px; font-weight: 700; color: #14201A; padding: 0"></div><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><label for="sr" style="font-size: 14px; font-weight: 600; color: #56635B">{{t.rateKg}}</label><input id="sr" type="text" inputMode="numeric" value="{{sRate}}" onChange="{{setSRate}}" style="flex: 1; min-width: 0; width: 100%; box-sizing: border-box; height: 52px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 30px; font-weight: 700; color: #14201A; padding: 0"></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.buyer}}</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{buyers}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; justify-content: space-between; font-size: 15px"><span>{{t.gross}}</span><strong>{{sGross}}</strong></div><div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px"><span>{{t.deduct}}</span><span style="display: flex; align-items: center; gap: 10px"><strong>{{sDed}}</strong><button onClick="{{soon}}" style="min-height: 44px; border: 0; background: transparent; padding: 0; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{t.change}}</button></span></div><div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #ECEFEA; padding-top: 10px"><span style="font-size: 16px; font-weight: 700">{{t.net}}</span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 30px; font-weight: 700; color: #1B6B3A">{{sNet}}</span></div></div>
+<div style="background: #E9F3EB; border-radius: 16px; padding: 12px 16px; font-size: 15px; line-height: 1.5; color: #0F3D22">{{sProfit}}</div>
+<button onClick="{{saveSale}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.slSave}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isPrices}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.prTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.prSub}}</span></div></header>
+<sc-for list="{{priceRows}}" as="p" hint-placeholder-count="4"><button aria-pressed="{{p.on}}" onClick="{{p.pick}}" style="min-height: 68px; border: 2px solid {{p.bd}}; border-radius: 18px; background: #FFFFFF; padding: 0 14px; display: flex; align-items: center; gap: 12px; text-align: left; font-family: inherit; color: #14201A"><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 700">{{p.name}}</span><span style="font-size: 13px; color: #56635B">{{p.src}}</span></span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 22px; font-weight: 700">{{p.price}}</span><span style="min-width: 52px; text-align: center; padding: 5px 8px; border-radius: 999px; background: {{p.chBg}}; color: {{p.chFg}}; font-size: 13px; font-weight: 700">{{p.chg}}</span></button></sc-for>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: 17px; font-weight: 700">{{selName}}</h2><span style="font-size: 13px; color: #56635B">{{t.days30}}</span></div><svg role="img" aria-label="{{t.days30}}" viewBox="0 0 300 80" style="width: 100%; height: 80px"><polyline points="{{chartPts}}" fill="none" stroke="#1B6B3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline></svg><sc-for list="{{markets}}" as="m" hint-placeholder-count="3"><div style="display: flex; justify-content: space-between; font-size: 15px; border-top: 1px solid #ECEFEA; padding-top: 8px"><span>{{m.name}}</span><strong>{{m.price}}</strong></div></sc-for></div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">{{t.alert}}</span><span style="font-size: 13px; color: #56635B">{{alertSub}}</span></div><button role="switch" aria-checked="{{alertOn}}" aria-label="{{t.alert}}" onClick="{{toggleAlert}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{alertBg}}"><span class="knob" style="position: absolute; top: 3px; left: {{alertLeft}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button></div>
+<button onClick="{{goSell}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.sellNow}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isHistory}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.hiTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.hiSub}}</span></div></header>
+<div style="background: #0F3D22; color: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #F2B01E; font-weight: 700">{{t.lastYear}}</span><span style="font-size: 15px; line-height: 1.5">{{t.lastYearTxt}}</span></div>
+<div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px"><sc-for list="{{hFilters}}" as="c" hint-placeholder-count="5"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; flex-shrink: 0">{{c.label}}</button></sc-for></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><sc-for list="{{events}}" as="e" hint-placeholder-count="6"><div style="display: flex; flex-direction: column; gap: 8px"><sc-if value="{{e.head}}" hint-placeholder-val="{{false}}"><h2 style="margin: 6px 0 0; font-size: 14px; font-weight: 700; color: #56635B">{{e.day}}</h2></sc-if><div style="background: #FFFFFF; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 13px; background: {{e.bg}}; color: {{e.fg}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{e.d}}"></path></svg></span><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{e.title}}</span><span style="font-size: 13px; color: #56635B">{{e.sub}}</span></span><span style="font-size: 15px; font-weight: 700; white-space: nowrap">{{e.amt}}</span></div></div></sc-for></div>
+<button onClick="{{soon}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700">{{t.exportPdf}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isLists}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.liTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.liSub}}</span></div></header>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{tplCrops}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div>
+<div style="background: #E4ECF7; border-radius: 16px; padding: 8px 8px 8px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #14335E"><span style="font-size: 14px; line-height: 1.45">{{t.tplUpdate}}</span><button onClick="{{soon}}" style="min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: #1F4E8C; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700">{{t.view}}</button></div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px"><div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 8px"><h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.activities}}</h2><span style="font-size: 13px; color: #56635B">{{t.actSub}}</span></div><sc-for list="{{tplRows}}" as="m" hint-placeholder-count="6"><div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #ECEFEA"><span style="flex: 1; font-size: 16px; font-weight: 600">{{m.label}}</span><button role="switch" aria-checked="{{m.on}}" aria-label="{{m.label}}" onClick="{{m.toggle}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{m.track}}"><span class="knob" style="position: absolute; top: 3px; left: {{m.left}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button></div></sc-for></div>
+<button onClick="{{soon}}" style="min-height: 56px; border: 2px dashed #9FAE9F; border-radius: 18px; background: transparent; color: #14201A; font-family: inherit; font-size: 16px; font-weight: 600">+ {{t.addOwn}}</button>
+<button onClick="{{resetTpl}}" style="min-height: 52px; border: 1.5px solid #B4440A; border-radius: 16px; background: transparent; color: #8A3306; font-family: inherit; font-size: 16px; font-weight: 700">{{t.reset}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isOnboard}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px"><sc-for list="{{obDots}}" as="o" hint-placeholder-count="3"><div style="height: 6px; border-radius: 3px; background: {{o.bg}}; transition: background-color .3s"></div></sc-for></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding-top: 8px"><span style="font-size: 14px; font-weight: 700; color: #1B6B3A">{{obStep}}</span><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 30px; font-weight: 700; line-height: 1.25">{{obTitle}}</h1><span style="font-size: 15px; color: #56635B">{{obSub}}</span></div>
+<sc-if value="{{ob0}}" hint-placeholder-val="{{true}}"><div class="stg" style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; gap: 18px"><label style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.yourName}}</span><input type="text" inputMode="text" value="{{obName}}" onChange="{{setObName}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 20px; font-weight: 700; color: #14201A; padding: 0"></label><label style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.phone}}</span><input type="text" inputMode="numeric" value="{{obPhone}}" onChange="{{setObPhone}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 20px; font-weight: 700; color: #14201A; padding: 0"></label></div></sc-if>
+<sc-if value="{{ob1}}" hint-placeholder-val="{{false}}"><div class="stg" style="display: flex; flex-direction: column; gap: 14px"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; gap: 18px"><label style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.farmName}}</span><input type="text" inputMode="text" value="{{obFarm}}" onChange="{{setObFarm}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 20px; font-weight: 700; color: #14201A; padding: 0"></label><label style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.area}}</span><input type="text" inputMode="numeric" value="{{obArea}}" onChange="{{setObArea}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 20px; font-weight: 700; color: #14201A; padding: 0"></label></div><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{obUnits}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{obOwns}}" as="c" hint-placeholder-count="2"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div></sc-if>
+<sc-if value="{{ob2}}" hint-placeholder-val="{{false}}"><div class="stg" style="display: flex; flex-direction: column; gap: 14px"><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{obCropChips}}" as="c" hint-placeholder-count="8"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div></div></sc-if>
+<div style="display: flex; gap: 10px; padding-top: 8px"><sc-if value="{{obHasBack}}" hint-placeholder-val="{{false}}"><button onClick="{{obBack}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700; min-height: 58px; padding: 0 20px">{{t.back}}</button></sc-if><button onClick="{{obNext}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600; flex: 1">{{obNextLabel}}</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isPlot}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{plotName}}</h1><span style="font-size: 13px; color: #56635B">{{plotSub}}</span></div></header>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px"><sc-for list="{{plotStats}}" as="k" hint-placeholder-count="4"><div style="background: #FFFFFF; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #56635B">{{k.k}}</span><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700; font-size: 22px">{{k.v}}</span></div></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: #E3E8E0; border-radius: 14px; padding: 4px"><sc-for list="{{plotTabs}}" as="o" hint-placeholder-count="3"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 44px; border: 0; border-radius: 11px; font-family: inherit; font-size: 15px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for></div>
+<sc-if value="{{isPtCrops}}" hint-placeholder-val="{{true}}"><div class="stg" style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><sc-for list="{{plotCrops}}" as="c" hint-placeholder-count="3"><div style="display: flex; align-items: center; gap: 12px; min-height: 48px"><span style="width: 36px; height: 36px; border-radius: 12px; background: #E9F3EB; color: #1B6B3A; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8"></path></svg></span><span style="font-size: 16px; font-weight: 600">{{c}}</span></div></sc-for></div></sc-if>
+<sc-if value="{{isPtCosts}}" hint-placeholder-val="{{false}}"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; gap: 14px"><sc-for list="{{plotCosts}}" as="c" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; gap: 6px"><div style="display: flex; justify-content: space-between; font-size: 15px"><span>{{c.label}}</span><strong>{{c.pct}}</strong></div><div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #ECEFEA"><div class="bar" style="height: 10px; border-radius: 5px; background: #E08A1E; width: {{c.pct}}"></div></div></div></sc-for></div></sc-if>
+<sc-if value="{{isPtHist}}" hint-placeholder-val="{{false}}"><div class="stg" style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><sc-for list="{{plotHist}}" as="c" hint-placeholder-count="3"><div style="font-size: 15px; line-height: 1.5; border-bottom: 1px solid #ECEFEA; padding-bottom: 10px">{{c}}</div></sc-for><button onClick="{{goHistory}}" style="min-height: 44px; border: 0; background: transparent; padding: 0; text-align: left; font-family: inherit; font-size: 15px; font-weight: 700; color: #1B6B3A">{{t.fullHist}}</button></div></sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px"><button onClick="{{goExpense}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700">+ {{t.addExp}}</button><button onClick="{{goHarvest}}" style="min-height: 52px; border: 1.5px solid #1B6B3A; border-radius: 16px; background: transparent; color: #0F3D22; font-family: inherit; font-size: 16px; font-weight: 700">+ {{t.addHv}}</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isInputs}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.inTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.inSub}}</span></div></header>
+<div style="background: #0F3D22; color: #FFFFFF; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700; font-size: 22px; color: #F2B01E">{{t.safeT}}</span><span style="font-size: 14px; color: #CFE5D5">{{t.safeS}}</span><div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #2C5A3D"><div class="bar" style="height: 8px; border-radius: 4px; background: #F2B01E; width: 20%"></div></div></div>
+<h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.stock}}</h2>
+<sc-for list="{{stockRows}}" as="r" hint-placeholder-count="4"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: 1; font-size: 17px; font-weight: 700">{{r.name}}</span><sc-if value="{{r.low}}" hint-placeholder-val="{{false}}"><span style="padding: 4px 10px; border-radius: 999px; background: #FBE3D2; color: #7A2E05; font-size: 12px; font-weight: 700">{{t.low}}</span></sc-if><span style="font-family: 'Anek Malayalam', sans-serif; font-size: 26px; font-weight: 700; font-size: 22px">{{r.qty}}</span></div><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><button onClick="{{r.use}}" style="min-height: 44px; border: 1.5px solid #C3CBC1; border-radius: 12px; background: #FFFFFF; color: #14201A; font-family: inherit; font-size: 14px; font-weight: 700">− {{r.step}} {{t.used}}</button><button onClick="{{r.buy}}" style="min-height: 44px; border: 1.5px solid #1B6B3A; border-radius: 12px; background: #E9F3EB; color: #0F3D22; font-family: inherit; font-size: 14px; font-weight: 700">+ {{r.step}} {{t.bought}}</button></div></div></sc-for>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 8px 8px 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px"><span style="font-size: 14px; line-height: 1.45">{{t.soil}}</span><button onClick="{{soon}}" style="min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: #1B6B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 700; white-space: nowrap">{{t.soilBtn}}</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isProcess}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.pcTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.pcSub}}</span></div></header>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 16px; font-weight: 700">{{t.pcIn}}</span><span style="font-size: 14px; color: #56635B">{{procCount}}</span></div><div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #ECEFEA"><div style="height: 10px; border-radius: 5px; background: #1B6B3A; width: {{procW}}; transition: width .4s cubic-bezier(.2,.8,.2,1)"></div></div></div>
+<sc-for list="{{procSteps}}" as="p" hint-placeholder-count="4"><button aria-pressed="{{p.on}}" onClick="{{p.toggle}}" style="min-height: 60px; border: 0; border-radius: 16px; background: #FFFFFF; padding: 0 16px; display: flex; align-items: center; gap: 14px; text-align: left; font-family: inherit; color: #14201A"><span style="width: 32px; height: 32px; border-radius: 16px; border: 2px solid #1B6B3A; background: {{p.bg}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color .25s"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size: 16px; font-weight: 600">{{p.label}}</span></button></sc-for>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><label style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #56635B">{{t.pcOut}}</span><input type="text" inputMode="numeric" value="{{pOut}}" onChange="{{setPOut}}" style="width: 100%; box-sizing: border-box; height: 48px; border: 0; border-bottom: 2px solid #1B6B3A; background: transparent; font-family: 'Anek Malayalam', sans-serif; font-size: 30px; font-weight: 700; color: #14201A; padding: 0"></label><div style="display: flex; justify-content: space-between; font-size: 15px"><span>{{t.conv}}</span><strong>{{procConv}}</strong></div><div style="display: flex; justify-content: space-between; font-size: 15px"><span>{{t.loss}}</span><strong>{{procLoss}}</strong></div><div style="font-size: 14px; color: #56635B">{{t.pcCost}}</div></div>
+<button onClick="{{procMove}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.toStock}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isCommunity}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.cmTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.cmSub}}</span></div></header>
+<button onClick="{{shareMine}}" style="min-height: 58px; border: 0; border-radius: 16px; background: #1B6B3A; color: #FFFFFF; font-family: 'Anek Malayalam', sans-serif; font-size: 18px; font-weight: 600">{{t.shareMine}}</button>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{cmChips}}" as="c" hint-placeholder-count="4"><button aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 15px; font-weight: 600">{{c.label}}</button></sc-for></div>
+<sc-for list="{{posts}}" as="p" hint-placeholder-count="3"><article style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><span style="font-size: 13px; color: #56635B">{{p.who}}</span><h2 style="margin: 0; font-size: 17px; font-weight: 700; line-height: 1.4">{{p.title}}</h2><div style="display: flex; flex-wrap: wrap; gap: 8px"><span style="padding: 6px 12px; border-radius: 999px; background: #E9F3EB; color: #0F3D22; font-size: 14px; font-weight: 700">{{p.a}}</span><span style="padding: 6px 12px; border-radius: 999px; background: #ECEFEA; color: #3C4A42; font-size: 14px; font-weight: 600">{{p.b}}</span></div><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><button aria-pressed="{{p.liked}}" onClick="{{p.like}}" style="min-height: 44px; border: 1.5px solid {{p.bd}}; border-radius: 12px; background: {{p.bg}}; color: {{p.fg}}; font-family: inherit; font-size: 14px; font-weight: 700">{{p.likeTxt}}</button><button onClick="{{sharePost}}" style="min-height: 44px; border: 1.5px solid #C3CBC1; border-radius: 12px; background: #FFFFFF; color: #14201A; font-family: inherit; font-size: 14px; font-weight: 700">{{t.shareWord}}</button></div></article></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{isSchemes}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 14px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><div style="display: flex; flex-direction: column; gap: 2px"><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.scTitle}}</h1><span style="font-size: 13px; color: #56635B">{{t.scSub}}</span></div></header>
+<sc-for list="{{schemeRows}}" as="p" hint-placeholder-count="3"><div style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; align-items: center; gap: 10px"><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 17px; font-weight: 700">{{p.name}}</span><span style="font-size: 13px; color: #56635B">{{p.sub}}</span></span><span style="padding: 5px 10px; border-radius: 999px; background: {{p.stBg}}; color: {{p.stFg}}; font-size: 12px; font-weight: 700; white-space: nowrap">{{p.status}}</span></div><button aria-expanded="{{p.open}}" onClick="{{p.toggle}}" style="min-height: 44px; border: 0; background: transparent; padding: 0; text-align: left; font-family: inherit; font-size: 14px; font-weight: 700; color: #1B6B3A">{{p.docsLabel}}</button><sc-if value="{{p.open}}" hint-placeholder-val="{{false}}"><div class="stg" style="display: flex; flex-direction: column; gap: 4px"><sc-for list="{{p.docs}}" as="d" hint-placeholder-count="3"><label style="display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; font-size: 15px"><input type="checkbox" checked="{{d.checked}}" onChange="{{d.toggle}}" style="width: 22px; height: 22px; accent-color: #1B6B3A">{{d.label}}</label></sc-for></div></sc-if></div></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{isSettings}}" hint-placeholder-val="{{false}}">
+<div class="stg" style="padding: 48px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+<header style="display: flex; align-items: center; gap: 12px"><button onClick="{{goBack}}" aria-label="{{t.back}}" style="width: 46px; height: 46px; border-radius: 23px; border: 1px solid #DDE3DA; background: #FFFFFF; color: #14201A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><h1 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.settings}}</h1></header>
+<section style="background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #56635B">{{t.lang}}</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; background: #ECEFEA; border-radius: 14px; padding: 4px"><sc-for list="{{langOpts}}" as="o" hint-placeholder-count="2"><button aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="min-height: 46px; border: 0; border-radius: 11px; font-family: inherit; font-size: 16px; font-weight: 700; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button></sc-for></div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">{{t.bigText}}</span><span style="font-size: 13px; color: #56635B">{{t.bigTextSub}}</span></div>
+<button role="switch" aria-checked="{{big}}" aria-label="{{t.bigText}}" onClick="{{toggleBig}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{bigBg}}"><span class="knob" style="position: absolute; top: 3px; left: {{bigLeft}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button></div>
+</section>
+<section style="background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 8px"><h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.pages}}</h2><span style="font-size: 13px; color: #56635B">{{t.pagesSub}}</span></div>
+<sc-for list="{{modRows}}" as="m" hint-placeholder-count="8">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid #ECEFEA">
+<span style="width: 40px; height: 40px; border-radius: 13px; background: {{m.bg}}; color: {{m.fg}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.d}}"></path></svg></span>
+<span style="flex: 1; font-size: 16px; font-weight: 600">{{m.label}}</span>
+<button role="switch" aria-checked="{{m.on}}" aria-label="{{m.label}}" onClick="{{m.toggle}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{m.track}}"><span class="knob" style="position: absolute; top: 3px; left: {{m.left}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button>
+</div>
+</sc-for>
+</section>
+<section style="background: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; padding-bottom: 8px; font-family: 'Anek Malayalam', sans-serif; font-size: 19px; font-weight: 600">{{t.homeCards}}</h2>
+<sc-for list="{{cardRows}}" as="m" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid #ECEFEA">
+<span style="flex: 1; font-size: 16px; font-weight: 600">{{m.label}}</span>
+<button role="switch" aria-checked="{{m.on}}" aria-label="{{m.label}}" onClick="{{m.toggle}}" style="width: 54px; height: 34px; border-radius: 17px; border: 0; padding: 0; position: relative; flex-shrink: 0; background: {{m.track}}"><span class="knob" style="position: absolute; top: 3px; left: {{m.left}}; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF"></span></button>
+</div>
+</sc-for>
+</section>
+<button onClick="{{resetAll}}" style="min-height: 52px; border: 1.5px solid #B4440A; border-radius: 16px; background: transparent; color: #8A3306; font-family: inherit; font-size: 16px; font-weight: 700">{{t.reset}}</button>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{showNav}}" hint-placeholder-val="{{true}}">
+<nav aria-label="{{t.menu}}" style="height: 78px; background: #FFFFFF; border-top: 1px solid #DDE3DA; display: flex; align-items: center; justify-content: space-around; padding: 0 6px; flex-shrink: 0">
+<sc-for list="{{tabsL}}" as="tb" hint-placeholder-count="2"><button onClick="{{tb.go}}" aria-pressed="{{tb.on}}" style="width: 70px; min-height: 54px; border: 0; background: transparent; font-family: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: {{tb.w}}; color: {{tb.fg}}"><span style="width: 52px; height: 30px; border-radius: 15px; background: {{tb.pill}}; display: flex; align-items: center; justify-content: center; transition: background-color .25s"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{tb.d}}"></path></svg></span>{{tb.label}}</button></sc-for>
+<button onClick="{{openSheet}}" aria-label="{{t.add}}" class="pulse" style="width: 62px; height: 62px; border-radius: 31px; border: 4px solid #F4F6F1; background: #1B6B3A; color: #FFFFFF; margin-top: -34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+<sc-for list="{{tabsR}}" as="tb" hint-placeholder-count="2"><button onClick="{{tb.go}}" aria-pressed="{{tb.on}}" style="width: 70px; min-height: 54px; border: 0; background: transparent; font-family: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: {{tb.w}}; color: {{tb.fg}}"><span style="width: 52px; height: 30px; border-radius: 15px; background: {{tb.pill}}; display: flex; align-items: center; justify-content: center; transition: background-color .25s"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{tb.d}}"></path></svg></span>{{tb.label}}</button></sc-for>
+</nav>
+</sc-if>
+
+<sc-if value="{{sheet}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end">
+<button class="scrim" onClick="{{closeSheet}}" aria-label="{{t.close}}" style="position: absolute; inset: 0; border: 0; background: rgba(15, 30, 20, 0.6)"></button>
+<section class="sheet" aria-label="{{t.what}}" style="position: relative; background: #F4F6F1; border-radius: 28px 28px 0 0; padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+<div aria-hidden="true" style="width: 44px; height: 5px; border-radius: 3px; background: #B9C2B8; align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between"><h2 style="margin: 0; font-family: 'Anek Malayalam', sans-serif; font-size: 24px; font-weight: 700">{{t.what}}</h2><button onClick="{{closeSheet}}" aria-label="{{t.close}}" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #E3E8E0; color: #14201A; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<button onClick="{{voice}}" style="min-height: 84px; border: 0; border-radius: 20px; background: {{accent}}; color: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 16px; text-align: left; font-family: inherit"><span class="pulse" style="width: 52px; height: 52px; border-radius: 26px; background: #F2B01E; color: #0F3D22; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 19px; font-weight: 700">{{t.voice}}</span><span style="font-size: 14px; color: #D6EADB; line-height: 1.45">{{t.voiceEg}}</span></span></button>
+<div class="stg" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{quick}}" as="m" hint-placeholder-count="6"><button onClick="{{m.open}}" style="min-height: 104px; border: 1px solid #DDE3DA; border-radius: 18px; background: #FFFFFF; color: #14201A; font-family: inherit; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 4px"><span style="width: 46px; height: 46px; border-radius: 15px; background: {{m.bg}}; color: {{m.fg}}; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{m.d}}"></path></svg></span>{{m.label}}</button></sc-for>
+</div>
+<button onClick="{{soon}}" style="min-height: 58px; border: 2px dashed #9FAE9F; border-radius: 18px; background: transparent; color: #14201A; font-family: inherit; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>{{t.bill}}</button>
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+<div role="status" class="toast" style="position: absolute; left: 24px; right: 24px; bottom: 100px; background: #14201A; color: #FFFFFF; border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F2B01E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12l5 5 9-10"></path></svg><span>{{toast}}</span></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1B6B3A"},"$preview":{"width":390,"height":844}}'>
+var START0 = 'home';
+var SHEET0 = false;
+var LAB0 = 'named';
+var IC = {
+home: 'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
+land: 'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',
+money: 'M7 5h10M7 9h10M7 5c4 0 6 1.5 6 4s-2 4-6 4l6 6',
+more: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',
+users: 'M9 11.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6M16 5a3.5 3.5 0 0 1 0 7M18 14c2 .8 3.5 2.8 3.5 6',
+leaf: 'M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8',
+basket: 'M4 10h16l-2 10H6zM8 10l4-6 4 6',
+flame: 'M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z',
+shield: 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6zM12 9v6M9 12h6',
+chat: 'M4 5h16v11H9l-5 4z',
+trend: 'M4 18l5-6 4 3 7-9M15 6h5v5',
+doc: 'M6 3h12v18H6zM9 9l2 2 4-4M9 15h6',
+tag: 'M3 12V4h8l10 10-8 8zM7.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+note: 'M6 3h9l4 4v14H6zM9 12h7M9 16h7',
+clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+list: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
+pencil: 'M4 20l1-4L16 5l3 3L8 19z'
+};
+var MODS = [
+{ id: 'labour', ml: 'പണിക്കാർ', en: 'Labour', d: IC.users, bg: '#E4ECF7', fg: '#1F4E8C', to: 'labour' },
+{ id: 'inputs', ml: 'വളം / മരുന്ന്', en: 'Inputs', d: IC.leaf, bg: '#E9F3EB', fg: '#1B6B3A', to: 'inputs' },
+{ id: 'harvest', ml: 'വിളവെടുപ്പ്', en: 'Harvest', d: IC.basket, bg: '#FFF1C7', fg: '#6B4A00', to: 'harvest' },
+{ id: 'sell', ml: 'വിൽപ്പന', en: 'Selling', d: IC.tag, bg: '#E9F3EB', fg: '#1B6B3A', to: 'sell' },
+{ id: 'process', ml: 'സംസ്കരണം', en: 'Processing', d: IC.flame, bg: '#FBEEDD', fg: '#8A4B00', to: 'process' },
+{ id: 'doctor', ml: 'വിള ഡോക്ടർ', en: 'Crop doctor', d: IC.shield, bg: '#E9F3EB', fg: '#1B6B3A', to: 'doctor' },
+{ id: 'community', ml: 'അനുഭവങ്ങൾ', en: 'Community', d: IC.chat, bg: '#E4ECF7', fg: '#1F4E8C', to: 'community' },
+{ id: 'market', ml: 'ഇന്നത്തെ വില', en: 'Live prices', d: IC.trend, bg: '#FFF1C7', fg: '#6B4A00', to: 'prices' },
+{ id: 'history', ml: 'ചരിത്രം', en: 'History', d: IC.clock, bg: '#ECEFEA', fg: '#3C4A42', to: 'history' },
+{ id: 'lists', ml: 'എന്റെ ലിസ്റ്റുകൾ', en: 'My lists', d: IC.list, bg: '#E4ECF7', fg: '#1F4E8C', to: 'lists' },
+{ id: 'schemes', ml: 'പദ്ധതികൾ', en: 'Schemes', d: IC.doc, bg: '#ECEFEA', fg: '#3C4A42', to: 'schemes' }
+];
+var MOD0 = { labour: true, inputs: true, harvest: true, process: true, doctor: true, community: true, market: true, schemes: true, sell: true, history: true, lists: true };
+var CARD0 = { weather: true, profit: true, price: true, tasks: true, dues: true };
+var PRICES = [[705, 5, [690, 694, 688, 696, 700, 698, 702, 700, 705]], [188, -1, [184, 186, 190, 191, 189, 190, 189, 189, 188]], [2510, 35, [2380, 2420, 2400, 2450, 2440, 2475, 2460, 2475, 2510]], [62, 0, [60, 61, 61, 62, 63, 62, 62, 62, 62]]];
+var EVT = [['labour', 0, 2150], ['expense', 0, 3600], ['harvest', 1, 0], ['sale', 1, 35250], ['labour', 2, 5200], ['edit', 2, 0]];
+var EVI = { labour: ['users', '#E4ECF7', '#1F4E8C'], expense: ['money', '#FBEEDD', '#8A4B00'], harvest: ['basket', '#FFF1C7', '#6B4A00'], sale: ['tag', '#E9F3EB', '#1B6B3A'], edit: ['pencil', '#ECEFEA', '#3C4A42'] };
+var ATT0 = { 0: 'f', 1: 'f', 2: 'h', 3: 'a' };
+var STR = {
+ml: {
+remove: 'നീക്കുക', hvSplit: 'ഓരോ ടീമിന്റെയും അളവ് രേഖപ്പെടുത്തുക', hvSplitSub: 'വേണ്ടെങ്കിൽ ആകെ അളവ് മാത്രം മതി', hvTeams: 'വിളവെടുത്തവർ', hvTotal: 'ആകെ അളവ്', heads: 'എത്ര പേർ', ratePer: 'കൂലി (₹ / ആൾ)', person: 'ആൾ', groupWord: 'ഗ്രൂപ്പ്', tagGroup: 'ഗ്രൂപ്പ്', tagNamed: 'പേരുള്ളയാൾ', addGroup: 'ഗ്രൂപ്പ്', addNamed: 'പേരുള്ളയാൾ',
+dSub: 'കുരുമുളക് · വീട്ടുപറമ്പ്', photo: 'ഫോട്ടോ', addPhoto: 'ഫോട്ടോ', dPart: 'എവിടെയാണ് രോഗം?', parts: ['ഇല', 'തണ്ട്', 'വേര്', 'കായ'], dSev: 'എത്ര കടുപ്പം?', sevs: ['കുറവ്', 'ഇടത്തരം', 'കൂടുതൽ'], suggest: 'പ്രതിവിധി കാണുക', sendExpert: 'വിദഗ്ധന് അയക്കുക', dSentToast: 'വിദഗ്ധന് അയച്ചു', dSentMsg: 'ഫോട്ടോയും വിവരങ്ങളും വിദഗ്ധന് അയച്ചു. മറുപടി വരുമ്പോൾ അറിയിക്കും.', dSave: 'രോഗ രേഖ സേവ് ചെയ്യുക', dSaved: 'രോഗ രേഖ സേവ് ചെയ്തു',
+obTitles: ['നിങ്ങളെ പരിചയപ്പെടാം', 'ആദ്യത്തെ കൃഷിയിടം', 'എന്തൊക്കെ കൃഷി ചെയ്യുന്നു?'], obSubs: ['പേരും ഫോൺ നമ്പറും മതി', 'പിന്നീട് കൂടുതൽ പ്ലോട്ടുകൾ ചേർക്കാം', 'ഒന്നിലധികം തിരഞ്ഞെടുക്കാം'], yourName: 'പേര്', phone: 'ഫോൺ നമ്പർ', farmName: 'കൃഷിയിടത്തിന്റെ പേര്', area: 'വിസ്തീർണ്ണം', areaUnits: ['സെന്റ്', 'ഏക്കർ', 'ഹെക്ടർ'], obCrops: ['തെങ്ങ്', 'കുരുമുളക്', 'റബ്ബർ', 'വാഴ', 'നെല്ല്', 'കവുങ്ങ്', 'ഏലം', 'പച്ചക്കറി'], next: 'അടുത്തത്', finish: 'തുടങ്ങാം', welcome: 'സ്വാഗതം! കൃഷിയിടം തയ്യാർ', step: 'ഘട്ടം',
+psCrops: 'വിളകൾ', psCost: 'ഈ സീസൺ ചെലവ്', psYield: 'വിളവ്', ptCrops: 'വിളകൾ', ptCosts: 'ചെലവ്', ptHist: 'ചരിത്രം', other: 'മറ്റുള്ളവ', plotHist: ['ഇന്ന് · വളമിടൽ · 3 പണിക്കാർ', '12 നവംബർ · വിളവെടുപ്പ് · 110 kg', '2 നവംബർ · ബോർഡോ മിശ്രിതം തളിച്ചു'], fullHist: 'മുഴുവൻ ചരിത്രം കാണുക', addExp: 'ചെലവ്', addHv: 'വിളവെടുപ്പ്',
+inTitle: 'വളം / മരുന്ന്', inSub: 'സ്റ്റോക്കും ഉപയോഗവും', safeT: 'വിളവെടുക്കാൻ 12 ദിവസം കൂടി', safeS: 'കുരുമുളക് · മരുന്ന് തളിച്ചിട്ട് 3 ദിവസം', stock: 'സ്റ്റോക്ക്', stockNames: ['യൂറിയ', 'പൊട്ടാഷ്', 'വേപ്പിൻപിണ്ണാക്ക്', 'ബോർഡോ മിശ്രിതം'], low: 'കുറവ്', used: 'ഉപയോഗിച്ചു', bought: 'വാങ്ങി', soil: 'മണ്ണ് പരിശോധന · pH 5.6 · 14 മാസം മുമ്പ്', soilBtn: 'പുതിയത്',
+pcTitle: 'സംസ്കരണം', pcSub: 'കുരുമുളക് · ലോട്ട് നവംബർ', pcIn: 'പച്ച കുരുമുളക് 100 kg', procNames: ['മെതിക്കൽ', 'ഉണക്കൽ', 'വൃത്തിയാക്കൽ', 'ചാക്കിലാക്കൽ'], pcOut: 'ഉണക്കിയ അളവ് (kg)', conv: 'ഉണക്ക് അനുപാതം', loss: 'ഭാരക്കുറവ്', pcCost: 'സംസ്കരണ ചെലവ് ₹1,200', toStock: 'സ്റ്റോക്കിലേക്ക് മാറ്റുക', movedStock: 'സ്റ്റോക്കിൽ ചേർത്തു', stepsDone: 'ഘട്ടം കഴിഞ്ഞു',
+cmTitle: 'അനുഭവങ്ങൾ', cmSub: 'സാമ്പിൾ പോസ്റ്റുകൾ', cmFilters: ['എല്ലാം', 'കുരുമുളക്', 'തെങ്ങ്', 'റബ്ബർ'], postWho: ['കർഷകൻ · ഇടുക്കി', 'കർഷക · തൃശ്ശൂർ', 'കർഷകൻ · കോട്ടയം'], postT: ['ഇടവിളയായി കുരുമുളക്: 50 സെന്റിൽ നല്ല വരുമാനം', 'തെങ്ങിന് ജൈവവളം: ചെലവ് കുറഞ്ഞു', 'റെയിൻ ഗാർഡ് ഇട്ടു, ടാപ്പിംഗ് ദിവസം കൂടി'], postA: ['ലാഭം ₹61,000', 'ചെലവ് 20% കുറവ്', 'ടാപ്പിംഗ് +28 ദിവസം'], postB: ['50 സെന്റ്', '60 തെങ്ങ്', '2.5 ഏക്കർ'], useful: 'ഉപകാരപ്രദം', shareWord: 'പങ്കിടുക', shareMine: 'എന്റെ സീസൺ പങ്കിടുക', sharedToast: 'പങ്കിടാൻ തയ്യാർ',
+scTitle: 'പദ്ധതികൾ', scSub: 'സാമ്പിൾ വിവരം · ഔദ്യോഗിക സൈറ്റിൽ ഉറപ്പാക്കുക', schemeN: ['PM-KISAN', 'വിള ഇൻഷുറൻസ്', 'കാർഷിക യന്ത്ര സബ്സിഡി'], schemeS: ['അടുത്ത ഗഡു വിവരം നോക്കുക', 'പ്രീമിയം തീയതി ഓർമ്മിപ്പിക്കും', 'അപേക്ഷ തയ്യാറാക്കുക'], schemeSt: ['ലഭിക്കുന്നു', 'പുതുക്കണം', 'യോഗ്യത നോക്കുക'], docsWord: 'വേണ്ട രേഖകൾ', docN: ['ആധാർ', 'കരം അടച്ച രസീത്', 'ബാങ്ക് പാസ്ബുക്ക്'],
+less: 'കുറയ്ക്കുക', moreN: 'കൂട്ടുക', named: 'പേരുള്ളവർ', group: 'ഗ്രൂപ്പ് (എണ്ണം മാത്രം)', gName: 'ഗ്രൂപ്പിന്റെ പേര് (വേണമെങ്കിൽ)', gDefault: 'വിളവെടുപ്പ് ഗ്രൂപ്പ്', gHint: 'പേരുകൾ വേണ്ട, എണ്ണം മതി. പിന്നീട് പേരും ലീഡറും ചേർക്കാം. ഗ്രൂപ്പിന്റെ പഴയ കണക്കുകൾ ചരിത്രത്തിൽ കാണാം.', gClass: ['സാധാരണ പണി', 'കയറ്റക്കാർ'], people: 'പേർ',
+todayPrice: 'ഇന്നത്തെ വില', cPrice: 'ഇന്നത്തെ വില',
+hvTitle: 'വിളവെടുപ്പ്', hvSub: 'കുരുമുളക് · വീട്ടുപറമ്പ്', hvLast: 'കഴിഞ്ഞ തവണ: 110 kg · 6 പേർ · 12 നവംബർ', qty: 'അളവ്', unitNames: ['kg', 'ക്വിന്റൽ', 'എണ്ണം'], hvWho: 'വിളവെടുത്തവർ', hvWhoSub: 'വിളവെടുപ്പ് ഗ്രൂപ്പ് · ₹800 വീതം', perHead: 'ഒരാൾ ഒരു ദിവസം', costPer: 'ഒരു യൂണിറ്റിന് കൂലി', hvPrev: 'കഴിഞ്ഞ തവണ 18.3', wageWord: 'കൂലി', sellNow: 'ഇപ്പോൾ വിൽക്കുക',
+slTitle: 'വിൽക്കുക', slSub: 'കുരുമുളക് · സ്റ്റോക്ക് 80 kg', slToday: 'ഇന്നത്തെ വില ₹705 / kg', priceSrc: 'കൊച്ചി · ഇന്ന് 10:30 · സാമ്പിൾ', seePrices: 'വിലകൾ', qtyKg: 'അളവ് (kg)', rateKg: 'വില (₹ / kg)', buyer: 'വാങ്ങുന്നയാൾ', buyerNames: ['അങ്ങാടി കട', 'സൊസൈറ്റി', 'നേരിട്ട്'], gross: 'ആകെ', deduct: 'ഗതാഗതം, തൂക്കം', change: 'മാറ്റാം', net: 'കൈയിൽ കിട്ടുന്നത്', profitKg: 'ഒരു കിലോയ്ക്ക് ലാഭം', yourCost: 'നിങ്ങളുടെ ചെലവ്', slSave: 'വിൽപ്പന സേവ് ചെയ്യുക',
+prTitle: 'ഇന്നത്തെ വില', prSub: 'സാമ്പിൾ വിലകൾ · ഓരോന്നിനും ഉറവിടവും സമയവും', priceNames: ['കുരുമുളക്', 'റബ്ബർ RSS-4', 'ഏലം', 'തേങ്ങ'], priceSrcs: ['കൊച്ചി · 10:30', 'കോട്ടയം · 11:00', 'ലേലം · ഇന്നലെ', 'ആലപ്പുഴ · 9:15'], days30: 'കഴിഞ്ഞ 30 ദിവസം', marketNames: ['കൊച്ചി', 'കട്ടപ്പന', 'കല്പറ്റ'], alert: 'വില അറിയിപ്പ്', alertAt: 'കടന്നാൽ അറിയിക്കും', same: 'മാറ്റമില്ല',
+hiTitle: 'ചരിത്രം', hiSub: 'എല്ലാ കണക്കും, എല്ലാ ദിവസവും', lastYear: 'കഴിഞ്ഞ വർഷം ഈ ആഴ്ച', lastYearTxt: 'തെങ്ങിന് വളമിട്ടു · 50 kg · ₹3,200', fNames: ['എല്ലാം', 'കൂലി', 'ചെലവ്', 'വിളവ്', 'വിൽപ്പന', 'തിരുത്തൽ'], dayNames: ['ഇന്ന്', 'ഇന്നലെ', '12 നവംബർ'],
+evT: ['3 പണിക്കാർ · തെങ്ങിന് വളമിടൽ', 'വളം വാങ്ങി', 'റബ്ബർ ഷീറ്റ് 42 kg', 'കുരുമുളക് 50 kg വിറ്റു', 'വിളവെടുപ്പ് ഗ്രൂപ്പ് · 6 പേർ', 'കൂലി തിരുത്തി: ₹850 → ₹900'], evS: ['വീട്ടുപറമ്പ്', 'വീട്ടുപറമ്പ് · UPI', 'മലയിലെ തോട്ടം', 'അങ്ങാടി കട · ₹705 / kg', 'കുരുമുളക് · വീട്ടുപറമ്പ്', 'രാജൻ മാറ്റി · പഴയത് കാണാം'], exportPdf: 'PDF ആയി എടുക്കുക',
+liTitle: 'എന്റെ ലിസ്റ്റുകൾ', liSub: 'ഓരോ വിളയ്ക്കും വേണ്ട ഇനങ്ങൾ', tplUpdate: 'പുതിയ ഇനങ്ങൾ ലഭ്യമാണ്. നിങ്ങളുടെ മാറ്റങ്ങൾ മായില്ല.', view: 'കാണുക', activities: 'പണികൾ', actSub: 'വേണ്ടാത്തവ ഓഫ് ചെയ്യാം', addOwn: 'സ്വന്തം ഇനം ചേർക്കുക',
+tplNames: ['കുരുമുളക്', 'തെങ്ങ്', 'റബ്ബർ'], tplActs: [['വള്ളി കെട്ടൽ', 'തണൽ ക്രമീകരണം', 'പുതയിടൽ', 'ബോർഡോ തളിക്കൽ', 'വിളവെടുപ്പ്', 'ഉണക്കൽ'], ['തടം തുറക്കൽ', 'വളമിടൽ', 'നനയ്ക്കൽ', 'തെങ്ങ് കയറ്റം', 'കൊപ്ര ഉണക്കൽ'], ['ടാപ്പിംഗ്', 'ഷീറ്റ് അടിക്കൽ', 'പുകയ്ക്കൽ', 'റെയിൻ ഗാർഡ്', 'കള വെട്ടൽ']],
+date: 'തിങ്കൾ, 16 നവംബർ · വൃശ്ചികം 1', hello: 'നമസ്കാരം, രാജൻ', lang: 'ഭാഷ', settings: 'ക്രമീകരണം',
+rain: 'ഉച്ചയ്ക്ക് ശേഷം മഴ · 28°C', rainTip: 'ഇന്ന് മരുന്ന് തളിക്കൽ ഒഴിവാക്കുക',
+seasonProfit: 'ഈ സീസൺ · ലാഭം', details: 'വിശദമായി', income: 'വരവ്', expense: 'ചെലവ്', profit: 'ലാഭം',
+tasks: 'ഇന്നത്തെ പണികൾ', done: 'കഴിഞ്ഞു', due: 'കൊടുക്കാനുള്ള കൂലി ₹4,300 · 2 പേർ', pay: 'കൊടുക്കുക',
+home: 'ഹോം', land: 'എന്റെ ഭൂമി', money: 'കണക്ക്', more: 'കൂടുതൽ', add: 'ചേർക്കുക', menu: 'പ്രധാന മെനു',
+landTitle: 'എന്റെ ഭൂമി', landSub: '3 പ്ലോട്ട് · 4 ഏക്കർ', addPlot: 'പുതിയ പ്ലോട്ട് ചേർക്കുക', mixed: 'മിശ്രവിള', own: 'സ്വന്തം', lease: 'പാട്ടം',
+moneyTitle: 'ലാഭ നഷ്ടം', season: 'ഈ സീസൺ · എല്ലാ പ്ലോട്ടും', byCrop: 'വിള തിരിച്ച്', family: 'കുടുംബ കൂലി ഉൾപ്പെടുത്തുക', familySub: 'സ്വന്തം അധ്വാനത്തിന്റെ വില ₹12,000', share: 'റിപ്പോർട്ട് പങ്കിടുക', shared: 'റിപ്പോർട്ട് തയ്യാർ',
+managePages: 'പേജുകൾ, ഭാഷ, അക്ഷര വലുപ്പം',
+labourTitle: 'ഇന്നത്തെ ഹാജർ', labourSub: 'തെങ്ങിന് വളമിടൽ · വീട്ടുപറമ്പ്', full: 'മുഴുവൻ', half: 'പകുതി', absent: 'ഇല്ല', sameY: 'ഇന്നലത്തെ പോലെ', totalWage: 'ആകെ കൂലി', save: 'സേവ് ചെയ്യുക', saved: 'സേവ് ചെയ്തു', perDay: ' / ദിവസം', back: 'പിന്നോട്ട്',
+expTitle: 'ചെലവ് ചേർക്കുക', amount: 'തുക', category: 'ഇനം', split: 'വിളകൾക്ക് വിഭജനം', splitHint: 'സ്വയം മാറ്റാം', payBy: 'പണം കൊടുത്ത രീതി',
+doctorTitle: 'വിള ഡോക്ടർ', photoPh: 'കുരുമുളക് ഇലയുടെ ഫോട്ടോ', diag: 'ദ്രുതവാട്ടം', conf: 'സാധ്യത 86%', remedy: 'പ്രതിവിധി', organic: 'ജൈവം', chemical: 'രാസം', wrong: 'ശരിയല്ലേ? തിരുത്തുക', addTask: 'പണിയായി ചേർക്കുക', taskAdded: 'പണി ചേർത്തു', askExpert: 'വിദഗ്ധനോട് ചോദിക്കുക',
+bigText: 'വലിയ അക്ഷരം', bigTextSub: 'എളുപ്പ മോഡ്', pages: 'പേജുകൾ', pagesSub: 'വേണ്ടവ മാത്രം ഓൺ ചെയ്യുക', homeCards: 'ഹോം കാർഡുകൾ', reset: 'പഴയപടിയാക്കുക', resetDone: 'പഴയപടിയാക്കി',
+cWeather: 'കാലാവസ്ഥ', cProfit: 'ലാഭം', cTasks: 'ഇന്നത്തെ പണികൾ', cDues: 'കൊടുക്കാനുള്ളത്',
+what: 'എന്ത് ചേർക്കണം?', voice: 'പറഞ്ഞ് ചേർക്കാം', voiceEg: '"ഇന്ന് മൂന്ന് പണിക്കാർ, 900 രൂപ വീതം"', listening: 'കേൾക്കുന്നു…', bill: 'ബിൽ ഫോട്ടോ എടുക്കുക', close: 'അടയ്ക്കുക', sale: 'വിൽപ്പന', note: 'കുറിപ്പ്', soon: 'ഈ പേജ് അടുത്ത ഘട്ടത്തിൽ വരും',
+org: ['നീർവാർച്ച ഉറപ്പാക്കുക', 'ട്രൈക്കോഡെർമ ചേർത്ത വേപ്പിൻപിണ്ണാക്ക് ചുവട്ടിൽ ഇടുക', 'രോഗം വന്ന വള്ളികൾ നീക്കം ചെയ്യുക'],
+chem: ['1% ബോർഡോ മിശ്രിതം തളിക്കുക', 'ലേബലിലെ അളവ് മാത്രം ഉപയോഗിക്കുക'],
+cats: ['വളം', 'കൂലി', 'വിത്ത്', 'യന്ത്രം', 'ഗതാഗതം'], pays: ['പണം', 'UPI', 'കടം'],
+splitNames: ['തെങ്ങ്', 'കുരുമുളക്', 'വാഴ'], cropNames: ['കുരുമുളക്', 'റബ്ബർ', 'തെങ്ങ്'],
+workers: ['സുരേഷ്', 'മണി', 'ലീല', 'ബാബു'],
+taskT: ['റബ്ബർ ടാപ്പിംഗ്', 'തെങ്ങിന് വളമിടൽ', 'കുരുമുളകിന് ബോർഡോ മിശ്രിതം'], taskS: ['മലയിലെ തോട്ടം', 'വീട്ടുപറമ്പ് · 3 പണിക്കാർ', 'മഴ കാരണം നാളത്തേക്ക് മാറ്റാം'],
+plots: [
+{ name: 'വീട്ടുപറമ്പ്', area: '50 സെന്റ്', crops: ['തെങ്ങ് 60', 'കുരുമുളക് 120', 'വാഴ 40'], next: 'അടുത്തത്: വളമിടൽ · ഇന്ന്' },
+{ name: 'മലയിലെ തോട്ടം', area: '2.5 ഏക്കർ', crops: ['റബ്ബർ 450'], next: 'അടുത്തത്: ടാപ്പിംഗ് · നാളെ' },
+{ name: 'പാടം', area: '1 ഏക്കർ', crops: ['നെല്ല് · മുണ്ടകൻ'], next: 'അടുത്തത്: കള പറിക്കൽ · 3 ദിവസം' }]
+},
+en: {
+remove: 'Remove', hvSplit: 'Log quantity for each team', hvSplitSub: 'Optional: the total alone is enough', hvTeams: 'Harvested by', hvTotal: 'Total quantity', heads: 'How many', ratePer: 'Wage (₹ / person)', person: 'person', groupWord: 'Group', tagGroup: 'Group', tagNamed: 'Named', addGroup: 'Group', addNamed: 'Named worker',
+dSub: 'Pepper · Home plot', photo: 'Photo', addPhoto: 'Photo', dPart: 'Where is the problem?', parts: ['Leaf', 'Stem', 'Root', 'Fruit'], dSev: 'How severe?', sevs: ['Mild', 'Medium', 'Severe'], suggest: 'Suggest remedy', sendExpert: 'Send to expert', dSentToast: 'Sent to expert', dSentMsg: 'Photos and details sent to the expert. You will be notified when they reply.', dSave: 'Save disease record', dSaved: 'Disease record saved',
+obTitles: ['Let\u2019s get to know you', 'Your first farm', 'What do you grow?'], obSubs: ['Just a name and phone number', 'You can add more plots later', 'Pick as many as you like'], yourName: 'Name', phone: 'Phone number', farmName: 'Farm name', area: 'Area', areaUnits: ['cents', 'acres', 'hectares'], obCrops: ['Coconut', 'Pepper', 'Rubber', 'Banana', 'Paddy', 'Arecanut', 'Cardamom', 'Vegetables'], next: 'Next', finish: 'Get started', welcome: 'Welcome! Your farm is ready', step: 'Step',
+psCrops: 'Crops', psCost: 'Season cost', psYield: 'Yield', ptCrops: 'Crops', ptCosts: 'Costs', ptHist: 'History', other: 'Other', plotHist: ['Today · fertilising · 3 workers', '12 November · harvest · 110 kg', '2 November · sprayed Bordeaux mixture'], fullHist: 'See full history', addExp: 'Expense', addHv: 'Harvest',
+inTitle: 'Inputs', inSub: 'Stock and use', safeT: '12 more days until safe to harvest', safeS: 'Pepper · sprayed 3 days ago', stock: 'Stock', stockNames: ['Urea', 'Potash', 'Neem cake', 'Bordeaux mixture'], low: 'Low', used: 'used', bought: 'bought', soil: 'Soil test · pH 5.6 · 14 months ago', soilBtn: 'Add new',
+pcTitle: 'Processing', pcSub: 'Pepper · November lot', pcIn: 'Green pepper 100 kg', procNames: ['Threshing', 'Drying', 'Cleaning', 'Bagging'], pcOut: 'Dry weight (kg)', conv: 'Drying ratio', loss: 'Weight loss', pcCost: 'Processing cost ₹1,200', toStock: 'Move to stock', movedStock: 'Added to stock', stepsDone: 'steps done',
+cmTitle: 'Community', cmSub: 'Sample posts', cmFilters: ['All', 'Pepper', 'Coconut', 'Rubber'], postWho: ['Farmer · Idukki', 'Farmer · Thrissur', 'Farmer · Kottayam'], postT: ['Pepper as an intercrop: good income from 50 cents', 'Organic manure for coconut: lower cost', 'Rain guards added more tapping days'], postA: ['Profit ₹61,000', 'Cost down 20%', '+28 tapping days'], postB: ['50 cents', '60 palms', '2.5 acres'], useful: 'Useful', shareWord: 'Share', shareMine: 'Share my season', sharedToast: 'Ready to share',
+scTitle: 'Schemes', scSub: 'Sample information · confirm on the official site', schemeN: ['PM-KISAN', 'Crop insurance', 'Farm machinery subsidy'], schemeS: ['Check the next instalment', 'Reminder for premium date', 'Prepare the application'], schemeSt: ['Receiving', 'Renew', 'Check eligibility'], docsWord: 'Documents needed', docN: ['Aadhaar', 'Land tax receipt', 'Bank passbook'],
+less: 'Fewer', moreN: 'More', named: 'Named workers', group: 'Group (head count)', gName: 'Group name (optional)', gDefault: 'Harvest gang', gHint: 'No names needed, just the count. You can add names and a leader later. The group keeps its own history.', gClass: ['General work', 'Climbers'], people: 'people',
+todayPrice: 'Today\u2019s price', cPrice: 'Today\u2019s price',
+hvTitle: 'Harvest', hvSub: 'Pepper · Home plot', hvLast: 'Last time: 110 kg · 6 people · 12 November', qty: 'Quantity', unitNames: ['kg', 'quintal', 'count'], hvWho: 'Harvested by', hvWhoSub: 'Harvest gang · ₹800 each', perHead: 'Per person per day', costPer: 'Labour cost per unit', hvPrev: 'Last time 18.3', wageWord: 'Wages', sellNow: 'Sell now',
+slTitle: 'Sell', slSub: 'Pepper · 80 kg in stock', slToday: 'Today\u2019s price ₹705 / kg', priceSrc: 'Kochi · today 10:30 · sample', seePrices: 'Prices', qtyKg: 'Quantity (kg)', rateKg: 'Rate (₹ / kg)', buyer: 'Buyer', buyerNames: ['Local trader', 'Society', 'Direct'], gross: 'Gross', deduct: 'Transport, weighing', change: 'Change', net: 'You receive', profitKg: 'Profit per kg', yourCost: 'your cost', slSave: 'Save sale',
+prTitle: 'Live prices', prSub: 'Sample prices · each shows source and time', priceNames: ['Pepper', 'Rubber RSS-4', 'Cardamom', 'Coconut'], priceSrcs: ['Kochi · 10:30', 'Kottayam · 11:00', 'Auction · yesterday', 'Alappuzha · 9:15'], days30: 'Last 30 days', marketNames: ['Kochi', 'Kattappana', 'Kalpetta'], alert: 'Price alert', alertAt: 'Notify when above', same: 'No change',
+hiTitle: 'History', hiSub: 'Every record, every day', lastYear: 'This week last year', lastYearTxt: 'Fertilised coconut · 50 kg · ₹3,200', fNames: ['All', 'Labour', 'Expense', 'Harvest', 'Sales', 'Edits'], dayNames: ['Today', 'Yesterday', '12 November'],
+evT: ['3 workers · fertilising coconut', 'Bought fertiliser', 'Rubber sheet 42 kg', 'Sold pepper 50 kg', 'Harvest gang · 6 people', 'Wage corrected: ₹850 → ₹900'], evS: ['Home plot', 'Home plot · UPI', 'Hill estate', 'Local trader · ₹705 / kg', 'Pepper · Home plot', 'Changed by Rajan · old value kept'], exportPdf: 'Export as PDF',
+liTitle: 'My lists', liSub: 'Items used for each crop', tplUpdate: 'New items are available. Your changes stay.', view: 'View', activities: 'Activities', actSub: 'Turn off what you don\u2019t use', addOwn: 'Add your own item',
+tplNames: ['Pepper', 'Coconut', 'Rubber'], tplActs: [['Tying vines', 'Shade regulation', 'Mulching', 'Bordeaux spray', 'Harvest', 'Drying'], ['Opening basins', 'Fertilising', 'Irrigation', 'Palm climbing', 'Copra drying'], ['Tapping', 'Sheet rolling', 'Smoking', 'Rain guarding', 'Weeding']],
+date: 'Monday, 16 November', hello: 'Hello, Rajan', lang: 'Language', settings: 'Settings',
+rain: 'Rain after noon · 28°C', rainTip: 'Avoid spraying today',
+seasonProfit: 'This season · Profit', details: 'Details', income: 'Income', expense: 'Expense', profit: 'Profit',
+tasks: 'Today’s tasks', done: 'done', due: 'Wages due ₹4,300 · 2 workers', pay: 'Pay',
+home: 'Home', land: 'My land', money: 'Money', more: 'More', add: 'Add', menu: 'Main menu',
+landTitle: 'My land', landSub: '3 plots · 4 acres', addPlot: 'Add a plot', mixed: 'Mixed crop', own: 'Owned', lease: 'Leased',
+moneyTitle: 'Profit and loss', season: 'This season · All plots', byCrop: 'By crop', family: 'Include family labour', familySub: 'Value of own work ₹12,000', share: 'Share report', shared: 'Report ready',
+managePages: 'Pages, language, text size',
+labourTitle: 'Today’s attendance', labourSub: 'Fertilising coconut · Home plot', full: 'Full', half: 'Half', absent: 'Absent', sameY: 'Same as yesterday', totalWage: 'Total wages', save: 'Save', saved: 'Saved', perDay: ' / day', back: 'Back',
+expTitle: 'Add expense', amount: 'Amount', category: 'Category', split: 'Split across crops', splitHint: 'Edit manually', payBy: 'Paid by',
+doctorTitle: 'Crop doctor', photoPh: 'Photo of pepper leaf', diag: 'Quick wilt (foot rot)', conf: '86% likely', remedy: 'Remedies', organic: 'Organic', chemical: 'Chemical', wrong: 'Not right? Correct it', addTask: 'Add as task', taskAdded: 'Task added', askExpert: 'Ask an expert',
+bigText: 'Large text', bigTextSub: 'Easy mode', pages: 'Pages', pagesSub: 'Turn on only what you need', homeCards: 'Home cards', reset: 'Reset to default', resetDone: 'Reset done',
+cWeather: 'Weather', cProfit: 'Profit', cTasks: 'Today’s tasks', cDues: 'Dues',
+what: 'What to add?', voice: 'Add by voice', voiceEg: '"Three workers today, 900 rupees each"', listening: 'Listening…', bill: 'Scan a bill', close: 'Close', sale: 'Sale', note: 'Note', soon: 'This page comes in the next round',
+org: ['Make sure water drains away', 'Apply neem cake enriched with Trichoderma at the base', 'Remove affected vines'],
+chem: ['Spray 1% Bordeaux mixture', 'Use only the dose on the label'],
+cats: ['Fertiliser', 'Wages', 'Seeds', 'Machinery', 'Transport'], pays: ['Cash', 'UPI', 'Credit'],
+splitNames: ['Coconut', 'Pepper', 'Banana'], cropNames: ['Pepper', 'Rubber', 'Coconut'],
+workers: ['Suresh', 'Mani', 'Leela', 'Babu'],
+taskT: ['Rubber tapping', 'Fertilise coconut', 'Bordeaux mixture for pepper'], taskS: ['Hill estate', 'Home plot · 3 workers', 'Rain today, can move to tomorrow'],
+plots: [
+{ name: 'Home plot', area: '50 cents', crops: ['Coconut 60', 'Pepper 120', 'Banana 40'], next: 'Next: fertilising · today' },
+{ name: 'Hill estate', area: '2.5 acres', crops: ['Rubber 450'], next: 'Next: tapping · tomorrow' },
+{ name: 'Paddy field', area: '1 acre', crops: ['Paddy · Mundakan'], next: 'Next: weeding · in 3 days' }]
+}
+};
+class Component extends DCLogic {
+g(k, d) { var s = this.state || {}; return s[k] === undefined ? d : s[k]; }
+go(screen) { var cur = this.g('screen', START0); this.setState({ screen: screen, sheet: false, prev: cur }); }
+say(msg) { var self = this; this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(function () { self.setState({ toast: null }); }, 1900); }
+renderVals() {
+var self = this;
+var L = this.g('lang', 'ml'); var t = STR[L];
+var screen = this.g('screen', START0);
+var mods = Object.assign({}, MOD0, this.g('mods', {}));
+var cards = Object.assign({}, CARD0, this.g('cards', {}));
+var att = Object.assign({}, ATT0, this.g('att', {}));
+var doneMap = Object.assign({ 0: true }, this.g('doneMap', {}));
+var family = this.g('family', false);
+var big = this.g('big', false);
+var cat = this.g('cat', 0); var payI = this.g('payI', 0); var rem = this.g('rem', 'org');
+var amount = this.g('amount', '3600');
+var fmt = function (n) { return '₹' + Math.round(n).toLocaleString('en-IN'); };
+var seg = function (on) { return { bg: on ? '#FFFFFF' : 'transparent', fg: on ? '#0F3D22' : '#56635B' }; };
+var chip = function (on) { return { bg: on ? '#1B6B3A' : '#FFFFFF', fg: on ? '#FFFFFF' : '#14201A', bd: on ? '#1B6B3A' : '#C3CBC1' }; };
+var sw = function (on) { return { track: on ? '#1B6B3A' : '#8B978D', left: on ? '23px' : '3px' }; };
+var soon = function () { self.say(t.soon); };
+var tabOf = { home: 'home', expense: 'home', land: 'land', money: 'money', more: 'more', labour: 'more', doctor: 'more', settings: 'more', harvest: 'more', sell: 'more', prices: 'more', history: 'more', lists: 'more', inputs: 'more', process: 'more', community: 'more', schemes: 'more', plot: 'land', onboard: 'none' }[screen];
+var mkTab = function (id) { var on = tabOf === id; return { label: t[id], d: IC[id], on: on, w: on ? 700 : 500, fg: on ? '#0F3D22' : '#56635B', pill: on ? '#D5EBDA' : 'transparent', go: function () { self.go(id); } }; };
+var famAdd = family ? [5000, 4000, 3000] : [0, 0, 0];
+var base = [[92000, 31000], [68500, 44200], [24000, 21000]];
+var inc = 0, exp = 0;
+var crops = base.map(function (b, i) { var e = b[1] + famAdd[i]; inc += b[0]; exp += e; var p = b[0] - e; return { name: t.cropNames[i], inc: fmt(b[0]), exp: fmt(e), profit: (p >= 0 ? '+' : '−') + fmt(Math.abs(p)), incW: (b[0] / 920) + '%', expW: (e / 920) + '%' }; });
+var rates = [900, 900, 700, 900]; var mult = { f: 1, h: 0.5, a: 0 }; var wage = 0;
+var workers = rates.map(function (r, i) { wage += r * mult[att[i]]; return { name: t.workers[i], rate: fmt(r) + t.perDay, opts: [['f', t.full], ['h', t.half], ['a', t.absent]].map(function (o) { var on = att[i] === o[0]; var s = seg(on); return { label: o[1], on: on, bg: s.bg, fg: s.fg, pick: function () { var n = Object.assign({}, att); n[i] = o[0]; self.setState({ att: n }); } }; }) }; });
+var doneN = 0;
+var tasks = t.taskT.map(function (title, i) { var d = !!doneMap[i]; if (d) doneN++; return { title: title, sub: t.taskS[i], done: d, color: d ? '#56635B' : '#14201A', deco: d ? 'line-through' : 'none', toggle: function () { var n = Object.assign({}, doneMap); n[i] = !d; self.setState({ doneMap: n }); } }; });
+var amt = parseInt(String(amount).replace(/[^0-9]/g, ''), 10) || 0;
+var tint = [['#E9F3EB', '#1B6B3A'], ['#E4ECF7', '#1F4E8C'], ['#FFF1C7', '#6B4A00']];
+var tiles = MODS.filter(function (m) { return mods[m.id]; }).map(function (m) { return { label: m[L], d: m.d, bg: m.bg, fg: m.fg, open: m.to ? function () { self.go(m.to); } : soon }; });
+var quick = [{ label: t.expense, d: IC.money, bg: '#FBEEDD', fg: '#8A4B00', open: function () { self.go('expense'); } }]
+.concat(MODS.filter(function (m) { return mods[m.id] && ['labour', 'harvest', 'inputs'].indexOf(m.id) >= 0; }).map(function (m) { return { label: m[L], d: m.d, bg: m.bg, fg: m.fg, open: m.to ? function () { self.go(m.to); } : function () { self.setState({ sheet: false }); soon(); } }; }))
+.concat([{ label: t.sale, d: IC.tag, bg: '#E9F3EB', fg: '#1B6B3A', open: function () { self.go('sell'); } }, { label: t.note, d: IC.note, bg: '#ECEFEA', fg: '#3C4A42', open: function () { self.setState({ sheet: false }); soon(); } }]);
+
+var num = function (v, d) { var n = parseInt(String(v).replace(/[^0-9]/g, ''), 10); return isNaN(n) ? d : n; };
+var onNum = function (key, max) { return function (e) { var o = {}; o[key] = e.target.value.replace(/[^0-9]/g, '').slice(0, max); self.setState(o); }; };
+var labTab = this.g('labTab', LAB0);
+var gN = this.g('gN', [5, 1]); var gRates = [800, 1200];
+var gTotal = gN[0] * gRates[0] + gN[1] * gRates[1];
+var gRows = gRates.map(function (r, i) { return { label: t.gClass[i], rate: fmt(r) + t.perDay, n: gN[i], minus: function () { var n = gN.slice(); n[i] = Math.max(0, n[i] - 1); self.setState({ gN: n }); }, plus: function () { var n = gN.slice(); n[i] = Math.min(99, n[i] + 1); self.setState({ gN: n }); } }; });
+var labTotal = labTab === 'group' ? gTotal : wage;
+var hQty = this.g('hQty', '120'); var hq = num(hQty, 0); var hCount = this.g('hCount', 6); var hU = this.g('hU', 0);
+var hWageN = hCount * 800;
+var sQty = this.g('sQty', '50'); var sRate = this.g('sRate', '705'); var sq = num(sQty, 0); var sr = num(sRate, 0); var sBuyer = this.g('sBuyer', 0);
+var sGross = sq * sr; var sDedN = sq > 0 ? 170 : 0; var sNetN = Math.max(0, sGross - sDedN);
+var pSel = this.g('pSel', 0); var alerts = this.g('alerts', { 0: true });
+var chg = function (c) { return c === 0 ? '0' : (c > 0 ? '+₹' + c : '−₹' + Math.abs(c)); };
+var priceRows = PRICES.map(function (p, i) { var on = pSel === i; return { name: t.priceNames[i], src: t.priceSrcs[i], price: fmt(p[0]), chg: chg(p[1]), chBg: p[1] > 0 ? '#D5EBDA' : (p[1] < 0 ? '#FBE3D2' : '#ECEFEA'), chFg: p[1] > 0 ? '#0F3D22' : (p[1] < 0 ? '#7A2E05' : '#3C4A42'), on: on, bd: on ? '#1B6B3A' : '#FFFFFF', pick: function () { self.setState({ pSel: i }); } }; });
+var ser = PRICES[pSel][2]; var mn = Math.min.apply(null, ser), mx = Math.max.apply(null, ser);
+var chartPts = ser.map(function (v, i) { return (6 + i * 36) + ',' + Math.round(70 - (v - mn) / ((mx - mn) || 1) * 60); }).join(' ');
+var aOn = !!alerts[pSel]; var aSw = sw(aOn); var target = Math.round(PRICES[pSel][0] * 1.05);
+var hf = this.g('hf', 'all'); var fKeys = ['all', 'labour', 'expense', 'harvest', 'sale', 'edit']; var lastDay = -1;
+var events = [];
+EVT.forEach(function (e, i) { if (hf !== 'all' && hf !== e[0]) return; var ic = EVI[e[0]]; events.push({ head: e[1] !== lastDay, day: t.dayNames[e[1]], title: t.evT[i], sub: t.evS[i], d: IC[ic[0]], bg: ic[1], fg: ic[2], amt: e[2] ? (e[0] === 'sale' ? '+' : '−') + fmt(e[2]) : '' }); lastDay = e[1]; });
+var tc = this.g('tc', 0); var tplOff = this.g('tplOff', {});
+
+var unitN = t.unitNames[hU];
+var hSplit = this.g('hSplit', true);
+var teams0 = this.g('hTeams', [{ k: 'g', n: 6, rate: '800', qty: '75' }, { k: 'g', n: 3, rate: '900', qty: '30' }, { k: 'w', n: 1, rate: '1000', qty: '15' }]);
+var setTeam = function (i, patch) { var n = teams0.map(function (x) { return Object.assign({}, x); }); Object.assign(n[i], patch); self.setState({ hTeams: n }); };
+var r1 = function (v) { return Math.round(v * 10) / 10; };
+var gi = 0, wi = 0, heads = 0, wageSum = 0, qtySum = 0;
+var teams = teams0.map(function (tm, i) { var isG = tm.k === 'g'; var name = isG ? t.groupWord + ' ' + 'ABCDEFGH'.charAt(gi++ % 8) : t.workers[wi++ % 4]; var r = num(tm.rate, 0), q = num(tm.qty, 0), w = tm.n * r; heads += tm.n; wageSum += w; qtySum += q;
+var calc = t.wageWord + ' ' + fmt(w); if (hSplit && q > 0) calc = r1(q / tm.n) + ' ' + unitN + ' / ' + t.person + ' · ₹' + r1(w / q) + ' / ' + unitN + ' · ' + calc;
+return { name: name, tag: isG ? t.tagGroup : t.tagNamed, tagBg: isG ? '#E4ECF7' : '#FFF1C7', tagFg: isG ? '#14335E' : '#3D2A00', isGroup: isG, n: tm.n, rate: tm.rate, qty: tm.qty, qtyLabel: t.qty + ' (' + unitN + ')', showQty: hSplit, calc: calc,
+minus: function () { setTeam(i, { n: Math.max(1, tm.n - 1) }); }, plus: function () { setTeam(i, { n: Math.min(99, tm.n + 1) }); },
+setRate: function (e) { setTeam(i, { rate: e.target.value.replace(/[^0-9]/g, '').slice(0, 5) }); }, setQty: function (e) { setTeam(i, { qty: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) }); },
+remove: function () { self.setState({ hTeams: teams0.filter(function (x, j) { return j !== i; }) }); } }; });
+var hTotal = hSplit ? qtySum : hq; var spl = sw(hSplit);
+var addTeam = function (o) { return function () { if (teams0.length >= 6) return; self.setState({ hTeams: teams0.concat([o]) }); }; };
+var dPh = this.g('dPh', 2); var dPart = this.g('dPart', 0); var dSev = this.g('dSev', 1);
+var ob = this.g('ob', 0); var obUnit = this.g('obUnit', 0); var obOwn = this.g('obOwn', 0); var obSel = this.g('obSel', { 0: true, 1: true });
+var onTxt = function (key, max) { return function (e) { var o = {}; o[key] = e.target.value.slice(0, max); self.setState(o); }; };
+var plotI = this.g('plotI', 0); var pl = t.plots[plotI]; var plotTab = this.g('plotTab', 'crops');
+var pStats = [['₹52,000', '210 kg'], ['₹44,200', '365 kg'], ['₹18,500', '—']][plotI];
+var stock = this.g('stock', [40, 15, 60, 5]); var sStep = [10, 10, 10, 1], sMin = [20, 20, 20, 2], sUnit = ['kg', 'kg', 'kg', 'L'];
+var setStock = function (i, d) { return function () { var n = stock.slice(); n[i] = Math.max(0, Math.min(999, n[i] + d)); self.setState({ stock: n }); }; };
+var pDone = this.g('pDone', { 0: true, 1: true }); var pCount = 0; var pOut = this.g('pOut', '33'); var po = Math.min(100, num(pOut, 0));
+var procSteps = t.procNames.map(function (label, i) { var on = !!pDone[i]; if (on) pCount++; return { label: label, on: on, bg: on ? '#1B6B3A' : '#FFFFFF', toggle: function () { var n = Object.assign({}, pDone); n[i] = !on; self.setState({ pDone: n }); } }; });
+var cf = this.g('cf', 0); var likes = this.g('likes', {}); var likeBase = [12, 8, 5];
+var posts = []; [0, 1, 2].forEach(function (i) { if (cf !== 0 && cf !== i + 1) return; var lk = !!likes[i]; posts.push({ who: t.postWho[i], title: t.postT[i], a: t.postA[i], b: t.postB[i], liked: lk, likeTxt: (likeBase[i] + (lk ? 1 : 0)) + ' · ' + t.useful, bg: lk ? '#1B6B3A' : '#FFFFFF', fg: lk ? '#FFFFFF' : '#14201A', bd: lk ? '#1B6B3A' : '#C3CBC1', like: function () { var n = Object.assign({}, likes); n[i] = !lk; self.setState({ likes: n }); } }); });
+var sOpen = this.g('sOpen', 0); var docs = this.g('docs', { '0-0': true, '0-1': true, '0-2': true });
+var stCol = [['#D5EBDA', '#0F3D22'], ['#FBE3D2', '#7A2E05'], ['#E4ECF7', '#14335E']];
+var fam = sw(family); var bg = sw(big);
+return {
+accent: this.props.accent ?? '#1B6B3A', t: t, zoom: big ? 1.12 : 1,
+isHome: screen === 'home', isLand: screen === 'land', isMoney: screen === 'money', isMore: screen === 'more', isLabour: screen === 'labour', isExpense: screen === 'expense', isDoctor: screen === 'doctor', isSettings: screen === 'settings',
+sheet: this.g('sheet', SHEET0), toast: this.g('toast', null), hasToast: !!this.g('toast', null),
+langBadge: L === 'ml' ? 'EN' : 'മ', cards: cards,
+toggleLang: function () { self.setState({ lang: L === 'ml' ? 'en' : 'ml' }); },
+goSettings: function () { self.go('settings'); }, goMoney: function () { self.go('money'); }, goLabour: function () { self.go('labour'); },
+goBack: function () { var p = self.g('prev', 'home'); self.go(p === screen ? 'home' : p); },
+openSheet: function () { self.setState({ sheet: true }); }, closeSheet: function () { self.setState({ sheet: false }); },
+voice: function () { self.setState({ sheet: false }); self.say(t.listening); }, soon: soon,
+profitTxt: fmt(inc - exp), incomeTxt: fmt(inc), expenseTxt: fmt(exp), crops: crops,
+family: family, familyBg: fam.track, familyLeft: fam.left, toggleFamily: function () { self.setState({ family: !family }); },
+shareReport: function () { self.say(t.shared); },
+tasks: tasks, taskCount: doneN + ' / ' + tasks.length + ' ' + t.done,
+plots: t.plots.map(function (p, i) { return { name: p.name, area: p.area, crops: p.crops, next: p.next, mixed: p.crops.length > 1, tenure: i === 2 ? t.lease : t.own, bg: tint[i][0], fg: tint[i][1], open: function () { self.setState({ plotI: i, plotTab: 'crops', screen: 'plot', prev: screen, sheet: false }); } }; }),
+tiles: tiles, quick: quick,
+workers: workers, wageTotal: fmt(labTotal),
+sameAsYesterday: function () { self.setState({ att: { 0: 'f', 1: 'f', 2: 'f', 3: 'f' } }); },
+saveLabour: function () { self.say(t.saved + ' · ' + fmt(labTotal)); self.go('home'); },
+amount: amount, setAmount: function (e) { self.setState({ amount: e.target.value.replace(/[^0-9]/g, '').slice(0, 7) }); },
+cats: t.cats.map(function (c, i) { var s = chip(cat === i); return { label: c, on: cat === i, bg: s.bg, fg: s.fg, bd: s.bd, pick: function () { self.setState({ cat: i }); } }; }),
+pays: t.pays.map(function (c, i) { var s = chip(payI === i); return { label: c, on: payI === i, bg: s.bg, fg: s.fg, bd: s.bd, pick: function () { self.setState({ payI: i }); } }; }),
+splits: [60, 30, 10].map(function (p, i) { return { label: t.splitNames[i], pct: p + '%', amt: fmt(amt * p / 100) }; }),
+saveExpense: function () { self.say(t.saved + ' · ' + fmt(amt)); self.go('home'); },
+remTabs: [['org', t.organic], ['chem', t.chemical]].map(function (o) { var on = rem === o[0]; var s = seg(on); return { label: o[1], on: on, bg: s.bg, fg: s.fg, pick: function () { self.setState({ rem: o[0] }); } }; }),
+remedies: t[rem], addTask: function () { self.say(t.taskAdded); },
+langOpts: [['ml', 'മലയാളം'], ['en', 'English']].map(function (o) { var on = L === o[0]; var s = seg(on); return { label: o[1], on: on, bg: s.bg, fg: s.fg, pick: function () { self.setState({ lang: o[0] }); } }; }),
+big: big, bigBg: bg.track, bigLeft: bg.left, toggleBig: function () { self.setState({ big: !big }); },
+modRows: MODS.map(function (m) { var on = !!mods[m.id]; var s = sw(on); return { label: m[L], d: m.d, bg: m.bg, fg: m.fg, on: on, track: s.track, left: s.left, toggle: function () { var n = Object.assign({}, mods); n[m.id] = !on; self.setState({ mods: n }); } }; }),
+cardRows: [['weather', t.cWeather], ['profit', t.cProfit], ['price', t.cPrice], ['tasks', t.cTasks], ['dues', t.cDues]].map(function (c) { var on = !!cards[c[0]]; var s = sw(on); return { label: c[1], on: on, track: s.track, left: s.left, toggle: function () { var n = Object.assign({}, cards); n[c[0]] = !on; self.setState({ cards: n }); } }; }),
+resetAll: function () { self.setState({ mods: {}, cards: {}, big: false }); self.say(t.resetDone); },
+isHarvest: screen === 'harvest', isSell: screen === 'sell', isPrices: screen === 'prices', isHistory: screen === 'history', isLists: screen === 'lists',
+goPrices: function () { self.go('prices'); }, goSell: function () { self.go('sell'); },
+homePrice: t.priceNames[0] + ' ' + fmt(PRICES[0][0]) + ' / kg', homePriceChg: chg(PRICES[0][1]),
+labTabs: [['named', t.named], ['group', t.group]].map(function (o) { var on = labTab === o[0]; var s2 = seg(on); return { label: o[1], on: on, bg: s2.bg, fg: s2.fg, pick: function () { self.setState({ labTab: o[0] }); } }; }),
+labNamed: labTab !== 'group', labGroup: labTab === 'group', gRows: gRows, gName: this.g('gName', t.gDefault), setGName: function (e) { self.setState({ gName: e.target.value.slice(0, 30) }); },
+hQty: hQty, setHQty: onNum('hQty', 6), hUnit: t.unitNames[hU], hCount: hCount,
+units: t.unitNames.map(function (c, i) { var s2 = chip(hU === i); return { label: c, on: hU === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ hU: i }); } }; }),
+hMinus: function () { self.setState({ hCount: Math.max(1, hCount - 1) }); }, hPlus: function () { self.setState({ hCount: Math.min(99, hCount + 1) }); },
+hRate: (Math.round(hq / hCount * 10) / 10) + ' ' + t.unitNames[hU], hCost: hq > 0 ? '₹' + (Math.round(hWageN / hq * 10) / 10) : '₹0', hWage: t.wageWord + ' ' + fmt(hWageN),
+saveHarvest: function () { self.say(t.saved + ' · ' + hq + ' ' + t.unitNames[hU]); self.go('history'); },
+sQty: sQty, sRate: sRate, setSQty: onNum('sQty', 5), setSRate: onNum('sRate', 5),
+buyers: t.buyerNames.map(function (c, i) { var s2 = chip(sBuyer === i); return { label: c, on: sBuyer === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ sBuyer: i }); } }; }),
+sGross: fmt(sGross), sDed: '−' + fmt(sDedN), sNet: fmt(sNetN), sProfit: t.profitKg + ' ' + (sr >= 238 ? '+' : '−') + fmt(Math.abs(sr - 238)) + ' (' + t.yourCost + ' ₹238 / kg)',
+saveSale: function () { self.say(t.saved + ' · ' + fmt(sNetN)); self.go('history'); },
+priceRows: priceRows, selName: t.priceNames[pSel], chartPts: chartPts,
+markets: [0, -4, 3].map(function (dlt, i) { return { name: t.marketNames[i], price: fmt(Math.round(PRICES[pSel][0] * (1 + dlt / 500))) }; }),
+alertOn: aOn, alertBg: aSw.track, alertLeft: aSw.left, alertSub: fmt(target) + ' ' + t.alertAt, toggleAlert: function () { var n = Object.assign({}, alerts); n[pSel] = !aOn; self.setState({ alerts: n }); },
+hFilters: fKeys.map(function (k, i) { var s2 = chip(hf === k); return { label: t.fNames[i], on: hf === k, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ hf: k }); } }; }),
+events: events,
+tplCrops: t.tplNames.map(function (c, i) { var s2 = chip(tc === i); return { label: c, on: tc === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ tc: i }); } }; }),
+tplRows: t.tplActs[tc].map(function (a, i) { var key = tc + '-' + i; var on = !tplOff[key]; var s2 = sw(on); return { label: a, on: on, track: s2.track, left: s2.left, toggle: function () { var n = Object.assign({}, tplOff); n[key] = on; self.setState({ tplOff: n }); } }; }),
+resetTpl: function () { self.setState({ tplOff: {} }); self.say(t.resetDone); },
+showNav: screen !== 'onboard',
+isOnboard: screen === 'onboard', isPlot: screen === 'plot', isInputs: screen === 'inputs', isProcess: screen === 'process', isCommunity: screen === 'community', isSchemes: screen === 'schemes',
+goHistory: function () { self.go('history'); }, goExpense: function () { self.go('expense'); }, goHarvest: function () { self.go('harvest'); },
+hSplit: hSplit, hNoSplit: !hSplit, splitBg: spl.track, splitLeft: spl.left, toggleSplit: function () { self.setState({ hSplit: !hSplit }); },
+teams: teams, hTotalTxt: hTotal + ' ' + unitN,
+addGroup: addTeam({ k: 'g', n: 4, rate: '800', qty: '' }), addNamed: addTeam({ k: 'w', n: 1, rate: '900', qty: '' }),
+hRate: (heads ? r1(hTotal / heads) : 0) + ' ' + unitN, hCost: hTotal > 0 ? '₹' + r1(wageSum / hTotal) : '₹0', hWage: fmt(wageSum),
+saveHarvest: function () { self.say(t.saved + ' · ' + hTotal + ' ' + unitN); self.go('history'); },
+dPhotos: Array.apply(null, Array(dPh)).map(function (x, i) { return { label: t.photo + ' ' + (i + 1) }; }), canAddPhoto: dPh < 5, addPhoto: function () { self.setState({ dPh: dPh + 1 }); },
+dParts: t.parts.map(function (c, i) { var s2 = chip(dPart === i); return { label: c, on: dPart === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ dPart: i }); } }; }),
+dSevs: t.sevs.map(function (c, i) { var on = dSev === i; var s2 = seg(on); return { label: c, on: on, bg: s2.bg, fg: s2.fg, pick: function () { self.setState({ dSev: i }); } }; }),
+dShow: this.g('dShow', false), dSent: this.g('dSent', false), suggest: function () { self.setState({ dShow: true }); }, sendExpert: function () { self.setState({ dSent: true }); self.say(t.dSentToast); },
+saveRecord: function () { self.say(t.dSaved); self.go('history'); },
+ob0: ob === 0, ob1: ob === 1, ob2: ob === 2, obStep: t.step + ' ' + (ob + 1) + ' / 3', obTitle: t.obTitles[ob], obSub: t.obSubs[ob], obHasBack: ob > 0, obNextLabel: ob < 2 ? t.next : t.finish,
+obDots: [0, 1, 2].map(function (i) { return { bg: i <= ob ? '#1B6B3A' : '#C3CBC1' }; }),
+obNext: function () { if (ob < 2) { self.setState({ ob: ob + 1 }); } else { self.say(t.welcome); self.go('home'); } }, obBack: function () { self.setState({ ob: Math.max(0, ob - 1) }); },
+obName: this.g('obName', ''), obPhone: this.g('obPhone', ''), obFarm: this.g('obFarm', ''), obArea: this.g('obArea', ''),
+setObName: onTxt('obName', 30), setObFarm: onTxt('obFarm', 30), setObPhone: onNum('obPhone', 10), setObArea: onNum('obArea', 5),
+obUnits: t.areaUnits.map(function (c, i) { var s2 = chip(obUnit === i); return { label: c, on: obUnit === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ obUnit: i }); } }; }),
+obOwns: [t.own, t.lease].map(function (c, i) { var s2 = chip(obOwn === i); return { label: c, on: obOwn === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ obOwn: i }); } }; }),
+obCropChips: t.obCrops.map(function (c, i) { var on = !!obSel[i]; var s2 = chip(on); return { label: c, on: on, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { var n = Object.assign({}, obSel); n[i] = !on; self.setState({ obSel: n }); } }; }),
+plotName: pl.name, plotSub: pl.area + ' · ' + (plotI === 2 ? t.lease : t.own),
+plotStats: [{ k: t.psCrops, v: pl.crops.length }, { k: t.psCost, v: pStats[0] }, { k: t.psYield, v: pStats[1] }, { k: t.todayPrice, v: fmt(PRICES[plotI === 1 ? 1 : 0][0]) }],
+plotTabs: [['crops', t.ptCrops], ['costs', t.ptCosts], ['hist', t.ptHist]].map(function (o) { var on = plotTab === o[0]; var s2 = seg(on); return { label: o[1], on: on, bg: s2.bg, fg: s2.fg, pick: function () { self.setState({ plotTab: o[0] }); } }; }),
+isPtCrops: plotTab === 'crops', isPtCosts: plotTab === 'costs', isPtHist: plotTab === 'hist', plotCrops: pl.crops,
+plotCosts: [[t.cats[1], 55], [t.cats[0], 30], [t.other, 15]].map(function (c) { return { label: c[0], pct: c[1] + '%' }; }), plotHist: t.plotHist,
+stockRows: t.stockNames.map(function (nm, i) { return { name: nm, qty: stock[i] + ' ' + sUnit[i], low: stock[i] <= sMin[i], step: sStep[i], use: setStock(i, -sStep[i]), buy: setStock(i, sStep[i]) }; }),
+procSteps: procSteps, procCount: pCount + ' / 4 ' + t.stepsDone, procW: (pCount * 25) + '%', pOut: pOut, setPOut: onNum('pOut', 3), procConv: po + '%', procLoss: (100 - po) + ' kg', procMove: function () { self.say(t.movedStock); },
+cmChips: t.cmFilters.map(function (c, i) { var s2 = chip(cf === i); return { label: c, on: cf === i, bg: s2.bg, fg: s2.fg, bd: s2.bd, pick: function () { self.setState({ cf: i }); } }; }),
+posts: posts, shareMine: function () { self.say(t.sharedToast); }, sharePost: function () { self.say(t.sharedToast); },
+schemeRows: t.schemeN.map(function (nm, i) { var open = sOpen === i; return { name: nm, sub: t.schemeS[i], status: t.schemeSt[i], stBg: stCol[i][0], stFg: stCol[i][1], open: open, docsLabel: t.docsWord + (open ? ' −' : ' +'), toggle: function () { self.setState({ sOpen: open ? -1 : i }); },
+docs: t.docN.map(function (d, j) { var key = i + '-' + j; var ck = !!docs[key]; return { label: d, checked: ck, toggle: function () { var n = Object.assign({}, docs); n[key] = !ck; self.setState({ docs: n }); } }; }) }; }),
+tabsL: [mkTab('home'), mkTab('land')], tabsR: [mkTab('money'), mkTab('more')]
+};
+}
+}
+</script>
+</body>
+</html>

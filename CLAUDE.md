@@ -1,0 +1,62 @@
+# Thottam (തോട്ടം)
+
+Offline-first, Malayalam-first farm management app for Kerala farmers. It replaces the paper notebook: plots and mixed crops, labour (named workers and unnamed groups), expenses, inputs, harvest, processing, selling, live prices, profit and loss, and a complete history of everything.
+
+## Read these first
+
+- `docs/product-spec.md` — what the app does, module by module, and the rules that cut across modules.
+- `docs/phase-1-tasks.md` — the ordered backlog. Work top to bottom; one task per branch/PR.
+- `docs/screens.md` — every screen, its fields, behaviour and acceptance checks.
+- `docs/design-tokens.md` — colours, type, spacing, motion. Do not invent new values.
+- `design/prototype/` — the interactive HTML prototype. It is the visual and behavioural reference, not code to port line by line.
+- `supabase/migrations/0001_init.sql` — draft schema. It has NOT been run against a database yet; validate it before relying on it.
+
+## Stack
+
+- Flutter (stable channel), Android first, iOS from the same code.
+- State: Riverpod. Navigation: go_router.
+- Local database: Drift (SQLite). The local DB is the source of truth for the UI.
+- Backend: Supabase (Postgres with row-level security, auth by phone OTP, storage for photos).
+- Localisation: `flutter_localizations` + ARB files in `lib/l10n/` (`app_ml.arb` is the template, `app_en.arb` the second language).
+
+Check current package versions and APIs in their docs before adding a dependency; do not rely on memory for version numbers or setup steps.
+
+## Non-negotiable rules
+
+1. **Offline first.** Every write goes to Drift first and into an outbox table; sync is a background concern. No screen may block on the network.
+2. **History of everything.** Every create, edit and delete writes a row to `event_log` (entity, action, old and new values, user, time). Nothing is hard-deleted from the app; use `deleted_at`.
+3. **Everything overridable.** Resolution order: app default → farm → plot or crop → single entry. Computed values (amount = qty × rate, splits, conversion ratios) always have a manual-edit path. Never hard-code a list, unit, rate or category in Dart; they come from templates.
+4. **Malayalam first.** No user-facing string in Dart code. Every string is an ARB key with both `ml` and `en`. Test layouts with Malayalam text and with large-text mode (1.12 scale).
+5. **Money is integer paise**, quantities are numeric with a unit code. Format with Indian grouping (₹1,84,500).
+6. **Ids are UUIDs generated on the device.** Every table has `id, farm_id, created_at, created_by, updated_at, updated_by, version, deleted_at`.
+7. **20-second entries.** Smart defaults (today, last plot, last rate). Touch targets at least 48 dp. Undo after every save.
+8. **Accessibility.** Contrast 4.5:1, labels on every icon button, colour never the only signal.
+
+## Project layout (create as you go)
+
+```
+lib/
+  app/            # router, theme, localisation setup
+  core/           # db (drift), sync, event log, money, units, overrides
+  features/
+    onboarding/ land/ labour/ expenses/ harvest/ sales/ prices/
+    history/ money/ inputs/ processing/ doctor/ templates/ settings/
+  l10n/           # app_ml.arb, app_en.arb
+supabase/migrations/
+test/             # unit tests for every rule in core/, widget tests per feature
+```
+
+Each feature folder: `data/` (drift tables, repositories), `domain/` (models, rules), `ui/` (screens, widgets).
+
+## Working agreements
+
+- Before a feature: read its section in `docs/screens.md`, then write the acceptance checks as tests first.
+- Calculations (wages, splits, harvest rate, profit) live in pure Dart functions in `domain/` with unit tests that match hand-worked examples in the docs.
+- Run `flutter analyze` and `flutter test` before saying a task is done.
+- Keep commits small and described by what changed for the farmer.
+- If a doc and the prototype disagree, the doc wins; if the doc is silent, ask rather than guess.
+- Do not add analytics, ads or third-party SDKs without asking.
+
+## Out of scope for phase 1
+
+Photo diagnosis model, voice entry, bill OCR, community feed, schemes, livestock, web dashboard. The admin template console is phase 1 but may start as seed SQL plus a minimal web page.
