@@ -30,5 +30,6 @@ MalayalamDate malayalamDateOf(DateTime date) {
       }
     }
   }
-  throw StateError('unreachable: Dhanu of the previous year always matches');
+  // Dhanu of the previous year always matches, so this never runs.
+  throw StateError('unreachable'); // gate: not user-facing
 }

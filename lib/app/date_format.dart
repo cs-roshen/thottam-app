@@ -7,7 +7,11 @@ import '../l10n/app_localizations.dart';
 String formatHomeDate(DateTime date, AppLocalizations l10n) {
   final m = malayalamDateOf(date);
   return l10n.homeDate(
-    DateFormat('EEEE, d MMMM', l10n.localeName).format(date),
+    DateFormat(
+      // gate: not user-facing
+      'EEEE, d MMMM',
+      l10n.localeName,
+    ).format(date),
     l10n.malayalamDate(l10n.malayalamMonth(m.month), m.day),
   );
 }

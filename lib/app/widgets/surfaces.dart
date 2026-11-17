@@ -39,7 +39,11 @@ class TintIconTile extends StatelessWidget {
     this.size = 48,
     this.label,
     this.onTap,
-  }) : assert(onTap == null || label != null, 'a tappable tile needs a label');
+  }) : assert(
+         onTap == null || label != null,
+         // gate: not user-facing
+         'tap needs label',
+       );
 
   final IconData icon;
   final Color background;
