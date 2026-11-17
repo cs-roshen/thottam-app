@@ -4,377 +4,816 @@
   "@appName": {
     "description": "App name, shown in the title bar and launcher."
   },
-  "absent": "ഇല്ല",
-  "actSub": "വേണ്ടാത്തവ ഓഫ് ചെയ്യാം",
-  "activities": "പണികൾ",
-  "add": "ചേർക്കുക",
-  "addExp": "ചെലവ്",
-  "addGroup": "ഗ്രൂപ്പ്",
-  "addHv": "വിളവെടുപ്പ്",
-  "addNamed": "പേരുള്ളയാൾ",
-  "addOwn": "സ്വന്തം ഇനം ചേർക്കുക",
-  "addPhoto": "ഫോട്ടോ",
-  "addPlot": "പുതിയ പ്ലോട്ട് ചേർക്കുക",
-  "addTask": "പണിയായി ചേർക്കുക",
-  "alert": "വില അറിയിപ്പ്",
-  "alertAt": "കടന്നാൽ അറിയിക്കും",
-  "amount": "തുക",
-  "area": "വിസ്തീർണ്ണം",
-  "areaUnits0": "സെന്റ്",
-  "areaUnits1": "ഏക്കർ",
-  "areaUnits2": "ഹെക്ടർ",
-  "askExpert": "വിദഗ്ധനോട് ചോദിക്കുക",
-  "back": "പിന്നോട്ട്",
-  "bigText": "വലിയ അക്ഷരം",
-  "bigTextSub": "എളുപ്പ മോഡ്",
-  "bill": "ബിൽ ഫോട്ടോ എടുക്കുക",
-  "bought": "വാങ്ങി",
-  "buyer": "വാങ്ങുന്നയാൾ",
-  "buyerNames0": "അങ്ങാടി കട",
-  "buyerNames1": "സൊസൈറ്റി",
-  "buyerNames2": "നേരിട്ട്",
-  "byCrop": "വിള തിരിച്ച്",
-  "cDues": "കൊടുക്കാനുള്ളത്",
-  "cPrice": "ഇന്നത്തെ വില",
-  "cProfit": "ലാഭം",
-  "cTasks": "ഇന്നത്തെ പണികൾ",
-  "cWeather": "കാലാവസ്ഥ",
-  "category": "ഇനം",
-  "cats0": "വളം",
-  "cats1": "കൂലി",
-  "cats2": "വിത്ത്",
-  "cats3": "യന്ത്രം",
-  "cats4": "ഗതാഗതം",
-  "change": "മാറ്റാം",
-  "chem0": "1% ബോർഡോ മിശ്രിതം തളിക്കുക",
-  "chem1": "ലേബലിലെ അളവ് മാത്രം ഉപയോഗിക്കുക",
-  "chemical": "രാസം",
-  "close": "അടയ്ക്കുക",
-  "cmFilters0": "എല്ലാം",
-  "cmFilters1": "കുരുമുളക്",
-  "cmFilters2": "തെങ്ങ്",
-  "cmFilters3": "റബ്ബർ",
-  "cmSub": "സാമ്പിൾ പോസ്റ്റുകൾ",
-  "cmTitle": "അനുഭവങ്ങൾ",
-  "conf": "സാധ്യത 86%",
-  "conv": "ഉണക്ക് അനുപാതം",
-  "costPer": "ഒരു യൂണിറ്റിന് കൂലി",
-  "cropNames0": "കുരുമുളക്",
-  "cropNames1": "റബ്ബർ",
-  "cropNames2": "തെങ്ങ്",
-  "dPart": "എവിടെയാണ് രോഗം?",
-  "dSave": "രോഗ രേഖ സേവ് ചെയ്യുക",
-  "dSaved": "രോഗ രേഖ സേവ് ചെയ്തു",
-  "dSentMsg": "ഫോട്ടോയും വിവരങ്ങളും വിദഗ്ധന് അയച്ചു. മറുപടി വരുമ്പോൾ അറിയിക്കും.",
-  "dSentToast": "വിദഗ്ധന് അയച്ചു",
-  "dSev": "എത്ര കടുപ്പം?",
-  "dSub": "കുരുമുളക് · വീട്ടുപറമ്പ്",
-  "date": "തിങ്കൾ, 16 നവംബർ · വൃശ്ചികം 1",
-  "dayNames0": "ഇന്ന്",
-  "dayNames1": "ഇന്നലെ",
-  "dayNames2": "12 നവംബർ",
-  "days30": "കഴിഞ്ഞ 30 ദിവസം",
-  "deduct": "ഗതാഗതം, തൂക്കം",
-  "details": "വിശദമായി",
-  "diag": "ദ്രുതവാട്ടം",
-  "docN0": "ആധാർ",
-  "docN1": "കരം അടച്ച രസീത്",
-  "docN2": "ബാങ്ക് പാസ്ബുക്ക്",
-  "docsWord": "വേണ്ട രേഖകൾ",
-  "doctorTitle": "വിള ഡോക്ടർ",
-  "done": "കഴിഞ്ഞു",
-  "due": "കൊടുക്കാനുള്ള കൂലി ₹4,300 · 2 പേർ",
-  "evS0": "വീട്ടുപറമ്പ്",
-  "evS1": "വീട്ടുപറമ്പ് · UPI",
-  "evS2": "മലയിലെ തോട്ടം",
-  "evS3": "അങ്ങാടി കട · ₹705 / kg",
-  "evS4": "കുരുമുളക് · വീട്ടുപറമ്പ്",
-  "evS5": "രാജൻ മാറ്റി · പഴയത് കാണാം",
-  "evT0": "3 പണിക്കാർ · തെങ്ങിന് വളമിടൽ",
-  "evT1": "വളം വാങ്ങി",
-  "evT2": "റബ്ബർ ഷീറ്റ് 42 kg",
-  "evT3": "കുരുമുളക് 50 kg വിറ്റു",
-  "evT4": "വിളവെടുപ്പ് ഗ്രൂപ്പ് · 6 പേർ",
-  "evT5": "കൂലി തിരുത്തി: ₹850 → ₹900",
-  "expTitle": "ചെലവ് ചേർക്കുക",
-  "expense": "ചെലവ്",
-  "exportPdf": "PDF ആയി എടുക്കുക",
-  "fNames0": "എല്ലാം",
-  "fNames1": "കൂലി",
-  "fNames2": "ചെലവ്",
-  "fNames3": "വിളവ്",
-  "fNames4": "വിൽപ്പന",
-  "fNames5": "തിരുത്തൽ",
-  "family": "കുടുംബ കൂലി ഉൾപ്പെടുത്തുക",
-  "familySub": "സ്വന്തം അധ്വാനത്തിന്റെ വില ₹12,000",
-  "farmName": "കൃഷിയിടത്തിന്റെ പേര്",
-  "finish": "തുടങ്ങാം",
-  "full": "മുഴുവൻ",
-  "fullHist": "മുഴുവൻ ചരിത്രം കാണുക",
-  "gClass0": "സാധാരണ പണി",
-  "gClass1": "കയറ്റക്കാർ",
-  "gDefault": "വിളവെടുപ്പ് ഗ്രൂപ്പ്",
-  "gHint": "പേരുകൾ വേണ്ട, എണ്ണം മതി. പിന്നീട് പേരും ലീഡറും ചേർക്കാം. ഗ്രൂപ്പിന്റെ പഴയ കണക്കുകൾ ചരിത്രത്തിൽ കാണാം.",
-  "gName": "ഗ്രൂപ്പിന്റെ പേര് (വേണമെങ്കിൽ)",
-  "gross": "ആകെ",
-  "group": "ഗ്രൂപ്പ് (എണ്ണം മാത്രം)",
-  "groupWord": "ഗ്രൂപ്പ്",
-  "half": "പകുതി",
-  "heads": "എത്ര പേർ",
-  "hello": "നമസ്കാരം, രാജൻ",
-  "hiSub": "എല്ലാ കണക്കും, എല്ലാ ദിവസവും",
-  "hiTitle": "ചരിത്രം",
-  "home": "ഹോം",
-  "homeCards": "ഹോം കാർഡുകൾ",
-  "hvLast": "കഴിഞ്ഞ തവണ: 110 kg · 6 പേർ · 12 നവംബർ",
-  "hvPrev": "കഴിഞ്ഞ തവണ 18.3",
-  "hvSplit": "ഓരോ ടീമിന്റെയും അളവ് രേഖപ്പെടുത്തുക",
-  "hvSplitSub": "വേണ്ടെങ്കിൽ ആകെ അളവ് മാത്രം മതി",
-  "hvSub": "കുരുമുളക് · വീട്ടുപറമ്പ്",
-  "hvTeams": "വിളവെടുത്തവർ",
-  "hvTitle": "വിളവെടുപ്പ്",
-  "hvTotal": "ആകെ അളവ്",
-  "hvWho": "വിളവെടുത്തവർ",
-  "hvWhoSub": "വിളവെടുപ്പ് ഗ്രൂപ്പ് · ₹800 വീതം",
-  "inSub": "സ്റ്റോക്കും ഉപയോഗവും",
-  "inTitle": "വളം / മരുന്ന്",
-  "income": "വരവ്",
-  "labourSub": "തെങ്ങിന് വളമിടൽ · വീട്ടുപറമ്പ്",
-  "labourTitle": "ഇന്നത്തെ ഹാജർ",
-  "land": "എന്റെ ഭൂമി",
-  "landSub": "3 പ്ലോട്ട് · 4 ഏക്കർ",
+  "navHome": "ഹോം",
+  "@navHome": {
+    "description": "Bottom navigation tab: Home."
+  },
+  "navLand": "എന്റെ ഭൂമി",
+  "@navLand": {
+    "description": "Bottom navigation tab: My land."
+  },
+  "navMoney": "കണക്ക്",
+  "@navMoney": {
+    "description": "Bottom navigation tab: Money."
+  },
+  "navMore": "കൂടുതൽ",
+  "@navMore": {
+    "description": "Bottom navigation tab: More."
+  },
+  "navMenu": "പ്രധാന മെനു",
+  "@navMenu": {
+    "description": "Screen reader label for the main menu."
+  },
+  "actionAdd": "ചേർക്കുക",
+  "@actionAdd": {
+    "description": "Centre add button and generic Add action."
+  },
+  "actionBack": "പിന്നോട്ട്",
+  "@actionBack": {
+    "description": "Back button label."
+  },
+  "actionClose": "അടയ്ക്കുക",
+  "@actionClose": {
+    "description": "Close button label."
+  },
+  "actionNext": "അടുത്തത്",
+  "@actionNext": {
+    "description": "Next button in multi-step forms."
+  },
+  "actionSave": "സേവ് ചെയ്യുക",
+  "@actionSave": {
+    "description": "Save button on entry forms."
+  },
+  "actionRemove": "നീക്കുക",
+  "@actionRemove": {
+    "description": "Remove an item, such as a harvest team."
+  },
+  "actionChange": "മാറ്റാം",
+  "@actionChange": {
+    "description": "Change a value or choice."
+  },
+  "actionView": "കാണുക",
+  "@actionView": {
+    "description": "Open a detail view."
+  },
+  "actionDetails": "വിശദമായി",
+  "@actionDetails": {
+    "description": "Show more details."
+  },
+  "actionShare": "പങ്കിടുക",
+  "@actionShare": {
+    "description": "Share action."
+  },
+  "actionPay": "കൊടുക്കുക",
+  "@actionPay": {
+    "description": "Pay wages or a due amount."
+  },
+  "actionExportPdf": "PDF ആയി എടുക്കുക",
+  "@actionExportPdf": {
+    "description": "Export the current report or history as PDF."
+  },
+  "actionResetDefault": "പഴയപടിയാക്കുക",
+  "@actionResetDefault": {
+    "description": "Reset a setting or list to its default."
+  },
+  "toastSaved": "സേവ് ചെയ്തു",
+  "@toastSaved": {
+    "description": "Toast after an entry is saved."
+  },
+  "toastResetDone": "പഴയപടിയാക്കി",
+  "@toastResetDone": {
+    "description": "Toast after a reset."
+  },
+  "toastReadyToShare": "പങ്കിടാൻ തയ്യാർ",
+  "@toastReadyToShare": {
+    "description": "Toast when a report is ready to share."
+  },
+  "stepperDecrease": "കുറയ്ക്കുക",
+  "@stepperDecrease": {
+    "description": "Screen reader label for the minus button on a stepper."
+  },
+  "stepperIncrease": "കൂട്ടുക",
+  "@stepperIncrease": {
+    "description": "Screen reader label for the plus button on a stepper."
+  },
+  "dayToday": "ഇന്ന്",
+  "@dayToday": {
+    "description": "Relative day: today."
+  },
+  "dayYesterday": "ഇന്നലെ",
+  "@dayYesterday": {
+    "description": "Relative day: yesterday."
+  },
+  "fieldName": "പേര്",
+  "@fieldName": {
+    "description": "Person's name field."
+  },
+  "fieldPhone": "ഫോൺ നമ്പർ",
+  "@fieldPhone": {
+    "description": "Phone number field."
+  },
+  "fieldAmount": "തുക",
+  "@fieldAmount": {
+    "description": "Amount field."
+  },
+  "fieldArea": "വിസ്തീർണ്ണം",
+  "@fieldArea": {
+    "description": "Area field."
+  },
+  "fieldCategory": "ഇനം",
+  "@fieldCategory": {
+    "description": "Expense category field."
+  },
+  "fieldQuantity": "അളവ്",
+  "@fieldQuantity": {
+    "description": "Quantity field."
+  },
+  "fieldQuantityInUnit": "അളവ് ({unit})",
+  "@fieldQuantityInUnit": {
+    "description": "Quantity field with its unit, e.g. Quantity (kg).",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldWagePerPerson": "കൂലി (₹ / ആൾ)",
+  "@fieldWagePerPerson": {
+    "description": "Wage per person field."
+  },
+  "fieldTotalWages": "ആകെ കൂലി",
+  "@fieldTotalWages": {
+    "description": "Total wages line."
+  },
+  "fieldPaymentMode": "പണം കൊടുത്ത രീതി",
+  "@fieldPaymentMode": {
+    "description": "Payment mode field."
+  },
+  "paymentCash": "പണം",
+  "@paymentCash": {
+    "description": "Payment mode: cash."
+  },
+  "paymentUpi": "UPI",
+  "@paymentUpi": {
+    "description": "Payment mode: UPI."
+  },
+  "paymentCredit": "കടം",
+  "@paymentCredit": {
+    "description": "Payment mode: credit (creates a payable)."
+  },
+  "tenureOwned": "സ്വന്തം",
+  "@tenureOwned": {
+    "description": "Land tenure: owned."
+  },
+  "tenureLeased": "പാട്ടം",
+  "@tenureLeased": {
+    "description": "Land tenure: leased."
+  },
+  "attendanceFull": "മുഴുവൻ",
+  "@attendanceFull": {
+    "description": "Attendance: full day."
+  },
+  "attendanceHalf": "പകുതി",
+  "@attendanceHalf": {
+    "description": "Attendance: half day."
+  },
+  "attendanceAbsent": "ഇല്ല",
+  "@attendanceAbsent": {
+    "description": "Attendance: absent."
+  },
+  "languageMalayalam": "മലയാളം",
+  "@languageMalayalam": {
+    "description": "Language choice: Malayalam. Always shown in Malayalam script."
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Language choice: English. Always shown in English."
+  },
+  "languageMixed": "മിക്സ് (മലയാളം + English)",
+  "@languageMixed": {
+    "description": "Language choice: Malayalam interface with names also in English."
+  },
+  "settingsTitle": "ക്രമീകരണം",
+  "@settingsTitle": {
+    "description": "Settings screen title."
+  },
+  "settingsLanguage": "ഭാഷ",
+  "@settingsLanguage": {
+    "description": "Language setting."
+  },
+  "settingsLargeText": "വലിയ അക്ഷരം",
+  "@settingsLargeText": {
+    "description": "Large-text switch."
+  },
+  "settingsLargeTextHint": "എളുപ്പ മോഡ്",
+  "@settingsLargeTextHint": {
+    "description": "Hint under the large-text switch."
+  },
+  "settingsPages": "പേജുകൾ",
+  "@settingsPages": {
+    "description": "Pages on or off setting."
+  },
+  "settingsPagesHint": "വേണ്ടവ മാത്രം ഓൺ ചെയ്യുക",
+  "@settingsPagesHint": {
+    "description": "Hint under the pages setting."
+  },
+  "settingsHomeCards": "ഹോം കാർഡുകൾ",
+  "@settingsHomeCards": {
+    "description": "Home cards on or off setting."
+  },
+  "moreSettingsHint": "പേജുകൾ, ഭാഷ, അക്ഷര വലുപ്പം",
+  "@moreSettingsHint": {
+    "description": "Hint on the Settings tile in More."
+  },
+  "morePageComingSoon": "ഈ പേജ് അടുത്ത ഘട്ടത്തിൽ വരും",
+  "@morePageComingSoon": {
+    "description": "Shown on a page that is not built yet."
+  },
+  "setupStepNameTitle": "നിങ്ങളെ പരിചയപ്പെടാം",
+  "@setupStepNameTitle": {
+    "description": "Set-up step 1 title."
+  },
+  "setupStepNameHint": "പേര് ശരിയാണോ എന്ന് നോക്കൂ; ഫോൺ നമ്പർ വേണമെങ്കിൽ മാത്രം",
+  "@setupStepNameHint": {
+    "description": "Set-up step 1 hint. The name comes from the Google account; phone is optional."
+  },
+  "setupStepFarmTitle": "ആദ്യത്തെ കൃഷിയിടം",
+  "@setupStepFarmTitle": {
+    "description": "Set-up step 2 title."
+  },
+  "setupStepFarmHint": "പിന്നീട് കൂടുതൽ പ്ലോട്ടുകൾ ചേർക്കാം",
+  "@setupStepFarmHint": {
+    "description": "Set-up step 2 hint."
+  },
+  "setupStepCropsTitle": "എന്തൊക്കെ കൃഷി ചെയ്യുന്നു?",
+  "@setupStepCropsTitle": {
+    "description": "Set-up step 3 title."
+  },
+  "setupStepCropsHint": "ഒന്നിലധികം തിരഞ്ഞെടുക്കാം",
+  "@setupStepCropsHint": {
+    "description": "Set-up step 3 hint."
+  },
+  "setupFarmName": "കൃഷിയിടത്തിന്റെ പേര്",
+  "@setupFarmName": {
+    "description": "Farm name field."
+  },
+  "setupFinish": "തുടങ്ങാം",
+  "@setupFinish": {
+    "description": "Finish set-up button."
+  },
+  "setupWelcomeDone": "സ്വാഗതം! കൃഷിയിടം തയ്യാർ",
+  "@setupWelcomeDone": {
+    "description": "Message after set-up finishes."
+  },
+  "homeDate": "{gregorian} · {malayalam}",
+  "@homeDate": {
+    "description": "Home date line: Gregorian date, then Malayalam calendar date. Both are formatted in code.",
+    "placeholders": {
+      "gregorian": {
+        "type": "String"
+      },
+      "malayalam": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreeting": "നമസ്കാരം, {name}",
+  "@homeGreeting": {
+    "description": "Greeting on Home with the farmer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCardWeather": "കാലാവസ്ഥ",
+  "@homeCardWeather": {
+    "description": "Home card title: weather."
+  },
+  "homeCardProfit": "ലാഭം",
+  "@homeCardProfit": {
+    "description": "Home card title: profit."
+  },
+  "homeCardPrice": "ഇന്നത്തെ വില",
+  "@homeCardPrice": {
+    "description": "Home card title: today's price."
+  },
+  "homeCardTasks": "ഇന്നത്തെ പണികൾ",
+  "@homeCardTasks": {
+    "description": "Home card title: today's tasks."
+  },
+  "homeCardDues": "കൊടുക്കാനുള്ളത്",
+  "@homeCardDues": {
+    "description": "Home card title: dues."
+  },
+  "homeSeasonProfit": "ഈ സീസൺ · ലാഭം",
+  "@homeSeasonProfit": {
+    "description": "Label on the season profit card."
+  },
+  "homeDuesSummary": "കൊടുക്കാനുള്ള കൂലി {amount} · {count} പേർ",
+  "@homeDuesSummary": {
+    "description": "Wages due line on Home: amount and number of workers.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeTasksDone": "{count} കഴിഞ്ഞു",
+  "@homeTasksDone": {
+    "description": "Count of tasks ticked today.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homePricesLink": "വിലകൾ",
+  "@homePricesLink": {
+    "description": "Link from Home to the prices screen."
+  },
+  "quickAddTitle": "എന്ത് ചേർക്കണം?",
+  "@quickAddTitle": {
+    "description": "Title of the quick add sheet."
+  },
+  "quickAddExpense": "ചെലവ്",
+  "@quickAddExpense": {
+    "description": "Quick add tile: expense."
+  },
+  "quickAddHarvest": "വിളവെടുപ്പ്",
+  "@quickAddHarvest": {
+    "description": "Quick add tile: harvest."
+  },
+  "quickAddSale": "വിൽപ്പന",
+  "@quickAddSale": {
+    "description": "Quick add tile: sale."
+  },
+  "quickAddNote": "കുറിപ്പ്",
+  "@quickAddNote": {
+    "description": "Quick add tile: note."
+  },
   "landTitle": "എന്റെ ഭൂമി",
-  "lang": "ഭാഷ",
-  "lastYear": "കഴിഞ്ഞ വർഷം ഈ ആഴ്ച",
-  "lastYearTxt": "തെങ്ങിന് വളമിട്ടു · 50 kg · ₹3,200",
-  "lease": "പാട്ടം",
-  "less": "കുറയ്ക്കുക",
-  "liSub": "ഓരോ വിളയ്ക്കും വേണ്ട ഇനങ്ങൾ",
-  "liTitle": "എന്റെ ലിസ്റ്റുകൾ",
-  "listening": "കേൾക്കുന്നു…",
-  "loss": "ഭാരക്കുറവ്",
-  "low": "കുറവ്",
-  "managePages": "പേജുകൾ, ഭാഷ, അക്ഷര വലുപ്പം",
-  "marketNames0": "കൊച്ചി",
-  "marketNames1": "കട്ടപ്പന",
-  "marketNames2": "കല്പറ്റ",
-  "menu": "പ്രധാന മെനു",
-  "mixed": "മിശ്രവിള",
-  "money": "കണക്ക്",
+  "@landTitle": {
+    "description": "My land screen title."
+  },
+  "landSummary": "{plots} പ്ലോട്ട് · {area}",
+  "@landSummary": {
+    "description": "Summary under My land: number of plots and total area (area formatted in code with its unit).",
+    "placeholders": {
+      "plots": {
+        "type": "int"
+      },
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "landAddPlot": "പുതിയ പ്ലോട്ട് ചേർക്കുക",
+  "@landAddPlot": {
+    "description": "Add plot button."
+  },
+  "landMixedCropTag": "മിശ്രവിള",
+  "@landMixedCropTag": {
+    "description": "Tag on a plot with more than one crop."
+  },
+  "plotSeasonCost": "ഈ സീസൺ ചെലവ്",
+  "@plotSeasonCost": {
+    "description": "Plot detail stat: season cost."
+  },
+  "plotCrops": "വിളകൾ",
+  "@plotCrops": {
+    "description": "Plot detail stat: crops."
+  },
+  "plotYield": "വിളവ്",
+  "@plotYield": {
+    "description": "Plot detail stat: yield."
+  },
+  "plotTabCrops": "വിളകൾ",
+  "@plotTabCrops": {
+    "description": "Plot detail tab: crops."
+  },
+  "plotTabCosts": "ചെലവ്",
+  "@plotTabCosts": {
+    "description": "Plot detail tab: costs."
+  },
+  "plotTabHistory": "ചരിത്രം",
+  "@plotTabHistory": {
+    "description": "Plot detail tab: history."
+  },
+  "plotFullHistory": "മുഴുവൻ ചരിത്രം കാണുക",
+  "@plotFullHistory": {
+    "description": "Link to the full history of a plot."
+  },
+  "labourTitle": "ഇന്നത്തെ ഹാജർ",
+  "@labourTitle": {
+    "description": "Labour screen title."
+  },
+  "labourContext": "{task} · {plot}",
+  "@labourContext": {
+    "description": "Context line on labour entry: task and plot.",
+    "placeholders": {
+      "task": {
+        "type": "String"
+      },
+      "plot": {
+        "type": "String"
+      }
+    }
+  },
+  "labourModeNamed": "പേരുള്ളവർ",
+  "@labourModeNamed": {
+    "description": "Labour mode: named workers."
+  },
+  "labourModeGroup": "ഗ്രൂപ്പ് (എണ്ണം മാത്രം)",
+  "@labourModeGroup": {
+    "description": "Labour mode: group by head count."
+  },
+  "labourSameAsYesterday": "ഇന്നലത്തെ പോലെ",
+  "@labourSameAsYesterday": {
+    "description": "Copy yesterday's attendance."
+  },
+  "labourGroupName": "ഗ്രൂപ്പിന്റെ പേര് (വേണമെങ്കിൽ)",
+  "@labourGroupName": {
+    "description": "Optional group name field."
+  },
+  "labourGroupHint": "പേരുകൾ വേണ്ട, എണ്ണം മതി. പിന്നീട് പേരും ലീഡറും ചേർക്കാം. ഗ്രൂപ്പിന്റെ പഴയ കണക്കുകൾ ചരിത്രത്തിൽ കാണാം.",
+  "@labourGroupHint": {
+    "description": "Hint on the group entry."
+  },
+  "labourHeadCount": "എത്ര പേർ",
+  "@labourHeadCount": {
+    "description": "Head count field."
+  },
+  "labourRatePerDay": "{rate} / ദിവസം",
+  "@labourRatePerDay": {
+    "description": "Rate per day; rate formatted in code.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "expenseTitle": "ചെലവ് ചേർക്കുക",
+  "@expenseTitle": {
+    "description": "Add expense screen title."
+  },
+  "expenseSplit": "വിളകൾക്ക് വിഭജനം",
+  "@expenseSplit": {
+    "description": "Split across crops section."
+  },
+  "expenseSplitEdit": "സ്വയം മാറ്റാം",
+  "@expenseSplitEdit": {
+    "description": "Edit the split by hand."
+  },
+  "harvestTitle": "വിളവെടുപ്പ്",
+  "@harvestTitle": {
+    "description": "Harvest screen title."
+  },
+  "entryContext": "{crop} · {plot}",
+  "@entryContext": {
+    "description": "Context line on an entry: crop and plot.",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "plot": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestLastTime": "കഴിഞ്ഞ തവണ: {quantity} · {people} പേർ · {date}",
+  "@harvestLastTime": {
+    "description": "Last time banner on harvest: quantity with unit, people, date (formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "people": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestPreviousValue": "കഴിഞ്ഞ തവണ {value}",
+  "@harvestPreviousValue": {
+    "description": "Previous value hint beside a harvest figure.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestTotalQuantity": "ആകെ അളവ്",
+  "@harvestTotalQuantity": {
+    "description": "Total quantity field."
+  },
+  "harvestPerTeamQuantity": "ഓരോ ടീമിന്റെയും അളവ് രേഖപ്പെടുത്തുക",
+  "@harvestPerTeamQuantity": {
+    "description": "Switch: log quantity for each team."
+  },
+  "harvestPerTeamQuantityHint": "വേണ്ടെങ്കിൽ ആകെ അളവ് മാത്രം മതി",
+  "@harvestPerTeamQuantityHint": {
+    "description": "Hint under the per-team quantity switch."
+  },
+  "harvestTeams": "വിളവെടുത്തവർ",
+  "@harvestTeams": {
+    "description": "Section title for harvest teams."
+  },
+  "harvestTeamSummary": "{team} · {rate} വീതം",
+  "@harvestTeamSummary": {
+    "description": "Team line: team name and rate each.",
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestAddGroup": "ഗ്രൂപ്പ്",
+  "@harvestAddGroup": {
+    "description": "Add a group team."
+  },
+  "harvestAddNamedWorker": "പേരുള്ളയാൾ",
+  "@harvestAddNamedWorker": {
+    "description": "Add a named worker team."
+  },
+  "harvestPerPersonPerDay": "ഒരാൾ ഒരു ദിവസം",
+  "@harvestPerPersonPerDay": {
+    "description": "Summary: quantity per person per day."
+  },
+  "harvestLabourCostPerUnit": "ഒരു യൂണിറ്റിന് കൂലി",
+  "@harvestLabourCostPerUnit": {
+    "description": "Summary: labour cost per unit."
+  },
+  "harvestSellNow": "ഇപ്പോൾ വിൽക്കുക",
+  "@harvestSellNow": {
+    "description": "Open selling after saving a harvest."
+  },
+  "teamTagGroup": "ഗ്രൂപ്പ്",
+  "@teamTagGroup": {
+    "description": "Tag on a group team."
+  },
+  "teamTagNamed": "പേരുള്ളയാൾ",
+  "@teamTagNamed": {
+    "description": "Tag on a named worker team."
+  },
+  "saleTitle": "വിൽക്കുക",
+  "@saleTitle": {
+    "description": "Sell screen title."
+  },
+  "saleStockContext": "{crop} · സ്റ്റോക്ക് {quantity}",
+  "@saleStockContext": {
+    "description": "Context line on sell: crop and stock (formatted in code with unit).",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "saleTodayPrice": "ഇന്നത്തെ വില {rate} / {unit}",
+  "@saleTodayPrice": {
+    "description": "Today's price banner: rate and unit.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleRatePerUnit": "വില (₹ / {unit})",
+  "@saleRatePerUnit": {
+    "description": "Rate field with unit.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleBuyer": "വാങ്ങുന്നയാൾ",
+  "@saleBuyer": {
+    "description": "Buyer field."
+  },
+  "saleGross": "ആകെ",
+  "@saleGross": {
+    "description": "Gross amount line."
+  },
+  "saleNet": "കൈയിൽ കിട്ടുന്നത്",
+  "@saleNet": {
+    "description": "Net amount line (after deductions)."
+  },
+  "saleProfitPerUnit": "{unit} ഒന്നിന് ലാഭം",
+  "@saleProfitPerUnit": {
+    "description": "Profit per sale unit, before saving.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleYourCost": "നിങ്ങളുടെ ചെലവ്",
+  "@saleYourCost": {
+    "description": "Lot cost label beside the rate."
+  },
+  "saleSave": "വിൽപ്പന സേവ് ചെയ്യുക",
+  "@saleSave": {
+    "description": "Save sale button."
+  },
+  "pricesTitle": "ഇന്നത്തെ വില",
+  "@pricesTitle": {
+    "description": "Prices screen title."
+  },
+  "pricesSubtitle": "ഓരോ വിലയ്ക്കും ഉറവിടവും സമയവും",
+  "@pricesSubtitle": {
+    "description": "Prices screen subtitle."
+  },
+  "pricesSource": "{source} · {time}",
+  "@pricesSource": {
+    "description": "Source and time of a price (time formatted in code).",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesLast30Days": "കഴിഞ്ഞ 30 ദിവസം",
+  "@pricesLast30Days": {
+    "description": "Chart range: last 30 days."
+  },
+  "pricesNoChange": "മാറ്റമില്ല",
+  "@pricesNoChange": {
+    "description": "Price change chip: no change."
+  },
+  "pricesAlert": "വില അറിയിപ്പ്",
+  "@pricesAlert": {
+    "description": "Price alert switch."
+  },
+  "pricesAlertThreshold": "കടന്നാൽ അറിയിക്കും",
+  "@pricesAlertThreshold": {
+    "description": "Price alert threshold field."
+  },
+  "historyTitle": "ചരിത്രം",
+  "@historyTitle": {
+    "description": "History screen title."
+  },
+  "historySubtitle": "എല്ലാ കണക്കും, എല്ലാ ദിവസവും",
+  "@historySubtitle": {
+    "description": "History screen subtitle."
+  },
+  "historyLastYear": "കഴിഞ്ഞ വർഷം ഈ ആഴ്ച",
+  "@historyLastYear": {
+    "description": "This week last year card title."
+  },
+  "historyFilterAll": "എല്ലാം",
+  "@historyFilterAll": {
+    "description": "History filter: all."
+  },
+  "historyFilterLabour": "കൂലി",
+  "@historyFilterLabour": {
+    "description": "History filter: labour."
+  },
+  "historyFilterExpense": "ചെലവ്",
+  "@historyFilterExpense": {
+    "description": "History filter: expense."
+  },
+  "historyFilterHarvest": "വിളവ്",
+  "@historyFilterHarvest": {
+    "description": "History filter: harvest."
+  },
+  "historyFilterSales": "വിൽപ്പന",
+  "@historyFilterSales": {
+    "description": "History filter: sales."
+  },
+  "historyFilterEdits": "തിരുത്തൽ",
+  "@historyFilterEdits": {
+    "description": "History filter: edits."
+  },
+  "historyEditChange": "{field} തിരുത്തി: {oldValue} → {newValue}",
+  "@historyEditChange": {
+    "description": "Edit event: field, old value and new value (values formatted in code).",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      },
+      "oldValue": {
+        "type": "String"
+      },
+      "newValue": {
+        "type": "String"
+      }
+    }
+  },
+  "historyEditedBy": "{name} മാറ്റി · പഴയത് കാണാം",
+  "@historyEditedBy": {
+    "description": "Who changed an entry; the old value stays in history.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "moneyTitle": "ലാഭ നഷ്ടം",
-  "more": "കൂടുതൽ",
-  "moreN": "കൂട്ടുക",
-  "movedStock": "സ്റ്റോക്കിൽ ചേർത്തു",
-  "named": "പേരുള്ളവർ",
-  "net": "കൈയിൽ കിട്ടുന്നത്",
-  "next": "അടുത്തത്",
-  "note": "കുറിപ്പ്",
-  "obCrops0": "തെങ്ങ്",
-  "obCrops1": "കുരുമുളക്",
-  "obCrops2": "റബ്ബർ",
-  "obCrops3": "വാഴ",
-  "obCrops4": "നെല്ല്",
-  "obCrops5": "കവുങ്ങ്",
-  "obCrops6": "ഏലം",
-  "obCrops7": "പച്ചക്കറി",
-  "obSubs0": "പേരും ഫോൺ നമ്പറും മതി",
-  "obSubs1": "പിന്നീട് കൂടുതൽ പ്ലോട്ടുകൾ ചേർക്കാം",
-  "obSubs2": "ഒന്നിലധികം തിരഞ്ഞെടുക്കാം",
-  "obTitles0": "നിങ്ങളെ പരിചയപ്പെടാം",
-  "obTitles1": "ആദ്യത്തെ കൃഷിയിടം",
-  "obTitles2": "എന്തൊക്കെ കൃഷി ചെയ്യുന്നു?",
-  "org0": "നീർവാർച്ച ഉറപ്പാക്കുക",
-  "org1": "ട്രൈക്കോഡെർമ ചേർത്ത വേപ്പിൻപിണ്ണാക്ക് ചുവട്ടിൽ ഇടുക",
-  "org2": "രോഗം വന്ന വള്ളികൾ നീക്കം ചെയ്യുക",
-  "organic": "ജൈവം",
-  "other": "മറ്റുള്ളവ",
-  "own": "സ്വന്തം",
-  "pages": "പേജുകൾ",
-  "pagesSub": "വേണ്ടവ മാത്രം ഓൺ ചെയ്യുക",
-  "parts0": "ഇല",
-  "parts1": "തണ്ട്",
-  "parts2": "വേര്",
-  "parts3": "കായ",
-  "pay": "കൊടുക്കുക",
-  "payBy": "പണം കൊടുത്ത രീതി",
-  "pays0": "പണം",
-  "pays1": "UPI",
-  "pays2": "കടം",
-  "pcCost": "സംസ്കരണ ചെലവ് ₹1,200",
-  "pcIn": "പച്ച കുരുമുളക് 100 kg",
-  "pcOut": "ഉണക്കിയ അളവ് (kg)",
-  "pcSub": "കുരുമുളക് · ലോട്ട് നവംബർ",
-  "pcTitle": "സംസ്കരണം",
-  "people": "പേർ",
-  "perDay": " / ദിവസം",
-  "perHead": "ഒരാൾ ഒരു ദിവസം",
-  "person": "ആൾ",
-  "phone": "ഫോൺ നമ്പർ",
-  "photo": "ഫോട്ടോ",
-  "photoPh": "കുരുമുളക് ഇലയുടെ ഫോട്ടോ",
-  "plotHist0": "ഇന്ന് · വളമിടൽ · 3 പണിക്കാർ",
-  "plotHist1": "12 നവംബർ · വിളവെടുപ്പ് · 110 kg",
-  "plotHist2": "2 നവംബർ · ബോർഡോ മിശ്രിതം തളിച്ചു",
-  "plots0Area": "50 സെന്റ്",
-  "plots0Crops0": "തെങ്ങ് 60",
-  "plots0Crops1": "കുരുമുളക് 120",
-  "plots0Crops2": "വാഴ 40",
-  "plots0Name": "വീട്ടുപറമ്പ്",
-  "plots0Next": "അടുത്തത്: വളമിടൽ · ഇന്ന്",
-  "plots1Area": "2.5 ഏക്കർ",
-  "plots1Crops0": "റബ്ബർ 450",
-  "plots1Name": "മലയിലെ തോട്ടം",
-  "plots1Next": "അടുത്തത്: ടാപ്പിംഗ് · നാളെ",
-  "plots2Area": "1 ഏക്കർ",
-  "plots2Crops0": "നെല്ല് · മുണ്ടകൻ",
-  "plots2Name": "പാടം",
-  "plots2Next": "അടുത്തത്: കള പറിക്കൽ · 3 ദിവസം",
-  "postA0": "ലാഭം ₹61,000",
-  "postA1": "ചെലവ് 20% കുറവ്",
-  "postA2": "ടാപ്പിംഗ് +28 ദിവസം",
-  "postB0": "50 സെന്റ്",
-  "postB1": "60 തെങ്ങ്",
-  "postB2": "2.5 ഏക്കർ",
-  "postT0": "ഇടവിളയായി കുരുമുളക്: 50 സെന്റിൽ നല്ല വരുമാനം",
-  "postT1": "തെങ്ങിന് ജൈവവളം: ചെലവ് കുറഞ്ഞു",
-  "postT2": "റെയിൻ ഗാർഡ് ഇട്ടു, ടാപ്പിംഗ് ദിവസം കൂടി",
-  "postWho0": "കർഷകൻ · ഇടുക്കി",
-  "postWho1": "കർഷക · തൃശ്ശൂർ",
-  "postWho2": "കർഷകൻ · കോട്ടയം",
-  "prSub": "സാമ്പിൾ വിലകൾ · ഓരോന്നിനും ഉറവിടവും സമയവും",
-  "prTitle": "ഇന്നത്തെ വില",
-  "priceNames0": "കുരുമുളക്",
-  "priceNames1": "റബ്ബർ RSS-4",
-  "priceNames2": "ഏലം",
-  "priceNames3": "തേങ്ങ",
-  "priceSrc": "കൊച്ചി · ഇന്ന് 10:30 · സാമ്പിൾ",
-  "priceSrcs0": "കൊച്ചി · 10:30",
-  "priceSrcs1": "കോട്ടയം · 11:00",
-  "priceSrcs2": "ലേലം · ഇന്നലെ",
-  "priceSrcs3": "ആലപ്പുഴ · 9:15",
-  "procNames0": "മെതിക്കൽ",
-  "procNames1": "ഉണക്കൽ",
-  "procNames2": "വൃത്തിയാക്കൽ",
-  "procNames3": "ചാക്കിലാക്കൽ",
-  "profit": "ലാഭം",
-  "profitKg": "ഒരു കിലോയ്ക്ക് ലാഭം",
-  "psCost": "ഈ സീസൺ ചെലവ്",
-  "psCrops": "വിളകൾ",
-  "psYield": "വിളവ്",
-  "ptCosts": "ചെലവ്",
-  "ptCrops": "വിളകൾ",
-  "ptHist": "ചരിത്രം",
-  "qty": "അളവ്",
-  "qtyKg": "അളവ് (kg)",
-  "rain": "ഉച്ചയ്ക്ക് ശേഷം മഴ · 28°C",
-  "rainTip": "ഇന്ന് മരുന്ന് തളിക്കൽ ഒഴിവാക്കുക",
-  "rateKg": "വില (₹ / kg)",
-  "ratePer": "കൂലി (₹ / ആൾ)",
-  "remedy": "പ്രതിവിധി",
-  "remove": "നീക്കുക",
-  "reset": "പഴയപടിയാക്കുക",
-  "resetDone": "പഴയപടിയാക്കി",
-  "safeS": "കുരുമുളക് · മരുന്ന് തളിച്ചിട്ട് 3 ദിവസം",
-  "safeT": "വിളവെടുക്കാൻ 12 ദിവസം കൂടി",
-  "sale": "വിൽപ്പന",
-  "same": "മാറ്റമില്ല",
-  "sameY": "ഇന്നലത്തെ പോലെ",
-  "save": "സേവ് ചെയ്യുക",
-  "saved": "സേവ് ചെയ്തു",
-  "scSub": "സാമ്പിൾ വിവരം · ഔദ്യോഗിക സൈറ്റിൽ ഉറപ്പാക്കുക",
-  "scTitle": "പദ്ധതികൾ",
-  "schemeN0": "PM-KISAN",
-  "schemeN1": "വിള ഇൻഷുറൻസ്",
-  "schemeN2": "കാർഷിക യന്ത്ര സബ്സിഡി",
-  "schemeS0": "അടുത്ത ഗഡു വിവരം നോക്കുക",
-  "schemeS1": "പ്രീമിയം തീയതി ഓർമ്മിപ്പിക്കും",
-  "schemeS2": "അപേക്ഷ തയ്യാറാക്കുക",
-  "schemeSt0": "ലഭിക്കുന്നു",
-  "schemeSt1": "പുതുക്കണം",
-  "schemeSt2": "യോഗ്യത നോക്കുക",
-  "season": "ഈ സീസൺ · എല്ലാ പ്ലോട്ടും",
-  "seasonProfit": "ഈ സീസൺ · ലാഭം",
-  "seePrices": "വിലകൾ",
-  "sellNow": "ഇപ്പോൾ വിൽക്കുക",
-  "sendExpert": "വിദഗ്ധന് അയക്കുക",
-  "settings": "ക്രമീകരണം",
-  "sevs0": "കുറവ്",
-  "sevs1": "ഇടത്തരം",
-  "sevs2": "കൂടുതൽ",
-  "share": "റിപ്പോർട്ട് പങ്കിടുക",
-  "shareMine": "എന്റെ സീസൺ പങ്കിടുക",
-  "shareWord": "പങ്കിടുക",
-  "shared": "റിപ്പോർട്ട് തയ്യാർ",
-  "sharedToast": "പങ്കിടാൻ തയ്യാർ",
-  "slSave": "വിൽപ്പന സേവ് ചെയ്യുക",
-  "slSub": "കുരുമുളക് · സ്റ്റോക്ക് 80 kg",
-  "slTitle": "വിൽക്കുക",
-  "slToday": "ഇന്നത്തെ വില ₹705 / kg",
-  "soil": "മണ്ണ് പരിശോധന · pH 5.6 · 14 മാസം മുമ്പ്",
-  "soilBtn": "പുതിയത്",
-  "soon": "ഈ പേജ് അടുത്ത ഘട്ടത്തിൽ വരും",
-  "split": "വിളകൾക്ക് വിഭജനം",
-  "splitHint": "സ്വയം മാറ്റാം",
-  "splitNames0": "തെങ്ങ്",
-  "splitNames1": "കുരുമുളക്",
-  "splitNames2": "വാഴ",
-  "step": "ഘട്ടം",
-  "stepsDone": "ഘട്ടം കഴിഞ്ഞു",
-  "stock": "സ്റ്റോക്ക്",
-  "stockNames0": "യൂറിയ",
-  "stockNames1": "പൊട്ടാഷ്",
-  "stockNames2": "വേപ്പിൻപിണ്ണാക്ക്",
-  "stockNames3": "ബോർഡോ മിശ്രിതം",
-  "suggest": "പ്രതിവിധി കാണുക",
-  "tagGroup": "ഗ്രൂപ്പ്",
-  "tagNamed": "പേരുള്ളയാൾ",
-  "taskAdded": "പണി ചേർത്തു",
-  "taskS0": "മലയിലെ തോട്ടം",
-  "taskS1": "വീട്ടുപറമ്പ് · 3 പണിക്കാർ",
-  "taskS2": "മഴ കാരണം നാളത്തേക്ക് മാറ്റാം",
-  "taskT0": "റബ്ബർ ടാപ്പിംഗ്",
-  "taskT1": "തെങ്ങിന് വളമിടൽ",
-  "taskT2": "കുരുമുളകിന് ബോർഡോ മിശ്രിതം",
-  "tasks": "ഇന്നത്തെ പണികൾ",
-  "toStock": "സ്റ്റോക്കിലേക്ക് മാറ്റുക",
-  "todayPrice": "ഇന്നത്തെ വില",
-  "totalWage": "ആകെ കൂലി",
-  "tplActs0x0": "വള്ളി കെട്ടൽ",
-  "tplActs0x1": "തണൽ ക്രമീകരണം",
-  "tplActs0x2": "പുതയിടൽ",
-  "tplActs0x3": "ബോർഡോ തളിക്കൽ",
-  "tplActs0x4": "വിളവെടുപ്പ്",
-  "tplActs0x5": "ഉണക്കൽ",
-  "tplActs1x0": "തടം തുറക്കൽ",
-  "tplActs1x1": "വളമിടൽ",
-  "tplActs1x2": "നനയ്ക്കൽ",
-  "tplActs1x3": "തെങ്ങ് കയറ്റം",
-  "tplActs1x4": "കൊപ്ര ഉണക്കൽ",
-  "tplActs2x0": "ടാപ്പിംഗ്",
-  "tplActs2x1": "ഷീറ്റ് അടിക്കൽ",
-  "tplActs2x2": "പുകയ്ക്കൽ",
-  "tplActs2x3": "റെയിൻ ഗാർഡ്",
-  "tplActs2x4": "കള വെട്ടൽ",
-  "tplNames0": "കുരുമുളക്",
-  "tplNames1": "തെങ്ങ്",
-  "tplNames2": "റബ്ബർ",
-  "tplUpdate": "പുതിയ ഇനങ്ങൾ ലഭ്യമാണ്. നിങ്ങളുടെ മാറ്റങ്ങൾ മായില്ല.",
-  "unitNames0": "kg",
-  "unitNames1": "ക്വിന്റൽ",
-  "unitNames2": "എണ്ണം",
-  "used": "ഉപയോഗിച്ചു",
-  "useful": "ഉപകാരപ്രദം",
-  "view": "കാണുക",
-  "voice": "പറഞ്ഞ് ചേർക്കാം",
-  "voiceEg": "\"ഇന്ന് മൂന്ന് പണിക്കാർ, 900 രൂപ വീതം\"",
-  "wageWord": "കൂലി",
-  "welcome": "സ്വാഗതം! കൃഷിയിടം തയ്യാർ",
-  "what": "എന്ത് ചേർക്കണം?",
-  "workers0": "സുരേഷ്",
-  "workers1": "മണി",
-  "workers2": "ലീല",
-  "workers3": "ബാബു",
-  "wrong": "ശരിയല്ലേ? തിരുത്തുക",
-  "yourCost": "നിങ്ങളുടെ ചെലവ്",
-  "yourName": "പേര്"
+  "@moneyTitle": {
+    "description": "Profit and loss screen title."
+  },
+  "moneyIncome": "വരവ്",
+  "@moneyIncome": {
+    "description": "Income label."
+  },
+  "moneyExpense": "ചെലവ്",
+  "@moneyExpense": {
+    "description": "Expense label."
+  },
+  "moneyProfit": "ലാഭം",
+  "@moneyProfit": {
+    "description": "Profit label."
+  },
+  "moneyByCrop": "വിള തിരിച്ച്",
+  "@moneyByCrop": {
+    "description": "By crop section."
+  },
+  "moneySeasonAllPlots": "ഈ സീസൺ · എല്ലാ പ്ലോട്ടും",
+  "@moneySeasonAllPlots": {
+    "description": "Scope line: this season, all plots."
+  },
+  "moneyIncludeFamilyLabour": "കുടുംബ കൂലി ഉൾപ്പെടുത്തുക",
+  "@moneyIncludeFamilyLabour": {
+    "description": "Switch to include family labour."
+  },
+  "moneyFamilyLabourValue": "സ്വന്തം അധ്വാനത്തിന്റെ വില {amount}",
+  "@moneyFamilyLabourValue": {
+    "description": "Value of family labour (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyShareReport": "റിപ്പോർട്ട് പങ്കിടുക",
+  "@moneyShareReport": {
+    "description": "Share report button."
+  },
+  "moneyReportReady": "റിപ്പോർട്ട് തയ്യാർ",
+  "@moneyReportReady": {
+    "description": "Report ready message."
+  },
+  "myListsTitle": "എന്റെ ലിസ്റ്റുകൾ",
+  "@myListsTitle": {
+    "description": "My lists screen title."
+  },
+  "myListsSubtitle": "ഓരോ വിളയ്ക്കും വേണ്ട ഇനങ്ങൾ",
+  "@myListsSubtitle": {
+    "description": "My lists subtitle."
+  },
+  "myListsActivities": "പണികൾ",
+  "@myListsActivities": {
+    "description": "Activities list title."
+  },
+  "myListsActivitiesHint": "വേണ്ടാത്തവ ഓഫ് ചെയ്യാം",
+  "@myListsActivitiesHint": {
+    "description": "Hint under the activity list."
+  },
+  "myListsAddOwn": "സ്വന്തം ഇനം ചേർക്കുക",
+  "@myListsAddOwn": {
+    "description": "Add own item."
+  },
+  "myListsUpdateAvailable": "പുതിയ ഇനങ്ങൾ ലഭ്യമാണ്. നിങ്ങളുടെ മാറ്റങ്ങൾ മായില്ല.",
+  "@myListsUpdateAvailable": {
+    "description": "Banner when an admin template update is available."
+  },
+  "malayalamMonth": "{month, select, chingam{ചിങ്ങം} kanni{കന്നി} thulam{തുലാം} vrischikam{വൃശ്ചികം} dhanu{ധനു} makaram{മകരം} kumbham{കുംഭം} meenam{മീനം} medam{മേടം} edavam{ഇടവം} mithunam{മിഥുനം} karkidakam{കർക്കിടകം} other{}}",
+  "@malayalamMonth": {
+    "description": "Malayalam calendar month name, selected by its English key.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "malayalamDate": "{month} {day}",
+  "@malayalamDate": {
+    "description": "Malayalam calendar date: month name and day.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  }
 }

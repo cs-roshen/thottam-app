@@ -1,377 +1,819 @@
 {
   "@@locale": "en",
   "appName": "Thottam",
-  "absent": "Absent",
-  "actSub": "Turn off what you don’t use",
-  "activities": "Activities",
-  "add": "Add",
-  "addExp": "Expense",
-  "addGroup": "Group",
-  "addHv": "Harvest",
-  "addNamed": "Named worker",
-  "addOwn": "Add your own item",
-  "addPhoto": "Photo",
-  "addPlot": "Add a plot",
-  "addTask": "Add as task",
-  "alert": "Price alert",
-  "alertAt": "Notify when above",
-  "amount": "Amount",
-  "area": "Area",
-  "areaUnits0": "cents",
-  "areaUnits1": "acres",
-  "areaUnits2": "hectares",
-  "askExpert": "Ask an expert",
-  "back": "Back",
-  "bigText": "Large text",
-  "bigTextSub": "Easy mode",
-  "bill": "Scan a bill",
-  "bought": "bought",
-  "buyer": "Buyer",
-  "buyerNames0": "Local trader",
-  "buyerNames1": "Society",
-  "buyerNames2": "Direct",
-  "byCrop": "By crop",
-  "cDues": "Dues",
-  "cPrice": "Today’s price",
-  "cProfit": "Profit",
-  "cTasks": "Today’s tasks",
-  "cWeather": "Weather",
-  "category": "Category",
-  "cats0": "Fertiliser",
-  "cats1": "Wages",
-  "cats2": "Seeds",
-  "cats3": "Machinery",
-  "cats4": "Transport",
-  "change": "Change",
-  "chem0": "Spray 1% Bordeaux mixture",
-  "chem1": "Use only the dose on the label",
-  "chemical": "Chemical",
-  "close": "Close",
-  "cmFilters0": "All",
-  "cmFilters1": "Pepper",
-  "cmFilters2": "Coconut",
-  "cmFilters3": "Rubber",
-  "cmSub": "Sample posts",
-  "cmTitle": "Community",
-  "conf": "86% likely",
-  "conv": "Drying ratio",
-  "costPer": "Labour cost per unit",
-  "cropNames0": "Pepper",
-  "cropNames1": "Rubber",
-  "cropNames2": "Coconut",
-  "dPart": "Where is the problem?",
-  "dSave": "Save disease record",
-  "dSaved": "Disease record saved",
-  "dSentMsg": "Photos and details sent to the expert. You will be notified when they reply.",
-  "dSentToast": "Sent to expert",
-  "dSev": "How severe?",
-  "dSub": "Pepper · Home plot",
-  "date": "Monday, 16 November",
-  "dayNames0": "Today",
-  "dayNames1": "Yesterday",
-  "dayNames2": "12 November",
-  "days30": "Last 30 days",
-  "deduct": "Transport, weighing",
-  "details": "Details",
-  "diag": "Quick wilt (foot rot)",
-  "docN0": "Aadhaar",
-  "docN1": "Land tax receipt",
-  "docN2": "Bank passbook",
-  "docsWord": "Documents needed",
-  "doctorTitle": "Crop doctor",
-  "done": "done",
-  "due": "Wages due ₹4,300 · 2 workers",
-  "evS0": "Home plot",
-  "evS1": "Home plot · UPI",
-  "evS2": "Hill estate",
-  "evS3": "Local trader · ₹705 / kg",
-  "evS4": "Pepper · Home plot",
-  "evS5": "Changed by Rajan · old value kept",
-  "evT0": "3 workers · fertilising coconut",
-  "evT1": "Bought fertiliser",
-  "evT2": "Rubber sheet 42 kg",
-  "evT3": "Sold pepper 50 kg",
-  "evT4": "Harvest gang · 6 people",
-  "evT5": "Wage corrected: ₹850 → ₹900",
-  "expTitle": "Add expense",
-  "expense": "Expense",
-  "exportPdf": "Export as PDF",
-  "fNames0": "All",
-  "fNames1": "Labour",
-  "fNames2": "Expense",
-  "fNames3": "Harvest",
-  "fNames4": "Sales",
-  "fNames5": "Edits",
-  "family": "Include family labour",
-  "familySub": "Value of own work ₹12,000",
-  "farmName": "Farm name",
-  "finish": "Get started",
-  "full": "Full",
-  "fullHist": "See full history",
-  "gClass0": "General work",
-  "gClass1": "Climbers",
-  "gDefault": "Harvest gang",
-  "gHint": "No names needed, just the count. You can add names and a leader later. The group keeps its own history.",
-  "gName": "Group name (optional)",
-  "gross": "Gross",
-  "group": "Group (head count)",
-  "groupWord": "Group",
-  "half": "Half",
-  "heads": "How many",
-  "hello": "Hello, Rajan",
-  "hiSub": "Every record, every day",
-  "hiTitle": "History",
-  "home": "Home",
-  "homeCards": "Home cards",
-  "hvLast": "Last time: 110 kg · 6 people · 12 November",
-  "hvPrev": "Last time 18.3",
-  "hvSplit": "Log quantity for each team",
-  "hvSplitSub": "Optional: the total alone is enough",
-  "hvSub": "Pepper · Home plot",
-  "hvTeams": "Harvested by",
-  "hvTitle": "Harvest",
-  "hvTotal": "Total quantity",
-  "hvWho": "Harvested by",
-  "hvWhoSub": "Harvest gang · ₹800 each",
-  "inSub": "Stock and use",
-  "inTitle": "Inputs",
-  "income": "Income",
-  "labourSub": "Fertilising coconut · Home plot",
-  "labourTitle": "Today’s attendance",
-  "land": "My land",
-  "landSub": "3 plots · 4 acres",
+  "@appName": {
+    "description": "App name, shown in the title bar and launcher."
+  },
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Bottom navigation tab: Home."
+  },
+  "navLand": "My land",
+  "@navLand": {
+    "description": "Bottom navigation tab: My land."
+  },
+  "navMoney": "Money",
+  "@navMoney": {
+    "description": "Bottom navigation tab: Money."
+  },
+  "navMore": "More",
+  "@navMore": {
+    "description": "Bottom navigation tab: More."
+  },
+  "navMenu": "Main menu",
+  "@navMenu": {
+    "description": "Screen reader label for the main menu."
+  },
+  "actionAdd": "Add",
+  "@actionAdd": {
+    "description": "Centre add button and generic Add action."
+  },
+  "actionBack": "Back",
+  "@actionBack": {
+    "description": "Back button label."
+  },
+  "actionClose": "Close",
+  "@actionClose": {
+    "description": "Close button label."
+  },
+  "actionNext": "Next",
+  "@actionNext": {
+    "description": "Next button in multi-step forms."
+  },
+  "actionSave": "Save",
+  "@actionSave": {
+    "description": "Save button on entry forms."
+  },
+  "actionRemove": "Remove",
+  "@actionRemove": {
+    "description": "Remove an item, such as a harvest team."
+  },
+  "actionChange": "Change",
+  "@actionChange": {
+    "description": "Change a value or choice."
+  },
+  "actionView": "View",
+  "@actionView": {
+    "description": "Open a detail view."
+  },
+  "actionDetails": "Details",
+  "@actionDetails": {
+    "description": "Show more details."
+  },
+  "actionShare": "Share",
+  "@actionShare": {
+    "description": "Share action."
+  },
+  "actionPay": "Pay",
+  "@actionPay": {
+    "description": "Pay wages or a due amount."
+  },
+  "actionExportPdf": "Export as PDF",
+  "@actionExportPdf": {
+    "description": "Export the current report or history as PDF."
+  },
+  "actionResetDefault": "Reset to default",
+  "@actionResetDefault": {
+    "description": "Reset a setting or list to its default."
+  },
+  "toastSaved": "Saved",
+  "@toastSaved": {
+    "description": "Toast after an entry is saved."
+  },
+  "toastResetDone": "Reset done",
+  "@toastResetDone": {
+    "description": "Toast after a reset."
+  },
+  "toastReadyToShare": "Ready to share",
+  "@toastReadyToShare": {
+    "description": "Toast when a report is ready to share."
+  },
+  "stepperDecrease": "Fewer",
+  "@stepperDecrease": {
+    "description": "Screen reader label for the minus button on a stepper."
+  },
+  "stepperIncrease": "More",
+  "@stepperIncrease": {
+    "description": "Screen reader label for the plus button on a stepper."
+  },
+  "dayToday": "Today",
+  "@dayToday": {
+    "description": "Relative day: today."
+  },
+  "dayYesterday": "Yesterday",
+  "@dayYesterday": {
+    "description": "Relative day: yesterday."
+  },
+  "fieldName": "Name",
+  "@fieldName": {
+    "description": "Person's name field."
+  },
+  "fieldPhone": "Phone number",
+  "@fieldPhone": {
+    "description": "Phone number field."
+  },
+  "fieldAmount": "Amount",
+  "@fieldAmount": {
+    "description": "Amount field."
+  },
+  "fieldArea": "Area",
+  "@fieldArea": {
+    "description": "Area field."
+  },
+  "fieldCategory": "Category",
+  "@fieldCategory": {
+    "description": "Expense category field."
+  },
+  "fieldQuantity": "Quantity",
+  "@fieldQuantity": {
+    "description": "Quantity field."
+  },
+  "fieldQuantityInUnit": "Quantity ({unit})",
+  "@fieldQuantityInUnit": {
+    "description": "Quantity field with its unit, e.g. Quantity (kg).",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldWagePerPerson": "Wage (₹ / person)",
+  "@fieldWagePerPerson": {
+    "description": "Wage per person field."
+  },
+  "fieldTotalWages": "Total wages",
+  "@fieldTotalWages": {
+    "description": "Total wages line."
+  },
+  "fieldPaymentMode": "Paid by",
+  "@fieldPaymentMode": {
+    "description": "Payment mode field."
+  },
+  "paymentCash": "Cash",
+  "@paymentCash": {
+    "description": "Payment mode: cash."
+  },
+  "paymentUpi": "UPI",
+  "@paymentUpi": {
+    "description": "Payment mode: UPI."
+  },
+  "paymentCredit": "Credit",
+  "@paymentCredit": {
+    "description": "Payment mode: credit (creates a payable)."
+  },
+  "tenureOwned": "Owned",
+  "@tenureOwned": {
+    "description": "Land tenure: owned."
+  },
+  "tenureLeased": "Leased",
+  "@tenureLeased": {
+    "description": "Land tenure: leased."
+  },
+  "attendanceFull": "Full",
+  "@attendanceFull": {
+    "description": "Attendance: full day."
+  },
+  "attendanceHalf": "Half",
+  "@attendanceHalf": {
+    "description": "Attendance: half day."
+  },
+  "attendanceAbsent": "Absent",
+  "@attendanceAbsent": {
+    "description": "Attendance: absent."
+  },
+  "languageMalayalam": "മലയാളം",
+  "@languageMalayalam": {
+    "description": "Language choice: Malayalam. Always shown in Malayalam script."
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Language choice: English. Always shown in English."
+  },
+  "languageMixed": "Mixed (Malayalam + English)",
+  "@languageMixed": {
+    "description": "Language choice: Malayalam interface with names also in English."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen title."
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Language setting."
+  },
+  "settingsLargeText": "Large text",
+  "@settingsLargeText": {
+    "description": "Large-text switch."
+  },
+  "settingsLargeTextHint": "Easy mode",
+  "@settingsLargeTextHint": {
+    "description": "Hint under the large-text switch."
+  },
+  "settingsPages": "Pages",
+  "@settingsPages": {
+    "description": "Pages on or off setting."
+  },
+  "settingsPagesHint": "Turn on only what you need",
+  "@settingsPagesHint": {
+    "description": "Hint under the pages setting."
+  },
+  "settingsHomeCards": "Home cards",
+  "@settingsHomeCards": {
+    "description": "Home cards on or off setting."
+  },
+  "moreSettingsHint": "Pages, language, text size",
+  "@moreSettingsHint": {
+    "description": "Hint on the Settings tile in More."
+  },
+  "morePageComingSoon": "This page comes in the next round",
+  "@morePageComingSoon": {
+    "description": "Shown on a page that is not built yet."
+  },
+  "setupStepNameTitle": "Let’s get to know you",
+  "@setupStepNameTitle": {
+    "description": "Set-up step 1 title."
+  },
+  "setupStepNameHint": "Check your name; a phone number is optional",
+  "@setupStepNameHint": {
+    "description": "Set-up step 1 hint. The name comes from the Google account; phone is optional."
+  },
+  "setupStepFarmTitle": "Your first farm",
+  "@setupStepFarmTitle": {
+    "description": "Set-up step 2 title."
+  },
+  "setupStepFarmHint": "You can add more plots later",
+  "@setupStepFarmHint": {
+    "description": "Set-up step 2 hint."
+  },
+  "setupStepCropsTitle": "What do you grow?",
+  "@setupStepCropsTitle": {
+    "description": "Set-up step 3 title."
+  },
+  "setupStepCropsHint": "Pick as many as you like",
+  "@setupStepCropsHint": {
+    "description": "Set-up step 3 hint."
+  },
+  "setupFarmName": "Farm name",
+  "@setupFarmName": {
+    "description": "Farm name field."
+  },
+  "setupFinish": "Get started",
+  "@setupFinish": {
+    "description": "Finish set-up button."
+  },
+  "setupWelcomeDone": "Welcome! Your farm is ready",
+  "@setupWelcomeDone": {
+    "description": "Message after set-up finishes."
+  },
+  "homeDate": "{gregorian} · {malayalam}",
+  "@homeDate": {
+    "description": "Home date line: Gregorian date, then Malayalam calendar date. Both are formatted in code.",
+    "placeholders": {
+      "gregorian": {
+        "type": "String"
+      },
+      "malayalam": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreeting": "Hello, {name}",
+  "@homeGreeting": {
+    "description": "Greeting on Home with the farmer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCardWeather": "Weather",
+  "@homeCardWeather": {
+    "description": "Home card title: weather."
+  },
+  "homeCardProfit": "Profit",
+  "@homeCardProfit": {
+    "description": "Home card title: profit."
+  },
+  "homeCardPrice": "Today’s price",
+  "@homeCardPrice": {
+    "description": "Home card title: today's price."
+  },
+  "homeCardTasks": "Today’s tasks",
+  "@homeCardTasks": {
+    "description": "Home card title: today's tasks."
+  },
+  "homeCardDues": "Dues",
+  "@homeCardDues": {
+    "description": "Home card title: dues."
+  },
+  "homeSeasonProfit": "This season · Profit",
+  "@homeSeasonProfit": {
+    "description": "Label on the season profit card."
+  },
+  "homeDuesSummary": "Wages due {amount} · {count, plural, =1{1 worker} other{{count} workers}}",
+  "@homeDuesSummary": {
+    "description": "Wages due line on Home: amount and number of workers.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeTasksDone": "{count} done",
+  "@homeTasksDone": {
+    "description": "Count of tasks ticked today.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homePricesLink": "Prices",
+  "@homePricesLink": {
+    "description": "Link from Home to the prices screen."
+  },
+  "quickAddTitle": "What to add?",
+  "@quickAddTitle": {
+    "description": "Title of the quick add sheet."
+  },
+  "quickAddExpense": "Expense",
+  "@quickAddExpense": {
+    "description": "Quick add tile: expense."
+  },
+  "quickAddHarvest": "Harvest",
+  "@quickAddHarvest": {
+    "description": "Quick add tile: harvest."
+  },
+  "quickAddSale": "Sale",
+  "@quickAddSale": {
+    "description": "Quick add tile: sale."
+  },
+  "quickAddNote": "Note",
+  "@quickAddNote": {
+    "description": "Quick add tile: note."
+  },
   "landTitle": "My land",
-  "lang": "Language",
-  "lastYear": "This week last year",
-  "lastYearTxt": "Fertilised coconut · 50 kg · ₹3,200",
-  "lease": "Leased",
-  "less": "Fewer",
-  "liSub": "Items used for each crop",
-  "liTitle": "My lists",
-  "listening": "Listening…",
-  "loss": "Weight loss",
-  "low": "Low",
-  "managePages": "Pages, language, text size",
-  "marketNames0": "Kochi",
-  "marketNames1": "Kattappana",
-  "marketNames2": "Kalpetta",
-  "menu": "Main menu",
-  "mixed": "Mixed crop",
-  "money": "Money",
+  "@landTitle": {
+    "description": "My land screen title."
+  },
+  "landSummary": "{plots, plural, =1{1 plot} other{{plots} plots}} · {area}",
+  "@landSummary": {
+    "description": "Summary under My land: number of plots and total area (area formatted in code with its unit).",
+    "placeholders": {
+      "plots": {
+        "type": "int"
+      },
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "landAddPlot": "Add a plot",
+  "@landAddPlot": {
+    "description": "Add plot button."
+  },
+  "landMixedCropTag": "Mixed crop",
+  "@landMixedCropTag": {
+    "description": "Tag on a plot with more than one crop."
+  },
+  "plotSeasonCost": "Season cost",
+  "@plotSeasonCost": {
+    "description": "Plot detail stat: season cost."
+  },
+  "plotCrops": "Crops",
+  "@plotCrops": {
+    "description": "Plot detail stat: crops."
+  },
+  "plotYield": "Yield",
+  "@plotYield": {
+    "description": "Plot detail stat: yield."
+  },
+  "plotTabCrops": "Crops",
+  "@plotTabCrops": {
+    "description": "Plot detail tab: crops."
+  },
+  "plotTabCosts": "Costs",
+  "@plotTabCosts": {
+    "description": "Plot detail tab: costs."
+  },
+  "plotTabHistory": "History",
+  "@plotTabHistory": {
+    "description": "Plot detail tab: history."
+  },
+  "plotFullHistory": "See full history",
+  "@plotFullHistory": {
+    "description": "Link to the full history of a plot."
+  },
+  "labourTitle": "Today’s attendance",
+  "@labourTitle": {
+    "description": "Labour screen title."
+  },
+  "labourContext": "{task} · {plot}",
+  "@labourContext": {
+    "description": "Context line on labour entry: task and plot.",
+    "placeholders": {
+      "task": {
+        "type": "String"
+      },
+      "plot": {
+        "type": "String"
+      }
+    }
+  },
+  "labourModeNamed": "Named workers",
+  "@labourModeNamed": {
+    "description": "Labour mode: named workers."
+  },
+  "labourModeGroup": "Group (head count)",
+  "@labourModeGroup": {
+    "description": "Labour mode: group by head count."
+  },
+  "labourSameAsYesterday": "Same as yesterday",
+  "@labourSameAsYesterday": {
+    "description": "Copy yesterday's attendance."
+  },
+  "labourGroupName": "Group name (optional)",
+  "@labourGroupName": {
+    "description": "Optional group name field."
+  },
+  "labourGroupHint": "No names needed, just the count. You can add names and a leader later. The group keeps its own history.",
+  "@labourGroupHint": {
+    "description": "Hint on the group entry."
+  },
+  "labourHeadCount": "How many",
+  "@labourHeadCount": {
+    "description": "Head count field."
+  },
+  "labourRatePerDay": "{rate} / day",
+  "@labourRatePerDay": {
+    "description": "Rate per day; rate formatted in code.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "expenseTitle": "Add expense",
+  "@expenseTitle": {
+    "description": "Add expense screen title."
+  },
+  "expenseSplit": "Split across crops",
+  "@expenseSplit": {
+    "description": "Split across crops section."
+  },
+  "expenseSplitEdit": "Edit manually",
+  "@expenseSplitEdit": {
+    "description": "Edit the split by hand."
+  },
+  "harvestTitle": "Harvest",
+  "@harvestTitle": {
+    "description": "Harvest screen title."
+  },
+  "entryContext": "{crop} · {plot}",
+  "@entryContext": {
+    "description": "Context line on an entry: crop and plot.",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "plot": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestLastTime": "Last time: {quantity} · {people, plural, =1{1 person} other{{people} people}} · {date}",
+  "@harvestLastTime": {
+    "description": "Last time banner on harvest: quantity with unit, people, date (formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "people": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestPreviousValue": "Last time {value}",
+  "@harvestPreviousValue": {
+    "description": "Previous value hint beside a harvest figure.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestTotalQuantity": "Total quantity",
+  "@harvestTotalQuantity": {
+    "description": "Total quantity field."
+  },
+  "harvestPerTeamQuantity": "Log quantity for each team",
+  "@harvestPerTeamQuantity": {
+    "description": "Switch: log quantity for each team."
+  },
+  "harvestPerTeamQuantityHint": "Optional: the total alone is enough",
+  "@harvestPerTeamQuantityHint": {
+    "description": "Hint under the per-team quantity switch."
+  },
+  "harvestTeams": "Harvested by",
+  "@harvestTeams": {
+    "description": "Section title for harvest teams."
+  },
+  "harvestTeamSummary": "{team} · {rate} each",
+  "@harvestTeamSummary": {
+    "description": "Team line: team name and rate each.",
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestAddGroup": "Group",
+  "@harvestAddGroup": {
+    "description": "Add a group team."
+  },
+  "harvestAddNamedWorker": "Named worker",
+  "@harvestAddNamedWorker": {
+    "description": "Add a named worker team."
+  },
+  "harvestPerPersonPerDay": "Per person per day",
+  "@harvestPerPersonPerDay": {
+    "description": "Summary: quantity per person per day."
+  },
+  "harvestLabourCostPerUnit": "Labour cost per unit",
+  "@harvestLabourCostPerUnit": {
+    "description": "Summary: labour cost per unit."
+  },
+  "harvestSellNow": "Sell now",
+  "@harvestSellNow": {
+    "description": "Open selling after saving a harvest."
+  },
+  "teamTagGroup": "Group",
+  "@teamTagGroup": {
+    "description": "Tag on a group team."
+  },
+  "teamTagNamed": "Named",
+  "@teamTagNamed": {
+    "description": "Tag on a named worker team."
+  },
+  "saleTitle": "Sell",
+  "@saleTitle": {
+    "description": "Sell screen title."
+  },
+  "saleStockContext": "{crop} · {quantity} in stock",
+  "@saleStockContext": {
+    "description": "Context line on sell: crop and stock (formatted in code with unit).",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "saleTodayPrice": "Today’s price {rate} / {unit}",
+  "@saleTodayPrice": {
+    "description": "Today's price banner: rate and unit.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleRatePerUnit": "Rate (₹ / {unit})",
+  "@saleRatePerUnit": {
+    "description": "Rate field with unit.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleBuyer": "Buyer",
+  "@saleBuyer": {
+    "description": "Buyer field."
+  },
+  "saleGross": "Gross",
+  "@saleGross": {
+    "description": "Gross amount line."
+  },
+  "saleNet": "You receive",
+  "@saleNet": {
+    "description": "Net amount line (after deductions)."
+  },
+  "saleProfitPerUnit": "Profit per {unit}",
+  "@saleProfitPerUnit": {
+    "description": "Profit per sale unit, before saving.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleYourCost": "your cost",
+  "@saleYourCost": {
+    "description": "Lot cost label beside the rate."
+  },
+  "saleSave": "Save sale",
+  "@saleSave": {
+    "description": "Save sale button."
+  },
+  "pricesTitle": "Live prices",
+  "@pricesTitle": {
+    "description": "Prices screen title."
+  },
+  "pricesSubtitle": "Each price shows its source and time",
+  "@pricesSubtitle": {
+    "description": "Prices screen subtitle."
+  },
+  "pricesSource": "{source} · {time}",
+  "@pricesSource": {
+    "description": "Source and time of a price (time formatted in code).",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesLast30Days": "Last 30 days",
+  "@pricesLast30Days": {
+    "description": "Chart range: last 30 days."
+  },
+  "pricesNoChange": "No change",
+  "@pricesNoChange": {
+    "description": "Price change chip: no change."
+  },
+  "pricesAlert": "Price alert",
+  "@pricesAlert": {
+    "description": "Price alert switch."
+  },
+  "pricesAlertThreshold": "Notify when above",
+  "@pricesAlertThreshold": {
+    "description": "Price alert threshold field."
+  },
+  "historyTitle": "History",
+  "@historyTitle": {
+    "description": "History screen title."
+  },
+  "historySubtitle": "Every record, every day",
+  "@historySubtitle": {
+    "description": "History screen subtitle."
+  },
+  "historyLastYear": "This week last year",
+  "@historyLastYear": {
+    "description": "This week last year card title."
+  },
+  "historyFilterAll": "All",
+  "@historyFilterAll": {
+    "description": "History filter: all."
+  },
+  "historyFilterLabour": "Labour",
+  "@historyFilterLabour": {
+    "description": "History filter: labour."
+  },
+  "historyFilterExpense": "Expense",
+  "@historyFilterExpense": {
+    "description": "History filter: expense."
+  },
+  "historyFilterHarvest": "Harvest",
+  "@historyFilterHarvest": {
+    "description": "History filter: harvest."
+  },
+  "historyFilterSales": "Sales",
+  "@historyFilterSales": {
+    "description": "History filter: sales."
+  },
+  "historyFilterEdits": "Edits",
+  "@historyFilterEdits": {
+    "description": "History filter: edits."
+  },
+  "historyEditChange": "{field} corrected: {oldValue} → {newValue}",
+  "@historyEditChange": {
+    "description": "Edit event: field, old value and new value (values formatted in code).",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      },
+      "oldValue": {
+        "type": "String"
+      },
+      "newValue": {
+        "type": "String"
+      }
+    }
+  },
+  "historyEditedBy": "Changed by {name} · old value kept",
+  "@historyEditedBy": {
+    "description": "Who changed an entry; the old value stays in history.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "moneyTitle": "Profit and loss",
-  "more": "More",
-  "moreN": "More",
-  "movedStock": "Added to stock",
-  "named": "Named workers",
-  "net": "You receive",
-  "next": "Next",
-  "note": "Note",
-  "obCrops0": "Coconut",
-  "obCrops1": "Pepper",
-  "obCrops2": "Rubber",
-  "obCrops3": "Banana",
-  "obCrops4": "Paddy",
-  "obCrops5": "Arecanut",
-  "obCrops6": "Cardamom",
-  "obCrops7": "Vegetables",
-  "obSubs0": "Just a name and phone number",
-  "obSubs1": "You can add more plots later",
-  "obSubs2": "Pick as many as you like",
-  "obTitles0": "Let’s get to know you",
-  "obTitles1": "Your first farm",
-  "obTitles2": "What do you grow?",
-  "org0": "Make sure water drains away",
-  "org1": "Apply neem cake enriched with Trichoderma at the base",
-  "org2": "Remove affected vines",
-  "organic": "Organic",
-  "other": "Other",
-  "own": "Owned",
-  "pages": "Pages",
-  "pagesSub": "Turn on only what you need",
-  "parts0": "Leaf",
-  "parts1": "Stem",
-  "parts2": "Root",
-  "parts3": "Fruit",
-  "pay": "Pay",
-  "payBy": "Paid by",
-  "pays0": "Cash",
-  "pays1": "UPI",
-  "pays2": "Credit",
-  "pcCost": "Processing cost ₹1,200",
-  "pcIn": "Green pepper 100 kg",
-  "pcOut": "Dry weight (kg)",
-  "pcSub": "Pepper · November lot",
-  "pcTitle": "Processing",
-  "people": "people",
-  "perDay": " / day",
-  "perHead": "Per person per day",
-  "person": "person",
-  "phone": "Phone number",
-  "photo": "Photo",
-  "photoPh": "Photo of pepper leaf",
-  "plotHist0": "Today · fertilising · 3 workers",
-  "plotHist1": "12 November · harvest · 110 kg",
-  "plotHist2": "2 November · sprayed Bordeaux mixture",
-  "plots0Area": "50 cents",
-  "plots0Crops0": "Coconut 60",
-  "plots0Crops1": "Pepper 120",
-  "plots0Crops2": "Banana 40",
-  "plots0Name": "Home plot",
-  "plots0Next": "Next: fertilising · today",
-  "plots1Area": "2.5 acres",
-  "plots1Crops0": "Rubber 450",
-  "plots1Name": "Hill estate",
-  "plots1Next": "Next: tapping · tomorrow",
-  "plots2Area": "1 acre",
-  "plots2Crops0": "Paddy · Mundakan",
-  "plots2Name": "Paddy field",
-  "plots2Next": "Next: weeding · in 3 days",
-  "postA0": "Profit ₹61,000",
-  "postA1": "Cost down 20%",
-  "postA2": "+28 tapping days",
-  "postB0": "50 cents",
-  "postB1": "60 palms",
-  "postB2": "2.5 acres",
-  "postT0": "Pepper as an intercrop: good income from 50 cents",
-  "postT1": "Organic manure for coconut: lower cost",
-  "postT2": "Rain guards added more tapping days",
-  "postWho0": "Farmer · Idukki",
-  "postWho1": "Farmer · Thrissur",
-  "postWho2": "Farmer · Kottayam",
-  "prSub": "Sample prices · each shows source and time",
-  "prTitle": "Live prices",
-  "priceNames0": "Pepper",
-  "priceNames1": "Rubber RSS-4",
-  "priceNames2": "Cardamom",
-  "priceNames3": "Coconut",
-  "priceSrc": "Kochi · today 10:30 · sample",
-  "priceSrcs0": "Kochi · 10:30",
-  "priceSrcs1": "Kottayam · 11:00",
-  "priceSrcs2": "Auction · yesterday",
-  "priceSrcs3": "Alappuzha · 9:15",
-  "procNames0": "Threshing",
-  "procNames1": "Drying",
-  "procNames2": "Cleaning",
-  "procNames3": "Bagging",
-  "profit": "Profit",
-  "profitKg": "Profit per kg",
-  "psCost": "Season cost",
-  "psCrops": "Crops",
-  "psYield": "Yield",
-  "ptCosts": "Costs",
-  "ptCrops": "Crops",
-  "ptHist": "History",
-  "qty": "Quantity",
-  "qtyKg": "Quantity (kg)",
-  "rain": "Rain after noon · 28°C",
-  "rainTip": "Avoid spraying today",
-  "rateKg": "Rate (₹ / kg)",
-  "ratePer": "Wage (₹ / person)",
-  "remedy": "Remedies",
-  "remove": "Remove",
-  "reset": "Reset to default",
-  "resetDone": "Reset done",
-  "safeS": "Pepper · sprayed 3 days ago",
-  "safeT": "12 more days until safe to harvest",
-  "sale": "Sale",
-  "same": "No change",
-  "sameY": "Same as yesterday",
-  "save": "Save",
-  "saved": "Saved",
-  "scSub": "Sample information · confirm on the official site",
-  "scTitle": "Schemes",
-  "schemeN0": "PM-KISAN",
-  "schemeN1": "Crop insurance",
-  "schemeN2": "Farm machinery subsidy",
-  "schemeS0": "Check the next instalment",
-  "schemeS1": "Reminder for premium date",
-  "schemeS2": "Prepare the application",
-  "schemeSt0": "Receiving",
-  "schemeSt1": "Renew",
-  "schemeSt2": "Check eligibility",
-  "season": "This season · All plots",
-  "seasonProfit": "This season · Profit",
-  "seePrices": "Prices",
-  "sellNow": "Sell now",
-  "sendExpert": "Send to expert",
-  "settings": "Settings",
-  "sevs0": "Mild",
-  "sevs1": "Medium",
-  "sevs2": "Severe",
-  "share": "Share report",
-  "shareMine": "Share my season",
-  "shareWord": "Share",
-  "shared": "Report ready",
-  "sharedToast": "Ready to share",
-  "slSave": "Save sale",
-  "slSub": "Pepper · 80 kg in stock",
-  "slTitle": "Sell",
-  "slToday": "Today’s price ₹705 / kg",
-  "soil": "Soil test · pH 5.6 · 14 months ago",
-  "soilBtn": "Add new",
-  "soon": "This page comes in the next round",
-  "split": "Split across crops",
-  "splitHint": "Edit manually",
-  "splitNames0": "Coconut",
-  "splitNames1": "Pepper",
-  "splitNames2": "Banana",
-  "step": "Step",
-  "stepsDone": "steps done",
-  "stock": "Stock",
-  "stockNames0": "Urea",
-  "stockNames1": "Potash",
-  "stockNames2": "Neem cake",
-  "stockNames3": "Bordeaux mixture",
-  "suggest": "Suggest remedy",
-  "tagGroup": "Group",
-  "tagNamed": "Named",
-  "taskAdded": "Task added",
-  "taskS0": "Hill estate",
-  "taskS1": "Home plot · 3 workers",
-  "taskS2": "Rain today, can move to tomorrow",
-  "taskT0": "Rubber tapping",
-  "taskT1": "Fertilise coconut",
-  "taskT2": "Bordeaux mixture for pepper",
-  "tasks": "Today’s tasks",
-  "toStock": "Move to stock",
-  "todayPrice": "Today’s price",
-  "totalWage": "Total wages",
-  "tplActs0x0": "Tying vines",
-  "tplActs0x1": "Shade regulation",
-  "tplActs0x2": "Mulching",
-  "tplActs0x3": "Bordeaux spray",
-  "tplActs0x4": "Harvest",
-  "tplActs0x5": "Drying",
-  "tplActs1x0": "Opening basins",
-  "tplActs1x1": "Fertilising",
-  "tplActs1x2": "Irrigation",
-  "tplActs1x3": "Palm climbing",
-  "tplActs1x4": "Copra drying",
-  "tplActs2x0": "Tapping",
-  "tplActs2x1": "Sheet rolling",
-  "tplActs2x2": "Smoking",
-  "tplActs2x3": "Rain guarding",
-  "tplActs2x4": "Weeding",
-  "tplNames0": "Pepper",
-  "tplNames1": "Coconut",
-  "tplNames2": "Rubber",
-  "tplUpdate": "New items are available. Your changes stay.",
-  "unitNames0": "kg",
-  "unitNames1": "quintal",
-  "unitNames2": "count",
-  "used": "used",
-  "useful": "Useful",
-  "view": "View",
-  "voice": "Add by voice",
-  "voiceEg": "\"Three workers today, 900 rupees each\"",
-  "wageWord": "Wages",
-  "welcome": "Welcome! Your farm is ready",
-  "what": "What to add?",
-  "workers0": "Suresh",
-  "workers1": "Mani",
-  "workers2": "Leela",
-  "workers3": "Babu",
-  "wrong": "Not right? Correct it",
-  "yourCost": "your cost",
-  "yourName": "Name"
+  "@moneyTitle": {
+    "description": "Profit and loss screen title."
+  },
+  "moneyIncome": "Income",
+  "@moneyIncome": {
+    "description": "Income label."
+  },
+  "moneyExpense": "Expense",
+  "@moneyExpense": {
+    "description": "Expense label."
+  },
+  "moneyProfit": "Profit",
+  "@moneyProfit": {
+    "description": "Profit label."
+  },
+  "moneyByCrop": "By crop",
+  "@moneyByCrop": {
+    "description": "By crop section."
+  },
+  "moneySeasonAllPlots": "This season · All plots",
+  "@moneySeasonAllPlots": {
+    "description": "Scope line: this season, all plots."
+  },
+  "moneyIncludeFamilyLabour": "Include family labour",
+  "@moneyIncludeFamilyLabour": {
+    "description": "Switch to include family labour."
+  },
+  "moneyFamilyLabourValue": "Value of own work {amount}",
+  "@moneyFamilyLabourValue": {
+    "description": "Value of family labour (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyShareReport": "Share report",
+  "@moneyShareReport": {
+    "description": "Share report button."
+  },
+  "moneyReportReady": "Report ready",
+  "@moneyReportReady": {
+    "description": "Report ready message."
+  },
+  "myListsTitle": "My lists",
+  "@myListsTitle": {
+    "description": "My lists screen title."
+  },
+  "myListsSubtitle": "Items used for each crop",
+  "@myListsSubtitle": {
+    "description": "My lists subtitle."
+  },
+  "myListsActivities": "Activities",
+  "@myListsActivities": {
+    "description": "Activities list title."
+  },
+  "myListsActivitiesHint": "Turn off what you don’t use",
+  "@myListsActivitiesHint": {
+    "description": "Hint under the activity list."
+  },
+  "myListsAddOwn": "Add your own item",
+  "@myListsAddOwn": {
+    "description": "Add own item."
+  },
+  "myListsUpdateAvailable": "New items are available. Your changes stay.",
+  "@myListsUpdateAvailable": {
+    "description": "Banner when an admin template update is available."
+  },
+  "malayalamMonth": "{month, select, chingam{Chingam} kanni{Kanni} thulam{Thulam} vrischikam{Vrischikam} dhanu{Dhanu} makaram{Makaram} kumbham{Kumbham} meenam{Meenam} medam{Medam} edavam{Edavam} mithunam{Mithunam} karkidakam{Karkidakam} other{}}",
+  "@malayalamMonth": {
+    "description": "Malayalam calendar month name, selected by its English key.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "malayalamDate": "{month} {day}",
+  "@malayalamDate": {
+    "description": "Malayalam calendar date: month name and day.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  }
 }
