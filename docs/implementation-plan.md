@@ -184,7 +184,9 @@ labour is a separate line on the harvest) and the rest were fixed as recommended
 review found 9 more, fixed as recommended: lot cost moves to its own money table, a
 supervisor's team edit marks the cost pending again, equal values are not a conflict, group
 leaders are workers, invites apply at the next sync, labour splits default to the expense
-split, and the upload order, indexes and network exception were corrected.
+split, and the upload order, indexes and network exception were corrected. A fifth review found 3
+more in the lot-cost text (one shared `lot_costs` row per lot, a stamp instead of a pending
+flag, and who writes `lots`), fixed the same day.
 
 | Question | Recommended answer | Doc to edit |
 | --- | --- | --- |
@@ -300,7 +302,7 @@ Fixes to make:
 | Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
 | Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)` and drop `sales.lot_id`. Add `sale_payments` for part payments. Both new tables carry the common columns. Keep `sales.received_paise` only if it is derived. |
-| Lots | Supervisors read `lots` (stock), and row-level security cannot hide one column, so move the cost out: add `lot_costs (lot_id, cost_paise, cost_overridden)` with the common columns, as a money table, and drop `lots.cost_paise`. Add `lots.cost_pending`, set when a role that cannot write money saves the harvest or edits its teams; the next money phone works out the cost and clears it. |
+| Lots | Supervisors read `lots` (stock), and row-level security cannot hide one column, so move the cost out: add `lot_costs (cost_paise, cost_overridden, teams_stamp)` with the common columns, as a money table, and drop `lots.cost_paise`. A `lot_costs` row's id is its lot's id, so every phone writes the same row. Every edit to a harvest's teams sets `lots.teams_stamp` to a new random value; `lot_costs.teams_stamp` records the stamp the cost was worked out from. The cost is "not yet worked out" when the lot has no `lot_costs` row or the two stamps differ; a money phone then works it out, keeping a hand-edited cost. Lot-cost work never writes `lots`. |
 | Payables | Add a payments table, with the common columns, for expenses bought on credit, so a payable can be part-paid. |
 | Notes | Add `notes` (text, date, optional plot and crop cycle) with the common columns. |
 | Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. Add `overtime_hours` and `overtime_rate_paise` to `labour_entries` (the overtime rate defaults from templates); `hours` stays for the hourly wage type. Add `labour_allocations` (like `expense_allocations`, with the common columns) so wage cost can split across a mixed plot's crop cycles. Replace `labour_groups.leader_party_id` with `leader_worker_id`, so a supervisor can name a group leader without touching parties. |
@@ -464,8 +466,9 @@ Goal: the full chain from harvest to stock to sale to profit, with history visib
   does not change until the farmer recalculates). Also: an edited cost is marked and can be
   reset; editing a team recalculates the lot unless the cost was edited by hand; a supervisor's
   harvest saves with the cost not yet worked out, and the next owner, manager or accountant
-  phone works it out; a supervisor's team edit marks it pending again; two money phones that
-  save the same cost make no conflict.
+  phone works it out; a supervisor's team edit marks it pending again, even when it lands while
+  a money phone is working out the cost; two money phones that save the same cost make no
+  conflict.
 - Piece-rate teams enter their own quantity even with per-team quantity off.
 - Check: the harvest example with the switch on and off; removing a team recalculates.
 
@@ -904,7 +907,7 @@ The local database is what every screen reads, so its speed is the app's speed.
 | `labour_payments` | `(worker_id, paid_on)`, `(group_id, paid_on)` | Balances |
 | `expense_allocations` | `(expense_id)`, `(crop_cycle_id)` | Splits and crop costs |
 | `labour_allocations` | `(labour_entry_id)`, `(crop_cycle_id)` | Splits and crop costs |
-| `lot_costs` | unique `(lot_id)` | Lot cost and sale profit |
+| `lot_costs` | primary key `id` (the lot's id) | Lot cost and sale profit |
 | `lots` | `(crop_cycle_id)`, and a partial index on lots with stock left | Selling from stock |
 | `sale_lots` | `(sale_id)`, `(lot_id)` | Sales and lot history |
 | `event_log` | `(farm_id, occurred_on, created_at, id)`, `(entity, entity_id, created_at)` | Diary and timelines |
@@ -1050,7 +1053,9 @@ Supabase's guidance for fast policies, to follow in B1:
 Role rules to encode (D3 then only verifies them), as listed in `product-spec.md` rule 7:
 supervisor cannot read money tables (including parties and lot cost) or profit, and its read of
 `event_log` leaves out rows whose entity is a money table; supervisor writes daily work
-(labour allocations included), workers and groups; lot costs are money; set-up records are written by owner and manager; accountant can read everything and
+(labour allocations included), workers and groups; lot costs are money; `lots` (stock) is
+written by daily-work and money roles alike, since harvests create lots and sales lower their
+stock; set-up records are written by owner and manager; accountant can read everything and
 write money entries but not daily work entries; viewer cannot write; per-person `permissions`
 override the role defaults. Roles are per farm.
 
