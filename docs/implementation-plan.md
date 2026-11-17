@@ -208,6 +208,10 @@ flag, and who writes `lots`), fixed the same day.
 **Exit check:** the owner has answered the decisions needed for A1 and B1, and a reviewer
 session finds no remaining contradiction between the six docs (`CLAUDE.md` included).
 
+**Phase 0 done, 2026-11-17.** The owner answered the A1 and B1 decisions, and a reviewer session
+that did not write the edits found no remaining contradiction at commit `d85b509`. Next task:
+A1.
+
 ---
 
 ## 5. Phase 1: foundation (A1 to A6)
