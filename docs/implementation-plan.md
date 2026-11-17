@@ -10,7 +10,8 @@ current docs for versions and setup before adding it. No version numbers are fix
 
 "Phase 1" in `CLAUDE.md`, `docs/phase-1-tasks.md` and `docs/screens.md` means the whole first
 release (tasks A1 to D6). This plan splits that release into its phases 1 to 6; its own
-"Phase 1" (section 5) is the foundation only.
+"Phase 1" (section 5) is the foundation only. "Phase 2 and later" in `docs/screens.md` means
+this plan's phases 7 to 13.
 
 Contents
 
@@ -97,9 +98,10 @@ mistake is expensive to undo, and leave repetitive screens for later. In priorit
 
 After that, the remaining features (C1 to C3, C5 to C11) are mostly "follow the Expenses
 pattern" and are safer to hand to any model, provided the gates and review process are in place.
+C12 is a small web page outside that pattern.
 
 A possible order for the days available: phase 0 and A1 to A3; then A4 to A6 and B1; then B2 to
-B5; then B7 and the domain functions; then C4 as the reference feature. Adjust to what is
+B5; then B6, B7 and the domain functions; then C4 as the reference feature. Adjust to what is
 actually finished each day; do not skip the gates to keep to the order.
 
 ---
@@ -152,7 +154,8 @@ No app code. The output is corrected docs and answered decisions.
 | Supabase project (new or existing) and region | B1 | The owner's existing project, in its current region |
 | Google Cloud project and OAuth client ids for Google sign-in | B6 | Open |
 | SMS provider for phone OTP and its registration (see section 17) | D6 | Open |
-| Whether one account can have both Google and phone sign-in linked | D6 | Open |
+| Whether one account can have both Google and phone sign-in linked, and how a phone-only member is invited | D6 | Open |
+| How many seasons of history stay on the phone (section 12) | B7 | Open |
 | Test phone: one low-end Android phone typical of the pilot district | A6 | Open |
 | Pilot district and crops | B1 seed data | Idukki; wave 1 crops (coconut, rubber, pepper, banana, paddy, cardamom) |
 | Partner organisation for the pilot | Field test (phase 6) | Open |
@@ -173,6 +176,10 @@ parts always follow the split rule, a lot stores its total cost when the harvest
 leaves out family labour, members and account in Settings, the first sign-in as the one step
 that needs the network, the base version on uploads, a delete against an edit going to the
 user, overtime columns, the switch hit area, and the column and naming notes in `CLAUDE.md`.
+A third review found 21 more; the owner settled four rules on the same day (a supervisor also
+writes workers and groups; on a mixed plot labour either splits or posts to one crop cycle, as
+set under the override model; one account can belong to several farms, with a switcher; family
+labour is a separate line on the harvest) and the rest were fixed as recommended.
 
 | Question | Recommended answer | Doc to edit |
 | --- | --- | --- |
@@ -181,7 +188,7 @@ user, overtime columns, the switch hit area, and the column and naming notes in 
 | Where do leftover paise go in a split? | Largest-remainder method: give each crop its rounded-down share, then hand out the remaining paise one at a time to the largest fractional parts; ties go to the crop cycle listed first. | `product-spec.md`, `screens.md` |
 | How are per-kg and per-person figures rounded? | Keep full precision in calculation; round only for display, to one decimal for quantities and to whole paise for money. | `product-spec.md` |
 | What does "mixed" language show? | Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin. | `product-spec.md`, `screens.md` |
-| Who owns the record `version`? | The device increments `version` on every local write. The server changes it only when it merges edits from two devices. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
+| Who owns the record `version`? | The device increments `version` on every local write. The server changes it only when it settles a conflict between two devices. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
 | Which tables carry the common columns? | Every farm-owned, synced table, including a farmer's own crops and locally entered prices. Standard master data with no owning farm (`crops`, `template_items`, official `market_prices`) and `event_log` are exempt, and say so. | `CLAUDE.md` |
 
 ### Backlog fixes
@@ -248,7 +255,7 @@ undo, bottom sheet, bottom navigation with the centre add button, amount input, 
 
 ### A5. Router and shell
 
-- Four tabs plus the add sheet, with placeholder screens. Each tab keeps its own navigation
+- Four tabs (three when the role cannot open Money) plus the add sheet, with placeholder screens. Each tab keeps its own navigation
   stack and scroll position when the user switches tabs.
 - Android back button behaves predictably: closes a sheet, then goes back, then goes to Home,
   then leaves the app.
@@ -284,12 +291,14 @@ Fixes to make:
 | Deletes | Split every `for all` policy into select, insert and update. No client delete policy on any table; deleting means setting `deleted_at`. |
 | Farm creation | One security-definer function `create_farm(...)` that inserts the farm and the owner's `farm_members` row in one transaction and returns the farm. Clients do not insert into `farms` directly. |
 | Profiles | Create the `profiles` row automatically when an auth user is created. |
-| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account first signs in. |
+| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account first signs in. `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
 | Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
-| Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)`. Add `sale_payments` for part payments. Keep `sales.received_paise` only if it is derived. |
-| Payables | Add a payments table for expenses bought on credit, so a payable can be part-paid. |
-| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. Add `overtime_hours` and `overtime_rate_paise` to `labour_entries` (the overtime rate defaults from templates); `hours` stays for the hourly wage type. |
+| Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)` and drop `sales.lot_id`. Add `sale_payments` for part payments. Both new tables carry the common columns. Keep `sales.received_paise` only if it is derived. |
+| Lots | Add `lots.cost_overridden`, and allow a "not yet worked out" lot cost (null `cost_paise`) for harvests saved by a role that cannot read money. |
+| Payables | Add a payments table, with the common columns, for expenses bought on credit, so a payable can be part-paid. |
+| Notes | Add `notes` (text, date, optional plot and crop cycle) with the common columns. |
+| Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. Add `overtime_hours` and `overtime_rate_paise` to `labour_entries` (the overtime rate defaults from templates); `hours` stays for the hourly wage type. Add `labour_allocations` (like `expense_allocations`, with the common columns) so wage cost can split across a mixed plot's crop cycles. |
 | Units | Remove hard-coded unit lists from check constraints; units come from templates. |
 | Common columns | Add the missing ones to `expense_allocations`, `price_alerts`, farmer-owned `crops` rows and locally entered `market_prices` rows. Give `farm_members` and `labour_group_members` the full common columns so membership changes sync and can be undone. |
 | Versions | Remove the version increment from the `set_updated` trigger (see section 13). |
@@ -363,12 +372,14 @@ Build to the design in section 13. Deliverables:
 
 - Outbox upload with coalescing, batching and retry.
 - Pull by cursor per table, applied in dependency order inside local transactions.
-- Conflict rules from the spec: different fields merge; the same field takes the change the
-  server accepted last; money and quantity conflicts, and a delete against an edit, are put in
-  `conflicts` and shown to the user to choose.
+- Conflict rules from the spec: different fields merge; on the same field the upload that
+  reaches the server later wins; money and quantity conflicts, a delete against an edit, and a
+  new row under a parent deleted elsewhere are put in `conflicts` and shown to the user to
+  choose.
 - A test harness with two simulated devices and a fake or local server, covering: both offline
   then both sync; the same row edited on both; delete on one and edit on the other; upload
-  interrupted halfway; the same batch sent twice; clock on one device wrong by a day.
+  interrupted halfway; the same batch sent twice; clock on one device wrong by a day; a new
+  row on one device under a parent deleted on the other.
 - A small sync status element (last synced time, items waiting) for Settings. Never a blocking
   dialog.
 
@@ -389,7 +400,8 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
 - Screen: large amount input opens with the numeric keypad already up; category chips ordered
   by most used; plot and date default to the last used and today; split shown collapsed with
   "edit manually"; payment mode; save with undo toast.
-- Tests: the ₹3,600 example; awkward amounts (₹100 across three equal crops); manual edit then
+- Tests: the ₹3,600 example; awkward amounts (₹100 across three equal crops, and the ₹3,333
+  percentage example); manual edit then
   amount change; credit creates a payable.
 - Record in the pull request: taps to save a typical expense, time from opening to saved, and
   the query timings. Later features copy this structure and this report.
@@ -398,6 +410,8 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
 
 - Three steps, each skippable except name and farm name. Finishing creates the farm, one plot
   and the crop cycles from templates in a single local transaction.
+- An account that already has a farm (its own, or by invite) skips set-up: sign-in runs the
+  first sync (section 13) and opens Home.
 - Works fully offline after the sign-in step; templates needed for set-up ship inside the app as a
   bundled seed so the first run does not depend on a download.
 
@@ -414,12 +428,14 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
   advances and balances.
 - Domain functions: attendance wage, group wage, balance per worker and per group.
 - Check: the ₹2,150, ₹1,200 overtime and ₹5,200 examples; an unnamed group can be named
-  later without losing its entries; wage cost posts to the chosen crop cycle.
+  later without losing its entries; wage cost posts to the chosen crop cycle, or splits across
+  a mixed plot's crop cycles by the split rule, whichever the override model sets.
 
 ### Quick add sheet (part of C9, brought forward)
 
-- The centre button opens the sheet from any tab. Tiles follow the enabled pages. Voice and
-  bill scan are hidden in phase 1.
+- The centre button opens the sheet from any tab. Tiles follow the enabled pages and the
+  user's role. Voice, bill scan and Inputs are hidden in phase 1 (Inputs arrives in plan phase
+  7). Note is a small sheet (`screens.md` section 3).
 
 **Owner check:** record a real day from the paper notebook into the app, in flight mode, and
 note anything that took more than 20 seconds or needed explaining.
@@ -440,7 +456,11 @@ Goal: the full chain from harvest to stock to sale to profit, with history visib
 - Saving creates the harvest, the team labour entries and the lot in one transaction.
 - Lot cost: `product-spec.md` rule 9; test with its two lot-cost examples, a family worker on
   a team (left out of the total), and a cost entered later with an earlier date (a saved lot
-  does not change until the farmer recalculates).
+  does not change until the farmer recalculates). Also: an edited cost is marked and can be
+  reset; editing a team recalculates the lot unless the cost was edited by hand; a supervisor's
+  harvest saves with the cost not yet worked out, and the next owner, manager or accountant
+  phone works it out.
+- Piece-rate teams enter their own quantity even with per-team quantity off.
 - Check: the harvest example with the switch on and off; removing a team recalculates.
 
 ### C6. Selling
@@ -448,7 +468,8 @@ Goal: the full chain from harvest to stock to sale to profit, with history visib
 - Sell from one or more lots; rate prefilled from the latest price; deductions; net; profit per
   sale unit shown before saving; part payments and receivables; buyer book.
 - Check: cannot sell more than stock, including when two devices sell from the same lot while
-  offline (this becomes a quantity conflict for the user to settle).
+  offline (this becomes a quantity conflict for the user to settle); a sale in a different unit
+  from the lot (paddy harvested in kg, sold per quintal) converts the lot cost before profit.
 
 ### C7. History
 
@@ -475,11 +496,12 @@ expected profit to the paisa; History shows every step; budgets met with the see
 - **C9. Home dashboard and tasks.** Each card has its own provider and query, so one card
   changing does not rebuild the others. Ticking a task writes to history. Weather needs a data
   source decision; show the card only when data exists.
-- **C10. Settings and My lists.** Pages and home cards on or off; reset to default; members and
-  roles (owner only, added by Google email); account and sign out, with a warning when items
-  are waiting to sync; farmer templates with "new items available" for admin updates. Check: an
-  admin update never changes an item the farmer edited or switched off; a member added as
-  supervisor cannot open money or profit.
+- **C10. Settings and My lists.** Pages and home cards on or off; reset to default; farms
+  (switch and add); members and roles (owner only, added by Google email); account and sign
+  out, with a warning when items are waiting to sync; sync status; farmer templates with "new
+  items available" for admin updates. Check: an admin update never changes an item the farmer
+  edited or switched off; a member added as supervisor cannot open money or profit; a removed
+  member loses access; switching farm shows only that farm's data.
 - **C11. Prices.** Table and manual entry first. Prices older than one day are marked stale.
   Source integration only after licensing is confirmed. Cache the latest prices locally so the
   screen works offline and says how old the data is.
@@ -943,8 +965,10 @@ not scan the whole table.
 
 - **Coalesce before sending.** If a row was edited five times offline, send one upsert with the
   final state. The event log still carries all five changes.
-- **Order by dependency.** Farms, then plots, crop cycles, parties, workers and groups, then
-  entries, then allocations and payments, then event log.
+- **Order by dependency.** Farms, then members and invites, a farmer's own crops, template
+  overrides, plots, crop cycles, parties, workers and groups, then entries (labour, expenses,
+  harvests, notes, tasks, local prices, price alerts), then lots, then sales and sale lots, then
+  allocations and payments, then event log.
 - **Batches.** About 200 rows or 256 KB per request, whichever comes first. Tune with
   measurements on a slow connection.
 - **One server function per batch**, running in one transaction: it checks permissions, applies
@@ -980,11 +1004,13 @@ not scan the whole table.
 - Detect with the device-owned `version`: the upload carries the base version N (the last
   version this device received from the server) with the new row, so "I changed version N"
   holds however many local edits were coalesced. If the server row is still at N, accept. If
-  not, compare changed fields: different fields merge; the same field takes the change the
-  server accepted last (server order, never the device clock); money and quantity fields, and a
-  delete against an edit, go to the user.
-- A merge is the one case where the server sets `version`: it stores the merged row at the
-  highest version seen plus one and returns it, so no two different row states share a version.
+  not, compare changed fields: different fields merge; on the same field the upload that reaches the
+  server later wins (server order, never the device clock); money and quantity fields, and a
+  delete against an edit, go to the user. A new row whose parent was deleted on another device
+  also goes to the user.
+- Settling a conflict is the one case where the server sets `version`: any row it writes after
+  a conflict (a merge, or a same-field change accepted over another device's) is stored at the
+  highest version seen plus one and returned, so no two different row states share a version.
 - Stock is a special case: two devices selling from the same lot offline can oversell. The
   server function detects it and returns a conflict for the user to settle.
 
@@ -995,7 +1021,8 @@ not scan the whole table.
 
 ### Server schema for speed
 
-- Index `(farm_id, server_seq)` on every synced table (`owner_farm_id` on `crops`).
+- Index `(farm_id, server_seq)` on every synced table (`owner_farm_id` on `crops`), and
+  `server_seq` alone on master data with no farm.
 - Index `farm_members (user_id)` and every column a policy filters on.
 - Keep the indexes that serve reports small in number; this server mostly stores and relays,
   the phone does the reporting.
@@ -1012,9 +1039,11 @@ Supabase's guidance for fast policies, to follow in B1:
 - Add the farm filter in the query as well as relying on the policy.
 
 Role rules to encode (D3 then only verifies them), as listed in `product-spec.md` rule 7:
-supervisor cannot read money tables or profit; accountant can read everything and write money
-entries but not daily work entries; viewer cannot write; per-person `permissions` override the
-role defaults.
+supervisor cannot read money tables (including parties and lot cost) or profit, and its read of
+`event_log` leaves out rows whose entity is a money table; supervisor writes daily work, workers
+and groups; set-up records are written by owner and manager; accountant can read everything and
+write money entries but not daily work entries; viewer cannot write; per-person `permissions`
+override the role defaults. Roles are per farm.
 
 Check policies with `explain analyze` on a seeded local instance, as a signed-in user, before
 B1 is called done.
@@ -1086,7 +1115,8 @@ outdoors, on a cheap phone, without fear of losing or breaking anything.
 
 - [ ] Empty state says what the screen is for and offers the first action.
 - [ ] Offline looks identical to online. No spinner, no "no connection" wall.
-- [ ] Read-only state (closed season, viewer role) is clear and explains why.
+- [ ] Read-only state (closed season, or a role that cannot write it) is clear and explains why;
+      what the role cannot open is hidden.
 - [ ] Errors say what happened and what to do, in plain Malayalam, next to the field.
 - [ ] Long content, many items and zero items all look right.
 
@@ -1232,5 +1262,6 @@ farmer's data?" only.
 | Hosted database limits | Plan limits (pausing, storage, connections) differ by tier and change over time. | Check the current terms of the chosen plan before beta. |
 | Scope growth | The spec lists many later modules. | Phase 1 scope is fixed by `docs/phase-1-tasks.md`; anything else waits for phases 7 to 13. |
 
-Open questions for the owner beyond phase 0: weather data source for the Home card; how long
-history stays on the phone (section 12); whether crash reporting is allowed in the beta.
+Open questions for the owner beyond phase 0: weather data source for the Home card; whether
+crash reporting is allowed in the beta. How long history stays on the phone is in the owner
+decision table (section 4).

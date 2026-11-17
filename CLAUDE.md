@@ -24,12 +24,12 @@ Check current package versions and APIs in their docs before adding a dependency
 
 ## Non-negotiable rules
 
-1. **Offline first.** Every write goes to Drift first and into an outbox table; sync is a background concern. No screen may block on the network. The one exception is the first sign-in on a phone, which needs a connection once.
+1. **Offline first.** Every write goes to Drift first and into an outbox table; sync is a background concern. No screen may block on the network. The one exception is the first sign-in on a phone, with the first sync of any farm the account already has, which needs a connection once.
 2. **History of everything.** Every create, edit and delete writes a row to `event_log` (entity, action, old and new values, user, time). Nothing is hard-deleted from the app; use `deleted_at`.
 3. **Everything overridable.** Resolution order: app default → farm → plot or crop → single entry. Computed values (amount = qty × rate, splits, conversion ratios) always have a manual-edit path. Never hard-code a list, unit, rate or category in Dart; they come from templates.
 4. **Malayalam first.** No user-facing string in Dart code. Every string is an ARB key with both `ml` and `en`. Test layouts with Malayalam text and with large-text mode (1.12 scale).
 5. **Money is integer paise**, quantities are numeric with a unit code. Format with Indian grouping (₹1,84,500).
-6. **Ids are UUIDs generated on the device.** Every farm-owned, synced table has `id, farm_id, created_at, created_by, updated_at, updated_by, version, deleted_at`; `farms` uses its own `id` as the farm id. Exempt: standard master data with no owning farm (`crops` with a null `owner_farm_id`, `template_items`, official `market_prices` with a null `farm_id`) and `event_log`, which is insert-only and keeps only `id, farm_id, created_at, created_by`. A farmer's own crops and locally entered prices carry the full set; `crops` uses `owner_farm_id` as its farm id. The device increments `version` on every local write; the server changes it only when it merges edits from two devices (implementation plan section 13). The server keeps its own `server_seq` for pulling changes.
+6. **Ids are UUIDs generated on the device.** Every farm-owned, synced table has `id, farm_id, created_at, created_by, updated_at, updated_by, version, deleted_at`; `farms` uses its own `id` as the farm id. Exempt: standard master data with no owning farm (`crops` with a null `owner_farm_id`, `template_items`, official `market_prices` with a null `farm_id`) and `event_log`, which is insert-only and keeps only `id, farm_id, created_at, created_by`. A farmer's own crops and locally entered prices carry the full set; `crops` uses `owner_farm_id` as its farm id. The device increments `version` on every local write; the server changes it only when it settles a conflict between two devices (implementation plan section 13). The server keeps its own `server_seq` for pulling changes.
 7. **20-second entries.** Smart defaults (today, last plot, last rate). Touch targets at least 48 dp. Undo after every save.
 8. **Accessibility.** Contrast 4.5:1, labels on every icon button, colour never the only signal.
 
@@ -60,4 +60,4 @@ Each feature folder: `data/` (drift tables, repositories), `domain/` (models, ru
 
 ## Out of scope for phase 1
 
-Photo diagnosis model, voice entry, bill OCR, community feed, schemes, livestock, web dashboard. The admin template console is phase 1 but may start as seed SQL plus a minimal web page.
+Everything in implementation plan phases 7 to 13: inputs and stock, processing, crop doctor (including the photo diagnosis model), loans and full money, voice entry, bill OCR, organisations and the web dashboard, community feed, schemes, documents, equipment, livestock, custom records. The admin template console is phase 1 but may start as seed SQL plus a minimal web page.
