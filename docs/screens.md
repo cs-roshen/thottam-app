@@ -9,11 +9,12 @@ Every data screen must handle: empty state, offline (no spinner, just works), re
 ## Phase 1
 
 ### 1. Welcome and language
-Choose Malayalam, English or mixed; large-text switch. Continue → set-up. Mixed: Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin.
+Choose Malayalam, English or mixed; large-text switch. Continue → Google sign-in → set-up. Mixed: Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin.
 - Check: choice persists and applies immediately across the app.
+- Check: after the first sign-in the app opens and works in flight mode; signing in as another user on the same phone shows none of the first user's data.
 
 ### 17. Set-up (3 steps)
-Name and phone → first farm (name, area, unit, owned or leased) → crops (multi-select). Finish creates farm, plot and crop cycles from templates, then opens Home.
+Name (prefilled from the Google account) and phone (optional) → first farm (name, area, unit, owned or leased) → crops (multi-select). Finish creates farm, plot and crop cycles from templates, then opens Home.
 - Check: can finish with only a name and farm name; everything else has defaults and can be added later.
 
 ### 2. Home
@@ -29,9 +30,9 @@ List of plots with area, tenure, crop chips, "mixed crop" tag and next task. Tap
 
 ### 8 and 11. Labour
 Segmented switch: named workers | group (head count).
-- Named: "same as yesterday", per-worker full / half / absent, live total, save.
+- Named: "same as yesterday", per-worker full / half / absent / overtime (with extra hours), live total, save.
 - Group: optional group name, a stepper per rate class with its rate per day, live total, save. No profiles needed.
-- Check: both examples in the spec (₹2,150 and ₹5,200); saving posts wage cost to the chosen crop cycle and to each worker's or group's history.
+- Check: the examples in the spec (₹2,150, ₹1,200 overtime and ₹5,200); saving posts wage cost to the chosen crop cycle and to each worker's or group's history.
 
 ### 9. Add expense
 Amount (large input), category chips, split across the plot's crops (default by template share, "edit manually"), payment mode, save with undo.
@@ -42,8 +43,8 @@ Amount (large input), category chips, split across the plot's crops (default by 
 - Check: the harvest example in the spec, with the switch on and off; removing a team recalculates.
 
 ### 13. Sell
-Today's price banner with source and time (links to prices). Quantity and rate (rate prefilled from price), buyer type, gross, deductions (editable), net, profit per kg (net per kg minus lot cost per kg). Save reduces stock.
-- Check: cannot sell more than stock; part sale leaves the remainder.
+Today's price banner with source and time (links to prices). Quantity and rate (rate prefilled from price), buyer type, gross, deductions (editable), net, profit per sale unit (net per unit minus lot cost per unit, `product-spec.md` rule 9). Save reduces stock.
+- Check: cannot sell more than stock; part sale leaves the remainder; the sale and two-lot examples in the spec.
 
 ### 14. Prices
 List of the farmer's crops: price, change, source and time. Selecting one shows a 30-day chart, market comparison and a price-alert switch with threshold.

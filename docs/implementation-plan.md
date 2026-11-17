@@ -14,12 +14,12 @@ Contents
 2. Where to spend the strongest model
 3. Architecture in one page
 4. Phase 0: settle the starter
-5. Phase 1: foundation (A1 to A5)
+5. Phase 1: foundation (A1 to A6)
 6. Phase 2: data core (B1 to B7)
 7. Phase 3: daily entries (C1 to C4, quick add)
 8. Phase 4: harvest to profit (C5 to C8)
 9. Phase 5: home, lists and prices (C9 to C11, admin console)
-10. Phase 6: release readiness (D1 to D5)
+10. Phase 6: release readiness (D1 to D6)
 11. Phases 7 to 13: later modules
 12. Local database and offline performance
 13. Sync and server performance
@@ -94,7 +94,7 @@ mistake is expensive to undo, and leave repetitive screens for later. In priorit
 After that, the remaining features (C1 to C3, C5 to C11) are mostly "follow the Expenses
 pattern" and are safer to hand to any model, provided the gates and review process are in place.
 
-A possible order for the days available: phase 0 and A1 to A3; then A4, A5 and B1; then B2 to
+A possible order for the days available: phase 0 and A1 to A3; then A4 to A6 and B1; then B2 to
 B5; then B7 and the domain functions; then C4 as the reference feature. Adjust to what is
 actually finished each day; do not skip the gates to keep to the order.
 
@@ -148,6 +148,8 @@ No app code. The output is corrected docs and answered decisions.
 | Supabase project (new or existing) and region | B1 |
 | Google Cloud project and OAuth client ids for Google sign-in | B6 |
 | SMS provider for phone OTP and its registration (see section 17) | D6 |
+| Whether one account can have both Google and phone sign-in linked | D6 |
+| Test phone: one low-end Android phone typical of the pilot district | A6 |
 | Pilot district, crops and partner organisation | B1 seed data |
 | Which price sources are licensed for use | C11 |
 
@@ -157,6 +159,10 @@ Each has a recommended answer. The owner confirms or changes it, then the doc is
 
 **Settled 2026-11-17:** the owner accepted every recommended answer below, plus one more found
 during phase 0: half-day is an attendance value (0.5), not a wage type. The docs are edited.
+A review of those edits then found more gaps; the owner accepted the recommended fixes on the
+same day: a role table (`product-spec.md` rule 7), stored-amount rounding (rule 8), lot cost
+(rule 9), overtime, conflicts settled in server order, a merge being the one case where the
+server sets `version`, profit per sale unit, and a Google sign-in step in `screens.md`.
 
 | Question | Recommended answer | Doc to edit |
 | --- | --- | --- |
@@ -165,8 +171,8 @@ during phase 0: half-day is an attendance value (0.5), not a wage type. The docs
 | Where do leftover paise go in a split? | Largest-remainder method: give each crop its rounded-down share, then hand out the remaining paise one at a time to the largest fractional parts; ties go to the crop cycle listed first. | `product-spec.md`, `screens.md` |
 | How are per-kg and per-person figures rounded? | Keep full precision in calculation; round only for display, to one decimal for quantities and to whole paise for money. | `product-spec.md` |
 | What does "mixed" language show? | Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin. | `product-spec.md`, `screens.md` |
-| Who owns the record `version`? | The device increments `version` on every local write. The server never changes it. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
-| Which tables carry the common columns? | Every farm-owned, synced table. Master data (`crops`, `template_items`) and `event_log` are exempt, and say so. | `CLAUDE.md` |
+| Who owns the record `version`? | The device increments `version` on every local write. The server changes it only when it merges edits from two devices. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
+| Which tables carry the common columns? | Every farm-owned, synced table, including a farmer's own crops and locally entered prices. Standard master data with no owning farm (`crops`, `template_items`, official `market_prices`) and `event_log` are exempt, and say so. | `CLAUDE.md` |
 
 ### Backlog fixes
 
@@ -176,11 +182,11 @@ during phase 0: half-day is an attendance value (0.5), not a wage type. The docs
 - Note in A3 that ARB placeholders must be added, not only keys renamed.
 
 **Exit check:** the owner has answered the decisions needed for A1 and B1, and a reviewer
-session finds no remaining contradiction between the five docs.
+session finds no remaining contradiction between the six docs (`CLAUDE.md` included).
 
 ---
 
-## 5. Phase 1: foundation (A1 to A5)
+## 5. Phase 1: foundation (A1 to A6)
 
 Goal: an empty app that already looks and reads right on a real low-end Android phone.
 
@@ -210,6 +216,8 @@ Goal: an empty app that already looks and reads right on a real low-end Android 
   names with descriptions.
 - Remove sample data from the ARB files (worker names, post authors, sample plot names, later
   phase screens). Sample data belongs in seed data, not strings.
+- Reword set-up copy written for phone sign-in (`obSubs0`, "Just a name and phone number") to
+  match the Google sign-in flow in `screens.md`.
 - Add placeholders and plural rules for every string that carries a number, amount, date or
   name. No string concatenation in Dart.
 - Money formatter: integer paise in, Indian grouping out (₹1,84,500). Date formatter with the
@@ -272,7 +280,7 @@ Fixes to make:
 | Payables | Add a payments table for expenses bought on credit, so a payable can be part-paid. |
 | Labour | Payment kinds and wage types match the spec exactly (half-day is an attendance value, not a wage type; settled in phase 0). Add check constraints to `labour_entries.wage_type` and `sales.mode`. |
 | Units | Remove hard-coded unit lists from check constraints; units come from templates. |
-| Common columns | Add the missing ones to `expense_allocations` and `price_alerts`. Give `farm_members` and `labour_group_members` an `id`, `version` and `deleted_at` so membership changes sync and can be undone. |
+| Common columns | Add the missing ones to `expense_allocations`, `price_alerts`, farmer-owned `crops` rows and locally entered `market_prices` rows. Give `farm_members` and `labour_group_members` the full common columns so membership changes sync and can be undone. |
 | Versions | Remove the version increment from the `set_updated` trigger (see section 13). |
 | Sync columns and indexes | Section 13. |
 | Roles | Section 13, "Row-level security". Tighten now so D3 is a check, not a rewrite. |
@@ -296,9 +304,9 @@ can be hard-deleted by a client.
 
 ### B3. Money and units
 
-- `Money` as integer paise: add, subtract, multiply by a quantity or ratio with a stated
-  rounding rule, split by weights using the largest-remainder rule from phase 0, format and
-  parse with Indian grouping.
+- `Money` as integer paise: add, subtract, multiply by a quantity or ratio with the rounding
+  rule in `product-spec.md` rule 8 (once, when saved, half away from zero), split by weights
+  using the largest-remainder rule from phase 0, format and parse with Indian grouping.
 - Units with conversions from templates, including local units and custom ratios.
 - Property-style tests: a split always sums to the original for random amounts and weights;
   formatting then parsing returns the same value.
@@ -344,8 +352,9 @@ Build to the design in section 13. Deliverables:
 
 - Outbox upload with coalescing, batching and retry.
 - Pull by cursor per table, applied in dependency order inside local transactions.
-- Conflict rules from the spec: different fields merge; the same field takes the latest; money
-  and quantity conflicts are put in `conflicts` and shown to the user to choose.
+- Conflict rules from the spec: different fields merge; the same field takes the change the
+  server accepted last; money and quantity conflicts are put in `conflicts` and shown to the
+  user to choose.
 - A test harness with two simulated devices and a fake or local server, covering: both offline
   then both sync; the same row edited on both; delete on one and edit on the other; upload
   interrupted halfway; the same batch sent twice; clock on one device wrong by a day.
@@ -393,8 +402,8 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
 - Named workers with "same as yesterday", and groups by head count per rate class. Payments,
   advances and balances.
 - Domain functions: attendance wage, group wage, balance per worker and per group.
-- Check: the ₹2,150 and ₹5,200 examples; an unnamed group can be named later without losing
-  its entries; wage cost posts to the chosen crop cycle.
+- Check: the ₹2,150, ₹1,200 overtime and ₹5,200 examples; an unnamed group can be named
+  later without losing its entries; wage cost posts to the chosen crop cycle.
 
 ### Quick add sheet (part of C9, brought forward)
 
@@ -418,15 +427,13 @@ Goal: the full chain from harvest to stock to sale to profit, with history visib
 - Any number of teams (unnamed group, named group, named worker), each with its own rate;
   per-team quantity on or off; piece-rate teams beside daily-rate teams.
 - Saving creates the harvest, the team labour entries and the lot in one transaction.
-- Lot cost: define the rule in `product-spec.md` before coding (recommended: harvest wages plus
-  the crop cycle's allocated costs for the period, per unit harvested) and test it by hand-worked
-  example.
+- Lot cost: `product-spec.md` rule 9; test with its two lot-cost examples.
 - Check: the harvest example with the switch on and off; removing a team recalculates.
 
 ### C6. Selling
 
 - Sell from one or more lots; rate prefilled from the latest price; deductions; net; profit per
-  kg shown before saving; part payments and receivables; buyer book.
+  sale unit shown before saving; part payments and receivables; buyer book.
 - Check: cannot sell more than stock, including when two devices sell from the same lot while
   offline (this becomes a quantity conflict for the user to settle).
 
@@ -470,18 +477,22 @@ arrives as "update available" and leaves farmer changes untouched.
 
 ---
 
-## 10. Phase 6: release readiness (D1 to D5)
+## 10. Phase 6: release readiness (D1 to D6)
 
 - **D1. Offline soak.** Seven days of scripted entries in flight mode on two devices, then
   sync. Compare row counts and totals on both devices and the server: no loss, no duplicates.
 - **D2. Malayalam pass.** A native speaker reviews every string in context on a low-end phone,
   in normal and large text. Fix clipping, awkward wording and wrong farming terms.
-- **D3. Role checks.** Supervisor cannot see profit or money screens; accountant and viewer
-  limits; per-person permission overrides. Checked in the app and against the server directly.
+- **D3. Role checks.** The role defaults in `product-spec.md` rule 7 and per-person permission
+  overrides. Checked in the app and against the server directly.
 - **D4. Backup and full export.** Excel and PDF of everything, and restore onto a new phone by
   signing in (first sync, section 13).
 - **D5. Closed beta.** Release build with obfuscation and split per CPU type; crash reporting
   only with the owner's approval (CLAUDE.md forbids adding SDKs without asking).
+- **D6. Phone OTP.** A second sign-in method beside Google, after the closed beta build. Same
+  session and per-user database rules as B6. Settle with the owner first whether one account
+  can have both linked. Owner check: OTP arrives on a real Indian number on at least two mobile
+  networks.
 - **Field test.** Five to ten farmers in the pilot district use it for two weeks. Watch at
   least three of them do a first entry without help. Record where they hesitate.
 - **Store requirements.** Privacy policy, data deletion request path, permissions explained in
@@ -953,7 +964,10 @@ not scan the whole table.
 
 - Detect with the device-owned `version`: the upload says "I changed version N". If the server
   row is still at N, accept. If not, compare changed fields: different fields merge; the same
-  field takes the later change; money and quantity fields go to the user.
+  field takes the change the server accepted last (server order, never the device clock); money
+  and quantity fields go to the user.
+- A merge is the one case where the server sets `version`: it stores the merged row at the
+  highest version seen plus one and returns it, so no two different row states share a version.
 - Stock is a special case: two devices selling from the same lot offline can oversell. The
   server function detects it and returns a conflict for the user to settle.
 
@@ -980,9 +994,10 @@ Supabase's guidance for fast policies, to follow in B1:
 - Keep membership lookups in security-definer functions and call those wrapped in `select` too.
 - Add the farm filter in the query as well as relying on the policy.
 
-Role rules to encode (D3 then only verifies them): supervisor cannot read money tables or
-profit; accountant can read everything and write money entries but not daily work entries;
-viewer cannot write; per-person `permissions` override the role defaults.
+Role rules to encode (D3 then only verifies them), as listed in `product-spec.md` rule 7:
+supervisor cannot read money tables or profit; accountant can read everything and write money
+entries but not daily work entries; viewer cannot write; per-person `permissions` override the
+role defaults.
 
 Check policies with `explain analyze` on a seeded local instance, as a signed-in user, before
 B1 is called done.

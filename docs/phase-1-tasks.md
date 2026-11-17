@@ -40,7 +40,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 
 - [ ] D1. Offline test: seven days of entries in flight mode, then sync with no loss or duplicates.
 - [ ] D2. Malayalam rendering pass on a low-end Android device, including large text.
-- [ ] D3. Role checks: supervisor cannot see profit; viewer cannot write.
+- [ ] D3. Role checks: the role defaults in `docs/product-spec.md` rule 7 (supervisor cannot see money or profit; accountant cannot write daily work; viewer cannot write), in the app and on the server.
 - [ ] D4. Backup and full export (Excel, PDF).
 - [ ] D5. Closed beta build.
 - [ ] D6. Phone OTP sign-in as a second method beside Google, once everything above works. Same offline and per-user database rules as B6. Decide with the owner whether one account can have both phone and Google linked.
@@ -51,6 +51,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - Supabase project (new or existing) and region.
 - Google Cloud project and OAuth client ids for Google sign-in (needed by B6).
 - SMS provider for phone OTP, and sender and template registration (needed by D6).
+- Whether one account can have both Google and phone sign-in linked (needed by D6).
 - Pilot district, crops and partner organisation.
 - Which price sources are licensed for use.
 - Test phone: one low-end Android phone typical of the pilot district, for all performance budgets (needed by A6).
