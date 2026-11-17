@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -6,7 +5,7 @@ import '../l10n/app_localizations.dart';
 import 'settings.dart';
 import 'theme/theme.dart';
 import 'theme/tokens.dart';
-import 'widgets/widget_gallery.dart';
+import 'router.dart';
 
 class ThottamApp extends ConsumerWidget {
   const ThottamApp({super.key});
@@ -15,7 +14,8 @@ class ThottamApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     const tokens = ThottamTokens.standard;
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: ref.watch(routerProvider),
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
       theme: buildTheme(tokens),
       locale: settings.language.locale,
@@ -36,8 +36,6 @@ class ThottamApp extends ConsumerWidget {
           child: child!,
         );
       },
-      // The widget gallery stands in for the shell until A5 adds the tabs.
-      home: kDebugMode ? const WidgetGalleryScreen() : const _Placeholder(),
     );
   }
 }
@@ -62,15 +60,4 @@ class _ExtraScale extends TextScaler {
 
   @override
   int get hashCode => Object.hash(base, factor);
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text(AppLocalizations.of(context).appName)),
-    );
-  }
 }
