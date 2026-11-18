@@ -17,7 +17,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [x] B2. Drift schema mirroring the phase 1 tables, with the common columns and an outbox table.
 - [x] B3. Money (integer paise, Indian formatting) and unit conversion helpers, with tests.
 - [x] B4. Event log: every repository write records old and new values; restore function; tests.
-- [ ] B5. Override resolver (app → farm → plot or crop → entry) with tests.
+- [x] B5. Override resolver (app → farm → plot or crop → entry) with tests.
 - [ ] B6. Auth: Google sign-in with Supabase; local session; works offline after first sign-in. Phone OTP comes later (D6).
 - [ ] B7. Sync: outbox upload, pull since last sync, conflict rules from the spec; tests with two simulated devices.
 
