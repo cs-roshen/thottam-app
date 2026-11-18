@@ -76,6 +76,9 @@ class ThottamTokens extends ThemeExtension<ThottamTokens> {
   double get navHeight => 78;
   double get addButtonSize => 62;
   double get addButtonRaise => 34;
+  // Same cap Material's NavigationBar uses, so labels fit the fixed bar at
+  // the largest system text size.
+  double get navLabelMaxScale => 1.3;
   double get outlineWidth => 1.5;
 
   // Components
@@ -99,6 +102,8 @@ class ThottamTokens extends ThemeExtension<ThottamTokens> {
   Duration get barResize => const Duration(milliseconds: 450);
   Duration get switchKnobMove => const Duration(milliseconds: 240);
   double get pressScale => 0.95;
+  // The doc gives no press duration; short enough to feel immediate.
+  Duration get pressDuration => const Duration(milliseconds: 100);
   Duration get toastIn => const Duration(milliseconds: 320);
   Duration get toastStay => const Duration(milliseconds: 1900);
 
@@ -109,4 +114,8 @@ class ThottamTokens extends ThemeExtension<ThottamTokens> {
 
   @override
   ThottamTokens lerp(ThottamTokens? other, double t) => this;
+}
+
+extension TokensOf on BuildContext {
+  ThottamTokens get tokens => Theme.of(this).extension<ThottamTokens>()!;
 }
