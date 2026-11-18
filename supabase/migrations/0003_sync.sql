@@ -140,7 +140,9 @@ begin
           join pg_catalog.pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
           where c.contype = 'f' and cardinality(c.conkey) = 1
             and c.conrelid = format('public.%I', v_entity)::regclass
-            and c.confrelid::regclass::text in (select 'public.' || name from public.sync_tables)
+            -- template_items has no deleted_at: master data is switched off, never deleted
+            and c.confrelid::regclass::text in
+              (select 'public.' || name from public.sync_tables where name <> 'template_items')
         loop
           continue when v_up ->> v_parent.col is null;
           execute format('select deleted_at is not null from %s where id = $1', v_parent.parent)

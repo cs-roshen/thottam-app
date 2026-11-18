@@ -228,7 +228,11 @@ class SyncEngine {
   // ---------- pull ----------
 
   Future<void> pull() async {
-    await _pullTable('farm_members', myMemberships, userId: userId);
+    // This person's memberships span farms, and server_seq is in commit order
+    // only within one farm (each farm's writes take that farm's lock), so a
+    // cursor here could step over a late commit. They are a handful of rows:
+    // read them all every time.
+    await _pullTable('farm_members', myMemberships, userId: userId, all: true);
     final farms = await db
         .customSelect(
           'SELECT farm_id FROM farm_members WHERE user_id = ? '
@@ -253,21 +257,23 @@ class SyncEngine {
     String key, {
     String? farmId,
     String? userId,
+    bool all = false,
   }) async {
     final info = _table(table);
-    var cursor =
-        (await db
-                .customSelect(
-                  'SELECT "cursor" FROM sync_state WHERE farm_id = ? '
-                  'AND entity = ?',
-                  variables: [
-                    Variable.withString(key),
-                    Variable.withString(table),
-                  ],
-                )
-                .getSingleOrNull())
-            ?.read<int>('cursor') ??
-        0;
+    var cursor = all
+        ? 0
+        : (await db
+                      .customSelect(
+                        'SELECT "cursor" FROM sync_state WHERE farm_id = ? '
+                        'AND entity = ?',
+                        variables: [
+                          Variable.withString(key),
+                          Variable.withString(table),
+                        ],
+                      )
+                      .getSingleOrNull())
+                  ?.read<int>('cursor') ??
+              0;
     while (true) {
       final rows = await server.pull(
         table,

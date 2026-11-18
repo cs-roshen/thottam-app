@@ -19,7 +19,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [x] B4. Event log: every repository write records old and new values; restore function; tests.
 - [x] B5. Override resolver (app → farm → plot or crop → entry) with tests.
 - [ ] B6. Auth: Google sign-in with Supabase; local session; works offline after first sign-in. Phone OTP comes later (D6).
-- [ ] B7. Sync: outbox upload, pull since last sync, conflict rules from the spec; tests with two simulated devices.
+- [x] B7. Sync: outbox upload, pull since last sync, conflict rules from the spec; tests with two simulated devices.
 
 ## C. Features (each: tests from `docs/screens.md` first, then UI)
 
@@ -56,7 +56,7 @@ Decided (2026-11-17):
 Decided (2026-11-18):
 
 - History on the phone: every season stays on the phone; nothing is cut off or fetched on demand.
-- B1 and B7 server tests run against the owner's Supabase cloud project (in a transaction that is rolled back), instead of a local Supabase instance.
+- B1 and B7 server tests run against the owner's Supabase cloud project, `Thottam-App`, in a transaction that always ends in an error so nothing is kept (`tool/server_tests.py`), instead of a local Supabase instance.
 - B6 waits for the Google Cloud project and OAuth client ids; B7 is built against a fake server and the server tests until then.
 
 Open:

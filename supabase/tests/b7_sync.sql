@@ -1,6 +1,6 @@
 -- B7 server tests for sync_push (the same cases as test/core/sync/sync_test.dart, on Postgres).
---   supabase db query --remote=<project ref> -f supabase/tests/b7_sync.sql
--- One transaction, rolled back at the end.
+-- Run with tool/server_tests.py.
+-- One transaction that always ends in an error, so nothing is kept.
 
 begin;
 
@@ -18,11 +18,13 @@ language sql immutable as $$ select md5('b7test:' || p_name)::uuid $$;
 -- Calls sync_push as p_user and keeps the result.
 create function pg_temp.push(p_user uuid, p_batch text, p_farm uuid, p_rows jsonb) returns jsonb
 language plpgsql as $$
-declare v jsonb;
+declare
+  v jsonb;
+  v_batch uuid := pg_temp.id(p_batch); -- before the role switch: pg_temp is not the caller's
 begin
   perform set_config('request.jwt.claims', json_build_object('sub', p_user, 'role', 'authenticated')::text, true);
   execute 'set local role authenticated';
-  select public.sync_push(pg_temp.id(p_batch), p_farm, p_rows) into v;
+  select public.sync_push(v_batch, p_farm, p_rows) into v;
   execute 'reset role';
   perform set_config('request.jwt.claims', '', true);
   return v;
@@ -180,8 +182,19 @@ select pg_temp.check('someone outside the farm cannot push to it',
     jsonb_build_array(pg_temp.r('notes', pg_temp.id('n4'), pg_temp.id('farm'), '{"noted_on": "2026-11-18", "body": "x"}')))
     -> 'rejected')));
 -- ---------- result ----------
-select count(*) filter (where ok) as passed, count(*) filter (where not ok) as failed,
-  coalesce(string_agg(name || ' -> ' || coalesce(detail, ''), E'\n' order by n) filter (where not ok), '') as failures
-from results;
+-- Always raises, so nothing above can be committed; the message is the summary.
+do $$
+declare
+  v_passed integer;
+  v_failed integer;
+  v_failures text;
+begin
+  select count(*) filter (where ok), count(*) filter (where not ok),
+    coalesce(string_agg(name || ' -> ' || coalesce(detail, ''), chr(10) order by n) filter (where not ok), '')
+    into v_passed, v_failed, v_failures
+  from results;
+  raise exception 'TEST SUMMARY b7_sync: passed=% failed=% %', v_passed, v_failed,
+    case when v_failed > 0 then chr(10) || v_failures else '' end;
+end $$;
 
 rollback;

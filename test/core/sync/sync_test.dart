@@ -529,6 +529,22 @@ void main() {
     },
   );
 
+  test('a membership committed late in another farm is still found', () async {
+    await setUpFarm();
+    // B has already pulled memberships with higher server_seq values; a
+    // membership in a second farm then lands with a lower one, as a late
+    // commit from another farm's transaction would.
+    await b.sync();
+    server.tables['farm_members']!['m-late'] = {
+      ...server.row('farm_members', 'm-manager')!,
+      'id': 'm-late',
+      'farm_id': 'farm-2',
+      'server_seq': 1,
+    };
+    await b.sync();
+    expect(await b.row('farm_members', 'm-late'), isNotNull);
+  });
+
   test('a removed member stops receiving the farm', () async {
     await setUpFarm();
     server.put('farm_members', {
