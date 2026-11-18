@@ -433,9 +433,11 @@ select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members s
 -- only an email confirmed by a Google sign-in claims an invite
 select pg_temp.run_as(pg_temp.u('owner_a'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
   pg_temp.fx_id('a', 'invite_emailonly'), pg_temp.fx_id('farm', 'a'), 'emailonly@example.com', 'viewer'));
-select pg_temp.check('an account without a Google sign-in cannot claim an invite',
-  pg_temp.run_as(pg_temp.u('emailonly'), 'select public.accept_invites()') = 'ok:0'
-  and not exists (select 1 from public.farm_members where user_id = pg_temp.u('emailonly')));
+-- (a statement cannot see what a function it calls wrote, so each check is its own statement)
+select pg_temp.check('an account without a Google sign-in claims nothing',
+  pg_temp.run_as(pg_temp.u('emailonly'), 'select public.accept_invites()') = 'ok:0');
+select pg_temp.check('an account without a Google sign-in gets no membership',
+  not exists (select 1 from public.farm_members where user_id = pg_temp.u('emailonly')));
 
 select pg_temp.check('accepting an invite is written to history',
   exists (select 1 from public.event_log e join public.farm_members m on m.id = e.entity_id
@@ -445,9 +447,10 @@ select pg_temp.check('accepting an invite is written to history',
 -- memberships get their own id, so an invite id cannot clash with one
 select pg_temp.run_as(pg_temp.u('owner_b'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
   pg_temp.fx_id('a', 'm_owner'), pg_temp.fx_id('farm', 'b'), 'stranger@example.com', 'viewer'));
+select pg_temp.check('an invite reusing a membership id is still accepted',
+  pg_temp.run_as(pg_temp.u('stranger'), 'select public.accept_invites()') = 'ok:1');
 select pg_temp.check('an invite reusing a membership id cannot block the invitee',
-  pg_temp.run_as(pg_temp.u('stranger'), 'select public.accept_invites()') = 'ok:1'
-  and exists (select 1 from public.farm_members where farm_id = pg_temp.fx_id('farm', 'b') and user_id = pg_temp.u('stranger')));
+  exists (select 1 from public.farm_members where farm_id = pg_temp.fx_id('farm', 'b') and user_id = pg_temp.u('stranger')));
 
 -- a row can only point at rows of its own farm
 set constraints all immediate;
