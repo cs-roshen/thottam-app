@@ -68,6 +68,13 @@ ThemeData buildTheme(ThottamTokens t) {
         textStyle: text.labelLarge,
       ),
     ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStatePropertyAll(t.surface),
+      trackColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? t.primary : t.switchOff,
+      ),
+      trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+    ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: t.toast,
       contentTextStyle: text.bodyMedium!.copyWith(color: t.onToast),
