@@ -28,9 +28,17 @@ def main(ref: str) -> int:
             print(f'{test}: must end by raising its TEST SUMMARY')
             return 1
         body = re.sub(r'^begin;\s*$', '', body, count=1, flags=re.M)
+        body = re.sub(r'^rollback;\s*\Z', '', body.rstrip() + '\n', flags=re.M)
+        # Anything that could end the transaction early would let the test data stay.
+        ender = re.compile(r'^\s*(commit|rollback|abort|end\s+(transaction|work)|begin\s*;)', re.I | re.M)
+        if ender.search(body) or ender.search(migrations):
+            print(f'{test}: must not begin or end transactions itself')
+            return 1
         with tempfile.NamedTemporaryFile('w', suffix='.sql', delete=False,
                                          encoding='utf-8', newline='\n') as f:
-            f.write('begin;\n' + migrations + '\n' + body)
+            # The guard raises if a test ever stops raising its own summary.
+            f.write('begin;\n' + migrations + '\n' + body +
+                    "\ndo $$ begin raise exception 'test did not raise its summary'; end $$;\n")
         try:
             run = subprocess.run([cli, 'db', 'query', f'--remote={ref}', '--yes', '-f', f.name],
                                  capture_output=True, text=True, encoding='utf-8')

@@ -75,7 +75,14 @@ end $$;
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
 select pg_temp.u(x), '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
   x || '@example.com', now(), jsonb_build_object('full_name', x), now(), now()
-from unnest(array['owner_a', 'manager_a', 'supervisor_a', 'accountant_a', 'viewer_a', 'owner_b', 'newcomer', 'stranger']) x;
+from unnest(array['owner_a', 'manager_a', 'supervisor_a', 'accountant_a', 'viewer_a', 'owner_b', 'newcomer', 'stranger',
+  'emailonly', 'creator']) x;
+-- everyone signs in with Google except emailonly
+insert into auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+select pg_temp.u(x)::text, pg_temp.u(x), jsonb_build_object('sub', pg_temp.u(x)::text, 'email', x || '@example.com'),
+  'google', now(), now(), now()
+from unnest(array['owner_a', 'manager_a', 'supervisor_a', 'accountant_a', 'viewer_a', 'owner_b', 'newcomer', 'stranger',
+  'creator']) x;
 
 create function pg_temp.make_rows(t text, f uuid, o uuid) returns void
 language plpgsql as $$
@@ -166,10 +173,11 @@ declare
   v_json jsonb;
   v_res text;
   v_exp integer;
+  v_read integer;
   v_id uuid;
 begin
   for r in select t.name, t.access_class from public.sync_tables t
-    where t.name not in ('template_items', 'farms', 'farm_members', 'farm_invites', 'crops', 'event_log')
+    where t.name not in ('template_items', 'farms', 'farm_members', 'farm_invites', 'crops', 'event_log', 'price_alerts')
     order by t.sort_order
   loop
     -- a lot's cost row has its lot's id
@@ -184,9 +192,12 @@ begin
     foreach v_role in array array['owner', 'manager', 'supervisor', 'accountant', 'viewer'] loop
       v_user := pg_temp.u(v_role || '_a');
       select level into v_exp from expected where cls = r.access_class and role = v_role;
+      -- what was taken from a lot is part of its stock, so stock readers see sale_lots
+      select level into v_read from expected
+        where cls = case r.name when 'sale_lots' then 'stock' else r.access_class end and role = v_role;
       v_res := pg_temp.try_as(v_user, format('select 1 from public.%I where id = %L', r.name, v_id));
-      perform pg_temp.check(format('%s reads %s: %s', v_role, r.name, v_exp >= 1),
-        v_res = case when v_exp >= 1 then 'ok:1' else 'ok:0' end, v_res);
+      perform pg_temp.check(format('%s reads %s: %s', v_role, r.name, v_read >= 1),
+        v_res = case when v_read >= 1 then 'ok:1' else 'ok:0' end, v_res);
       v_res := pg_temp.try_as(v_user, format(
         'insert into public.%I select * from jsonb_populate_record(null::public.%I, %L::jsonb)', r.name, r.name, v_json));
       perform pg_temp.check(format('%s inserts %s: %s', v_role, r.name, v_exp = 2), (v_res = 'ok:1') = (v_exp = 2), v_res);
@@ -248,7 +259,7 @@ select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members s
 select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
   '{"members": "write"}', pg_temp.fx_id('a', 'm_manager')));
 select pg_temp.check('manager with members write cannot make an owner',
-  pg_temp.try_as(pg_temp.u('manager_a'), format('update public.farm_members set role = %L where id = %L', 'owner', pg_temp.fx_id('a', 'm_viewer'))) <> 'ok:1');
+  pg_temp.try_as(pg_temp.u('manager_a'), format('update public.farm_members set role = %L where id = %L', 'owner', pg_temp.fx_id('a', 'm_viewer'))) like 'err:42501%');
 select pg_temp.check('manager with members write cannot remove the owner',
   pg_temp.try_as(pg_temp.u('manager_a'), format('update public.farm_members set deleted_at = now() where id = %L', pg_temp.fx_id('a', 'm_owner'))) = 'ok:0');
 select pg_temp.check('manager with members write changes a viewer',
@@ -402,6 +413,124 @@ select pg_temp.check('owner cannot read another farm''s profiles',
 select pg_temp.check('nobody edits someone else''s profile',
   pg_temp.try_as(pg_temp.u('owner_a'), format('update public.profiles set full_name = %L where id = %L', 'x', pg_temp.u('manager_a'))) = 'ok:0');
 
+-- ---------- review fixes ----------
+-- an invite never changes an active membership, so it cannot demote the owner
+select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
+  '{"members": "write"}', pg_temp.fx_id('a', 'm_manager')));
+select pg_temp.check('a member trusted with members can invite the owner''s email',
+  pg_temp.run_as(pg_temp.u('manager_a'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
+    pg_temp.fx_id('a', 'invite_owner'), pg_temp.fx_id('farm', 'a'), 'owner_a@example.com', 'viewer')) = 'ok:1');
+select pg_temp.check('the owner accepts it at the next sync',
+  pg_temp.run_as(pg_temp.u('owner_a'), 'select public.accept_invites()') = 'ok:1');
+select pg_temp.check('the owner is still the owner',
+  (select role = 'owner' and deleted_at is null from public.farm_members where id = pg_temp.fx_id('a', 'm_owner')));
+select pg_temp.check('an accepted invite cannot be reopened',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('update public.farm_invites set accepted_at = null where id = %L',
+    pg_temp.fx_id('a', 'invite_owner'))) = 'ok:0');
+select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
+  '{}', pg_temp.fx_id('a', 'm_manager')));
+
+-- only an email confirmed by a Google sign-in claims an invite
+select pg_temp.run_as(pg_temp.u('owner_a'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
+  pg_temp.fx_id('a', 'invite_emailonly'), pg_temp.fx_id('farm', 'a'), 'emailonly@example.com', 'viewer'));
+select pg_temp.check('an account without a Google sign-in cannot claim an invite',
+  pg_temp.run_as(pg_temp.u('emailonly'), 'select public.accept_invites()') = 'ok:0'
+  and not exists (select 1 from public.farm_members where user_id = pg_temp.u('emailonly')));
+
+select pg_temp.check('accepting an invite is written to history',
+  exists (select 1 from public.event_log e join public.farm_members m on m.id = e.entity_id
+          where e.entity = 'farm_members' and e.action = 'create' and m.user_id = pg_temp.u('newcomer'))
+  and exists (select 1 from public.event_log where entity = 'farm_invites' and entity_id = pg_temp.fx_id('a', 'invite_new')));
+
+-- memberships get their own id, so an invite id cannot clash with one
+select pg_temp.run_as(pg_temp.u('owner_b'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
+  pg_temp.fx_id('a', 'm_owner'), pg_temp.fx_id('farm', 'b'), 'stranger@example.com', 'viewer'));
+select pg_temp.check('an invite reusing a membership id cannot block the invitee',
+  pg_temp.run_as(pg_temp.u('stranger'), 'select public.accept_invites()') = 'ok:1'
+  and exists (select 1 from public.farm_members where farm_id = pg_temp.fx_id('farm', 'b') and user_id = pg_temp.u('stranger')));
+
+-- a row can only point at rows of its own farm
+set constraints all immediate;
+select pg_temp.check('another farm cannot claim this farm''s lot cost row',
+  pg_temp.try_as(pg_temp.u('owner_b'), format('insert into public.lot_costs (id, farm_id, cost_paise) values (%L, %L, 0)',
+    pg_temp.fx_id('a', 'lot_spare'), pg_temp.fx_id('farm', 'b'))) like 'err:23503%');
+select pg_temp.check('an entry cannot point at another farm''s plot',
+  pg_temp.try_as(pg_temp.u('owner_b'), format('insert into public.notes (id, farm_id, noted_on, body, plot_id) values (%L, %L, current_date, %L, %L)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'b'), 'x', pg_temp.fx_id('a', 'plots'))) like 'err:23503%');
+select pg_temp.check('an entry still points at its own farm''s plot',
+  pg_temp.try_as(pg_temp.u('owner_a'), format('insert into public.notes (id, farm_id, noted_on, body, plot_id) values (%L, %L, current_date, %L, %L)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'a'), 'x', pg_temp.fx_id('a', 'plots'))) = 'ok:1');
+set constraints all deferred;
+
+-- nothing a farm changed is hard-deleted from under it
+insert into public.template_overrides (id, farm_id, scope, template_item_id, data)
+values (pg_temp.fx_id('a', 'override_climber'), pg_temp.fx_id('farm', 'a'), 'farm',
+  md5('thottam:item:*:rate_class:climber')::uuid, '{"default_rate_paise": 110000}');
+do $$
+begin
+  delete from public.template_items where id = md5('thottam:item:*:rate_class:climber')::uuid;
+  perform pg_temp.check('a template item a farm has changed cannot be hard-deleted', false);
+exception when others then
+  perform pg_temp.check('a template item a farm has changed cannot be hard-deleted', sqlstate = '23503', sqlerrm);
+end $$;
+do $$
+begin
+  delete from auth.users where id = pg_temp.u('viewer_a');
+  perform pg_temp.check('an account with a farm cannot be hard-deleted', false);
+exception when others then
+  perform pg_temp.check('an account with a farm cannot be hard-deleted', sqlstate = '23503', sqlerrm);
+end $$;
+
+-- a farm always keeps an owner
+select pg_temp.check('the last owner cannot step down',
+  pg_temp.try_as(pg_temp.u('owner_a'), format('update public.farm_members set role = %L where id = %L',
+    'manager', pg_temp.fx_id('a', 'm_owner'))) like 'err:23514%');
+select pg_temp.check('the last owner cannot remove themselves',
+  pg_temp.try_as(pg_temp.u('owner_a'), format('update public.farm_members set deleted_at = now() where id = %L',
+    pg_temp.fx_id('a', 'm_owner'))) like 'err:23514%');
+
+-- a removed creator gets nothing back from create_farm
+select pg_temp.run_as(pg_temp.u('creator'), format('select public.create_farm(%L, %L, %L)',
+  pg_temp.fx_id('farm', 'c'), pg_temp.fx_id('c', 'm_creator'), 'Farm C'));
+insert into public.farm_members (id, farm_id, user_id, role)
+values (pg_temp.fx_id('c', 'm_owner_b'), pg_temp.fx_id('farm', 'c'), pg_temp.u('owner_b'), 'owner');
+select pg_temp.check('a second owner removes the creator',
+  pg_temp.run_as(pg_temp.u('owner_b'), format('update public.farm_members set deleted_at = now() where id = %L',
+    pg_temp.fx_id('c', 'm_creator'))) = 'ok:1');
+select pg_temp.check('a removed creator cannot read the farm through create_farm',
+  pg_temp.try_as(pg_temp.u('creator'), format('select public.create_farm(%L, %L, %L)',
+    pg_temp.fx_id('farm', 'c'), gen_random_uuid(), 'Mine')) like 'err:%');
+
+-- a price alert belongs to the person who set it
+select pg_temp.check('a member cannot set a price alert for someone else',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('insert into public.price_alerts (id, farm_id, user_id, crop_id, threshold_paise) values (%L, %L, %L, %L, 1)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'a'), pg_temp.u('owner_a'), md5('thottam:crop:coconut')::uuid)) like 'err:42501%');
+select pg_temp.check('a member sets their own price alert',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('insert into public.price_alerts (id, farm_id, user_id, crop_id, threshold_paise) values (%L, %L, %L, %L, 1)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'a'), pg_temp.u('manager_a'), md5('thottam:crop:coconut')::uuid)) = 'ok:1');
+select pg_temp.check('nobody else reads my price alerts',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('select 1 from public.price_alerts where id = %L', pg_temp.fx_id('a', 'price_alerts'))) = 'ok:0');
+select pg_temp.check('I read and change my own price alerts',
+  pg_temp.try_as(pg_temp.u('owner_a'), format('update public.price_alerts set threshold_paise = 1 where id = %L', pg_temp.fx_id('a', 'price_alerts'))) = 'ok:1');
+select pg_temp.check('a viewer cannot set a price alert',
+  pg_temp.try_as(pg_temp.u('viewer_a'), format('insert into public.price_alerts (id, farm_id, user_id, crop_id, threshold_paise) values (%L, %L, %L, %L, 1)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'a'), pg_temp.u('viewer_a'), md5('thottam:crop:coconut')::uuid)) like 'err:42501%');
+
+-- members see names, never phone numbers
+select pg_temp.check('members cannot read each other''s phone numbers',
+  pg_temp.try_as(pg_temp.u('owner_a'), format('select phone from public.profiles where id = %L', pg_temp.u('manager_a'))) like 'err:42501%');
+
+-- later migrations start closed
+create table public.zz_later_table (id int);
+create function public.zz_later_function() returns int language sql as 'select 1';
+select pg_temp.check('a table added later is closed to signed-out users',
+  not has_table_privilege('anon', 'public.zz_later_table', 'select'));
+select pg_temp.check('a table added later cannot be truncated or hard-deleted by clients',
+  not has_table_privilege('authenticated', 'public.zz_later_table', 'truncate')
+  and not has_table_privilege('authenticated', 'public.zz_later_table', 'delete'));
+select pg_temp.check('a function added later is closed to signed-out users',
+  not has_function_privilege('anon', 'public.zz_later_function()', 'execute'));
+
 -- ---------- a removed member loses access at once ----------
 select pg_temp.check('owner removes the supervisor',
   pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set deleted_at = now() where id = %L',
@@ -411,6 +540,8 @@ select pg_temp.check('removed supervisor cannot read the farm',
 select pg_temp.check('removed supervisor cannot write daily work',
   pg_temp.try_as(pg_temp.u('supervisor_a'), format('insert into public.notes (id, farm_id, noted_on, body) values (%L, %L, current_date, %L)',
     gen_random_uuid(), pg_temp.fx_id('farm', 'a'), 'x')) like 'err:%');
+select pg_temp.check('removed supervisor cannot read history',
+  pg_temp.try_as(pg_temp.u('supervisor_a'), format('select 1 from public.event_log where id = %L', pg_temp.fx_id('a', 'event_plots'))) = 'ok:0');
 select pg_temp.check('removed supervisor still sees their own membership, so the phone learns',
   pg_temp.try_as(pg_temp.u('supervisor_a'), format('select 1 from public.farm_members where id = %L', pg_temp.fx_id('a', 'm_supervisor'))) = 'ok:1');
 

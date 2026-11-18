@@ -72,11 +72,14 @@ begin
   execute 'select count(*) from (' || p_sql || ') x' into v_rows;  -- as the server, for scale
   insert into results (name, ok, detail) values (p_name,
     v_plan like '%' || p_index || '%'
+      -- the page really comes back: a policy hiding the rows would show fewer
+      and v_plan like 'Limit (actual rows=' || p_rows || ' %'
       and v_plan not like '%Seq Scan on ' || split_part(p_index, '_farm', 1) || '%'
       -- the policy's membership lookup runs once (an InitPlan, or a hashed SubPlan
       -- built once), not once per row
       and (v_plan like '%InitPlan%' or v_plan like '%hashed SubPlan%')
-      and v_plan not like '%SubPlan%loops=500%',
+      -- and no part of the plan runs more than once
+      and v_plan !~ 'loops=([2-9]|[1-9][0-9]+)',
     v_plan);
 end $$;
 

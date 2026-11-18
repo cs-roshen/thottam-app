@@ -154,7 +154,8 @@ create table public.farms (
 create table public.farm_members (
   id uuid primary key,
   farm_id uuid not null references public.farms (id) on delete cascade deferrable initially deferred,
-  user_id uuid not null references auth.users (id) on delete cascade,
+  -- no cascade: closing an account is a server procedure that hands over or closes its farms
+  user_id uuid not null references auth.users (id),
   role text not null check (role in ('owner', 'manager', 'supervisor', 'accountant', 'viewer')),
   permissions jsonb not null default '{}',       -- access class -> 'none' | 'read' | 'write'
   created_at timestamptz not null default now(),
@@ -262,7 +263,7 @@ create index crops_farm_seq on public.crops (owner_farm_id, server_seq);
 
 create table public.template_items (
   id uuid primary key,
-  crop_id uuid references public.crops (id) on delete cascade,  -- null = applies to all crops
+  crop_id uuid references public.crops (id),  -- null = applies to all crops; retire items with is_active
   list_type text not null check (list_type in
     ('activity', 'input', 'expense_category', 'unit', 'grade', 'process_step', 'labour_task',
      'disease', 'sale_grade', 'rate_class', 'setting')),
@@ -286,7 +287,7 @@ create table public.template_overrides (
   farm_id uuid not null references public.farms (id) on delete cascade deferrable initially deferred,
   scope text not null check (scope in ('farm', 'plot', 'crop_cycle')),
   scope_id uuid,                                  -- plot or crop cycle id when scope is not 'farm'
-  template_item_id uuid references public.template_items (id) on delete cascade,  -- null = farmer's own item
+  template_item_id uuid references public.template_items (id),  -- null = farmer's own item; never cascades
   crop_id uuid references public.crops (id) deferrable initially deferred,
   list_type text,
   code text,
@@ -785,10 +786,19 @@ end $$;
 create index farms_seq on public.farms (server_seq);
 
 create function public.farm_members_guard() returns trigger
-language plpgsql set search_path = '' as $$
+language plpgsql security definer set search_path = '' as $$
 begin
   if new.user_id <> old.user_id then
     raise exception 'a membership cannot move to another person' using errcode = 'check_violation';
+  end if;
+  if old.role = 'owner' and old.deleted_at is null
+     and (new.role <> 'owner' or new.deleted_at is not null) then
+    -- the farm's lock first, so two owners cannot remove each other at the same time
+    perform pg_advisory_xact_lock(hashtextextended(new.farm_id::text, 0));
+    if not exists (select 1 from public.farm_members m where m.farm_id = new.farm_id and m.id <> new.id
+                   and m.role = 'owner' and m.deleted_at is null) then
+      raise exception 'a farm keeps at least one owner' using errcode = 'check_violation';
+    end if;
   end if;
   return new;
 end $$;
@@ -812,7 +822,8 @@ begin
   end if;
   select * into v_farm from public.farms where id = p_id;
   if found then
-    if v_farm.created_by = v_uid then
+    if v_farm.created_by = v_uid and exists (select 1 from public.farm_members m
+         where m.farm_id = p_id and m.user_id = v_uid and m.deleted_at is null) then
       return v_farm;
     end if;
     raise exception 'farm id already used' using errcode = 'unique_violation';
@@ -825,16 +836,40 @@ begin
   return v_farm;
 end $$;
 
+-- Milliseconds since the epoch: how the phone stores times, also inside history values.
+create function public.epoch_ms(p_time timestamptz) returns bigint
+language sql immutable set search_path = '' as $$
+  select (extract(epoch from p_time) * 1000)::bigint
+$$;
+
+-- A history row written by the server, with values in the phone's form. Runs with the
+-- caller's rights, so a client calling it can do no more than insert into event_log itself.
+create function public.log_event(p_entity text, p_entity_id uuid, p_farm_id uuid, p_action text,
+  p_old jsonb, p_new jsonb) returns void
+language sql set search_path = '' as $$
+  insert into public.event_log (id, farm_id, entity, entity_id, action, old_values, new_values, occurred_on)
+  values (gen_random_uuid(), p_farm_id, p_entity, p_entity_id, p_action, p_old, p_new, current_date)
+$$;
+
 -- Turns the signed-in account's open invites into memberships. Called at sign-in and on
--- every sync. Only a confirmed email matches; a withdrawn invite (deleted_at) never does.
+-- every sync. Invites are by Google email, so only an email a Google sign-in confirmed
+-- matches; a withdrawn invite (deleted_at) never does. An invite only adds a person or
+-- brings back a removed one: it never changes an active membership, so it cannot demote
+-- anyone. Every change is written to history.
 create function public.accept_invites() returns setof uuid
 language plpgsql security definer set search_path = '' as $$
 declare
   v_uid uuid := auth.uid();
   v_email text;
   r public.farm_invites;
+  v_old public.farm_members;
+  v_new public.farm_members;
+  v_now timestamptz := now();
 begin
-  select lower(email) into v_email from auth.users where id = v_uid and email_confirmed_at is not null;
+  select lower(u.email) into v_email from auth.users u
+  where u.id = v_uid and u.email_confirmed_at is not null
+    and exists (select 1 from auth.identities i where i.user_id = u.id and i.provider = 'google'
+                and lower(i.identity_data ->> 'email') = lower(u.email));
   if v_email is null then
     return;
   end if;
@@ -843,14 +878,30 @@ begin
     where i.email = v_email and i.accepted_at is null and i.deleted_at is null
     order by i.farm_id, i.created_at
   loop
-    insert into public.farm_members (id, farm_id, user_id, role, permissions)
-    values (r.id, r.farm_id, v_uid, r.role, r.permissions)
-    on conflict (farm_id, user_id) do update
-      set role = excluded.role, permissions = excluded.permissions, deleted_at = null,
-          updated_at = now(), version = public.farm_members.version + 1;
+    select * into v_old from public.farm_members m where m.farm_id = r.farm_id and m.user_id = v_uid;
+    if not found then
+      insert into public.farm_members (id, farm_id, user_id, role, permissions)
+      values (gen_random_uuid(), r.farm_id, v_uid, r.role, r.permissions)
+      returning * into v_new;
+      perform public.log_event('farm_members', v_new.id, r.farm_id, 'create', null,
+        jsonb_build_object('user_id', v_uid, 'role', v_new.role, 'permissions', v_new.permissions::text));
+    elsif v_old.deleted_at is not null then
+      update public.farm_members
+        set role = r.role, permissions = r.permissions, deleted_at = null,
+            updated_at = v_now, version = version + 1
+        where id = v_old.id
+        returning * into v_new;
+      perform public.log_event('farm_members', v_old.id, r.farm_id, 'update',
+        jsonb_build_object('role', v_old.role, 'permissions', v_old.permissions::text,
+          'deleted_at', public.epoch_ms(v_old.deleted_at)),
+        jsonb_build_object('role', v_new.role, 'permissions', v_new.permissions::text, 'deleted_at', null));
+    end if;
     update public.farm_invites
-      set accepted_at = now(), accepted_by = v_uid, updated_at = now(), version = version + 1
+      set accepted_at = v_now, accepted_by = v_uid, updated_at = v_now, version = version + 1
       where id = r.id;
+    perform public.log_event('farm_invites', r.id, r.farm_id, 'update',
+      jsonb_build_object('accepted_at', null, 'accepted_by', null),
+      jsonb_build_object('accepted_at', public.epoch_ms(v_now), 'accepted_by', v_uid));
     return next r.farm_id;
   end loop;
 end $$;
@@ -890,7 +941,7 @@ create policy farm_invites_insert on public.farm_invites for insert to authentic
   with check (farm_id in (select public.my_farms('members', 2))
          and (role <> 'owner' or farm_id in (select public.my_owned_farms())));
 create policy farm_invites_update on public.farm_invites for update to authenticated
-  using (farm_id in (select public.my_farms('members', 2))
+  using (accepted_at is null and farm_id in (select public.my_farms('members', 2))
          and (role <> 'owner' or farm_id in (select public.my_owned_farms())))
   with check (farm_id in (select public.my_farms('members', 2))
          and (role <> 'owner' or farm_id in (select public.my_owned_farms())));
@@ -927,15 +978,58 @@ do $$
 declare r record;
 begin
   for r in select name, access_class from public.sync_tables
-    where name not in ('template_items', 'farms', 'farm_members', 'farm_invites', 'crops', 'market_prices', 'event_log')
+    where name not in ('template_items', 'farms', 'farm_members', 'farm_invites', 'crops', 'market_prices',
+      'price_alerts', 'event_log')
   loop
     execute format('alter table public.%I enable row level security', r.name);
+    -- what has been taken from a lot is part of its stock left, which stock readers see
     execute format('create policy %1$I_select on public.%1$I for select to authenticated using (farm_id in (select public.my_farms(%2$L, 1)))',
-      r.name, r.access_class);
+      r.name, case r.name when 'sale_lots' then 'stock' else r.access_class end);
     execute format('create policy %1$I_insert on public.%1$I for insert to authenticated with check (farm_id in (select public.my_farms(%2$L, 2)))',
       r.name, r.access_class);
     execute format('create policy %1$I_update on public.%1$I for update to authenticated using (farm_id in (select public.my_farms(%2$L, 2))) with check (farm_id in (select public.my_farms(%2$L, 2)))',
       r.name, r.access_class);
+  end loop;
+end $$;
+
+-- A price alert belongs to the person who set it.
+alter table public.price_alerts enable row level security;
+create policy price_alerts_select on public.price_alerts for select to authenticated
+  using (user_id = (select auth.uid()) and farm_id in (select public.my_farms('prices', 1)));
+create policy price_alerts_insert on public.price_alerts for insert to authenticated
+  with check (user_id = (select auth.uid()) and farm_id in (select public.my_farms('prices', 2)));
+create policy price_alerts_update on public.price_alerts for update to authenticated
+  using (user_id = (select auth.uid()) and farm_id in (select public.my_farms('prices', 2)))
+  with check (user_id = (select auth.uid()) and farm_id in (select public.my_farms('prices', 2)));
+
+-- ---------- same-farm references ----------
+-- A row may only point at a parent of its own farm: every reference between farm-owned
+-- tables is (column, farm_id) -> parent (id, farm_id). Otherwise a member of two farms
+-- could claim another farm's lot cost row, or file farm A's expense against farm B's plot.
+do $$
+declare r record;
+begin
+  for r in
+    select distinct c.confrelid::regclass::text as parent
+    from pg_catalog.pg_constraint c
+    join public.sync_tables p on c.confrelid = format('public.%I', p.name)::regclass and p.farm_column = 'farm_id'
+    join public.sync_tables ch on c.conrelid = format('public.%I', ch.name)::regclass and ch.farm_column = 'farm_id'
+    where c.contype = 'f'
+  loop
+    execute format('alter table %s add unique (id, farm_id)', r.parent);
+  end loop;
+  for r in
+    select c.conname, c.conrelid::regclass::text as child, a.attname::text as col,
+      c.confrelid::regclass::text as parent
+    from pg_catalog.pg_constraint c
+    join pg_catalog.pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
+    join public.sync_tables p on c.confrelid = format('public.%I', p.name)::regclass and p.farm_column = 'farm_id'
+    join public.sync_tables ch on c.conrelid = format('public.%I', ch.name)::regclass and ch.farm_column = 'farm_id'
+    where c.contype = 'f' and cardinality(c.conkey) = 1
+  loop
+    execute format('alter table %s drop constraint %I', r.child, r.conname);
+    execute format('alter table %s add constraint %I foreign key (%I, farm_id) references %s (id, farm_id) '
+      'deferrable initially deferred', r.child, r.conname, r.col, r.parent);
   end loop;
 end $$;
 
@@ -946,6 +1040,17 @@ revoke all on all tables in schema public from anon;
 revoke truncate, delete, references, trigger on all tables in schema public from authenticated;
 revoke all on all sequences in schema public from anon, authenticated;
 revoke execute on all functions in schema public from public, anon;
+-- Members see each other's names, never phone numbers.
+revoke select on public.profiles from authenticated;
+grant select (id, full_name, language, large_text, created_at, updated_at) on public.profiles to authenticated;
+-- Supabase's default privileges would grant every future table, sequence and function to
+-- anon and every right to authenticated; later migrations start from these rules instead.
+alter default privileges in schema public revoke all on tables from anon;
+alter default privileges in schema public revoke truncate, delete, references, trigger on tables from authenticated;
+alter default privileges in schema public revoke all on sequences from anon, authenticated;
+alter default privileges in schema public revoke execute on functions from anon;
+-- PUBLIC's right to run new functions is a global default, not a per-schema one
+alter default privileges revoke execute on functions from public;
 grant execute on function public.create_farm(uuid, uuid, text, text, jsonb, timestamptz),
   public.accept_invites(), public.my_farms(text, integer), public.my_owned_farms(),
   public.my_entities(integer), public.my_co_members(), public.access_level(text, jsonb, text)
