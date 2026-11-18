@@ -76,6 +76,12 @@ void main() {
       ]);
     });
 
+    test('leftovers follow the remainders, not the order listed', () {
+      // 100 by 1/3/3: shares 14.29, 42.86, 42.86; list order would give [15, 43, 42]
+      expect(splitPaise(100, [1, 3, 3]), [14, 43, 43]);
+      expect(splitPaise(11, [1, 2, 7]), [1, 2, 8]); // 1.1, 2.2, 7.7
+    });
+
     test('a zero weight gets nothing, negative amounts split as refunds', () {
       expect(splitPaise(1000, [0, 1]), [0, 1000]);
       expect(splitPaise(-10000, [1, 1, 1]), [-3334, -3333, -3333]);
@@ -98,12 +104,32 @@ void main() {
             (_) => r.nextInt(100000),
           );
           if (weights.every((w) => w == 0)) weights[0] = 1;
-          final parts = splitPaise(amount, weights);
-          expect(parts.reduce((a, b) => a + b), amount);
-          final total = weights.reduce((a, b) => a + b);
+          final signed = r.nextBool() ? amount : -amount;
+          final parts = splitPaise(signed, weights);
+          expect(parts.reduce((a, b) => a + b), signed);
+          // each part is its rounded-down share or one paisa more, and a
+          // paisa never goes to a smaller remainder ahead of a larger one
+          final total = BigInt.from(weights.reduce((a, b) => a + b));
+          final big = BigInt.from(amount);
+          final floor = [
+            for (final w in weights) (big * BigInt.from(w)) ~/ total,
+          ];
+          final rem = [for (final w in weights) (big * BigInt.from(w)) % total];
+          final extra = [
+            for (var k = 0; k < parts.length; k++)
+              parts[k].abs() - floor[k].toInt(),
+          ];
           for (var k = 0; k < parts.length; k++) {
-            final exact = amount * weights[k] / total;
-            expect((parts[k] - exact).abs() < 1.0001, isTrue);
+            expect(extra[k], anyOf(0, 1));
+            for (var j = 0; j < parts.length; j++) {
+              if (extra[k] == 1 && extra[j] == 0) {
+                expect(
+                  rem[k] > rem[j] || (rem[k] == rem[j] && k < j),
+                  isTrue,
+                  reason: '$signed $weights -> $parts',
+                );
+              }
+            }
           }
         }
       },
@@ -118,6 +144,19 @@ void main() {
         expect(parseRupeesToPaise(formatPaise(paise)), paise);
       }
       expect(parseRupeesToPaise(formatPaise(0)), 0);
+    });
+
+    test('too many digits is not an amount, never a wrapped number', () {
+      expect(parseRupeesToPaise('999999999999999.99'), 99999999999999999);
+      expect(parseRupeesToPaise('1000000000000000'), isNull);
+      expect(parseRupeesToPaise('100000000000000000'), isNull);
+    });
+
+    test('per-person figures are rounded once', () {
+      // 24.499 kg over 2 people is 12.2495 kg: 12.2, not 12.3
+      expect(formatQuantity(24499, 2), '12.2');
+      expect(formatQuantity(120000, 12), '10');
+      expect(() => formatQuantity(1, 0), throwsArgumentError);
     });
 
     test('negative input is not an amount', () {

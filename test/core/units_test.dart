@@ -9,7 +9,7 @@ void main() {
     Unit.fromTemplate('quintal', {'dimension': 'mass', 'factor': 100}),
     Unit.fromTemplate('cent', {'dimension': 'area', 'factor': 1}),
     Unit.fromTemplate('acre', {'dimension': 'area', 'factor': 100}),
-    Unit.fromTemplate('hectare', {'dimension': 'area', 'factor': 247.105}),
+    Unit.fromTemplate('hectare', {'dimension': 'area', 'factor': 247.105381}),
     Unit.fromTemplate('bunch', {'dimension': 'count', 'factor': 1}),
     Unit.fromTemplate('para', {'dimension': 'mass', 'factor': null}),
   ];
@@ -46,6 +46,38 @@ void main() {
       ratios: [const UnitRatio('bunch', 'kg', '12.5')],
     );
     expect(u.convert(2000, 'bunch', 'kg'), 25000);
+  });
+
+  test('the farmer ratio defines its unit for every conversion', () {
+    // a local "quintal" of 98 kg, though the template says 100
+    final u = Units(
+      templates,
+      ratios: [const UnitRatio('quintal', 'kg', '98')],
+    );
+    expect(u.convert(1000, 'quintal', 'kg'), 98000);
+    expect(u.convert(1000, 'quintal', 'g'), 98000000);
+    expect(u.convert(98000, 'kg', 'quintal'), 1000);
+    // units it does not define keep the template
+    expect(u.convert(1000, 'kg', 'g'), 1000000);
+  });
+
+  test('a bad factor or ratio is ignored and breaks nothing else', () {
+    final u = Units(
+      [
+        ...templates,
+        Unit.fromTemplate('ug', {'dimension': 'mass', 'factor': 1e-9}),
+        Unit.fromTemplate('broken', {'dimension': 'mass', 'factor': 'lots'}),
+      ],
+      ratios: [
+        const UnitRatio('para', 'kg', '7 kg'),
+        const UnitRatio('bunch', 'kg', '-12'),
+      ],
+    );
+    expect(u.convert(1000000000, 'ug', 'kg'), 1);
+    expect(u.convert(1000, 'broken', 'kg'), isNull);
+    expect(u.convert(1000, 'para', 'kg'), isNull);
+    expect(u.convert(1000, 'bunch', 'kg'), isNull);
+    expect(u.convert(1500, 'quintal', 'kg'), 150000);
   });
 
   test('a zero ratio gives no conversion instead of a crash', () {

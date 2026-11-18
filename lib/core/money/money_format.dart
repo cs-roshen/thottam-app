@@ -31,9 +31,11 @@ String indianGrouping(String digits) {
 
 /// Formats a quantity in thousandths of its unit for display: rounded to one
 /// decimal, half away from zero, with Indian grouping; the decimal appears only
-/// when it is not zero (12.5, 1,200). Digits are always Latin.
-String formatQuantity(int thousandths) {
-  final tenths = divRound(BigInt.from(thousandths), BigInt.from(100));
+/// when it is not zero (12.5, 1,200). Digits are always Latin. A per-person or
+/// per-unit figure passes the divisor as [per], so it is rounded only once.
+String formatQuantity(int thousandths, [int per = 1]) {
+  if (per <= 0) throw ArgumentError.value(per, 'per');
+  final tenths = divRound(BigInt.from(thousandths), BigInt.from(100 * per));
   final sign = tenths < 0 ? '−' : '';
   final abs = tenths.abs();
   final whole = indianGrouping((abs ~/ 10).toString());
