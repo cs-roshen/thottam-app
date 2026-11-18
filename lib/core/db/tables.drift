@@ -9,7 +9,9 @@
 --
 -- There are no foreign keys here: pulled pages arrive table by table, so a child can land
 -- before its parent. The server enforces references; the phone's repositories write parents
--- first.
+-- first. Checks that the server will never relax (worker or group, attendance range) are
+-- repeated here, so the phone refuses a row instead of saving one that can never sync.
+-- Lists of allowed values (modes, kinds) are not: the server may widen them later.
 
 -- ---------- people and farms ----------
 CREATE TABLE profiles (
@@ -317,7 +319,7 @@ CREATE TABLE labour_entries (
   task_code TEXT,
   rate_class TEXT,
   head_count INTEGER NOT NULL DEFAULT 1,
-  attendance INTEGER NOT NULL DEFAULT 1000,
+  attendance INTEGER NOT NULL DEFAULT 1000 CHECK (attendance BETWEEN 0 AND 1000),
   wage_type TEXT NOT NULL DEFAULT 'daily',
   hours INTEGER,
   overtime_hours INTEGER,
@@ -332,7 +334,8 @@ CREATE TABLE labour_entries (
   updated_at INTEGER NOT NULL,
   updated_by TEXT,
   version INTEGER NOT NULL DEFAULT 1,
-  deleted_at INTEGER
+  deleted_at INTEGER,
+  CHECK (worker_id IS NOT NULL OR group_id IS NOT NULL)
 ) AS LabourEntryRow;
 
 CREATE INDEX labour_entries_farm_day ON labour_entries (farm_id, work_date, id) WHERE deleted_at IS NULL;
@@ -374,7 +377,8 @@ CREATE TABLE labour_payments (
   updated_at INTEGER NOT NULL,
   updated_by TEXT,
   version INTEGER NOT NULL DEFAULT 1,
-  deleted_at INTEGER
+  deleted_at INTEGER,
+  CHECK (worker_id IS NOT NULL OR group_id IS NOT NULL)
 ) AS LabourPaymentRow;
 
 CREATE INDEX labour_payments_farm_day ON labour_payments (farm_id, paid_on, id) WHERE deleted_at IS NULL;

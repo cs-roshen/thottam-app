@@ -12172,7 +12172,8 @@ class LabourEntries extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 1000',
+    $customConstraints:
+        'NOT NULL DEFAULT 1000 CHECK (attendance BETWEEN 0 AND 1000)',
     defaultValue: const CustomExpression('1000'),
   );
   static const VerificationMeta _wageTypeMeta = const VerificationMeta(
@@ -12697,6 +12698,10 @@ class LabourEntries extends Table
     return LabourEntries(attachedDatabase, alias);
   }
 
+  @override
+  List<String> get customConstraints => const [
+    'CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL)',
+  ];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -14593,6 +14598,10 @@ class LabourPayments extends Table
     return LabourPayments(attachedDatabase, alias);
   }
 
+  @override
+  List<String> get customConstraints => const [
+    'CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL)',
+  ];
   @override
   bool get dontWriteConstraints => true;
 }

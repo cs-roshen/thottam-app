@@ -2734,7 +2734,7 @@
             "getter_name": "attendance",
             "moor_type": "int",
             "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT 1000",
+            "customConstraints": "NOT NULL DEFAULT 1000 CHECK (attendance BETWEEN 0 AND 1000)",
             "default_dart": "const CustomExpression('1000')",
             "default_client_dart": null,
             "dsl_features": []
@@ -2892,7 +2892,9 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": []
+        "constraints": [
+          "CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL)"
+        ]
       }
     },
     {
@@ -3292,7 +3294,9 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": []
+        "constraints": [
+          "CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL)"
+        ]
       }
     },
     {
@@ -6295,7 +6299,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"labour_entries\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"work_date\" TEXT NOT NULL, \"worker_id\" TEXT, \"group_id\" TEXT, \"crop_cycle_id\" TEXT, \"plot_id\" TEXT, \"harvest_id\" TEXT, \"task_code\" TEXT, \"rate_class\" TEXT, \"head_count\" INTEGER NOT NULL DEFAULT 1, \"attendance\" INTEGER NOT NULL DEFAULT 1000, \"wage_type\" TEXT NOT NULL DEFAULT 'daily', \"hours\" INTEGER, \"overtime_hours\" INTEGER, \"overtime_rate_paise\" INTEGER, \"rate_paise\" INTEGER NOT NULL DEFAULT 0, \"piece_quantity\" INTEGER, \"piece_unit\" TEXT, \"amount_paise\" INTEGER NOT NULL DEFAULT 0, \"amount_overridden\" INTEGER NOT NULL DEFAULT FALSE, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"labour_entries\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"work_date\" TEXT NOT NULL, \"worker_id\" TEXT, \"group_id\" TEXT, \"crop_cycle_id\" TEXT, \"plot_id\" TEXT, \"harvest_id\" TEXT, \"task_code\" TEXT, \"rate_class\" TEXT, \"head_count\" INTEGER NOT NULL DEFAULT 1, \"attendance\" INTEGER NOT NULL DEFAULT 1000 CHECK (attendance BETWEEN 0 AND 1000), \"wage_type\" TEXT NOT NULL DEFAULT 'daily', \"hours\" INTEGER, \"overtime_hours\" INTEGER, \"overtime_rate_paise\" INTEGER, \"rate_paise\" INTEGER NOT NULL DEFAULT 0, \"piece_quantity\" INTEGER, \"piece_unit\" TEXT, \"amount_paise\" INTEGER NOT NULL DEFAULT 0, \"amount_overridden\" INTEGER NOT NULL DEFAULT FALSE, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER, CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL));"
         }
       ]
     },
@@ -6376,7 +6380,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"labour_payments\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"paid_on\" TEXT NOT NULL, \"worker_id\" TEXT, \"group_id\" TEXT, \"kind\" TEXT NOT NULL, \"amount_paise\" INTEGER NOT NULL, \"mode\" TEXT NOT NULL DEFAULT 'cash', \"notes\" TEXT, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"labour_payments\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"paid_on\" TEXT NOT NULL, \"worker_id\" TEXT, \"group_id\" TEXT, \"kind\" TEXT NOT NULL, \"amount_paise\" INTEGER NOT NULL, \"mode\" TEXT NOT NULL DEFAULT 'cash', \"notes\" TEXT, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER, CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL));"
         }
       ]
     },

@@ -24,6 +24,21 @@ void main() {
       ];
       final scans = plan.where((d) => RegExp(r'^SCAN \w+').hasMatch(d));
       expect(scans, isEmpty, reason: plan.join('\n'));
+      // an automatic index is built by scanning the table on every run
+      expect(
+        plan.where((d) => d.contains('AUTOMATIC')),
+        isEmpty,
+        reason: plan.join('\n'),
+      );
+      // reading every row of the farm is a scan in disguise, unless it is a
+      // page taken in index order
+      if (!q.ordered) {
+        expect(
+          plan.where((d) => RegExp(r'INDEX \w+ \(farm_id=\?\)$').hasMatch(d)),
+          isEmpty,
+          reason: plan.join('\n'),
+        );
+      }
       if (q.ordered) {
         expect(
           plan.where((d) => d.contains('TEMP B-TREE')),

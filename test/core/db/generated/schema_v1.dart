@@ -4,7 +4,7 @@
 //
 import 'package:drift/drift.dart';
 
-class Profiles extends Table with TableInfo {
+class Profiles extends Table with TableInfo<Profiles, ProfilesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -86,8 +86,38 @@ class Profiles extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ProfilesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProfilesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      fullName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}full_name'],
+      )!,
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      language: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language'],
+      )!,
+      largeText: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}large_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
   }
 
   @override
@@ -99,7 +129,269 @@ class Profiles extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Farms extends Table with TableInfo {
+class ProfilesData extends DataClass implements Insertable<ProfilesData> {
+  final String id;
+  final String fullName;
+  final String? phone;
+  final String language;
+  final int largeText;
+  final int createdAt;
+  final int updatedAt;
+  const ProfilesData({
+    required this.id,
+    required this.fullName,
+    this.phone,
+    required this.language,
+    required this.largeText,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['full_name'] = Variable<String>(fullName);
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    map['language'] = Variable<String>(language);
+    map['large_text'] = Variable<int>(largeText);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  ProfilesCompanion toCompanion(bool nullToAbsent) {
+    return ProfilesCompanion(
+      id: Value(id),
+      fullName: Value(fullName),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      language: Value(language),
+      largeText: Value(largeText),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ProfilesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProfilesData(
+      id: serializer.fromJson<String>(json['id']),
+      fullName: serializer.fromJson<String>(json['fullName']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      language: serializer.fromJson<String>(json['language']),
+      largeText: serializer.fromJson<int>(json['largeText']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'fullName': serializer.toJson<String>(fullName),
+      'phone': serializer.toJson<String?>(phone),
+      'language': serializer.toJson<String>(language),
+      'largeText': serializer.toJson<int>(largeText),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  ProfilesData copyWith({
+    String? id,
+    String? fullName,
+    Value<String?> phone = const Value.absent(),
+    String? language,
+    int? largeText,
+    int? createdAt,
+    int? updatedAt,
+  }) => ProfilesData(
+    id: id ?? this.id,
+    fullName: fullName ?? this.fullName,
+    phone: phone.present ? phone.value : this.phone,
+    language: language ?? this.language,
+    largeText: largeText ?? this.largeText,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ProfilesData copyWithCompanion(ProfilesCompanion data) {
+    return ProfilesData(
+      id: data.id.present ? data.id.value : this.id,
+      fullName: data.fullName.present ? data.fullName.value : this.fullName,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      language: data.language.present ? data.language.value : this.language,
+      largeText: data.largeText.present ? data.largeText.value : this.largeText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProfilesData(')
+          ..write('id: $id, ')
+          ..write('fullName: $fullName, ')
+          ..write('phone: $phone, ')
+          ..write('language: $language, ')
+          ..write('largeText: $largeText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    fullName,
+    phone,
+    language,
+    largeText,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProfilesData &&
+          other.id == this.id &&
+          other.fullName == this.fullName &&
+          other.phone == this.phone &&
+          other.language == this.language &&
+          other.largeText == this.largeText &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ProfilesCompanion extends UpdateCompanion<ProfilesData> {
+  final Value<String> id;
+  final Value<String> fullName;
+  final Value<String?> phone;
+  final Value<String> language;
+  final Value<int> largeText;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const ProfilesCompanion({
+    this.id = const Value.absent(),
+    this.fullName = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.language = const Value.absent(),
+    this.largeText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProfilesCompanion.insert({
+    required String id,
+    this.fullName = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.language = const Value.absent(),
+    this.largeText = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<ProfilesData> custom({
+    Expression<String>? id,
+    Expression<String>? fullName,
+    Expression<String>? phone,
+    Expression<String>? language,
+    Expression<int>? largeText,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (fullName != null) 'full_name': fullName,
+      if (phone != null) 'phone': phone,
+      if (language != null) 'language': language,
+      if (largeText != null) 'large_text': largeText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProfilesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? fullName,
+    Value<String?>? phone,
+    Value<String>? language,
+    Value<int>? largeText,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ProfilesCompanion(
+      id: id ?? this.id,
+      fullName: fullName ?? this.fullName,
+      phone: phone ?? this.phone,
+      language: language ?? this.language,
+      largeText: largeText ?? this.largeText,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (fullName.present) {
+      map['full_name'] = Variable<String>(fullName.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (largeText.present) {
+      map['large_text'] = Variable<int>(largeText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProfilesCompanion(')
+          ..write('id: $id, ')
+          ..write('fullName: $fullName, ')
+          ..write('phone: $phone, ')
+          ..write('language: $language, ')
+          ..write('largeText: $largeText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Farms extends Table with TableInfo<Farms, FarmsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -218,8 +510,54 @@ class Farms extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  FarmsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FarmsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      district: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}district'],
+      ),
+      settings: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}settings'],
+      )!,
+      acceptedTemplateVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}accepted_template_version'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -231,7 +569,385 @@ class Farms extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class FarmMembers extends Table with TableInfo {
+class FarmsData extends DataClass implements Insertable<FarmsData> {
+  final String id;
+  final String name;
+  final String? district;
+  final String settings;
+  final int acceptedTemplateVersion;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const FarmsData({
+    required this.id,
+    required this.name,
+    this.district,
+    required this.settings,
+    required this.acceptedTemplateVersion,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || district != null) {
+      map['district'] = Variable<String>(district);
+    }
+    map['settings'] = Variable<String>(settings);
+    map['accepted_template_version'] = Variable<int>(acceptedTemplateVersion);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  FarmsCompanion toCompanion(bool nullToAbsent) {
+    return FarmsCompanion(
+      id: Value(id),
+      name: Value(name),
+      district: district == null && nullToAbsent
+          ? const Value.absent()
+          : Value(district),
+      settings: Value(settings),
+      acceptedTemplateVersion: Value(acceptedTemplateVersion),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory FarmsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FarmsData(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      district: serializer.fromJson<String?>(json['district']),
+      settings: serializer.fromJson<String>(json['settings']),
+      acceptedTemplateVersion: serializer.fromJson<int>(
+        json['acceptedTemplateVersion'],
+      ),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'district': serializer.toJson<String?>(district),
+      'settings': serializer.toJson<String>(settings),
+      'acceptedTemplateVersion': serializer.toJson<int>(
+        acceptedTemplateVersion,
+      ),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  FarmsData copyWith({
+    String? id,
+    String? name,
+    Value<String?> district = const Value.absent(),
+    String? settings,
+    int? acceptedTemplateVersion,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => FarmsData(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    district: district.present ? district.value : this.district,
+    settings: settings ?? this.settings,
+    acceptedTemplateVersion:
+        acceptedTemplateVersion ?? this.acceptedTemplateVersion,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  FarmsData copyWithCompanion(FarmsCompanion data) {
+    return FarmsData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      district: data.district.present ? data.district.value : this.district,
+      settings: data.settings.present ? data.settings.value : this.settings,
+      acceptedTemplateVersion: data.acceptedTemplateVersion.present
+          ? data.acceptedTemplateVersion.value
+          : this.acceptedTemplateVersion,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FarmsData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('district: $district, ')
+          ..write('settings: $settings, ')
+          ..write('acceptedTemplateVersion: $acceptedTemplateVersion, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    district,
+    settings,
+    acceptedTemplateVersion,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FarmsData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.district == this.district &&
+          other.settings == this.settings &&
+          other.acceptedTemplateVersion == this.acceptedTemplateVersion &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class FarmsCompanion extends UpdateCompanion<FarmsData> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> district;
+  final Value<String> settings;
+  final Value<int> acceptedTemplateVersion;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const FarmsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.district = const Value.absent(),
+    this.settings = const Value.absent(),
+    this.acceptedTemplateVersion = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FarmsCompanion.insert({
+    required String id,
+    required String name,
+    this.district = const Value.absent(),
+    this.settings = const Value.absent(),
+    this.acceptedTemplateVersion = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<FarmsData> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? district,
+    Expression<String>? settings,
+    Expression<int>? acceptedTemplateVersion,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (district != null) 'district': district,
+      if (settings != null) 'settings': settings,
+      if (acceptedTemplateVersion != null)
+        'accepted_template_version': acceptedTemplateVersion,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FarmsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String?>? district,
+    Value<String>? settings,
+    Value<int>? acceptedTemplateVersion,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return FarmsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      district: district ?? this.district,
+      settings: settings ?? this.settings,
+      acceptedTemplateVersion:
+          acceptedTemplateVersion ?? this.acceptedTemplateVersion,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (district.present) {
+      map['district'] = Variable<String>(district.value);
+    }
+    if (settings.present) {
+      map['settings'] = Variable<String>(settings.value);
+    }
+    if (acceptedTemplateVersion.present) {
+      map['accepted_template_version'] = Variable<int>(
+        acceptedTemplateVersion.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FarmsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('district: $district, ')
+          ..write('settings: $settings, ')
+          ..write('acceptedTemplateVersion: $acceptedTemplateVersion, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class FarmMembers extends Table with TableInfo<FarmMembers, FarmMembersData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -348,8 +1064,54 @@ class FarmMembers extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  FarmMembersData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FarmMembersData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      permissions: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}permissions'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -361,7 +1123,374 @@ class FarmMembers extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class FarmInvites extends Table with TableInfo {
+class FarmMembersData extends DataClass implements Insertable<FarmMembersData> {
+  final String id;
+  final String farmId;
+  final String userId;
+  final String role;
+  final String permissions;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const FarmMembersData({
+    required this.id,
+    required this.farmId,
+    required this.userId,
+    required this.role,
+    required this.permissions,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['user_id'] = Variable<String>(userId);
+    map['role'] = Variable<String>(role);
+    map['permissions'] = Variable<String>(permissions);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  FarmMembersCompanion toCompanion(bool nullToAbsent) {
+    return FarmMembersCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      userId: Value(userId),
+      role: Value(role),
+      permissions: Value(permissions),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory FarmMembersData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FarmMembersData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      userId: serializer.fromJson<String>(json['userId']),
+      role: serializer.fromJson<String>(json['role']),
+      permissions: serializer.fromJson<String>(json['permissions']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'userId': serializer.toJson<String>(userId),
+      'role': serializer.toJson<String>(role),
+      'permissions': serializer.toJson<String>(permissions),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  FarmMembersData copyWith({
+    String? id,
+    String? farmId,
+    String? userId,
+    String? role,
+    String? permissions,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => FarmMembersData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    userId: userId ?? this.userId,
+    role: role ?? this.role,
+    permissions: permissions ?? this.permissions,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  FarmMembersData copyWithCompanion(FarmMembersCompanion data) {
+    return FarmMembersData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      role: data.role.present ? data.role.value : this.role,
+      permissions: data.permissions.present
+          ? data.permissions.value
+          : this.permissions,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FarmMembersData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('userId: $userId, ')
+          ..write('role: $role, ')
+          ..write('permissions: $permissions, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    userId,
+    role,
+    permissions,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FarmMembersData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.userId == this.userId &&
+          other.role == this.role &&
+          other.permissions == this.permissions &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class FarmMembersCompanion extends UpdateCompanion<FarmMembersData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> userId;
+  final Value<String> role;
+  final Value<String> permissions;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const FarmMembersCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.permissions = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FarmMembersCompanion.insert({
+    required String id,
+    required String farmId,
+    required String userId,
+    required String role,
+    this.permissions = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       userId = Value(userId),
+       role = Value(role),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<FarmMembersData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? userId,
+    Expression<String>? role,
+    Expression<String>? permissions,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (userId != null) 'user_id': userId,
+      if (role != null) 'role': role,
+      if (permissions != null) 'permissions': permissions,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FarmMembersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? userId,
+    Value<String>? role,
+    Value<String>? permissions,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return FarmMembersCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      userId: userId ?? this.userId,
+      role: role ?? this.role,
+      permissions: permissions ?? this.permissions,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (permissions.present) {
+      map['permissions'] = Variable<String>(permissions.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FarmMembersCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('userId: $userId, ')
+          ..write('role: $role, ')
+          ..write('permissions: $permissions, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class FarmInvites extends Table with TableInfo<FarmInvites, FarmInvitesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -496,8 +1625,62 @@ class FarmInvites extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  FarmInvitesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FarmInvitesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      permissions: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}permissions'],
+      )!,
+      acceptedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}accepted_at'],
+      ),
+      acceptedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}accepted_by'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -509,7 +1692,432 @@ class FarmInvites extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Crops extends Table with TableInfo {
+class FarmInvitesData extends DataClass implements Insertable<FarmInvitesData> {
+  final String id;
+  final String farmId;
+  final String email;
+  final String role;
+  final String permissions;
+  final int? acceptedAt;
+  final String? acceptedBy;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const FarmInvitesData({
+    required this.id,
+    required this.farmId,
+    required this.email,
+    required this.role,
+    required this.permissions,
+    this.acceptedAt,
+    this.acceptedBy,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['email'] = Variable<String>(email);
+    map['role'] = Variable<String>(role);
+    map['permissions'] = Variable<String>(permissions);
+    if (!nullToAbsent || acceptedAt != null) {
+      map['accepted_at'] = Variable<int>(acceptedAt);
+    }
+    if (!nullToAbsent || acceptedBy != null) {
+      map['accepted_by'] = Variable<String>(acceptedBy);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  FarmInvitesCompanion toCompanion(bool nullToAbsent) {
+    return FarmInvitesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      email: Value(email),
+      role: Value(role),
+      permissions: Value(permissions),
+      acceptedAt: acceptedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(acceptedAt),
+      acceptedBy: acceptedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(acceptedBy),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory FarmInvitesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FarmInvitesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      email: serializer.fromJson<String>(json['email']),
+      role: serializer.fromJson<String>(json['role']),
+      permissions: serializer.fromJson<String>(json['permissions']),
+      acceptedAt: serializer.fromJson<int?>(json['acceptedAt']),
+      acceptedBy: serializer.fromJson<String?>(json['acceptedBy']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'email': serializer.toJson<String>(email),
+      'role': serializer.toJson<String>(role),
+      'permissions': serializer.toJson<String>(permissions),
+      'acceptedAt': serializer.toJson<int?>(acceptedAt),
+      'acceptedBy': serializer.toJson<String?>(acceptedBy),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  FarmInvitesData copyWith({
+    String? id,
+    String? farmId,
+    String? email,
+    String? role,
+    String? permissions,
+    Value<int?> acceptedAt = const Value.absent(),
+    Value<String?> acceptedBy = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => FarmInvitesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    email: email ?? this.email,
+    role: role ?? this.role,
+    permissions: permissions ?? this.permissions,
+    acceptedAt: acceptedAt.present ? acceptedAt.value : this.acceptedAt,
+    acceptedBy: acceptedBy.present ? acceptedBy.value : this.acceptedBy,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  FarmInvitesData copyWithCompanion(FarmInvitesCompanion data) {
+    return FarmInvitesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      email: data.email.present ? data.email.value : this.email,
+      role: data.role.present ? data.role.value : this.role,
+      permissions: data.permissions.present
+          ? data.permissions.value
+          : this.permissions,
+      acceptedAt: data.acceptedAt.present
+          ? data.acceptedAt.value
+          : this.acceptedAt,
+      acceptedBy: data.acceptedBy.present
+          ? data.acceptedBy.value
+          : this.acceptedBy,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FarmInvitesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('email: $email, ')
+          ..write('role: $role, ')
+          ..write('permissions: $permissions, ')
+          ..write('acceptedAt: $acceptedAt, ')
+          ..write('acceptedBy: $acceptedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    email,
+    role,
+    permissions,
+    acceptedAt,
+    acceptedBy,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FarmInvitesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.email == this.email &&
+          other.role == this.role &&
+          other.permissions == this.permissions &&
+          other.acceptedAt == this.acceptedAt &&
+          other.acceptedBy == this.acceptedBy &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class FarmInvitesCompanion extends UpdateCompanion<FarmInvitesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> email;
+  final Value<String> role;
+  final Value<String> permissions;
+  final Value<int?> acceptedAt;
+  final Value<String?> acceptedBy;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const FarmInvitesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.email = const Value.absent(),
+    this.role = const Value.absent(),
+    this.permissions = const Value.absent(),
+    this.acceptedAt = const Value.absent(),
+    this.acceptedBy = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FarmInvitesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String email,
+    required String role,
+    this.permissions = const Value.absent(),
+    this.acceptedAt = const Value.absent(),
+    this.acceptedBy = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       email = Value(email),
+       role = Value(role),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<FarmInvitesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? email,
+    Expression<String>? role,
+    Expression<String>? permissions,
+    Expression<int>? acceptedAt,
+    Expression<String>? acceptedBy,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (email != null) 'email': email,
+      if (role != null) 'role': role,
+      if (permissions != null) 'permissions': permissions,
+      if (acceptedAt != null) 'accepted_at': acceptedAt,
+      if (acceptedBy != null) 'accepted_by': acceptedBy,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FarmInvitesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? email,
+    Value<String>? role,
+    Value<String>? permissions,
+    Value<int?>? acceptedAt,
+    Value<String?>? acceptedBy,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return FarmInvitesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      permissions: permissions ?? this.permissions,
+      acceptedAt: acceptedAt ?? this.acceptedAt,
+      acceptedBy: acceptedBy ?? this.acceptedBy,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (permissions.present) {
+      map['permissions'] = Variable<String>(permissions.value);
+    }
+    if (acceptedAt.present) {
+      map['accepted_at'] = Variable<int>(acceptedAt.value);
+    }
+    if (acceptedBy.present) {
+      map['accepted_by'] = Variable<String>(acceptedBy.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FarmInvitesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('email: $email, ')
+          ..write('role: $role, ')
+          ..write('permissions: $permissions, ')
+          ..write('acceptedAt: $acceptedAt, ')
+          ..write('acceptedBy: $acceptedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Crops extends Table with TableInfo<Crops, CropsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -644,8 +2252,62 @@ class Crops extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  CropsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CropsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      nameMl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name_ml'],
+      )!,
+      nameEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name_en'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      defaultUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_unit'],
+      )!,
+      ownerFarmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_farm_id'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -657,7 +2319,428 @@ class Crops extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class TemplateItems extends Table with TableInfo {
+class CropsData extends DataClass implements Insertable<CropsData> {
+  final String id;
+  final String code;
+  final String nameMl;
+  final String nameEn;
+  final String kind;
+  final String defaultUnit;
+  final String? ownerFarmId;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const CropsData({
+    required this.id,
+    required this.code,
+    required this.nameMl,
+    required this.nameEn,
+    required this.kind,
+    required this.defaultUnit,
+    this.ownerFarmId,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['code'] = Variable<String>(code);
+    map['name_ml'] = Variable<String>(nameMl);
+    map['name_en'] = Variable<String>(nameEn);
+    map['kind'] = Variable<String>(kind);
+    map['default_unit'] = Variable<String>(defaultUnit);
+    if (!nullToAbsent || ownerFarmId != null) {
+      map['owner_farm_id'] = Variable<String>(ownerFarmId);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  CropsCompanion toCompanion(bool nullToAbsent) {
+    return CropsCompanion(
+      id: Value(id),
+      code: Value(code),
+      nameMl: Value(nameMl),
+      nameEn: Value(nameEn),
+      kind: Value(kind),
+      defaultUnit: Value(defaultUnit),
+      ownerFarmId: ownerFarmId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerFarmId),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory CropsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CropsData(
+      id: serializer.fromJson<String>(json['id']),
+      code: serializer.fromJson<String>(json['code']),
+      nameMl: serializer.fromJson<String>(json['nameMl']),
+      nameEn: serializer.fromJson<String>(json['nameEn']),
+      kind: serializer.fromJson<String>(json['kind']),
+      defaultUnit: serializer.fromJson<String>(json['defaultUnit']),
+      ownerFarmId: serializer.fromJson<String?>(json['ownerFarmId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'code': serializer.toJson<String>(code),
+      'nameMl': serializer.toJson<String>(nameMl),
+      'nameEn': serializer.toJson<String>(nameEn),
+      'kind': serializer.toJson<String>(kind),
+      'defaultUnit': serializer.toJson<String>(defaultUnit),
+      'ownerFarmId': serializer.toJson<String?>(ownerFarmId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  CropsData copyWith({
+    String? id,
+    String? code,
+    String? nameMl,
+    String? nameEn,
+    String? kind,
+    String? defaultUnit,
+    Value<String?> ownerFarmId = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => CropsData(
+    id: id ?? this.id,
+    code: code ?? this.code,
+    nameMl: nameMl ?? this.nameMl,
+    nameEn: nameEn ?? this.nameEn,
+    kind: kind ?? this.kind,
+    defaultUnit: defaultUnit ?? this.defaultUnit,
+    ownerFarmId: ownerFarmId.present ? ownerFarmId.value : this.ownerFarmId,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  CropsData copyWithCompanion(CropsCompanion data) {
+    return CropsData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      nameMl: data.nameMl.present ? data.nameMl.value : this.nameMl,
+      nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      defaultUnit: data.defaultUnit.present
+          ? data.defaultUnit.value
+          : this.defaultUnit,
+      ownerFarmId: data.ownerFarmId.present
+          ? data.ownerFarmId.value
+          : this.ownerFarmId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CropsData(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('nameMl: $nameMl, ')
+          ..write('nameEn: $nameEn, ')
+          ..write('kind: $kind, ')
+          ..write('defaultUnit: $defaultUnit, ')
+          ..write('ownerFarmId: $ownerFarmId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    code,
+    nameMl,
+    nameEn,
+    kind,
+    defaultUnit,
+    ownerFarmId,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CropsData &&
+          other.id == this.id &&
+          other.code == this.code &&
+          other.nameMl == this.nameMl &&
+          other.nameEn == this.nameEn &&
+          other.kind == this.kind &&
+          other.defaultUnit == this.defaultUnit &&
+          other.ownerFarmId == this.ownerFarmId &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class CropsCompanion extends UpdateCompanion<CropsData> {
+  final Value<String> id;
+  final Value<String> code;
+  final Value<String> nameMl;
+  final Value<String> nameEn;
+  final Value<String> kind;
+  final Value<String> defaultUnit;
+  final Value<String?> ownerFarmId;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const CropsCompanion({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nameMl = const Value.absent(),
+    this.nameEn = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.defaultUnit = const Value.absent(),
+    this.ownerFarmId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CropsCompanion.insert({
+    required String id,
+    required String code,
+    required String nameMl,
+    required String nameEn,
+    required String kind,
+    this.defaultUnit = const Value.absent(),
+    this.ownerFarmId = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       code = Value(code),
+       nameMl = Value(nameMl),
+       nameEn = Value(nameEn),
+       kind = Value(kind),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<CropsData> custom({
+    Expression<String>? id,
+    Expression<String>? code,
+    Expression<String>? nameMl,
+    Expression<String>? nameEn,
+    Expression<String>? kind,
+    Expression<String>? defaultUnit,
+    Expression<String>? ownerFarmId,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (code != null) 'code': code,
+      if (nameMl != null) 'name_ml': nameMl,
+      if (nameEn != null) 'name_en': nameEn,
+      if (kind != null) 'kind': kind,
+      if (defaultUnit != null) 'default_unit': defaultUnit,
+      if (ownerFarmId != null) 'owner_farm_id': ownerFarmId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CropsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? code,
+    Value<String>? nameMl,
+    Value<String>? nameEn,
+    Value<String>? kind,
+    Value<String>? defaultUnit,
+    Value<String?>? ownerFarmId,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return CropsCompanion(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      nameMl: nameMl ?? this.nameMl,
+      nameEn: nameEn ?? this.nameEn,
+      kind: kind ?? this.kind,
+      defaultUnit: defaultUnit ?? this.defaultUnit,
+      ownerFarmId: ownerFarmId ?? this.ownerFarmId,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (nameMl.present) {
+      map['name_ml'] = Variable<String>(nameMl.value);
+    }
+    if (nameEn.present) {
+      map['name_en'] = Variable<String>(nameEn.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (defaultUnit.present) {
+      map['default_unit'] = Variable<String>(defaultUnit.value);
+    }
+    if (ownerFarmId.present) {
+      map['owner_farm_id'] = Variable<String>(ownerFarmId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CropsCompanion(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('nameMl: $nameMl, ')
+          ..write('nameEn: $nameEn, ')
+          ..write('kind: $kind, ')
+          ..write('defaultUnit: $defaultUnit, ')
+          ..write('ownerFarmId: $ownerFarmId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class TemplateItems extends Table
+    with TableInfo<TemplateItems, TemplateItemsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -785,8 +2868,58 @@ class TemplateItems extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  TemplateItemsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemplateItemsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      cropId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_id'],
+      ),
+      listType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}list_type'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      nameMl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name_ml'],
+      )!,
+      nameEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name_en'],
+      )!,
+      data: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}data'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_active'],
+      )!,
+      templateVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}template_version'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
   }
 
   @override
@@ -798,7 +2931,392 @@ class TemplateItems extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class TemplateOverrides extends Table with TableInfo {
+class TemplateItemsData extends DataClass
+    implements Insertable<TemplateItemsData> {
+  final String id;
+  final String? cropId;
+  final String listType;
+  final String code;
+  final String nameMl;
+  final String nameEn;
+  final String data;
+  final int sortOrder;
+  final int isActive;
+  final int templateVersion;
+  final int createdAt;
+  final int updatedAt;
+  const TemplateItemsData({
+    required this.id,
+    this.cropId,
+    required this.listType,
+    required this.code,
+    required this.nameMl,
+    required this.nameEn,
+    required this.data,
+    required this.sortOrder,
+    required this.isActive,
+    required this.templateVersion,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || cropId != null) {
+      map['crop_id'] = Variable<String>(cropId);
+    }
+    map['list_type'] = Variable<String>(listType);
+    map['code'] = Variable<String>(code);
+    map['name_ml'] = Variable<String>(nameMl);
+    map['name_en'] = Variable<String>(nameEn);
+    map['data'] = Variable<String>(data);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['is_active'] = Variable<int>(isActive);
+    map['template_version'] = Variable<int>(templateVersion);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  TemplateItemsCompanion toCompanion(bool nullToAbsent) {
+    return TemplateItemsCompanion(
+      id: Value(id),
+      cropId: cropId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropId),
+      listType: Value(listType),
+      code: Value(code),
+      nameMl: Value(nameMl),
+      nameEn: Value(nameEn),
+      data: Value(data),
+      sortOrder: Value(sortOrder),
+      isActive: Value(isActive),
+      templateVersion: Value(templateVersion),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory TemplateItemsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemplateItemsData(
+      id: serializer.fromJson<String>(json['id']),
+      cropId: serializer.fromJson<String?>(json['cropId']),
+      listType: serializer.fromJson<String>(json['listType']),
+      code: serializer.fromJson<String>(json['code']),
+      nameMl: serializer.fromJson<String>(json['nameMl']),
+      nameEn: serializer.fromJson<String>(json['nameEn']),
+      data: serializer.fromJson<String>(json['data']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      isActive: serializer.fromJson<int>(json['isActive']),
+      templateVersion: serializer.fromJson<int>(json['templateVersion']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'cropId': serializer.toJson<String?>(cropId),
+      'listType': serializer.toJson<String>(listType),
+      'code': serializer.toJson<String>(code),
+      'nameMl': serializer.toJson<String>(nameMl),
+      'nameEn': serializer.toJson<String>(nameEn),
+      'data': serializer.toJson<String>(data),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+      'isActive': serializer.toJson<int>(isActive),
+      'templateVersion': serializer.toJson<int>(templateVersion),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  TemplateItemsData copyWith({
+    String? id,
+    Value<String?> cropId = const Value.absent(),
+    String? listType,
+    String? code,
+    String? nameMl,
+    String? nameEn,
+    String? data,
+    int? sortOrder,
+    int? isActive,
+    int? templateVersion,
+    int? createdAt,
+    int? updatedAt,
+  }) => TemplateItemsData(
+    id: id ?? this.id,
+    cropId: cropId.present ? cropId.value : this.cropId,
+    listType: listType ?? this.listType,
+    code: code ?? this.code,
+    nameMl: nameMl ?? this.nameMl,
+    nameEn: nameEn ?? this.nameEn,
+    data: data ?? this.data,
+    sortOrder: sortOrder ?? this.sortOrder,
+    isActive: isActive ?? this.isActive,
+    templateVersion: templateVersion ?? this.templateVersion,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  TemplateItemsData copyWithCompanion(TemplateItemsCompanion data) {
+    return TemplateItemsData(
+      id: data.id.present ? data.id.value : this.id,
+      cropId: data.cropId.present ? data.cropId.value : this.cropId,
+      listType: data.listType.present ? data.listType.value : this.listType,
+      code: data.code.present ? data.code.value : this.code,
+      nameMl: data.nameMl.present ? data.nameMl.value : this.nameMl,
+      nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
+      data: data.data.present ? data.data.value : this.data,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      templateVersion: data.templateVersion.present
+          ? data.templateVersion.value
+          : this.templateVersion,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateItemsData(')
+          ..write('id: $id, ')
+          ..write('cropId: $cropId, ')
+          ..write('listType: $listType, ')
+          ..write('code: $code, ')
+          ..write('nameMl: $nameMl, ')
+          ..write('nameEn: $nameEn, ')
+          ..write('data: $data, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('isActive: $isActive, ')
+          ..write('templateVersion: $templateVersion, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    cropId,
+    listType,
+    code,
+    nameMl,
+    nameEn,
+    data,
+    sortOrder,
+    isActive,
+    templateVersion,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemplateItemsData &&
+          other.id == this.id &&
+          other.cropId == this.cropId &&
+          other.listType == this.listType &&
+          other.code == this.code &&
+          other.nameMl == this.nameMl &&
+          other.nameEn == this.nameEn &&
+          other.data == this.data &&
+          other.sortOrder == this.sortOrder &&
+          other.isActive == this.isActive &&
+          other.templateVersion == this.templateVersion &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class TemplateItemsCompanion extends UpdateCompanion<TemplateItemsData> {
+  final Value<String> id;
+  final Value<String?> cropId;
+  final Value<String> listType;
+  final Value<String> code;
+  final Value<String> nameMl;
+  final Value<String> nameEn;
+  final Value<String> data;
+  final Value<int> sortOrder;
+  final Value<int> isActive;
+  final Value<int> templateVersion;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const TemplateItemsCompanion({
+    this.id = const Value.absent(),
+    this.cropId = const Value.absent(),
+    this.listType = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nameMl = const Value.absent(),
+    this.nameEn = const Value.absent(),
+    this.data = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.templateVersion = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TemplateItemsCompanion.insert({
+    required String id,
+    this.cropId = const Value.absent(),
+    required String listType,
+    required String code,
+    required String nameMl,
+    required String nameEn,
+    this.data = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.templateVersion = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       listType = Value(listType),
+       code = Value(code),
+       nameMl = Value(nameMl),
+       nameEn = Value(nameEn),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<TemplateItemsData> custom({
+    Expression<String>? id,
+    Expression<String>? cropId,
+    Expression<String>? listType,
+    Expression<String>? code,
+    Expression<String>? nameMl,
+    Expression<String>? nameEn,
+    Expression<String>? data,
+    Expression<int>? sortOrder,
+    Expression<int>? isActive,
+    Expression<int>? templateVersion,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (cropId != null) 'crop_id': cropId,
+      if (listType != null) 'list_type': listType,
+      if (code != null) 'code': code,
+      if (nameMl != null) 'name_ml': nameMl,
+      if (nameEn != null) 'name_en': nameEn,
+      if (data != null) 'data': data,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (isActive != null) 'is_active': isActive,
+      if (templateVersion != null) 'template_version': templateVersion,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TemplateItemsCompanion copyWith({
+    Value<String>? id,
+    Value<String?>? cropId,
+    Value<String>? listType,
+    Value<String>? code,
+    Value<String>? nameMl,
+    Value<String>? nameEn,
+    Value<String>? data,
+    Value<int>? sortOrder,
+    Value<int>? isActive,
+    Value<int>? templateVersion,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return TemplateItemsCompanion(
+      id: id ?? this.id,
+      cropId: cropId ?? this.cropId,
+      listType: listType ?? this.listType,
+      code: code ?? this.code,
+      nameMl: nameMl ?? this.nameMl,
+      nameEn: nameEn ?? this.nameEn,
+      data: data ?? this.data,
+      sortOrder: sortOrder ?? this.sortOrder,
+      isActive: isActive ?? this.isActive,
+      templateVersion: templateVersion ?? this.templateVersion,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (cropId.present) {
+      map['crop_id'] = Variable<String>(cropId.value);
+    }
+    if (listType.present) {
+      map['list_type'] = Variable<String>(listType.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (nameMl.present) {
+      map['name_ml'] = Variable<String>(nameMl.value);
+    }
+    if (nameEn.present) {
+      map['name_en'] = Variable<String>(nameEn.value);
+    }
+    if (data.present) {
+      map['data'] = Variable<String>(data.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<int>(isActive.value);
+    }
+    if (templateVersion.present) {
+      map['template_version'] = Variable<int>(templateVersion.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('cropId: $cropId, ')
+          ..write('listType: $listType, ')
+          ..write('code: $code, ')
+          ..write('nameMl: $nameMl, ')
+          ..write('nameEn: $nameEn, ')
+          ..write('data: $data, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('isActive: $isActive, ')
+          ..write('templateVersion: $templateVersion, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class TemplateOverrides extends Table
+    with TableInfo<TemplateOverrides, TemplateOverridesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -979,8 +3497,82 @@ class TemplateOverrides extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  TemplateOverridesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemplateOverridesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      scope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scope'],
+      )!,
+      scopeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scope_id'],
+      ),
+      templateItemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}template_item_id'],
+      ),
+      cropId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_id'],
+      ),
+      listType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}list_type'],
+      ),
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      ),
+      nameMl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name_ml'],
+      ),
+      nameEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name_en'],
+      ),
+      data: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}data'],
+      )!,
+      hidden: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}hidden'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -992,7 +3584,564 @@ class TemplateOverrides extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Plots extends Table with TableInfo {
+class TemplateOverridesData extends DataClass
+    implements Insertable<TemplateOverridesData> {
+  final String id;
+  final String farmId;
+  final String scope;
+  final String? scopeId;
+  final String? templateItemId;
+  final String? cropId;
+  final String? listType;
+  final String? code;
+  final String? nameMl;
+  final String? nameEn;
+  final String data;
+  final int hidden;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const TemplateOverridesData({
+    required this.id,
+    required this.farmId,
+    required this.scope,
+    this.scopeId,
+    this.templateItemId,
+    this.cropId,
+    this.listType,
+    this.code,
+    this.nameMl,
+    this.nameEn,
+    required this.data,
+    required this.hidden,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['scope'] = Variable<String>(scope);
+    if (!nullToAbsent || scopeId != null) {
+      map['scope_id'] = Variable<String>(scopeId);
+    }
+    if (!nullToAbsent || templateItemId != null) {
+      map['template_item_id'] = Variable<String>(templateItemId);
+    }
+    if (!nullToAbsent || cropId != null) {
+      map['crop_id'] = Variable<String>(cropId);
+    }
+    if (!nullToAbsent || listType != null) {
+      map['list_type'] = Variable<String>(listType);
+    }
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
+    if (!nullToAbsent || nameMl != null) {
+      map['name_ml'] = Variable<String>(nameMl);
+    }
+    if (!nullToAbsent || nameEn != null) {
+      map['name_en'] = Variable<String>(nameEn);
+    }
+    map['data'] = Variable<String>(data);
+    map['hidden'] = Variable<int>(hidden);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  TemplateOverridesCompanion toCompanion(bool nullToAbsent) {
+    return TemplateOverridesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      scope: Value(scope),
+      scopeId: scopeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(scopeId),
+      templateItemId: templateItemId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(templateItemId),
+      cropId: cropId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropId),
+      listType: listType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(listType),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      nameMl: nameMl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nameMl),
+      nameEn: nameEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nameEn),
+      data: Value(data),
+      hidden: Value(hidden),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory TemplateOverridesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemplateOverridesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      scope: serializer.fromJson<String>(json['scope']),
+      scopeId: serializer.fromJson<String?>(json['scopeId']),
+      templateItemId: serializer.fromJson<String?>(json['templateItemId']),
+      cropId: serializer.fromJson<String?>(json['cropId']),
+      listType: serializer.fromJson<String?>(json['listType']),
+      code: serializer.fromJson<String?>(json['code']),
+      nameMl: serializer.fromJson<String?>(json['nameMl']),
+      nameEn: serializer.fromJson<String?>(json['nameEn']),
+      data: serializer.fromJson<String>(json['data']),
+      hidden: serializer.fromJson<int>(json['hidden']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'scope': serializer.toJson<String>(scope),
+      'scopeId': serializer.toJson<String?>(scopeId),
+      'templateItemId': serializer.toJson<String?>(templateItemId),
+      'cropId': serializer.toJson<String?>(cropId),
+      'listType': serializer.toJson<String?>(listType),
+      'code': serializer.toJson<String?>(code),
+      'nameMl': serializer.toJson<String?>(nameMl),
+      'nameEn': serializer.toJson<String?>(nameEn),
+      'data': serializer.toJson<String>(data),
+      'hidden': serializer.toJson<int>(hidden),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  TemplateOverridesData copyWith({
+    String? id,
+    String? farmId,
+    String? scope,
+    Value<String?> scopeId = const Value.absent(),
+    Value<String?> templateItemId = const Value.absent(),
+    Value<String?> cropId = const Value.absent(),
+    Value<String?> listType = const Value.absent(),
+    Value<String?> code = const Value.absent(),
+    Value<String?> nameMl = const Value.absent(),
+    Value<String?> nameEn = const Value.absent(),
+    String? data,
+    int? hidden,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => TemplateOverridesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    scope: scope ?? this.scope,
+    scopeId: scopeId.present ? scopeId.value : this.scopeId,
+    templateItemId: templateItemId.present
+        ? templateItemId.value
+        : this.templateItemId,
+    cropId: cropId.present ? cropId.value : this.cropId,
+    listType: listType.present ? listType.value : this.listType,
+    code: code.present ? code.value : this.code,
+    nameMl: nameMl.present ? nameMl.value : this.nameMl,
+    nameEn: nameEn.present ? nameEn.value : this.nameEn,
+    data: data ?? this.data,
+    hidden: hidden ?? this.hidden,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  TemplateOverridesData copyWithCompanion(TemplateOverridesCompanion data) {
+    return TemplateOverridesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      scope: data.scope.present ? data.scope.value : this.scope,
+      scopeId: data.scopeId.present ? data.scopeId.value : this.scopeId,
+      templateItemId: data.templateItemId.present
+          ? data.templateItemId.value
+          : this.templateItemId,
+      cropId: data.cropId.present ? data.cropId.value : this.cropId,
+      listType: data.listType.present ? data.listType.value : this.listType,
+      code: data.code.present ? data.code.value : this.code,
+      nameMl: data.nameMl.present ? data.nameMl.value : this.nameMl,
+      nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
+      data: data.data.present ? data.data.value : this.data,
+      hidden: data.hidden.present ? data.hidden.value : this.hidden,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateOverridesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('scope: $scope, ')
+          ..write('scopeId: $scopeId, ')
+          ..write('templateItemId: $templateItemId, ')
+          ..write('cropId: $cropId, ')
+          ..write('listType: $listType, ')
+          ..write('code: $code, ')
+          ..write('nameMl: $nameMl, ')
+          ..write('nameEn: $nameEn, ')
+          ..write('data: $data, ')
+          ..write('hidden: $hidden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    scope,
+    scopeId,
+    templateItemId,
+    cropId,
+    listType,
+    code,
+    nameMl,
+    nameEn,
+    data,
+    hidden,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemplateOverridesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.scope == this.scope &&
+          other.scopeId == this.scopeId &&
+          other.templateItemId == this.templateItemId &&
+          other.cropId == this.cropId &&
+          other.listType == this.listType &&
+          other.code == this.code &&
+          other.nameMl == this.nameMl &&
+          other.nameEn == this.nameEn &&
+          other.data == this.data &&
+          other.hidden == this.hidden &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class TemplateOverridesCompanion
+    extends UpdateCompanion<TemplateOverridesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> scope;
+  final Value<String?> scopeId;
+  final Value<String?> templateItemId;
+  final Value<String?> cropId;
+  final Value<String?> listType;
+  final Value<String?> code;
+  final Value<String?> nameMl;
+  final Value<String?> nameEn;
+  final Value<String> data;
+  final Value<int> hidden;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const TemplateOverridesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.scope = const Value.absent(),
+    this.scopeId = const Value.absent(),
+    this.templateItemId = const Value.absent(),
+    this.cropId = const Value.absent(),
+    this.listType = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nameMl = const Value.absent(),
+    this.nameEn = const Value.absent(),
+    this.data = const Value.absent(),
+    this.hidden = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TemplateOverridesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String scope,
+    this.scopeId = const Value.absent(),
+    this.templateItemId = const Value.absent(),
+    this.cropId = const Value.absent(),
+    this.listType = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nameMl = const Value.absent(),
+    this.nameEn = const Value.absent(),
+    this.data = const Value.absent(),
+    this.hidden = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       scope = Value(scope),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<TemplateOverridesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? scope,
+    Expression<String>? scopeId,
+    Expression<String>? templateItemId,
+    Expression<String>? cropId,
+    Expression<String>? listType,
+    Expression<String>? code,
+    Expression<String>? nameMl,
+    Expression<String>? nameEn,
+    Expression<String>? data,
+    Expression<int>? hidden,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (scope != null) 'scope': scope,
+      if (scopeId != null) 'scope_id': scopeId,
+      if (templateItemId != null) 'template_item_id': templateItemId,
+      if (cropId != null) 'crop_id': cropId,
+      if (listType != null) 'list_type': listType,
+      if (code != null) 'code': code,
+      if (nameMl != null) 'name_ml': nameMl,
+      if (nameEn != null) 'name_en': nameEn,
+      if (data != null) 'data': data,
+      if (hidden != null) 'hidden': hidden,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TemplateOverridesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? scope,
+    Value<String?>? scopeId,
+    Value<String?>? templateItemId,
+    Value<String?>? cropId,
+    Value<String?>? listType,
+    Value<String?>? code,
+    Value<String?>? nameMl,
+    Value<String?>? nameEn,
+    Value<String>? data,
+    Value<int>? hidden,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return TemplateOverridesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      scope: scope ?? this.scope,
+      scopeId: scopeId ?? this.scopeId,
+      templateItemId: templateItemId ?? this.templateItemId,
+      cropId: cropId ?? this.cropId,
+      listType: listType ?? this.listType,
+      code: code ?? this.code,
+      nameMl: nameMl ?? this.nameMl,
+      nameEn: nameEn ?? this.nameEn,
+      data: data ?? this.data,
+      hidden: hidden ?? this.hidden,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (scope.present) {
+      map['scope'] = Variable<String>(scope.value);
+    }
+    if (scopeId.present) {
+      map['scope_id'] = Variable<String>(scopeId.value);
+    }
+    if (templateItemId.present) {
+      map['template_item_id'] = Variable<String>(templateItemId.value);
+    }
+    if (cropId.present) {
+      map['crop_id'] = Variable<String>(cropId.value);
+    }
+    if (listType.present) {
+      map['list_type'] = Variable<String>(listType.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (nameMl.present) {
+      map['name_ml'] = Variable<String>(nameMl.value);
+    }
+    if (nameEn.present) {
+      map['name_en'] = Variable<String>(nameEn.value);
+    }
+    if (data.present) {
+      map['data'] = Variable<String>(data.value);
+    }
+    if (hidden.present) {
+      map['hidden'] = Variable<int>(hidden.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemplateOverridesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('scope: $scope, ')
+          ..write('scopeId: $scopeId, ')
+          ..write('templateItemId: $templateItemId, ')
+          ..write('cropId: $cropId, ')
+          ..write('listType: $listType, ')
+          ..write('code: $code, ')
+          ..write('nameMl: $nameMl, ')
+          ..write('nameEn: $nameEn, ')
+          ..write('data: $data, ')
+          ..write('hidden: $hidden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Plots extends Table with TableInfo<Plots, PlotsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1129,8 +4278,62 @@ class Plots extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  PlotsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PlotsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      area: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}area'],
+      ),
+      areaUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}area_unit'],
+      )!,
+      tenure: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenure'],
+      )!,
+      details: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}details'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -1142,7 +4345,419 @@ class Plots extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class CropCycles extends Table with TableInfo {
+class PlotsData extends DataClass implements Insertable<PlotsData> {
+  final String id;
+  final String farmId;
+  final String name;
+  final int? area;
+  final String areaUnit;
+  final String tenure;
+  final String details;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const PlotsData({
+    required this.id,
+    required this.farmId,
+    required this.name,
+    this.area,
+    required this.areaUnit,
+    required this.tenure,
+    required this.details,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || area != null) {
+      map['area'] = Variable<int>(area);
+    }
+    map['area_unit'] = Variable<String>(areaUnit);
+    map['tenure'] = Variable<String>(tenure);
+    map['details'] = Variable<String>(details);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  PlotsCompanion toCompanion(bool nullToAbsent) {
+    return PlotsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      name: Value(name),
+      area: area == null && nullToAbsent ? const Value.absent() : Value(area),
+      areaUnit: Value(areaUnit),
+      tenure: Value(tenure),
+      details: Value(details),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory PlotsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PlotsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      name: serializer.fromJson<String>(json['name']),
+      area: serializer.fromJson<int?>(json['area']),
+      areaUnit: serializer.fromJson<String>(json['areaUnit']),
+      tenure: serializer.fromJson<String>(json['tenure']),
+      details: serializer.fromJson<String>(json['details']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'name': serializer.toJson<String>(name),
+      'area': serializer.toJson<int?>(area),
+      'areaUnit': serializer.toJson<String>(areaUnit),
+      'tenure': serializer.toJson<String>(tenure),
+      'details': serializer.toJson<String>(details),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  PlotsData copyWith({
+    String? id,
+    String? farmId,
+    String? name,
+    Value<int?> area = const Value.absent(),
+    String? areaUnit,
+    String? tenure,
+    String? details,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => PlotsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    name: name ?? this.name,
+    area: area.present ? area.value : this.area,
+    areaUnit: areaUnit ?? this.areaUnit,
+    tenure: tenure ?? this.tenure,
+    details: details ?? this.details,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  PlotsData copyWithCompanion(PlotsCompanion data) {
+    return PlotsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      name: data.name.present ? data.name.value : this.name,
+      area: data.area.present ? data.area.value : this.area,
+      areaUnit: data.areaUnit.present ? data.areaUnit.value : this.areaUnit,
+      tenure: data.tenure.present ? data.tenure.value : this.tenure,
+      details: data.details.present ? data.details.value : this.details,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlotsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('name: $name, ')
+          ..write('area: $area, ')
+          ..write('areaUnit: $areaUnit, ')
+          ..write('tenure: $tenure, ')
+          ..write('details: $details, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    name,
+    area,
+    areaUnit,
+    tenure,
+    details,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PlotsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.name == this.name &&
+          other.area == this.area &&
+          other.areaUnit == this.areaUnit &&
+          other.tenure == this.tenure &&
+          other.details == this.details &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class PlotsCompanion extends UpdateCompanion<PlotsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> name;
+  final Value<int?> area;
+  final Value<String> areaUnit;
+  final Value<String> tenure;
+  final Value<String> details;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const PlotsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.area = const Value.absent(),
+    this.areaUnit = const Value.absent(),
+    this.tenure = const Value.absent(),
+    this.details = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PlotsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String name,
+    this.area = const Value.absent(),
+    this.areaUnit = const Value.absent(),
+    this.tenure = const Value.absent(),
+    this.details = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       name = Value(name),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<PlotsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? name,
+    Expression<int>? area,
+    Expression<String>? areaUnit,
+    Expression<String>? tenure,
+    Expression<String>? details,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (name != null) 'name': name,
+      if (area != null) 'area': area,
+      if (areaUnit != null) 'area_unit': areaUnit,
+      if (tenure != null) 'tenure': tenure,
+      if (details != null) 'details': details,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PlotsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? name,
+    Value<int?>? area,
+    Value<String>? areaUnit,
+    Value<String>? tenure,
+    Value<String>? details,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return PlotsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      name: name ?? this.name,
+      area: area ?? this.area,
+      areaUnit: areaUnit ?? this.areaUnit,
+      tenure: tenure ?? this.tenure,
+      details: details ?? this.details,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (area.present) {
+      map['area'] = Variable<int>(area.value);
+    }
+    if (areaUnit.present) {
+      map['area_unit'] = Variable<String>(areaUnit.value);
+    }
+    if (tenure.present) {
+      map['tenure'] = Variable<String>(tenure.value);
+    }
+    if (details.present) {
+      map['details'] = Variable<String>(details.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlotsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('name: $name, ')
+          ..write('area: $area, ')
+          ..write('areaUnit: $areaUnit, ')
+          ..write('tenure: $tenure, ')
+          ..write('details: $details, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class CropCycles extends Table with TableInfo<CropCycles, CropCyclesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1322,8 +4937,82 @@ class CropCycles extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  CropCyclesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CropCyclesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      plotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plot_id'],
+      )!,
+      cropId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_id'],
+      )!,
+      variety: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}variety'],
+      ),
+      plantCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}plant_count'],
+      ),
+      areaShare: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}area_share'],
+      ),
+      season: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}season'],
+      ),
+      plantedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}planted_on'],
+      ),
+      startedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}started_on'],
+      ),
+      endedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ended_on'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -1335,7 +5024,563 @@ class CropCycles extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Tasks extends Table with TableInfo {
+class CropCyclesData extends DataClass implements Insertable<CropCyclesData> {
+  final String id;
+  final String farmId;
+  final String plotId;
+  final String cropId;
+  final String? variety;
+  final int? plantCount;
+  final int? areaShare;
+  final String? season;
+  final String? plantedOn;
+  final String? startedOn;
+  final String? endedOn;
+  final String status;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const CropCyclesData({
+    required this.id,
+    required this.farmId,
+    required this.plotId,
+    required this.cropId,
+    this.variety,
+    this.plantCount,
+    this.areaShare,
+    this.season,
+    this.plantedOn,
+    this.startedOn,
+    this.endedOn,
+    required this.status,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['plot_id'] = Variable<String>(plotId);
+    map['crop_id'] = Variable<String>(cropId);
+    if (!nullToAbsent || variety != null) {
+      map['variety'] = Variable<String>(variety);
+    }
+    if (!nullToAbsent || plantCount != null) {
+      map['plant_count'] = Variable<int>(plantCount);
+    }
+    if (!nullToAbsent || areaShare != null) {
+      map['area_share'] = Variable<int>(areaShare);
+    }
+    if (!nullToAbsent || season != null) {
+      map['season'] = Variable<String>(season);
+    }
+    if (!nullToAbsent || plantedOn != null) {
+      map['planted_on'] = Variable<String>(plantedOn);
+    }
+    if (!nullToAbsent || startedOn != null) {
+      map['started_on'] = Variable<String>(startedOn);
+    }
+    if (!nullToAbsent || endedOn != null) {
+      map['ended_on'] = Variable<String>(endedOn);
+    }
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  CropCyclesCompanion toCompanion(bool nullToAbsent) {
+    return CropCyclesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      plotId: Value(plotId),
+      cropId: Value(cropId),
+      variety: variety == null && nullToAbsent
+          ? const Value.absent()
+          : Value(variety),
+      plantCount: plantCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plantCount),
+      areaShare: areaShare == null && nullToAbsent
+          ? const Value.absent()
+          : Value(areaShare),
+      season: season == null && nullToAbsent
+          ? const Value.absent()
+          : Value(season),
+      plantedOn: plantedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plantedOn),
+      startedOn: startedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startedOn),
+      endedOn: endedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endedOn),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory CropCyclesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CropCyclesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      plotId: serializer.fromJson<String>(json['plotId']),
+      cropId: serializer.fromJson<String>(json['cropId']),
+      variety: serializer.fromJson<String?>(json['variety']),
+      plantCount: serializer.fromJson<int?>(json['plantCount']),
+      areaShare: serializer.fromJson<int?>(json['areaShare']),
+      season: serializer.fromJson<String?>(json['season']),
+      plantedOn: serializer.fromJson<String?>(json['plantedOn']),
+      startedOn: serializer.fromJson<String?>(json['startedOn']),
+      endedOn: serializer.fromJson<String?>(json['endedOn']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'plotId': serializer.toJson<String>(plotId),
+      'cropId': serializer.toJson<String>(cropId),
+      'variety': serializer.toJson<String?>(variety),
+      'plantCount': serializer.toJson<int?>(plantCount),
+      'areaShare': serializer.toJson<int?>(areaShare),
+      'season': serializer.toJson<String?>(season),
+      'plantedOn': serializer.toJson<String?>(plantedOn),
+      'startedOn': serializer.toJson<String?>(startedOn),
+      'endedOn': serializer.toJson<String?>(endedOn),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  CropCyclesData copyWith({
+    String? id,
+    String? farmId,
+    String? plotId,
+    String? cropId,
+    Value<String?> variety = const Value.absent(),
+    Value<int?> plantCount = const Value.absent(),
+    Value<int?> areaShare = const Value.absent(),
+    Value<String?> season = const Value.absent(),
+    Value<String?> plantedOn = const Value.absent(),
+    Value<String?> startedOn = const Value.absent(),
+    Value<String?> endedOn = const Value.absent(),
+    String? status,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => CropCyclesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    plotId: plotId ?? this.plotId,
+    cropId: cropId ?? this.cropId,
+    variety: variety.present ? variety.value : this.variety,
+    plantCount: plantCount.present ? plantCount.value : this.plantCount,
+    areaShare: areaShare.present ? areaShare.value : this.areaShare,
+    season: season.present ? season.value : this.season,
+    plantedOn: plantedOn.present ? plantedOn.value : this.plantedOn,
+    startedOn: startedOn.present ? startedOn.value : this.startedOn,
+    endedOn: endedOn.present ? endedOn.value : this.endedOn,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  CropCyclesData copyWithCompanion(CropCyclesCompanion data) {
+    return CropCyclesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      plotId: data.plotId.present ? data.plotId.value : this.plotId,
+      cropId: data.cropId.present ? data.cropId.value : this.cropId,
+      variety: data.variety.present ? data.variety.value : this.variety,
+      plantCount: data.plantCount.present
+          ? data.plantCount.value
+          : this.plantCount,
+      areaShare: data.areaShare.present ? data.areaShare.value : this.areaShare,
+      season: data.season.present ? data.season.value : this.season,
+      plantedOn: data.plantedOn.present ? data.plantedOn.value : this.plantedOn,
+      startedOn: data.startedOn.present ? data.startedOn.value : this.startedOn,
+      endedOn: data.endedOn.present ? data.endedOn.value : this.endedOn,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CropCyclesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('plotId: $plotId, ')
+          ..write('cropId: $cropId, ')
+          ..write('variety: $variety, ')
+          ..write('plantCount: $plantCount, ')
+          ..write('areaShare: $areaShare, ')
+          ..write('season: $season, ')
+          ..write('plantedOn: $plantedOn, ')
+          ..write('startedOn: $startedOn, ')
+          ..write('endedOn: $endedOn, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    plotId,
+    cropId,
+    variety,
+    plantCount,
+    areaShare,
+    season,
+    plantedOn,
+    startedOn,
+    endedOn,
+    status,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CropCyclesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.plotId == this.plotId &&
+          other.cropId == this.cropId &&
+          other.variety == this.variety &&
+          other.plantCount == this.plantCount &&
+          other.areaShare == this.areaShare &&
+          other.season == this.season &&
+          other.plantedOn == this.plantedOn &&
+          other.startedOn == this.startedOn &&
+          other.endedOn == this.endedOn &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class CropCyclesCompanion extends UpdateCompanion<CropCyclesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> plotId;
+  final Value<String> cropId;
+  final Value<String?> variety;
+  final Value<int?> plantCount;
+  final Value<int?> areaShare;
+  final Value<String?> season;
+  final Value<String?> plantedOn;
+  final Value<String?> startedOn;
+  final Value<String?> endedOn;
+  final Value<String> status;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const CropCyclesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.cropId = const Value.absent(),
+    this.variety = const Value.absent(),
+    this.plantCount = const Value.absent(),
+    this.areaShare = const Value.absent(),
+    this.season = const Value.absent(),
+    this.plantedOn = const Value.absent(),
+    this.startedOn = const Value.absent(),
+    this.endedOn = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CropCyclesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String plotId,
+    required String cropId,
+    this.variety = const Value.absent(),
+    this.plantCount = const Value.absent(),
+    this.areaShare = const Value.absent(),
+    this.season = const Value.absent(),
+    this.plantedOn = const Value.absent(),
+    this.startedOn = const Value.absent(),
+    this.endedOn = const Value.absent(),
+    this.status = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       plotId = Value(plotId),
+       cropId = Value(cropId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<CropCyclesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? plotId,
+    Expression<String>? cropId,
+    Expression<String>? variety,
+    Expression<int>? plantCount,
+    Expression<int>? areaShare,
+    Expression<String>? season,
+    Expression<String>? plantedOn,
+    Expression<String>? startedOn,
+    Expression<String>? endedOn,
+    Expression<String>? status,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (plotId != null) 'plot_id': plotId,
+      if (cropId != null) 'crop_id': cropId,
+      if (variety != null) 'variety': variety,
+      if (plantCount != null) 'plant_count': plantCount,
+      if (areaShare != null) 'area_share': areaShare,
+      if (season != null) 'season': season,
+      if (plantedOn != null) 'planted_on': plantedOn,
+      if (startedOn != null) 'started_on': startedOn,
+      if (endedOn != null) 'ended_on': endedOn,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CropCyclesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? plotId,
+    Value<String>? cropId,
+    Value<String?>? variety,
+    Value<int?>? plantCount,
+    Value<int?>? areaShare,
+    Value<String?>? season,
+    Value<String?>? plantedOn,
+    Value<String?>? startedOn,
+    Value<String?>? endedOn,
+    Value<String>? status,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return CropCyclesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      plotId: plotId ?? this.plotId,
+      cropId: cropId ?? this.cropId,
+      variety: variety ?? this.variety,
+      plantCount: plantCount ?? this.plantCount,
+      areaShare: areaShare ?? this.areaShare,
+      season: season ?? this.season,
+      plantedOn: plantedOn ?? this.plantedOn,
+      startedOn: startedOn ?? this.startedOn,
+      endedOn: endedOn ?? this.endedOn,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (plotId.present) {
+      map['plot_id'] = Variable<String>(plotId.value);
+    }
+    if (cropId.present) {
+      map['crop_id'] = Variable<String>(cropId.value);
+    }
+    if (variety.present) {
+      map['variety'] = Variable<String>(variety.value);
+    }
+    if (plantCount.present) {
+      map['plant_count'] = Variable<int>(plantCount.value);
+    }
+    if (areaShare.present) {
+      map['area_share'] = Variable<int>(areaShare.value);
+    }
+    if (season.present) {
+      map['season'] = Variable<String>(season.value);
+    }
+    if (plantedOn.present) {
+      map['planted_on'] = Variable<String>(plantedOn.value);
+    }
+    if (startedOn.present) {
+      map['started_on'] = Variable<String>(startedOn.value);
+    }
+    if (endedOn.present) {
+      map['ended_on'] = Variable<String>(endedOn.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CropCyclesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('plotId: $plotId, ')
+          ..write('cropId: $cropId, ')
+          ..write('variety: $variety, ')
+          ..write('plantCount: $plantCount, ')
+          ..write('areaShare: $areaShare, ')
+          ..write('season: $season, ')
+          ..write('plantedOn: $plantedOn, ')
+          ..write('startedOn: $startedOn, ')
+          ..write('endedOn: $endedOn, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Tasks extends Table with TableInfo<Tasks, TasksData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1479,8 +5724,66 @@ class Tasks extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  TasksData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TasksData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      ),
+      plotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plot_id'],
+      ),
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      dueOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}due_on'],
+      ),
+      doneAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}done_at'],
+      ),
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -1492,7 +5795,458 @@ class Tasks extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Notes extends Table with TableInfo {
+class TasksData extends DataClass implements Insertable<TasksData> {
+  final String id;
+  final String farmId;
+  final String? cropCycleId;
+  final String? plotId;
+  final String title;
+  final String? dueOn;
+  final int? doneAt;
+  final String source;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const TasksData({
+    required this.id,
+    required this.farmId,
+    this.cropCycleId,
+    this.plotId,
+    required this.title,
+    this.dueOn,
+    this.doneAt,
+    required this.source,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    if (!nullToAbsent || cropCycleId != null) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    }
+    if (!nullToAbsent || plotId != null) {
+      map['plot_id'] = Variable<String>(plotId);
+    }
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || dueOn != null) {
+      map['due_on'] = Variable<String>(dueOn);
+    }
+    if (!nullToAbsent || doneAt != null) {
+      map['done_at'] = Variable<int>(doneAt);
+    }
+    map['source'] = Variable<String>(source);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  TasksCompanion toCompanion(bool nullToAbsent) {
+    return TasksCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      cropCycleId: cropCycleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropCycleId),
+      plotId: plotId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plotId),
+      title: Value(title),
+      dueOn: dueOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueOn),
+      doneAt: doneAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(doneAt),
+      source: Value(source),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory TasksData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TasksData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      cropCycleId: serializer.fromJson<String?>(json['cropCycleId']),
+      plotId: serializer.fromJson<String?>(json['plotId']),
+      title: serializer.fromJson<String>(json['title']),
+      dueOn: serializer.fromJson<String?>(json['dueOn']),
+      doneAt: serializer.fromJson<int?>(json['doneAt']),
+      source: serializer.fromJson<String>(json['source']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'cropCycleId': serializer.toJson<String?>(cropCycleId),
+      'plotId': serializer.toJson<String?>(plotId),
+      'title': serializer.toJson<String>(title),
+      'dueOn': serializer.toJson<String?>(dueOn),
+      'doneAt': serializer.toJson<int?>(doneAt),
+      'source': serializer.toJson<String>(source),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  TasksData copyWith({
+    String? id,
+    String? farmId,
+    Value<String?> cropCycleId = const Value.absent(),
+    Value<String?> plotId = const Value.absent(),
+    String? title,
+    Value<String?> dueOn = const Value.absent(),
+    Value<int?> doneAt = const Value.absent(),
+    String? source,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => TasksData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    cropCycleId: cropCycleId.present ? cropCycleId.value : this.cropCycleId,
+    plotId: plotId.present ? plotId.value : this.plotId,
+    title: title ?? this.title,
+    dueOn: dueOn.present ? dueOn.value : this.dueOn,
+    doneAt: doneAt.present ? doneAt.value : this.doneAt,
+    source: source ?? this.source,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  TasksData copyWithCompanion(TasksCompanion data) {
+    return TasksData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      plotId: data.plotId.present ? data.plotId.value : this.plotId,
+      title: data.title.present ? data.title.value : this.title,
+      dueOn: data.dueOn.present ? data.dueOn.value : this.dueOn,
+      doneAt: data.doneAt.present ? data.doneAt.value : this.doneAt,
+      source: data.source.present ? data.source.value : this.source,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TasksData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('plotId: $plotId, ')
+          ..write('title: $title, ')
+          ..write('dueOn: $dueOn, ')
+          ..write('doneAt: $doneAt, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    cropCycleId,
+    plotId,
+    title,
+    dueOn,
+    doneAt,
+    source,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TasksData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.plotId == this.plotId &&
+          other.title == this.title &&
+          other.dueOn == this.dueOn &&
+          other.doneAt == this.doneAt &&
+          other.source == this.source &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class TasksCompanion extends UpdateCompanion<TasksData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String?> cropCycleId;
+  final Value<String?> plotId;
+  final Value<String> title;
+  final Value<String?> dueOn;
+  final Value<int?> doneAt;
+  final Value<String> source;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const TasksCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.dueOn = const Value.absent(),
+    this.doneAt = const Value.absent(),
+    this.source = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TasksCompanion.insert({
+    required String id,
+    required String farmId,
+    this.cropCycleId = const Value.absent(),
+    this.plotId = const Value.absent(),
+    required String title,
+    this.dueOn = const Value.absent(),
+    this.doneAt = const Value.absent(),
+    this.source = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       title = Value(title),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<TasksData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? cropCycleId,
+    Expression<String>? plotId,
+    Expression<String>? title,
+    Expression<String>? dueOn,
+    Expression<int>? doneAt,
+    Expression<String>? source,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (plotId != null) 'plot_id': plotId,
+      if (title != null) 'title': title,
+      if (dueOn != null) 'due_on': dueOn,
+      if (doneAt != null) 'done_at': doneAt,
+      if (source != null) 'source': source,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TasksCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String?>? cropCycleId,
+    Value<String?>? plotId,
+    Value<String>? title,
+    Value<String?>? dueOn,
+    Value<int?>? doneAt,
+    Value<String>? source,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return TasksCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      plotId: plotId ?? this.plotId,
+      title: title ?? this.title,
+      dueOn: dueOn ?? this.dueOn,
+      doneAt: doneAt ?? this.doneAt,
+      source: source ?? this.source,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (plotId.present) {
+      map['plot_id'] = Variable<String>(plotId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (dueOn.present) {
+      map['due_on'] = Variable<String>(dueOn.value);
+    }
+    if (doneAt.present) {
+      map['done_at'] = Variable<int>(doneAt.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TasksCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('plotId: $plotId, ')
+          ..write('title: $title, ')
+          ..write('dueOn: $dueOn, ')
+          ..write('doneAt: $doneAt, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Notes extends Table with TableInfo<Notes, NotesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1617,8 +6371,58 @@ class Notes extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  NotesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      notedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}noted_on'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      plotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plot_id'],
+      ),
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -1630,7 +6434,405 @@ class Notes extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Parties extends Table with TableInfo {
+class NotesData extends DataClass implements Insertable<NotesData> {
+  final String id;
+  final String farmId;
+  final String notedOn;
+  final String body;
+  final String? plotId;
+  final String? cropCycleId;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const NotesData({
+    required this.id,
+    required this.farmId,
+    required this.notedOn,
+    required this.body,
+    this.plotId,
+    this.cropCycleId,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['noted_on'] = Variable<String>(notedOn);
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || plotId != null) {
+      map['plot_id'] = Variable<String>(plotId);
+    }
+    if (!nullToAbsent || cropCycleId != null) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  NotesCompanion toCompanion(bool nullToAbsent) {
+    return NotesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      notedOn: Value(notedOn),
+      body: Value(body),
+      plotId: plotId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plotId),
+      cropCycleId: cropCycleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropCycleId),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory NotesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NotesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      notedOn: serializer.fromJson<String>(json['notedOn']),
+      body: serializer.fromJson<String>(json['body']),
+      plotId: serializer.fromJson<String?>(json['plotId']),
+      cropCycleId: serializer.fromJson<String?>(json['cropCycleId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'notedOn': serializer.toJson<String>(notedOn),
+      'body': serializer.toJson<String>(body),
+      'plotId': serializer.toJson<String?>(plotId),
+      'cropCycleId': serializer.toJson<String?>(cropCycleId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  NotesData copyWith({
+    String? id,
+    String? farmId,
+    String? notedOn,
+    String? body,
+    Value<String?> plotId = const Value.absent(),
+    Value<String?> cropCycleId = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => NotesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    notedOn: notedOn ?? this.notedOn,
+    body: body ?? this.body,
+    plotId: plotId.present ? plotId.value : this.plotId,
+    cropCycleId: cropCycleId.present ? cropCycleId.value : this.cropCycleId,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  NotesData copyWithCompanion(NotesCompanion data) {
+    return NotesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      notedOn: data.notedOn.present ? data.notedOn.value : this.notedOn,
+      body: data.body.present ? data.body.value : this.body,
+      plotId: data.plotId.present ? data.plotId.value : this.plotId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('notedOn: $notedOn, ')
+          ..write('body: $body, ')
+          ..write('plotId: $plotId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    notedOn,
+    body,
+    plotId,
+    cropCycleId,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NotesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.notedOn == this.notedOn &&
+          other.body == this.body &&
+          other.plotId == this.plotId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class NotesCompanion extends UpdateCompanion<NotesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> notedOn;
+  final Value<String> body;
+  final Value<String?> plotId;
+  final Value<String?> cropCycleId;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const NotesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.notedOn = const Value.absent(),
+    this.body = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String notedOn,
+    required String body,
+    this.plotId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       notedOn = Value(notedOn),
+       body = Value(body),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<NotesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? notedOn,
+    Expression<String>? body,
+    Expression<String>? plotId,
+    Expression<String>? cropCycleId,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (notedOn != null) 'noted_on': notedOn,
+      if (body != null) 'body': body,
+      if (plotId != null) 'plot_id': plotId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? notedOn,
+    Value<String>? body,
+    Value<String?>? plotId,
+    Value<String?>? cropCycleId,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return NotesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      notedOn: notedOn ?? this.notedOn,
+      body: body ?? this.body,
+      plotId: plotId ?? this.plotId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (notedOn.present) {
+      map['noted_on'] = Variable<String>(notedOn.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (plotId.present) {
+      map['plot_id'] = Variable<String>(plotId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('notedOn: $notedOn, ')
+          ..write('body: $body, ')
+          ..write('plotId: $plotId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Parties extends Table with TableInfo<Parties, PartiesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1755,8 +6957,58 @@ class Parties extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  PartiesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PartiesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -1768,7 +7020,403 @@ class Parties extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Workers extends Table with TableInfo {
+class PartiesData extends DataClass implements Insertable<PartiesData> {
+  final String id;
+  final String farmId;
+  final String kind;
+  final String name;
+  final String? phone;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const PartiesData({
+    required this.id,
+    required this.farmId,
+    required this.kind,
+    required this.name,
+    this.phone,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['kind'] = Variable<String>(kind);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  PartiesCompanion toCompanion(bool nullToAbsent) {
+    return PartiesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      kind: Value(kind),
+      name: Value(name),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory PartiesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PartiesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      kind: serializer.fromJson<String>(json['kind']),
+      name: serializer.fromJson<String>(json['name']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'kind': serializer.toJson<String>(kind),
+      'name': serializer.toJson<String>(name),
+      'phone': serializer.toJson<String?>(phone),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  PartiesData copyWith({
+    String? id,
+    String? farmId,
+    String? kind,
+    String? name,
+    Value<String?> phone = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => PartiesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    kind: kind ?? this.kind,
+    name: name ?? this.name,
+    phone: phone.present ? phone.value : this.phone,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  PartiesData copyWithCompanion(PartiesCompanion data) {
+    return PartiesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      name: data.name.present ? data.name.value : this.name,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PartiesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('kind: $kind, ')
+          ..write('name: $name, ')
+          ..write('phone: $phone, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    kind,
+    name,
+    phone,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PartiesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.kind == this.kind &&
+          other.name == this.name &&
+          other.phone == this.phone &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class PartiesCompanion extends UpdateCompanion<PartiesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> kind;
+  final Value<String> name;
+  final Value<String?> phone;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const PartiesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.name = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PartiesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String kind,
+    required String name,
+    this.phone = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       kind = Value(kind),
+       name = Value(name),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<PartiesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? kind,
+    Expression<String>? name,
+    Expression<String>? phone,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (kind != null) 'kind': kind,
+      if (name != null) 'name': name,
+      if (phone != null) 'phone': phone,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PartiesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? kind,
+    Value<String>? name,
+    Value<String?>? phone,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return PartiesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      kind: kind ?? this.kind,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PartiesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('kind: $kind, ')
+          ..write('name: $name, ')
+          ..write('phone: $phone, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Workers extends Table with TableInfo<Workers, WorkersData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1914,8 +7562,66 @@ class Workers extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  WorkersData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WorkersData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      skill: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skill'],
+      ),
+      wageType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}wage_type'],
+      )!,
+      defaultRatePaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}default_rate_paise'],
+      )!,
+      isFamily: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_family'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -1927,7 +7633,451 @@ class Workers extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class LabourGroups extends Table with TableInfo {
+class WorkersData extends DataClass implements Insertable<WorkersData> {
+  final String id;
+  final String farmId;
+  final String name;
+  final String? phone;
+  final String? skill;
+  final String wageType;
+  final int defaultRatePaise;
+  final int isFamily;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const WorkersData({
+    required this.id,
+    required this.farmId,
+    required this.name,
+    this.phone,
+    this.skill,
+    required this.wageType,
+    required this.defaultRatePaise,
+    required this.isFamily,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || skill != null) {
+      map['skill'] = Variable<String>(skill);
+    }
+    map['wage_type'] = Variable<String>(wageType);
+    map['default_rate_paise'] = Variable<int>(defaultRatePaise);
+    map['is_family'] = Variable<int>(isFamily);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  WorkersCompanion toCompanion(bool nullToAbsent) {
+    return WorkersCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      name: Value(name),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      skill: skill == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skill),
+      wageType: Value(wageType),
+      defaultRatePaise: Value(defaultRatePaise),
+      isFamily: Value(isFamily),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory WorkersData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WorkersData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      name: serializer.fromJson<String>(json['name']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      skill: serializer.fromJson<String?>(json['skill']),
+      wageType: serializer.fromJson<String>(json['wageType']),
+      defaultRatePaise: serializer.fromJson<int>(json['defaultRatePaise']),
+      isFamily: serializer.fromJson<int>(json['isFamily']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'name': serializer.toJson<String>(name),
+      'phone': serializer.toJson<String?>(phone),
+      'skill': serializer.toJson<String?>(skill),
+      'wageType': serializer.toJson<String>(wageType),
+      'defaultRatePaise': serializer.toJson<int>(defaultRatePaise),
+      'isFamily': serializer.toJson<int>(isFamily),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  WorkersData copyWith({
+    String? id,
+    String? farmId,
+    String? name,
+    Value<String?> phone = const Value.absent(),
+    Value<String?> skill = const Value.absent(),
+    String? wageType,
+    int? defaultRatePaise,
+    int? isFamily,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => WorkersData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    name: name ?? this.name,
+    phone: phone.present ? phone.value : this.phone,
+    skill: skill.present ? skill.value : this.skill,
+    wageType: wageType ?? this.wageType,
+    defaultRatePaise: defaultRatePaise ?? this.defaultRatePaise,
+    isFamily: isFamily ?? this.isFamily,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  WorkersData copyWithCompanion(WorkersCompanion data) {
+    return WorkersData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      name: data.name.present ? data.name.value : this.name,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      skill: data.skill.present ? data.skill.value : this.skill,
+      wageType: data.wageType.present ? data.wageType.value : this.wageType,
+      defaultRatePaise: data.defaultRatePaise.present
+          ? data.defaultRatePaise.value
+          : this.defaultRatePaise,
+      isFamily: data.isFamily.present ? data.isFamily.value : this.isFamily,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkersData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('name: $name, ')
+          ..write('phone: $phone, ')
+          ..write('skill: $skill, ')
+          ..write('wageType: $wageType, ')
+          ..write('defaultRatePaise: $defaultRatePaise, ')
+          ..write('isFamily: $isFamily, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    name,
+    phone,
+    skill,
+    wageType,
+    defaultRatePaise,
+    isFamily,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WorkersData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.name == this.name &&
+          other.phone == this.phone &&
+          other.skill == this.skill &&
+          other.wageType == this.wageType &&
+          other.defaultRatePaise == this.defaultRatePaise &&
+          other.isFamily == this.isFamily &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class WorkersCompanion extends UpdateCompanion<WorkersData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> name;
+  final Value<String?> phone;
+  final Value<String?> skill;
+  final Value<String> wageType;
+  final Value<int> defaultRatePaise;
+  final Value<int> isFamily;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const WorkersCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.skill = const Value.absent(),
+    this.wageType = const Value.absent(),
+    this.defaultRatePaise = const Value.absent(),
+    this.isFamily = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WorkersCompanion.insert({
+    required String id,
+    required String farmId,
+    required String name,
+    this.phone = const Value.absent(),
+    this.skill = const Value.absent(),
+    this.wageType = const Value.absent(),
+    this.defaultRatePaise = const Value.absent(),
+    this.isFamily = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       name = Value(name),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<WorkersData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? name,
+    Expression<String>? phone,
+    Expression<String>? skill,
+    Expression<String>? wageType,
+    Expression<int>? defaultRatePaise,
+    Expression<int>? isFamily,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (name != null) 'name': name,
+      if (phone != null) 'phone': phone,
+      if (skill != null) 'skill': skill,
+      if (wageType != null) 'wage_type': wageType,
+      if (defaultRatePaise != null) 'default_rate_paise': defaultRatePaise,
+      if (isFamily != null) 'is_family': isFamily,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WorkersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? name,
+    Value<String?>? phone,
+    Value<String?>? skill,
+    Value<String>? wageType,
+    Value<int>? defaultRatePaise,
+    Value<int>? isFamily,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return WorkersCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      skill: skill ?? this.skill,
+      wageType: wageType ?? this.wageType,
+      defaultRatePaise: defaultRatePaise ?? this.defaultRatePaise,
+      isFamily: isFamily ?? this.isFamily,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (skill.present) {
+      map['skill'] = Variable<String>(skill.value);
+    }
+    if (wageType.present) {
+      map['wage_type'] = Variable<String>(wageType.value);
+    }
+    if (defaultRatePaise.present) {
+      map['default_rate_paise'] = Variable<int>(defaultRatePaise.value);
+    }
+    if (isFamily.present) {
+      map['is_family'] = Variable<int>(isFamily.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkersCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('name: $name, ')
+          ..write('phone: $phone, ')
+          ..write('skill: $skill, ')
+          ..write('wageType: $wageType, ')
+          ..write('defaultRatePaise: $defaultRatePaise, ')
+          ..write('isFamily: $isFamily, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class LabourGroups extends Table
+    with TableInfo<LabourGroups, LabourGroupsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -2072,8 +8222,66 @@ class LabourGroups extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LabourGroupsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabourGroupsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      isNamed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_named'],
+      )!,
+      leaderWorkerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}leader_worker_id'],
+      ),
+      usualSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}usual_size'],
+      ),
+      defaultRates: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_rates'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -2085,7 +8293,460 @@ class LabourGroups extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class LabourGroupMembers extends Table with TableInfo {
+class LabourGroupsData extends DataClass
+    implements Insertable<LabourGroupsData> {
+  final String id;
+  final String farmId;
+  final String label;
+  final int isNamed;
+  final String? leaderWorkerId;
+  final int? usualSize;
+  final String defaultRates;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LabourGroupsData({
+    required this.id,
+    required this.farmId,
+    required this.label,
+    required this.isNamed,
+    this.leaderWorkerId,
+    this.usualSize,
+    required this.defaultRates,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['label'] = Variable<String>(label);
+    map['is_named'] = Variable<int>(isNamed);
+    if (!nullToAbsent || leaderWorkerId != null) {
+      map['leader_worker_id'] = Variable<String>(leaderWorkerId);
+    }
+    if (!nullToAbsent || usualSize != null) {
+      map['usual_size'] = Variable<int>(usualSize);
+    }
+    map['default_rates'] = Variable<String>(defaultRates);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LabourGroupsCompanion toCompanion(bool nullToAbsent) {
+    return LabourGroupsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      label: Value(label),
+      isNamed: Value(isNamed),
+      leaderWorkerId: leaderWorkerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(leaderWorkerId),
+      usualSize: usualSize == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usualSize),
+      defaultRates: Value(defaultRates),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LabourGroupsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabourGroupsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      label: serializer.fromJson<String>(json['label']),
+      isNamed: serializer.fromJson<int>(json['isNamed']),
+      leaderWorkerId: serializer.fromJson<String?>(json['leaderWorkerId']),
+      usualSize: serializer.fromJson<int?>(json['usualSize']),
+      defaultRates: serializer.fromJson<String>(json['defaultRates']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'label': serializer.toJson<String>(label),
+      'isNamed': serializer.toJson<int>(isNamed),
+      'leaderWorkerId': serializer.toJson<String?>(leaderWorkerId),
+      'usualSize': serializer.toJson<int?>(usualSize),
+      'defaultRates': serializer.toJson<String>(defaultRates),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LabourGroupsData copyWith({
+    String? id,
+    String? farmId,
+    String? label,
+    int? isNamed,
+    Value<String?> leaderWorkerId = const Value.absent(),
+    Value<int?> usualSize = const Value.absent(),
+    String? defaultRates,
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LabourGroupsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    label: label ?? this.label,
+    isNamed: isNamed ?? this.isNamed,
+    leaderWorkerId: leaderWorkerId.present
+        ? leaderWorkerId.value
+        : this.leaderWorkerId,
+    usualSize: usualSize.present ? usualSize.value : this.usualSize,
+    defaultRates: defaultRates ?? this.defaultRates,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LabourGroupsData copyWithCompanion(LabourGroupsCompanion data) {
+    return LabourGroupsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      label: data.label.present ? data.label.value : this.label,
+      isNamed: data.isNamed.present ? data.isNamed.value : this.isNamed,
+      leaderWorkerId: data.leaderWorkerId.present
+          ? data.leaderWorkerId.value
+          : this.leaderWorkerId,
+      usualSize: data.usualSize.present ? data.usualSize.value : this.usualSize,
+      defaultRates: data.defaultRates.present
+          ? data.defaultRates.value
+          : this.defaultRates,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourGroupsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('label: $label, ')
+          ..write('isNamed: $isNamed, ')
+          ..write('leaderWorkerId: $leaderWorkerId, ')
+          ..write('usualSize: $usualSize, ')
+          ..write('defaultRates: $defaultRates, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    label,
+    isNamed,
+    leaderWorkerId,
+    usualSize,
+    defaultRates,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabourGroupsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.label == this.label &&
+          other.isNamed == this.isNamed &&
+          other.leaderWorkerId == this.leaderWorkerId &&
+          other.usualSize == this.usualSize &&
+          other.defaultRates == this.defaultRates &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LabourGroupsCompanion extends UpdateCompanion<LabourGroupsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> label;
+  final Value<int> isNamed;
+  final Value<String?> leaderWorkerId;
+  final Value<int?> usualSize;
+  final Value<String> defaultRates;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LabourGroupsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.label = const Value.absent(),
+    this.isNamed = const Value.absent(),
+    this.leaderWorkerId = const Value.absent(),
+    this.usualSize = const Value.absent(),
+    this.defaultRates = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabourGroupsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String label,
+    this.isNamed = const Value.absent(),
+    this.leaderWorkerId = const Value.absent(),
+    this.usualSize = const Value.absent(),
+    this.defaultRates = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       label = Value(label),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LabourGroupsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? label,
+    Expression<int>? isNamed,
+    Expression<String>? leaderWorkerId,
+    Expression<int>? usualSize,
+    Expression<String>? defaultRates,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (label != null) 'label': label,
+      if (isNamed != null) 'is_named': isNamed,
+      if (leaderWorkerId != null) 'leader_worker_id': leaderWorkerId,
+      if (usualSize != null) 'usual_size': usualSize,
+      if (defaultRates != null) 'default_rates': defaultRates,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabourGroupsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? label,
+    Value<int>? isNamed,
+    Value<String?>? leaderWorkerId,
+    Value<int?>? usualSize,
+    Value<String>? defaultRates,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LabourGroupsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      label: label ?? this.label,
+      isNamed: isNamed ?? this.isNamed,
+      leaderWorkerId: leaderWorkerId ?? this.leaderWorkerId,
+      usualSize: usualSize ?? this.usualSize,
+      defaultRates: defaultRates ?? this.defaultRates,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (isNamed.present) {
+      map['is_named'] = Variable<int>(isNamed.value);
+    }
+    if (leaderWorkerId.present) {
+      map['leader_worker_id'] = Variable<String>(leaderWorkerId.value);
+    }
+    if (usualSize.present) {
+      map['usual_size'] = Variable<int>(usualSize.value);
+    }
+    if (defaultRates.present) {
+      map['default_rates'] = Variable<String>(defaultRates.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourGroupsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('label: $label, ')
+          ..write('isNamed: $isNamed, ')
+          ..write('leaderWorkerId: $leaderWorkerId, ')
+          ..write('usualSize: $usualSize, ')
+          ..write('defaultRates: $defaultRates, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class LabourGroupMembers extends Table
+    with TableInfo<LabourGroupMembers, LabourGroupMembersData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -2192,8 +8853,50 @@ class LabourGroupMembers extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LabourGroupMembersData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabourGroupMembersData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      groupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_id'],
+      )!,
+      workerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}worker_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -2205,7 +8908,351 @@ class LabourGroupMembers extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Harvests extends Table with TableInfo {
+class LabourGroupMembersData extends DataClass
+    implements Insertable<LabourGroupMembersData> {
+  final String id;
+  final String farmId;
+  final String groupId;
+  final String workerId;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LabourGroupMembersData({
+    required this.id,
+    required this.farmId,
+    required this.groupId,
+    required this.workerId,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['group_id'] = Variable<String>(groupId);
+    map['worker_id'] = Variable<String>(workerId);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LabourGroupMembersCompanion toCompanion(bool nullToAbsent) {
+    return LabourGroupMembersCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      groupId: Value(groupId),
+      workerId: Value(workerId),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LabourGroupMembersData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabourGroupMembersData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      groupId: serializer.fromJson<String>(json['groupId']),
+      workerId: serializer.fromJson<String>(json['workerId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'groupId': serializer.toJson<String>(groupId),
+      'workerId': serializer.toJson<String>(workerId),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LabourGroupMembersData copyWith({
+    String? id,
+    String? farmId,
+    String? groupId,
+    String? workerId,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LabourGroupMembersData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    groupId: groupId ?? this.groupId,
+    workerId: workerId ?? this.workerId,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LabourGroupMembersData copyWithCompanion(LabourGroupMembersCompanion data) {
+    return LabourGroupMembersData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
+      workerId: data.workerId.present ? data.workerId.value : this.workerId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourGroupMembersData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('groupId: $groupId, ')
+          ..write('workerId: $workerId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    groupId,
+    workerId,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabourGroupMembersData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.groupId == this.groupId &&
+          other.workerId == this.workerId &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LabourGroupMembersCompanion
+    extends UpdateCompanion<LabourGroupMembersData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> groupId;
+  final Value<String> workerId;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LabourGroupMembersCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.groupId = const Value.absent(),
+    this.workerId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabourGroupMembersCompanion.insert({
+    required String id,
+    required String farmId,
+    required String groupId,
+    required String workerId,
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       groupId = Value(groupId),
+       workerId = Value(workerId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LabourGroupMembersData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? groupId,
+    Expression<String>? workerId,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (groupId != null) 'group_id': groupId,
+      if (workerId != null) 'worker_id': workerId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabourGroupMembersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? groupId,
+    Value<String>? workerId,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LabourGroupMembersCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      groupId: groupId ?? this.groupId,
+      workerId: workerId ?? this.workerId,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<String>(groupId.value);
+    }
+    if (workerId.present) {
+      map['worker_id'] = Variable<String>(workerId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourGroupMembersCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('groupId: $groupId, ')
+          ..write('workerId: $workerId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Harvests extends Table with TableInfo<Harvests, HarvestsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -2368,8 +9415,74 @@ class Harvests extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  HarvestsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HarvestsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      )!,
+      plotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plot_id'],
+      )!,
+      harvestedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}harvested_on'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      gradeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grade_code'],
+      ),
+      perTeamQuantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}per_team_quantity'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -2381,7 +9494,504 @@ class Harvests extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class LabourEntries extends Table with TableInfo {
+class HarvestsData extends DataClass implements Insertable<HarvestsData> {
+  final String id;
+  final String farmId;
+  final String cropCycleId;
+  final String plotId;
+  final String harvestedOn;
+  final int quantity;
+  final String unit;
+  final String? gradeCode;
+  final int perTeamQuantity;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const HarvestsData({
+    required this.id,
+    required this.farmId,
+    required this.cropCycleId,
+    required this.plotId,
+    required this.harvestedOn,
+    required this.quantity,
+    required this.unit,
+    this.gradeCode,
+    required this.perTeamQuantity,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    map['plot_id'] = Variable<String>(plotId);
+    map['harvested_on'] = Variable<String>(harvestedOn);
+    map['quantity'] = Variable<int>(quantity);
+    map['unit'] = Variable<String>(unit);
+    if (!nullToAbsent || gradeCode != null) {
+      map['grade_code'] = Variable<String>(gradeCode);
+    }
+    map['per_team_quantity'] = Variable<int>(perTeamQuantity);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  HarvestsCompanion toCompanion(bool nullToAbsent) {
+    return HarvestsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      cropCycleId: Value(cropCycleId),
+      plotId: Value(plotId),
+      harvestedOn: Value(harvestedOn),
+      quantity: Value(quantity),
+      unit: Value(unit),
+      gradeCode: gradeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gradeCode),
+      perTeamQuantity: Value(perTeamQuantity),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory HarvestsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HarvestsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      cropCycleId: serializer.fromJson<String>(json['cropCycleId']),
+      plotId: serializer.fromJson<String>(json['plotId']),
+      harvestedOn: serializer.fromJson<String>(json['harvestedOn']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unit: serializer.fromJson<String>(json['unit']),
+      gradeCode: serializer.fromJson<String?>(json['gradeCode']),
+      perTeamQuantity: serializer.fromJson<int>(json['perTeamQuantity']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'cropCycleId': serializer.toJson<String>(cropCycleId),
+      'plotId': serializer.toJson<String>(plotId),
+      'harvestedOn': serializer.toJson<String>(harvestedOn),
+      'quantity': serializer.toJson<int>(quantity),
+      'unit': serializer.toJson<String>(unit),
+      'gradeCode': serializer.toJson<String?>(gradeCode),
+      'perTeamQuantity': serializer.toJson<int>(perTeamQuantity),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  HarvestsData copyWith({
+    String? id,
+    String? farmId,
+    String? cropCycleId,
+    String? plotId,
+    String? harvestedOn,
+    int? quantity,
+    String? unit,
+    Value<String?> gradeCode = const Value.absent(),
+    int? perTeamQuantity,
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => HarvestsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    cropCycleId: cropCycleId ?? this.cropCycleId,
+    plotId: plotId ?? this.plotId,
+    harvestedOn: harvestedOn ?? this.harvestedOn,
+    quantity: quantity ?? this.quantity,
+    unit: unit ?? this.unit,
+    gradeCode: gradeCode.present ? gradeCode.value : this.gradeCode,
+    perTeamQuantity: perTeamQuantity ?? this.perTeamQuantity,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  HarvestsData copyWithCompanion(HarvestsCompanion data) {
+    return HarvestsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      plotId: data.plotId.present ? data.plotId.value : this.plotId,
+      harvestedOn: data.harvestedOn.present
+          ? data.harvestedOn.value
+          : this.harvestedOn,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      gradeCode: data.gradeCode.present ? data.gradeCode.value : this.gradeCode,
+      perTeamQuantity: data.perTeamQuantity.present
+          ? data.perTeamQuantity.value
+          : this.perTeamQuantity,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HarvestsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('plotId: $plotId, ')
+          ..write('harvestedOn: $harvestedOn, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('perTeamQuantity: $perTeamQuantity, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    cropCycleId,
+    plotId,
+    harvestedOn,
+    quantity,
+    unit,
+    gradeCode,
+    perTeamQuantity,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HarvestsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.plotId == this.plotId &&
+          other.harvestedOn == this.harvestedOn &&
+          other.quantity == this.quantity &&
+          other.unit == this.unit &&
+          other.gradeCode == this.gradeCode &&
+          other.perTeamQuantity == this.perTeamQuantity &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class HarvestsCompanion extends UpdateCompanion<HarvestsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> cropCycleId;
+  final Value<String> plotId;
+  final Value<String> harvestedOn;
+  final Value<int> quantity;
+  final Value<String> unit;
+  final Value<String?> gradeCode;
+  final Value<int> perTeamQuantity;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const HarvestsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.harvestedOn = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    this.perTeamQuantity = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HarvestsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String cropCycleId,
+    required String plotId,
+    required String harvestedOn,
+    required int quantity,
+    this.unit = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    this.perTeamQuantity = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       cropCycleId = Value(cropCycleId),
+       plotId = Value(plotId),
+       harvestedOn = Value(harvestedOn),
+       quantity = Value(quantity),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<HarvestsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? cropCycleId,
+    Expression<String>? plotId,
+    Expression<String>? harvestedOn,
+    Expression<int>? quantity,
+    Expression<String>? unit,
+    Expression<String>? gradeCode,
+    Expression<int>? perTeamQuantity,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (plotId != null) 'plot_id': plotId,
+      if (harvestedOn != null) 'harvested_on': harvestedOn,
+      if (quantity != null) 'quantity': quantity,
+      if (unit != null) 'unit': unit,
+      if (gradeCode != null) 'grade_code': gradeCode,
+      if (perTeamQuantity != null) 'per_team_quantity': perTeamQuantity,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HarvestsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? cropCycleId,
+    Value<String>? plotId,
+    Value<String>? harvestedOn,
+    Value<int>? quantity,
+    Value<String>? unit,
+    Value<String?>? gradeCode,
+    Value<int>? perTeamQuantity,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return HarvestsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      plotId: plotId ?? this.plotId,
+      harvestedOn: harvestedOn ?? this.harvestedOn,
+      quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
+      gradeCode: gradeCode ?? this.gradeCode,
+      perTeamQuantity: perTeamQuantity ?? this.perTeamQuantity,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (plotId.present) {
+      map['plot_id'] = Variable<String>(plotId.value);
+    }
+    if (harvestedOn.present) {
+      map['harvested_on'] = Variable<String>(harvestedOn.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (gradeCode.present) {
+      map['grade_code'] = Variable<String>(gradeCode.value);
+    }
+    if (perTeamQuantity.present) {
+      map['per_team_quantity'] = Variable<int>(perTeamQuantity.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HarvestsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('plotId: $plotId, ')
+          ..write('harvestedOn: $harvestedOn, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('perTeamQuantity: $perTeamQuantity, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class LabourEntries extends Table
+    with TableInfo<LabourEntries, LabourEntriesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -2481,7 +10091,8 @@ class LabourEntries extends Table with TableInfo {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 1000',
+    $customConstraints:
+        'NOT NULL DEFAULT 1000 CHECK (attendance BETWEEN 0 AND 1000)',
     defaultValue: const CustomExpression('1000'),
   );
   late final GeneratedColumn<String> wageType = GeneratedColumn<String>(
@@ -2647,8 +10258,118 @@ class LabourEntries extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LabourEntriesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabourEntriesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      workDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}work_date'],
+      )!,
+      workerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}worker_id'],
+      ),
+      groupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_id'],
+      ),
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      ),
+      plotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plot_id'],
+      ),
+      harvestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}harvest_id'],
+      ),
+      taskCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}task_code'],
+      ),
+      rateClass: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rate_class'],
+      ),
+      headCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}head_count'],
+      )!,
+      attendance: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attendance'],
+      )!,
+      wageType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}wage_type'],
+      )!,
+      hours: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}hours'],
+      ),
+      overtimeHours: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}overtime_hours'],
+      ),
+      overtimeRatePaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}overtime_rate_paise'],
+      ),
+      ratePaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rate_paise'],
+      )!,
+      pieceQuantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}piece_quantity'],
+      ),
+      pieceUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}piece_unit'],
+      ),
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      amountOverridden: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_overridden'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -2657,10 +10378,816 @@ class LabourEntries extends Table with TableInfo {
   }
 
   @override
+  List<String> get customConstraints => const [
+    'CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL)',
+  ];
+  @override
   bool get dontWriteConstraints => true;
 }
 
-class LabourAllocations extends Table with TableInfo {
+class LabourEntriesData extends DataClass
+    implements Insertable<LabourEntriesData> {
+  final String id;
+  final String farmId;
+  final String workDate;
+  final String? workerId;
+  final String? groupId;
+  final String? cropCycleId;
+  final String? plotId;
+  final String? harvestId;
+  final String? taskCode;
+  final String? rateClass;
+  final int headCount;
+  final int attendance;
+  final String wageType;
+  final int? hours;
+  final int? overtimeHours;
+  final int? overtimeRatePaise;
+  final int ratePaise;
+  final int? pieceQuantity;
+  final String? pieceUnit;
+  final int amountPaise;
+  final int amountOverridden;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LabourEntriesData({
+    required this.id,
+    required this.farmId,
+    required this.workDate,
+    this.workerId,
+    this.groupId,
+    this.cropCycleId,
+    this.plotId,
+    this.harvestId,
+    this.taskCode,
+    this.rateClass,
+    required this.headCount,
+    required this.attendance,
+    required this.wageType,
+    this.hours,
+    this.overtimeHours,
+    this.overtimeRatePaise,
+    required this.ratePaise,
+    this.pieceQuantity,
+    this.pieceUnit,
+    required this.amountPaise,
+    required this.amountOverridden,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['work_date'] = Variable<String>(workDate);
+    if (!nullToAbsent || workerId != null) {
+      map['worker_id'] = Variable<String>(workerId);
+    }
+    if (!nullToAbsent || groupId != null) {
+      map['group_id'] = Variable<String>(groupId);
+    }
+    if (!nullToAbsent || cropCycleId != null) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    }
+    if (!nullToAbsent || plotId != null) {
+      map['plot_id'] = Variable<String>(plotId);
+    }
+    if (!nullToAbsent || harvestId != null) {
+      map['harvest_id'] = Variable<String>(harvestId);
+    }
+    if (!nullToAbsent || taskCode != null) {
+      map['task_code'] = Variable<String>(taskCode);
+    }
+    if (!nullToAbsent || rateClass != null) {
+      map['rate_class'] = Variable<String>(rateClass);
+    }
+    map['head_count'] = Variable<int>(headCount);
+    map['attendance'] = Variable<int>(attendance);
+    map['wage_type'] = Variable<String>(wageType);
+    if (!nullToAbsent || hours != null) {
+      map['hours'] = Variable<int>(hours);
+    }
+    if (!nullToAbsent || overtimeHours != null) {
+      map['overtime_hours'] = Variable<int>(overtimeHours);
+    }
+    if (!nullToAbsent || overtimeRatePaise != null) {
+      map['overtime_rate_paise'] = Variable<int>(overtimeRatePaise);
+    }
+    map['rate_paise'] = Variable<int>(ratePaise);
+    if (!nullToAbsent || pieceQuantity != null) {
+      map['piece_quantity'] = Variable<int>(pieceQuantity);
+    }
+    if (!nullToAbsent || pieceUnit != null) {
+      map['piece_unit'] = Variable<String>(pieceUnit);
+    }
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['amount_overridden'] = Variable<int>(amountOverridden);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LabourEntriesCompanion toCompanion(bool nullToAbsent) {
+    return LabourEntriesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      workDate: Value(workDate),
+      workerId: workerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(workerId),
+      groupId: groupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupId),
+      cropCycleId: cropCycleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropCycleId),
+      plotId: plotId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plotId),
+      harvestId: harvestId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(harvestId),
+      taskCode: taskCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(taskCode),
+      rateClass: rateClass == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rateClass),
+      headCount: Value(headCount),
+      attendance: Value(attendance),
+      wageType: Value(wageType),
+      hours: hours == null && nullToAbsent
+          ? const Value.absent()
+          : Value(hours),
+      overtimeHours: overtimeHours == null && nullToAbsent
+          ? const Value.absent()
+          : Value(overtimeHours),
+      overtimeRatePaise: overtimeRatePaise == null && nullToAbsent
+          ? const Value.absent()
+          : Value(overtimeRatePaise),
+      ratePaise: Value(ratePaise),
+      pieceQuantity: pieceQuantity == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pieceQuantity),
+      pieceUnit: pieceUnit == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pieceUnit),
+      amountPaise: Value(amountPaise),
+      amountOverridden: Value(amountOverridden),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LabourEntriesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabourEntriesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      workDate: serializer.fromJson<String>(json['workDate']),
+      workerId: serializer.fromJson<String?>(json['workerId']),
+      groupId: serializer.fromJson<String?>(json['groupId']),
+      cropCycleId: serializer.fromJson<String?>(json['cropCycleId']),
+      plotId: serializer.fromJson<String?>(json['plotId']),
+      harvestId: serializer.fromJson<String?>(json['harvestId']),
+      taskCode: serializer.fromJson<String?>(json['taskCode']),
+      rateClass: serializer.fromJson<String?>(json['rateClass']),
+      headCount: serializer.fromJson<int>(json['headCount']),
+      attendance: serializer.fromJson<int>(json['attendance']),
+      wageType: serializer.fromJson<String>(json['wageType']),
+      hours: serializer.fromJson<int?>(json['hours']),
+      overtimeHours: serializer.fromJson<int?>(json['overtimeHours']),
+      overtimeRatePaise: serializer.fromJson<int?>(json['overtimeRatePaise']),
+      ratePaise: serializer.fromJson<int>(json['ratePaise']),
+      pieceQuantity: serializer.fromJson<int?>(json['pieceQuantity']),
+      pieceUnit: serializer.fromJson<String?>(json['pieceUnit']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      amountOverridden: serializer.fromJson<int>(json['amountOverridden']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'workDate': serializer.toJson<String>(workDate),
+      'workerId': serializer.toJson<String?>(workerId),
+      'groupId': serializer.toJson<String?>(groupId),
+      'cropCycleId': serializer.toJson<String?>(cropCycleId),
+      'plotId': serializer.toJson<String?>(plotId),
+      'harvestId': serializer.toJson<String?>(harvestId),
+      'taskCode': serializer.toJson<String?>(taskCode),
+      'rateClass': serializer.toJson<String?>(rateClass),
+      'headCount': serializer.toJson<int>(headCount),
+      'attendance': serializer.toJson<int>(attendance),
+      'wageType': serializer.toJson<String>(wageType),
+      'hours': serializer.toJson<int?>(hours),
+      'overtimeHours': serializer.toJson<int?>(overtimeHours),
+      'overtimeRatePaise': serializer.toJson<int?>(overtimeRatePaise),
+      'ratePaise': serializer.toJson<int>(ratePaise),
+      'pieceQuantity': serializer.toJson<int?>(pieceQuantity),
+      'pieceUnit': serializer.toJson<String?>(pieceUnit),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'amountOverridden': serializer.toJson<int>(amountOverridden),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LabourEntriesData copyWith({
+    String? id,
+    String? farmId,
+    String? workDate,
+    Value<String?> workerId = const Value.absent(),
+    Value<String?> groupId = const Value.absent(),
+    Value<String?> cropCycleId = const Value.absent(),
+    Value<String?> plotId = const Value.absent(),
+    Value<String?> harvestId = const Value.absent(),
+    Value<String?> taskCode = const Value.absent(),
+    Value<String?> rateClass = const Value.absent(),
+    int? headCount,
+    int? attendance,
+    String? wageType,
+    Value<int?> hours = const Value.absent(),
+    Value<int?> overtimeHours = const Value.absent(),
+    Value<int?> overtimeRatePaise = const Value.absent(),
+    int? ratePaise,
+    Value<int?> pieceQuantity = const Value.absent(),
+    Value<String?> pieceUnit = const Value.absent(),
+    int? amountPaise,
+    int? amountOverridden,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LabourEntriesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    workDate: workDate ?? this.workDate,
+    workerId: workerId.present ? workerId.value : this.workerId,
+    groupId: groupId.present ? groupId.value : this.groupId,
+    cropCycleId: cropCycleId.present ? cropCycleId.value : this.cropCycleId,
+    plotId: plotId.present ? plotId.value : this.plotId,
+    harvestId: harvestId.present ? harvestId.value : this.harvestId,
+    taskCode: taskCode.present ? taskCode.value : this.taskCode,
+    rateClass: rateClass.present ? rateClass.value : this.rateClass,
+    headCount: headCount ?? this.headCount,
+    attendance: attendance ?? this.attendance,
+    wageType: wageType ?? this.wageType,
+    hours: hours.present ? hours.value : this.hours,
+    overtimeHours: overtimeHours.present
+        ? overtimeHours.value
+        : this.overtimeHours,
+    overtimeRatePaise: overtimeRatePaise.present
+        ? overtimeRatePaise.value
+        : this.overtimeRatePaise,
+    ratePaise: ratePaise ?? this.ratePaise,
+    pieceQuantity: pieceQuantity.present
+        ? pieceQuantity.value
+        : this.pieceQuantity,
+    pieceUnit: pieceUnit.present ? pieceUnit.value : this.pieceUnit,
+    amountPaise: amountPaise ?? this.amountPaise,
+    amountOverridden: amountOverridden ?? this.amountOverridden,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LabourEntriesData copyWithCompanion(LabourEntriesCompanion data) {
+    return LabourEntriesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      workDate: data.workDate.present ? data.workDate.value : this.workDate,
+      workerId: data.workerId.present ? data.workerId.value : this.workerId,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      plotId: data.plotId.present ? data.plotId.value : this.plotId,
+      harvestId: data.harvestId.present ? data.harvestId.value : this.harvestId,
+      taskCode: data.taskCode.present ? data.taskCode.value : this.taskCode,
+      rateClass: data.rateClass.present ? data.rateClass.value : this.rateClass,
+      headCount: data.headCount.present ? data.headCount.value : this.headCount,
+      attendance: data.attendance.present
+          ? data.attendance.value
+          : this.attendance,
+      wageType: data.wageType.present ? data.wageType.value : this.wageType,
+      hours: data.hours.present ? data.hours.value : this.hours,
+      overtimeHours: data.overtimeHours.present
+          ? data.overtimeHours.value
+          : this.overtimeHours,
+      overtimeRatePaise: data.overtimeRatePaise.present
+          ? data.overtimeRatePaise.value
+          : this.overtimeRatePaise,
+      ratePaise: data.ratePaise.present ? data.ratePaise.value : this.ratePaise,
+      pieceQuantity: data.pieceQuantity.present
+          ? data.pieceQuantity.value
+          : this.pieceQuantity,
+      pieceUnit: data.pieceUnit.present ? data.pieceUnit.value : this.pieceUnit,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      amountOverridden: data.amountOverridden.present
+          ? data.amountOverridden.value
+          : this.amountOverridden,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourEntriesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('workDate: $workDate, ')
+          ..write('workerId: $workerId, ')
+          ..write('groupId: $groupId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('plotId: $plotId, ')
+          ..write('harvestId: $harvestId, ')
+          ..write('taskCode: $taskCode, ')
+          ..write('rateClass: $rateClass, ')
+          ..write('headCount: $headCount, ')
+          ..write('attendance: $attendance, ')
+          ..write('wageType: $wageType, ')
+          ..write('hours: $hours, ')
+          ..write('overtimeHours: $overtimeHours, ')
+          ..write('overtimeRatePaise: $overtimeRatePaise, ')
+          ..write('ratePaise: $ratePaise, ')
+          ..write('pieceQuantity: $pieceQuantity, ')
+          ..write('pieceUnit: $pieceUnit, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('amountOverridden: $amountOverridden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    farmId,
+    workDate,
+    workerId,
+    groupId,
+    cropCycleId,
+    plotId,
+    harvestId,
+    taskCode,
+    rateClass,
+    headCount,
+    attendance,
+    wageType,
+    hours,
+    overtimeHours,
+    overtimeRatePaise,
+    ratePaise,
+    pieceQuantity,
+    pieceUnit,
+    amountPaise,
+    amountOverridden,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabourEntriesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.workDate == this.workDate &&
+          other.workerId == this.workerId &&
+          other.groupId == this.groupId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.plotId == this.plotId &&
+          other.harvestId == this.harvestId &&
+          other.taskCode == this.taskCode &&
+          other.rateClass == this.rateClass &&
+          other.headCount == this.headCount &&
+          other.attendance == this.attendance &&
+          other.wageType == this.wageType &&
+          other.hours == this.hours &&
+          other.overtimeHours == this.overtimeHours &&
+          other.overtimeRatePaise == this.overtimeRatePaise &&
+          other.ratePaise == this.ratePaise &&
+          other.pieceQuantity == this.pieceQuantity &&
+          other.pieceUnit == this.pieceUnit &&
+          other.amountPaise == this.amountPaise &&
+          other.amountOverridden == this.amountOverridden &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LabourEntriesCompanion extends UpdateCompanion<LabourEntriesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> workDate;
+  final Value<String?> workerId;
+  final Value<String?> groupId;
+  final Value<String?> cropCycleId;
+  final Value<String?> plotId;
+  final Value<String?> harvestId;
+  final Value<String?> taskCode;
+  final Value<String?> rateClass;
+  final Value<int> headCount;
+  final Value<int> attendance;
+  final Value<String> wageType;
+  final Value<int?> hours;
+  final Value<int?> overtimeHours;
+  final Value<int?> overtimeRatePaise;
+  final Value<int> ratePaise;
+  final Value<int?> pieceQuantity;
+  final Value<String?> pieceUnit;
+  final Value<int> amountPaise;
+  final Value<int> amountOverridden;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LabourEntriesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.workDate = const Value.absent(),
+    this.workerId = const Value.absent(),
+    this.groupId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.harvestId = const Value.absent(),
+    this.taskCode = const Value.absent(),
+    this.rateClass = const Value.absent(),
+    this.headCount = const Value.absent(),
+    this.attendance = const Value.absent(),
+    this.wageType = const Value.absent(),
+    this.hours = const Value.absent(),
+    this.overtimeHours = const Value.absent(),
+    this.overtimeRatePaise = const Value.absent(),
+    this.ratePaise = const Value.absent(),
+    this.pieceQuantity = const Value.absent(),
+    this.pieceUnit = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.amountOverridden = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabourEntriesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String workDate,
+    this.workerId = const Value.absent(),
+    this.groupId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.harvestId = const Value.absent(),
+    this.taskCode = const Value.absent(),
+    this.rateClass = const Value.absent(),
+    this.headCount = const Value.absent(),
+    this.attendance = const Value.absent(),
+    this.wageType = const Value.absent(),
+    this.hours = const Value.absent(),
+    this.overtimeHours = const Value.absent(),
+    this.overtimeRatePaise = const Value.absent(),
+    this.ratePaise = const Value.absent(),
+    this.pieceQuantity = const Value.absent(),
+    this.pieceUnit = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.amountOverridden = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       workDate = Value(workDate),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LabourEntriesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? workDate,
+    Expression<String>? workerId,
+    Expression<String>? groupId,
+    Expression<String>? cropCycleId,
+    Expression<String>? plotId,
+    Expression<String>? harvestId,
+    Expression<String>? taskCode,
+    Expression<String>? rateClass,
+    Expression<int>? headCount,
+    Expression<int>? attendance,
+    Expression<String>? wageType,
+    Expression<int>? hours,
+    Expression<int>? overtimeHours,
+    Expression<int>? overtimeRatePaise,
+    Expression<int>? ratePaise,
+    Expression<int>? pieceQuantity,
+    Expression<String>? pieceUnit,
+    Expression<int>? amountPaise,
+    Expression<int>? amountOverridden,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (workDate != null) 'work_date': workDate,
+      if (workerId != null) 'worker_id': workerId,
+      if (groupId != null) 'group_id': groupId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (plotId != null) 'plot_id': plotId,
+      if (harvestId != null) 'harvest_id': harvestId,
+      if (taskCode != null) 'task_code': taskCode,
+      if (rateClass != null) 'rate_class': rateClass,
+      if (headCount != null) 'head_count': headCount,
+      if (attendance != null) 'attendance': attendance,
+      if (wageType != null) 'wage_type': wageType,
+      if (hours != null) 'hours': hours,
+      if (overtimeHours != null) 'overtime_hours': overtimeHours,
+      if (overtimeRatePaise != null) 'overtime_rate_paise': overtimeRatePaise,
+      if (ratePaise != null) 'rate_paise': ratePaise,
+      if (pieceQuantity != null) 'piece_quantity': pieceQuantity,
+      if (pieceUnit != null) 'piece_unit': pieceUnit,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (amountOverridden != null) 'amount_overridden': amountOverridden,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabourEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? workDate,
+    Value<String?>? workerId,
+    Value<String?>? groupId,
+    Value<String?>? cropCycleId,
+    Value<String?>? plotId,
+    Value<String?>? harvestId,
+    Value<String?>? taskCode,
+    Value<String?>? rateClass,
+    Value<int>? headCount,
+    Value<int>? attendance,
+    Value<String>? wageType,
+    Value<int?>? hours,
+    Value<int?>? overtimeHours,
+    Value<int?>? overtimeRatePaise,
+    Value<int>? ratePaise,
+    Value<int?>? pieceQuantity,
+    Value<String?>? pieceUnit,
+    Value<int>? amountPaise,
+    Value<int>? amountOverridden,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LabourEntriesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      workDate: workDate ?? this.workDate,
+      workerId: workerId ?? this.workerId,
+      groupId: groupId ?? this.groupId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      plotId: plotId ?? this.plotId,
+      harvestId: harvestId ?? this.harvestId,
+      taskCode: taskCode ?? this.taskCode,
+      rateClass: rateClass ?? this.rateClass,
+      headCount: headCount ?? this.headCount,
+      attendance: attendance ?? this.attendance,
+      wageType: wageType ?? this.wageType,
+      hours: hours ?? this.hours,
+      overtimeHours: overtimeHours ?? this.overtimeHours,
+      overtimeRatePaise: overtimeRatePaise ?? this.overtimeRatePaise,
+      ratePaise: ratePaise ?? this.ratePaise,
+      pieceQuantity: pieceQuantity ?? this.pieceQuantity,
+      pieceUnit: pieceUnit ?? this.pieceUnit,
+      amountPaise: amountPaise ?? this.amountPaise,
+      amountOverridden: amountOverridden ?? this.amountOverridden,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (workDate.present) {
+      map['work_date'] = Variable<String>(workDate.value);
+    }
+    if (workerId.present) {
+      map['worker_id'] = Variable<String>(workerId.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<String>(groupId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (plotId.present) {
+      map['plot_id'] = Variable<String>(plotId.value);
+    }
+    if (harvestId.present) {
+      map['harvest_id'] = Variable<String>(harvestId.value);
+    }
+    if (taskCode.present) {
+      map['task_code'] = Variable<String>(taskCode.value);
+    }
+    if (rateClass.present) {
+      map['rate_class'] = Variable<String>(rateClass.value);
+    }
+    if (headCount.present) {
+      map['head_count'] = Variable<int>(headCount.value);
+    }
+    if (attendance.present) {
+      map['attendance'] = Variable<int>(attendance.value);
+    }
+    if (wageType.present) {
+      map['wage_type'] = Variable<String>(wageType.value);
+    }
+    if (hours.present) {
+      map['hours'] = Variable<int>(hours.value);
+    }
+    if (overtimeHours.present) {
+      map['overtime_hours'] = Variable<int>(overtimeHours.value);
+    }
+    if (overtimeRatePaise.present) {
+      map['overtime_rate_paise'] = Variable<int>(overtimeRatePaise.value);
+    }
+    if (ratePaise.present) {
+      map['rate_paise'] = Variable<int>(ratePaise.value);
+    }
+    if (pieceQuantity.present) {
+      map['piece_quantity'] = Variable<int>(pieceQuantity.value);
+    }
+    if (pieceUnit.present) {
+      map['piece_unit'] = Variable<String>(pieceUnit.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (amountOverridden.present) {
+      map['amount_overridden'] = Variable<int>(amountOverridden.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('workDate: $workDate, ')
+          ..write('workerId: $workerId, ')
+          ..write('groupId: $groupId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('plotId: $plotId, ')
+          ..write('harvestId: $harvestId, ')
+          ..write('taskCode: $taskCode, ')
+          ..write('rateClass: $rateClass, ')
+          ..write('headCount: $headCount, ')
+          ..write('attendance: $attendance, ')
+          ..write('wageType: $wageType, ')
+          ..write('hours: $hours, ')
+          ..write('overtimeHours: $overtimeHours, ')
+          ..write('overtimeRatePaise: $overtimeRatePaise, ')
+          ..write('ratePaise: $ratePaise, ')
+          ..write('pieceQuantity: $pieceQuantity, ')
+          ..write('pieceUnit: $pieceUnit, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('amountOverridden: $amountOverridden, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class LabourAllocations extends Table
+    with TableInfo<LabourAllocations, LabourAllocationsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -2786,8 +11313,58 @@ class LabourAllocations extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LabourAllocationsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabourAllocationsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      labourEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}labour_entry_id'],
+      )!,
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      isManual: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_manual'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -2799,7 +11376,405 @@ class LabourAllocations extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class LabourPayments extends Table with TableInfo {
+class LabourAllocationsData extends DataClass
+    implements Insertable<LabourAllocationsData> {
+  final String id;
+  final String farmId;
+  final String labourEntryId;
+  final String cropCycleId;
+  final int amountPaise;
+  final int isManual;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LabourAllocationsData({
+    required this.id,
+    required this.farmId,
+    required this.labourEntryId,
+    required this.cropCycleId,
+    required this.amountPaise,
+    required this.isManual,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['labour_entry_id'] = Variable<String>(labourEntryId);
+    map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['is_manual'] = Variable<int>(isManual);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LabourAllocationsCompanion toCompanion(bool nullToAbsent) {
+    return LabourAllocationsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      labourEntryId: Value(labourEntryId),
+      cropCycleId: Value(cropCycleId),
+      amountPaise: Value(amountPaise),
+      isManual: Value(isManual),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LabourAllocationsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabourAllocationsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      labourEntryId: serializer.fromJson<String>(json['labourEntryId']),
+      cropCycleId: serializer.fromJson<String>(json['cropCycleId']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      isManual: serializer.fromJson<int>(json['isManual']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'labourEntryId': serializer.toJson<String>(labourEntryId),
+      'cropCycleId': serializer.toJson<String>(cropCycleId),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'isManual': serializer.toJson<int>(isManual),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LabourAllocationsData copyWith({
+    String? id,
+    String? farmId,
+    String? labourEntryId,
+    String? cropCycleId,
+    int? amountPaise,
+    int? isManual,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LabourAllocationsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    labourEntryId: labourEntryId ?? this.labourEntryId,
+    cropCycleId: cropCycleId ?? this.cropCycleId,
+    amountPaise: amountPaise ?? this.amountPaise,
+    isManual: isManual ?? this.isManual,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LabourAllocationsData copyWithCompanion(LabourAllocationsCompanion data) {
+    return LabourAllocationsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      labourEntryId: data.labourEntryId.present
+          ? data.labourEntryId.value
+          : this.labourEntryId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      isManual: data.isManual.present ? data.isManual.value : this.isManual,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourAllocationsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('labourEntryId: $labourEntryId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('isManual: $isManual, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    labourEntryId,
+    cropCycleId,
+    amountPaise,
+    isManual,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabourAllocationsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.labourEntryId == this.labourEntryId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.amountPaise == this.amountPaise &&
+          other.isManual == this.isManual &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LabourAllocationsCompanion
+    extends UpdateCompanion<LabourAllocationsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> labourEntryId;
+  final Value<String> cropCycleId;
+  final Value<int> amountPaise;
+  final Value<int> isManual;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LabourAllocationsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.labourEntryId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.isManual = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabourAllocationsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String labourEntryId,
+    required String cropCycleId,
+    required int amountPaise,
+    this.isManual = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       labourEntryId = Value(labourEntryId),
+       cropCycleId = Value(cropCycleId),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LabourAllocationsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? labourEntryId,
+    Expression<String>? cropCycleId,
+    Expression<int>? amountPaise,
+    Expression<int>? isManual,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (labourEntryId != null) 'labour_entry_id': labourEntryId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (isManual != null) 'is_manual': isManual,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabourAllocationsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? labourEntryId,
+    Value<String>? cropCycleId,
+    Value<int>? amountPaise,
+    Value<int>? isManual,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LabourAllocationsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      labourEntryId: labourEntryId ?? this.labourEntryId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      amountPaise: amountPaise ?? this.amountPaise,
+      isManual: isManual ?? this.isManual,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (labourEntryId.present) {
+      map['labour_entry_id'] = Variable<String>(labourEntryId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (isManual.present) {
+      map['is_manual'] = Variable<int>(isManual.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourAllocationsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('labourEntryId: $labourEntryId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('isManual: $isManual, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class LabourPayments extends Table
+    with TableInfo<LabourPayments, LabourPaymentsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -2952,8 +11927,70 @@ class LabourPayments extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LabourPaymentsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabourPaymentsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      paidOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}paid_on'],
+      )!,
+      workerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}worker_id'],
+      ),
+      groupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_id'],
+      ),
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mode'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -2962,10 +11999,487 @@ class LabourPayments extends Table with TableInfo {
   }
 
   @override
+  List<String> get customConstraints => const [
+    'CHECK(worker_id IS NOT NULL OR group_id IS NOT NULL)',
+  ];
+  @override
   bool get dontWriteConstraints => true;
 }
 
-class Expenses extends Table with TableInfo {
+class LabourPaymentsData extends DataClass
+    implements Insertable<LabourPaymentsData> {
+  final String id;
+  final String farmId;
+  final String paidOn;
+  final String? workerId;
+  final String? groupId;
+  final String kind;
+  final int amountPaise;
+  final String mode;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LabourPaymentsData({
+    required this.id,
+    required this.farmId,
+    required this.paidOn,
+    this.workerId,
+    this.groupId,
+    required this.kind,
+    required this.amountPaise,
+    required this.mode,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['paid_on'] = Variable<String>(paidOn);
+    if (!nullToAbsent || workerId != null) {
+      map['worker_id'] = Variable<String>(workerId);
+    }
+    if (!nullToAbsent || groupId != null) {
+      map['group_id'] = Variable<String>(groupId);
+    }
+    map['kind'] = Variable<String>(kind);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['mode'] = Variable<String>(mode);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LabourPaymentsCompanion toCompanion(bool nullToAbsent) {
+    return LabourPaymentsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      paidOn: Value(paidOn),
+      workerId: workerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(workerId),
+      groupId: groupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupId),
+      kind: Value(kind),
+      amountPaise: Value(amountPaise),
+      mode: Value(mode),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LabourPaymentsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabourPaymentsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      paidOn: serializer.fromJson<String>(json['paidOn']),
+      workerId: serializer.fromJson<String?>(json['workerId']),
+      groupId: serializer.fromJson<String?>(json['groupId']),
+      kind: serializer.fromJson<String>(json['kind']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      mode: serializer.fromJson<String>(json['mode']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'paidOn': serializer.toJson<String>(paidOn),
+      'workerId': serializer.toJson<String?>(workerId),
+      'groupId': serializer.toJson<String?>(groupId),
+      'kind': serializer.toJson<String>(kind),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'mode': serializer.toJson<String>(mode),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LabourPaymentsData copyWith({
+    String? id,
+    String? farmId,
+    String? paidOn,
+    Value<String?> workerId = const Value.absent(),
+    Value<String?> groupId = const Value.absent(),
+    String? kind,
+    int? amountPaise,
+    String? mode,
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LabourPaymentsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    paidOn: paidOn ?? this.paidOn,
+    workerId: workerId.present ? workerId.value : this.workerId,
+    groupId: groupId.present ? groupId.value : this.groupId,
+    kind: kind ?? this.kind,
+    amountPaise: amountPaise ?? this.amountPaise,
+    mode: mode ?? this.mode,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LabourPaymentsData copyWithCompanion(LabourPaymentsCompanion data) {
+    return LabourPaymentsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      paidOn: data.paidOn.present ? data.paidOn.value : this.paidOn,
+      workerId: data.workerId.present ? data.workerId.value : this.workerId,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourPaymentsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('paidOn: $paidOn, ')
+          ..write('workerId: $workerId, ')
+          ..write('groupId: $groupId, ')
+          ..write('kind: $kind, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    paidOn,
+    workerId,
+    groupId,
+    kind,
+    amountPaise,
+    mode,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabourPaymentsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.paidOn == this.paidOn &&
+          other.workerId == this.workerId &&
+          other.groupId == this.groupId &&
+          other.kind == this.kind &&
+          other.amountPaise == this.amountPaise &&
+          other.mode == this.mode &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LabourPaymentsCompanion extends UpdateCompanion<LabourPaymentsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> paidOn;
+  final Value<String?> workerId;
+  final Value<String?> groupId;
+  final Value<String> kind;
+  final Value<int> amountPaise;
+  final Value<String> mode;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LabourPaymentsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.paidOn = const Value.absent(),
+    this.workerId = const Value.absent(),
+    this.groupId = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabourPaymentsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String paidOn,
+    this.workerId = const Value.absent(),
+    this.groupId = const Value.absent(),
+    required String kind,
+    required int amountPaise,
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       paidOn = Value(paidOn),
+       kind = Value(kind),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LabourPaymentsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? paidOn,
+    Expression<String>? workerId,
+    Expression<String>? groupId,
+    Expression<String>? kind,
+    Expression<int>? amountPaise,
+    Expression<String>? mode,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (paidOn != null) 'paid_on': paidOn,
+      if (workerId != null) 'worker_id': workerId,
+      if (groupId != null) 'group_id': groupId,
+      if (kind != null) 'kind': kind,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (mode != null) 'mode': mode,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabourPaymentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? paidOn,
+    Value<String?>? workerId,
+    Value<String?>? groupId,
+    Value<String>? kind,
+    Value<int>? amountPaise,
+    Value<String>? mode,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LabourPaymentsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      paidOn: paidOn ?? this.paidOn,
+      workerId: workerId ?? this.workerId,
+      groupId: groupId ?? this.groupId,
+      kind: kind ?? this.kind,
+      amountPaise: amountPaise ?? this.amountPaise,
+      mode: mode ?? this.mode,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (paidOn.present) {
+      map['paid_on'] = Variable<String>(paidOn.value);
+    }
+    if (workerId.present) {
+      map['worker_id'] = Variable<String>(workerId.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<String>(groupId.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<String>(mode.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabourPaymentsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('paidOn: $paidOn, ')
+          ..write('workerId: $workerId, ')
+          ..write('groupId: $groupId, ')
+          ..write('kind: $kind, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Expenses extends Table with TableInfo<Expenses, ExpensesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3136,8 +12650,78 @@ class Expenses extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ExpensesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExpensesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      spentOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}spent_on'],
+      )!,
+      categoryCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_code'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      plotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plot_id'],
+      ),
+      vendorPartyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vendor_party_id'],
+      ),
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mode'],
+      )!,
+      dueOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}due_on'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      photoPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photo_path'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -3149,7 +12733,540 @@ class Expenses extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class ExpenseAllocations extends Table with TableInfo {
+class ExpensesData extends DataClass implements Insertable<ExpensesData> {
+  final String id;
+  final String farmId;
+  final String spentOn;
+  final String categoryCode;
+  final int amountPaise;
+  final String? plotId;
+  final String? vendorPartyId;
+  final String mode;
+  final String? dueOn;
+  final String? notes;
+  final String? photoPath;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const ExpensesData({
+    required this.id,
+    required this.farmId,
+    required this.spentOn,
+    required this.categoryCode,
+    required this.amountPaise,
+    this.plotId,
+    this.vendorPartyId,
+    required this.mode,
+    this.dueOn,
+    this.notes,
+    this.photoPath,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['spent_on'] = Variable<String>(spentOn);
+    map['category_code'] = Variable<String>(categoryCode);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    if (!nullToAbsent || plotId != null) {
+      map['plot_id'] = Variable<String>(plotId);
+    }
+    if (!nullToAbsent || vendorPartyId != null) {
+      map['vendor_party_id'] = Variable<String>(vendorPartyId);
+    }
+    map['mode'] = Variable<String>(mode);
+    if (!nullToAbsent || dueOn != null) {
+      map['due_on'] = Variable<String>(dueOn);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || photoPath != null) {
+      map['photo_path'] = Variable<String>(photoPath);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  ExpensesCompanion toCompanion(bool nullToAbsent) {
+    return ExpensesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      spentOn: Value(spentOn),
+      categoryCode: Value(categoryCode),
+      amountPaise: Value(amountPaise),
+      plotId: plotId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plotId),
+      vendorPartyId: vendorPartyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vendorPartyId),
+      mode: Value(mode),
+      dueOn: dueOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueOn),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      photoPath: photoPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(photoPath),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory ExpensesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExpensesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      spentOn: serializer.fromJson<String>(json['spentOn']),
+      categoryCode: serializer.fromJson<String>(json['categoryCode']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      plotId: serializer.fromJson<String?>(json['plotId']),
+      vendorPartyId: serializer.fromJson<String?>(json['vendorPartyId']),
+      mode: serializer.fromJson<String>(json['mode']),
+      dueOn: serializer.fromJson<String?>(json['dueOn']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      photoPath: serializer.fromJson<String?>(json['photoPath']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'spentOn': serializer.toJson<String>(spentOn),
+      'categoryCode': serializer.toJson<String>(categoryCode),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'plotId': serializer.toJson<String?>(plotId),
+      'vendorPartyId': serializer.toJson<String?>(vendorPartyId),
+      'mode': serializer.toJson<String>(mode),
+      'dueOn': serializer.toJson<String?>(dueOn),
+      'notes': serializer.toJson<String?>(notes),
+      'photoPath': serializer.toJson<String?>(photoPath),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  ExpensesData copyWith({
+    String? id,
+    String? farmId,
+    String? spentOn,
+    String? categoryCode,
+    int? amountPaise,
+    Value<String?> plotId = const Value.absent(),
+    Value<String?> vendorPartyId = const Value.absent(),
+    String? mode,
+    Value<String?> dueOn = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    Value<String?> photoPath = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => ExpensesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    spentOn: spentOn ?? this.spentOn,
+    categoryCode: categoryCode ?? this.categoryCode,
+    amountPaise: amountPaise ?? this.amountPaise,
+    plotId: plotId.present ? plotId.value : this.plotId,
+    vendorPartyId: vendorPartyId.present
+        ? vendorPartyId.value
+        : this.vendorPartyId,
+    mode: mode ?? this.mode,
+    dueOn: dueOn.present ? dueOn.value : this.dueOn,
+    notes: notes.present ? notes.value : this.notes,
+    photoPath: photoPath.present ? photoPath.value : this.photoPath,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  ExpensesData copyWithCompanion(ExpensesCompanion data) {
+    return ExpensesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      spentOn: data.spentOn.present ? data.spentOn.value : this.spentOn,
+      categoryCode: data.categoryCode.present
+          ? data.categoryCode.value
+          : this.categoryCode,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      plotId: data.plotId.present ? data.plotId.value : this.plotId,
+      vendorPartyId: data.vendorPartyId.present
+          ? data.vendorPartyId.value
+          : this.vendorPartyId,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      dueOn: data.dueOn.present ? data.dueOn.value : this.dueOn,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpensesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('spentOn: $spentOn, ')
+          ..write('categoryCode: $categoryCode, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('plotId: $plotId, ')
+          ..write('vendorPartyId: $vendorPartyId, ')
+          ..write('mode: $mode, ')
+          ..write('dueOn: $dueOn, ')
+          ..write('notes: $notes, ')
+          ..write('photoPath: $photoPath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    spentOn,
+    categoryCode,
+    amountPaise,
+    plotId,
+    vendorPartyId,
+    mode,
+    dueOn,
+    notes,
+    photoPath,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExpensesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.spentOn == this.spentOn &&
+          other.categoryCode == this.categoryCode &&
+          other.amountPaise == this.amountPaise &&
+          other.plotId == this.plotId &&
+          other.vendorPartyId == this.vendorPartyId &&
+          other.mode == this.mode &&
+          other.dueOn == this.dueOn &&
+          other.notes == this.notes &&
+          other.photoPath == this.photoPath &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class ExpensesCompanion extends UpdateCompanion<ExpensesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> spentOn;
+  final Value<String> categoryCode;
+  final Value<int> amountPaise;
+  final Value<String?> plotId;
+  final Value<String?> vendorPartyId;
+  final Value<String> mode;
+  final Value<String?> dueOn;
+  final Value<String?> notes;
+  final Value<String?> photoPath;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const ExpensesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.spentOn = const Value.absent(),
+    this.categoryCode = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.plotId = const Value.absent(),
+    this.vendorPartyId = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.dueOn = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.photoPath = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExpensesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String spentOn,
+    required String categoryCode,
+    required int amountPaise,
+    this.plotId = const Value.absent(),
+    this.vendorPartyId = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.dueOn = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.photoPath = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       spentOn = Value(spentOn),
+       categoryCode = Value(categoryCode),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<ExpensesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? spentOn,
+    Expression<String>? categoryCode,
+    Expression<int>? amountPaise,
+    Expression<String>? plotId,
+    Expression<String>? vendorPartyId,
+    Expression<String>? mode,
+    Expression<String>? dueOn,
+    Expression<String>? notes,
+    Expression<String>? photoPath,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (spentOn != null) 'spent_on': spentOn,
+      if (categoryCode != null) 'category_code': categoryCode,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (plotId != null) 'plot_id': plotId,
+      if (vendorPartyId != null) 'vendor_party_id': vendorPartyId,
+      if (mode != null) 'mode': mode,
+      if (dueOn != null) 'due_on': dueOn,
+      if (notes != null) 'notes': notes,
+      if (photoPath != null) 'photo_path': photoPath,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExpensesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? spentOn,
+    Value<String>? categoryCode,
+    Value<int>? amountPaise,
+    Value<String?>? plotId,
+    Value<String?>? vendorPartyId,
+    Value<String>? mode,
+    Value<String?>? dueOn,
+    Value<String?>? notes,
+    Value<String?>? photoPath,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return ExpensesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      spentOn: spentOn ?? this.spentOn,
+      categoryCode: categoryCode ?? this.categoryCode,
+      amountPaise: amountPaise ?? this.amountPaise,
+      plotId: plotId ?? this.plotId,
+      vendorPartyId: vendorPartyId ?? this.vendorPartyId,
+      mode: mode ?? this.mode,
+      dueOn: dueOn ?? this.dueOn,
+      notes: notes ?? this.notes,
+      photoPath: photoPath ?? this.photoPath,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (spentOn.present) {
+      map['spent_on'] = Variable<String>(spentOn.value);
+    }
+    if (categoryCode.present) {
+      map['category_code'] = Variable<String>(categoryCode.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (plotId.present) {
+      map['plot_id'] = Variable<String>(plotId.value);
+    }
+    if (vendorPartyId.present) {
+      map['vendor_party_id'] = Variable<String>(vendorPartyId.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<String>(mode.value);
+    }
+    if (dueOn.present) {
+      map['due_on'] = Variable<String>(dueOn.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (photoPath.present) {
+      map['photo_path'] = Variable<String>(photoPath.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpensesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('spentOn: $spentOn, ')
+          ..write('categoryCode: $categoryCode, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('plotId: $plotId, ')
+          ..write('vendorPartyId: $vendorPartyId, ')
+          ..write('mode: $mode, ')
+          ..write('dueOn: $dueOn, ')
+          ..write('notes: $notes, ')
+          ..write('photoPath: $photoPath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class ExpenseAllocations extends Table
+    with TableInfo<ExpenseAllocations, ExpenseAllocationsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3275,8 +13392,58 @@ class ExpenseAllocations extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ExpenseAllocationsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExpenseAllocationsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      expenseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}expense_id'],
+      )!,
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      isManual: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_manual'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -3288,7 +13455,403 @@ class ExpenseAllocations extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class ExpensePayments extends Table with TableInfo {
+class ExpenseAllocationsData extends DataClass
+    implements Insertable<ExpenseAllocationsData> {
+  final String id;
+  final String farmId;
+  final String expenseId;
+  final String cropCycleId;
+  final int amountPaise;
+  final int isManual;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const ExpenseAllocationsData({
+    required this.id,
+    required this.farmId,
+    required this.expenseId,
+    required this.cropCycleId,
+    required this.amountPaise,
+    required this.isManual,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['expense_id'] = Variable<String>(expenseId);
+    map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['is_manual'] = Variable<int>(isManual);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  ExpenseAllocationsCompanion toCompanion(bool nullToAbsent) {
+    return ExpenseAllocationsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      expenseId: Value(expenseId),
+      cropCycleId: Value(cropCycleId),
+      amountPaise: Value(amountPaise),
+      isManual: Value(isManual),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory ExpenseAllocationsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExpenseAllocationsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      expenseId: serializer.fromJson<String>(json['expenseId']),
+      cropCycleId: serializer.fromJson<String>(json['cropCycleId']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      isManual: serializer.fromJson<int>(json['isManual']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'expenseId': serializer.toJson<String>(expenseId),
+      'cropCycleId': serializer.toJson<String>(cropCycleId),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'isManual': serializer.toJson<int>(isManual),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  ExpenseAllocationsData copyWith({
+    String? id,
+    String? farmId,
+    String? expenseId,
+    String? cropCycleId,
+    int? amountPaise,
+    int? isManual,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => ExpenseAllocationsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    expenseId: expenseId ?? this.expenseId,
+    cropCycleId: cropCycleId ?? this.cropCycleId,
+    amountPaise: amountPaise ?? this.amountPaise,
+    isManual: isManual ?? this.isManual,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  ExpenseAllocationsData copyWithCompanion(ExpenseAllocationsCompanion data) {
+    return ExpenseAllocationsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      expenseId: data.expenseId.present ? data.expenseId.value : this.expenseId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      isManual: data.isManual.present ? data.isManual.value : this.isManual,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpenseAllocationsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('isManual: $isManual, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    expenseId,
+    cropCycleId,
+    amountPaise,
+    isManual,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExpenseAllocationsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.expenseId == this.expenseId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.amountPaise == this.amountPaise &&
+          other.isManual == this.isManual &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class ExpenseAllocationsCompanion
+    extends UpdateCompanion<ExpenseAllocationsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> expenseId;
+  final Value<String> cropCycleId;
+  final Value<int> amountPaise;
+  final Value<int> isManual;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const ExpenseAllocationsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.expenseId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.isManual = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExpenseAllocationsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String expenseId,
+    required String cropCycleId,
+    required int amountPaise,
+    this.isManual = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       expenseId = Value(expenseId),
+       cropCycleId = Value(cropCycleId),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<ExpenseAllocationsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? expenseId,
+    Expression<String>? cropCycleId,
+    Expression<int>? amountPaise,
+    Expression<int>? isManual,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (expenseId != null) 'expense_id': expenseId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (isManual != null) 'is_manual': isManual,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExpenseAllocationsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? expenseId,
+    Value<String>? cropCycleId,
+    Value<int>? amountPaise,
+    Value<int>? isManual,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return ExpenseAllocationsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      expenseId: expenseId ?? this.expenseId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      amountPaise: amountPaise ?? this.amountPaise,
+      isManual: isManual ?? this.isManual,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (expenseId.present) {
+      map['expense_id'] = Variable<String>(expenseId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (isManual.present) {
+      map['is_manual'] = Variable<int>(isManual.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpenseAllocationsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('isManual: $isManual, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class ExpensePayments extends Table
+    with TableInfo<ExpensePayments, ExpensePaymentsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3423,8 +13986,62 @@ class ExpensePayments extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ExpensePaymentsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExpensePaymentsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      expenseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}expense_id'],
+      )!,
+      paidOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}paid_on'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mode'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -3436,7 +14053,426 @@ class ExpensePayments extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Lots extends Table with TableInfo {
+class ExpensePaymentsData extends DataClass
+    implements Insertable<ExpensePaymentsData> {
+  final String id;
+  final String farmId;
+  final String expenseId;
+  final String paidOn;
+  final int amountPaise;
+  final String mode;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const ExpensePaymentsData({
+    required this.id,
+    required this.farmId,
+    required this.expenseId,
+    required this.paidOn,
+    required this.amountPaise,
+    required this.mode,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['expense_id'] = Variable<String>(expenseId);
+    map['paid_on'] = Variable<String>(paidOn);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['mode'] = Variable<String>(mode);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  ExpensePaymentsCompanion toCompanion(bool nullToAbsent) {
+    return ExpensePaymentsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      expenseId: Value(expenseId),
+      paidOn: Value(paidOn),
+      amountPaise: Value(amountPaise),
+      mode: Value(mode),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory ExpensePaymentsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExpensePaymentsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      expenseId: serializer.fromJson<String>(json['expenseId']),
+      paidOn: serializer.fromJson<String>(json['paidOn']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      mode: serializer.fromJson<String>(json['mode']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'expenseId': serializer.toJson<String>(expenseId),
+      'paidOn': serializer.toJson<String>(paidOn),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'mode': serializer.toJson<String>(mode),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  ExpensePaymentsData copyWith({
+    String? id,
+    String? farmId,
+    String? expenseId,
+    String? paidOn,
+    int? amountPaise,
+    String? mode,
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => ExpensePaymentsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    expenseId: expenseId ?? this.expenseId,
+    paidOn: paidOn ?? this.paidOn,
+    amountPaise: amountPaise ?? this.amountPaise,
+    mode: mode ?? this.mode,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  ExpensePaymentsData copyWithCompanion(ExpensePaymentsCompanion data) {
+    return ExpensePaymentsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      expenseId: data.expenseId.present ? data.expenseId.value : this.expenseId,
+      paidOn: data.paidOn.present ? data.paidOn.value : this.paidOn,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpensePaymentsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('paidOn: $paidOn, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    expenseId,
+    paidOn,
+    amountPaise,
+    mode,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExpensePaymentsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.expenseId == this.expenseId &&
+          other.paidOn == this.paidOn &&
+          other.amountPaise == this.amountPaise &&
+          other.mode == this.mode &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class ExpensePaymentsCompanion extends UpdateCompanion<ExpensePaymentsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> expenseId;
+  final Value<String> paidOn;
+  final Value<int> amountPaise;
+  final Value<String> mode;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const ExpensePaymentsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.expenseId = const Value.absent(),
+    this.paidOn = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExpensePaymentsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String expenseId,
+    required String paidOn,
+    required int amountPaise,
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       expenseId = Value(expenseId),
+       paidOn = Value(paidOn),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<ExpensePaymentsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? expenseId,
+    Expression<String>? paidOn,
+    Expression<int>? amountPaise,
+    Expression<String>? mode,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (expenseId != null) 'expense_id': expenseId,
+      if (paidOn != null) 'paid_on': paidOn,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (mode != null) 'mode': mode,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExpensePaymentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? expenseId,
+    Value<String>? paidOn,
+    Value<int>? amountPaise,
+    Value<String>? mode,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return ExpensePaymentsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      expenseId: expenseId ?? this.expenseId,
+      paidOn: paidOn ?? this.paidOn,
+      amountPaise: amountPaise ?? this.amountPaise,
+      mode: mode ?? this.mode,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (expenseId.present) {
+      map['expense_id'] = Variable<String>(expenseId.value);
+    }
+    if (paidOn.present) {
+      map['paid_on'] = Variable<String>(paidOn.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<String>(mode.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExpensePaymentsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('expenseId: $expenseId, ')
+          ..write('paidOn: $paidOn, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Lots extends Table with TableInfo<Lots, LotsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3589,8 +14625,70 @@ class Lots extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LotsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LotsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      )!,
+      harvestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}harvest_id'],
+      ),
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      ),
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      gradeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grade_code'],
+      ),
+      teamsStamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}teams_stamp'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -3602,7 +14700,484 @@ class Lots extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class LotCosts extends Table with TableInfo {
+class LotsData extends DataClass implements Insertable<LotsData> {
+  final String id;
+  final String farmId;
+  final String cropCycleId;
+  final String? harvestId;
+  final String? label;
+  final int quantity;
+  final String unit;
+  final String? gradeCode;
+  final String? teamsStamp;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LotsData({
+    required this.id,
+    required this.farmId,
+    required this.cropCycleId,
+    this.harvestId,
+    this.label,
+    required this.quantity,
+    required this.unit,
+    this.gradeCode,
+    this.teamsStamp,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    if (!nullToAbsent || harvestId != null) {
+      map['harvest_id'] = Variable<String>(harvestId);
+    }
+    if (!nullToAbsent || label != null) {
+      map['label'] = Variable<String>(label);
+    }
+    map['quantity'] = Variable<int>(quantity);
+    map['unit'] = Variable<String>(unit);
+    if (!nullToAbsent || gradeCode != null) {
+      map['grade_code'] = Variable<String>(gradeCode);
+    }
+    if (!nullToAbsent || teamsStamp != null) {
+      map['teams_stamp'] = Variable<String>(teamsStamp);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LotsCompanion toCompanion(bool nullToAbsent) {
+    return LotsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      cropCycleId: Value(cropCycleId),
+      harvestId: harvestId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(harvestId),
+      label: label == null && nullToAbsent
+          ? const Value.absent()
+          : Value(label),
+      quantity: Value(quantity),
+      unit: Value(unit),
+      gradeCode: gradeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gradeCode),
+      teamsStamp: teamsStamp == null && nullToAbsent
+          ? const Value.absent()
+          : Value(teamsStamp),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LotsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LotsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      cropCycleId: serializer.fromJson<String>(json['cropCycleId']),
+      harvestId: serializer.fromJson<String?>(json['harvestId']),
+      label: serializer.fromJson<String?>(json['label']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unit: serializer.fromJson<String>(json['unit']),
+      gradeCode: serializer.fromJson<String?>(json['gradeCode']),
+      teamsStamp: serializer.fromJson<String?>(json['teamsStamp']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'cropCycleId': serializer.toJson<String>(cropCycleId),
+      'harvestId': serializer.toJson<String?>(harvestId),
+      'label': serializer.toJson<String?>(label),
+      'quantity': serializer.toJson<int>(quantity),
+      'unit': serializer.toJson<String>(unit),
+      'gradeCode': serializer.toJson<String?>(gradeCode),
+      'teamsStamp': serializer.toJson<String?>(teamsStamp),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LotsData copyWith({
+    String? id,
+    String? farmId,
+    String? cropCycleId,
+    Value<String?> harvestId = const Value.absent(),
+    Value<String?> label = const Value.absent(),
+    int? quantity,
+    String? unit,
+    Value<String?> gradeCode = const Value.absent(),
+    Value<String?> teamsStamp = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LotsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    cropCycleId: cropCycleId ?? this.cropCycleId,
+    harvestId: harvestId.present ? harvestId.value : this.harvestId,
+    label: label.present ? label.value : this.label,
+    quantity: quantity ?? this.quantity,
+    unit: unit ?? this.unit,
+    gradeCode: gradeCode.present ? gradeCode.value : this.gradeCode,
+    teamsStamp: teamsStamp.present ? teamsStamp.value : this.teamsStamp,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LotsData copyWithCompanion(LotsCompanion data) {
+    return LotsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      harvestId: data.harvestId.present ? data.harvestId.value : this.harvestId,
+      label: data.label.present ? data.label.value : this.label,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      gradeCode: data.gradeCode.present ? data.gradeCode.value : this.gradeCode,
+      teamsStamp: data.teamsStamp.present
+          ? data.teamsStamp.value
+          : this.teamsStamp,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LotsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('harvestId: $harvestId, ')
+          ..write('label: $label, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('teamsStamp: $teamsStamp, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    cropCycleId,
+    harvestId,
+    label,
+    quantity,
+    unit,
+    gradeCode,
+    teamsStamp,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LotsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.cropCycleId == this.cropCycleId &&
+          other.harvestId == this.harvestId &&
+          other.label == this.label &&
+          other.quantity == this.quantity &&
+          other.unit == this.unit &&
+          other.gradeCode == this.gradeCode &&
+          other.teamsStamp == this.teamsStamp &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LotsCompanion extends UpdateCompanion<LotsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> cropCycleId;
+  final Value<String?> harvestId;
+  final Value<String?> label;
+  final Value<int> quantity;
+  final Value<String> unit;
+  final Value<String?> gradeCode;
+  final Value<String?> teamsStamp;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LotsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.harvestId = const Value.absent(),
+    this.label = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    this.teamsStamp = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LotsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String cropCycleId,
+    this.harvestId = const Value.absent(),
+    this.label = const Value.absent(),
+    required int quantity,
+    this.unit = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    this.teamsStamp = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       cropCycleId = Value(cropCycleId),
+       quantity = Value(quantity),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LotsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? cropCycleId,
+    Expression<String>? harvestId,
+    Expression<String>? label,
+    Expression<int>? quantity,
+    Expression<String>? unit,
+    Expression<String>? gradeCode,
+    Expression<String>? teamsStamp,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (harvestId != null) 'harvest_id': harvestId,
+      if (label != null) 'label': label,
+      if (quantity != null) 'quantity': quantity,
+      if (unit != null) 'unit': unit,
+      if (gradeCode != null) 'grade_code': gradeCode,
+      if (teamsStamp != null) 'teams_stamp': teamsStamp,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LotsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? cropCycleId,
+    Value<String?>? harvestId,
+    Value<String?>? label,
+    Value<int>? quantity,
+    Value<String>? unit,
+    Value<String?>? gradeCode,
+    Value<String?>? teamsStamp,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LotsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      harvestId: harvestId ?? this.harvestId,
+      label: label ?? this.label,
+      quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
+      gradeCode: gradeCode ?? this.gradeCode,
+      teamsStamp: teamsStamp ?? this.teamsStamp,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (harvestId.present) {
+      map['harvest_id'] = Variable<String>(harvestId.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (gradeCode.present) {
+      map['grade_code'] = Variable<String>(gradeCode.value);
+    }
+    if (teamsStamp.present) {
+      map['teams_stamp'] = Variable<String>(teamsStamp.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LotsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('harvestId: $harvestId, ')
+          ..write('label: $label, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('teamsStamp: $teamsStamp, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class LotCosts extends Table with TableInfo<LotCosts, LotCostsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3720,8 +15295,54 @@ class LotCosts extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  LotCostsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LotCostsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      costPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cost_paise'],
+      )!,
+      costOverridden: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cost_overridden'],
+      )!,
+      teamsStamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}teams_stamp'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -3733,7 +15354,378 @@ class LotCosts extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Sales extends Table with TableInfo {
+class LotCostsData extends DataClass implements Insertable<LotCostsData> {
+  final String id;
+  final String farmId;
+  final int costPaise;
+  final int costOverridden;
+  final String? teamsStamp;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const LotCostsData({
+    required this.id,
+    required this.farmId,
+    required this.costPaise,
+    required this.costOverridden,
+    this.teamsStamp,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['cost_paise'] = Variable<int>(costPaise);
+    map['cost_overridden'] = Variable<int>(costOverridden);
+    if (!nullToAbsent || teamsStamp != null) {
+      map['teams_stamp'] = Variable<String>(teamsStamp);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  LotCostsCompanion toCompanion(bool nullToAbsent) {
+    return LotCostsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      costPaise: Value(costPaise),
+      costOverridden: Value(costOverridden),
+      teamsStamp: teamsStamp == null && nullToAbsent
+          ? const Value.absent()
+          : Value(teamsStamp),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory LotCostsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LotCostsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      costPaise: serializer.fromJson<int>(json['costPaise']),
+      costOverridden: serializer.fromJson<int>(json['costOverridden']),
+      teamsStamp: serializer.fromJson<String?>(json['teamsStamp']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'costPaise': serializer.toJson<int>(costPaise),
+      'costOverridden': serializer.toJson<int>(costOverridden),
+      'teamsStamp': serializer.toJson<String?>(teamsStamp),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  LotCostsData copyWith({
+    String? id,
+    String? farmId,
+    int? costPaise,
+    int? costOverridden,
+    Value<String?> teamsStamp = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => LotCostsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    costPaise: costPaise ?? this.costPaise,
+    costOverridden: costOverridden ?? this.costOverridden,
+    teamsStamp: teamsStamp.present ? teamsStamp.value : this.teamsStamp,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  LotCostsData copyWithCompanion(LotCostsCompanion data) {
+    return LotCostsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      costPaise: data.costPaise.present ? data.costPaise.value : this.costPaise,
+      costOverridden: data.costOverridden.present
+          ? data.costOverridden.value
+          : this.costOverridden,
+      teamsStamp: data.teamsStamp.present
+          ? data.teamsStamp.value
+          : this.teamsStamp,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LotCostsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('costPaise: $costPaise, ')
+          ..write('costOverridden: $costOverridden, ')
+          ..write('teamsStamp: $teamsStamp, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    costPaise,
+    costOverridden,
+    teamsStamp,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LotCostsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.costPaise == this.costPaise &&
+          other.costOverridden == this.costOverridden &&
+          other.teamsStamp == this.teamsStamp &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class LotCostsCompanion extends UpdateCompanion<LotCostsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<int> costPaise;
+  final Value<int> costOverridden;
+  final Value<String?> teamsStamp;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const LotCostsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.costPaise = const Value.absent(),
+    this.costOverridden = const Value.absent(),
+    this.teamsStamp = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LotCostsCompanion.insert({
+    required String id,
+    required String farmId,
+    this.costPaise = const Value.absent(),
+    this.costOverridden = const Value.absent(),
+    this.teamsStamp = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<LotCostsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<int>? costPaise,
+    Expression<int>? costOverridden,
+    Expression<String>? teamsStamp,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (costPaise != null) 'cost_paise': costPaise,
+      if (costOverridden != null) 'cost_overridden': costOverridden,
+      if (teamsStamp != null) 'teams_stamp': teamsStamp,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LotCostsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<int>? costPaise,
+    Value<int>? costOverridden,
+    Value<String?>? teamsStamp,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return LotCostsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      costPaise: costPaise ?? this.costPaise,
+      costOverridden: costOverridden ?? this.costOverridden,
+      teamsStamp: teamsStamp ?? this.teamsStamp,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (costPaise.present) {
+      map['cost_paise'] = Variable<int>(costPaise.value);
+    }
+    if (costOverridden.present) {
+      map['cost_overridden'] = Variable<int>(costOverridden.value);
+    }
+    if (teamsStamp.present) {
+      map['teams_stamp'] = Variable<String>(teamsStamp.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LotCostsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('costPaise: $costPaise, ')
+          ..write('costOverridden: $costOverridden, ')
+          ..write('teamsStamp: $teamsStamp, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Sales extends Table with TableInfo<Sales, SalesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3934,8 +15926,90 @@ class Sales extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  SalesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SalesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      soldOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sold_on'],
+      )!,
+      buyerPartyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}buyer_party_id'],
+      ),
+      saleType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sale_type'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      gradeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grade_code'],
+      ),
+      ratePaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rate_paise'],
+      )!,
+      deductions: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}deductions'],
+      )!,
+      netPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}net_paise'],
+      )!,
+      paymentDueOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_due_on'],
+      ),
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mode'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -3947,7 +16021,603 @@ class Sales extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class SaleLots extends Table with TableInfo {
+class SalesData extends DataClass implements Insertable<SalesData> {
+  final String id;
+  final String farmId;
+  final String soldOn;
+  final String? buyerPartyId;
+  final String saleType;
+  final int quantity;
+  final String unit;
+  final String? gradeCode;
+  final int ratePaise;
+  final String deductions;
+  final int netPaise;
+  final String? paymentDueOn;
+  final String mode;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const SalesData({
+    required this.id,
+    required this.farmId,
+    required this.soldOn,
+    this.buyerPartyId,
+    required this.saleType,
+    required this.quantity,
+    required this.unit,
+    this.gradeCode,
+    required this.ratePaise,
+    required this.deductions,
+    required this.netPaise,
+    this.paymentDueOn,
+    required this.mode,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['sold_on'] = Variable<String>(soldOn);
+    if (!nullToAbsent || buyerPartyId != null) {
+      map['buyer_party_id'] = Variable<String>(buyerPartyId);
+    }
+    map['sale_type'] = Variable<String>(saleType);
+    map['quantity'] = Variable<int>(quantity);
+    map['unit'] = Variable<String>(unit);
+    if (!nullToAbsent || gradeCode != null) {
+      map['grade_code'] = Variable<String>(gradeCode);
+    }
+    map['rate_paise'] = Variable<int>(ratePaise);
+    map['deductions'] = Variable<String>(deductions);
+    map['net_paise'] = Variable<int>(netPaise);
+    if (!nullToAbsent || paymentDueOn != null) {
+      map['payment_due_on'] = Variable<String>(paymentDueOn);
+    }
+    map['mode'] = Variable<String>(mode);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  SalesCompanion toCompanion(bool nullToAbsent) {
+    return SalesCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      soldOn: Value(soldOn),
+      buyerPartyId: buyerPartyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(buyerPartyId),
+      saleType: Value(saleType),
+      quantity: Value(quantity),
+      unit: Value(unit),
+      gradeCode: gradeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gradeCode),
+      ratePaise: Value(ratePaise),
+      deductions: Value(deductions),
+      netPaise: Value(netPaise),
+      paymentDueOn: paymentDueOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paymentDueOn),
+      mode: Value(mode),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory SalesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SalesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      soldOn: serializer.fromJson<String>(json['soldOn']),
+      buyerPartyId: serializer.fromJson<String?>(json['buyerPartyId']),
+      saleType: serializer.fromJson<String>(json['saleType']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unit: serializer.fromJson<String>(json['unit']),
+      gradeCode: serializer.fromJson<String?>(json['gradeCode']),
+      ratePaise: serializer.fromJson<int>(json['ratePaise']),
+      deductions: serializer.fromJson<String>(json['deductions']),
+      netPaise: serializer.fromJson<int>(json['netPaise']),
+      paymentDueOn: serializer.fromJson<String?>(json['paymentDueOn']),
+      mode: serializer.fromJson<String>(json['mode']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'soldOn': serializer.toJson<String>(soldOn),
+      'buyerPartyId': serializer.toJson<String?>(buyerPartyId),
+      'saleType': serializer.toJson<String>(saleType),
+      'quantity': serializer.toJson<int>(quantity),
+      'unit': serializer.toJson<String>(unit),
+      'gradeCode': serializer.toJson<String?>(gradeCode),
+      'ratePaise': serializer.toJson<int>(ratePaise),
+      'deductions': serializer.toJson<String>(deductions),
+      'netPaise': serializer.toJson<int>(netPaise),
+      'paymentDueOn': serializer.toJson<String?>(paymentDueOn),
+      'mode': serializer.toJson<String>(mode),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  SalesData copyWith({
+    String? id,
+    String? farmId,
+    String? soldOn,
+    Value<String?> buyerPartyId = const Value.absent(),
+    String? saleType,
+    int? quantity,
+    String? unit,
+    Value<String?> gradeCode = const Value.absent(),
+    int? ratePaise,
+    String? deductions,
+    int? netPaise,
+    Value<String?> paymentDueOn = const Value.absent(),
+    String? mode,
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => SalesData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    soldOn: soldOn ?? this.soldOn,
+    buyerPartyId: buyerPartyId.present ? buyerPartyId.value : this.buyerPartyId,
+    saleType: saleType ?? this.saleType,
+    quantity: quantity ?? this.quantity,
+    unit: unit ?? this.unit,
+    gradeCode: gradeCode.present ? gradeCode.value : this.gradeCode,
+    ratePaise: ratePaise ?? this.ratePaise,
+    deductions: deductions ?? this.deductions,
+    netPaise: netPaise ?? this.netPaise,
+    paymentDueOn: paymentDueOn.present ? paymentDueOn.value : this.paymentDueOn,
+    mode: mode ?? this.mode,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  SalesData copyWithCompanion(SalesCompanion data) {
+    return SalesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      soldOn: data.soldOn.present ? data.soldOn.value : this.soldOn,
+      buyerPartyId: data.buyerPartyId.present
+          ? data.buyerPartyId.value
+          : this.buyerPartyId,
+      saleType: data.saleType.present ? data.saleType.value : this.saleType,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      gradeCode: data.gradeCode.present ? data.gradeCode.value : this.gradeCode,
+      ratePaise: data.ratePaise.present ? data.ratePaise.value : this.ratePaise,
+      deductions: data.deductions.present
+          ? data.deductions.value
+          : this.deductions,
+      netPaise: data.netPaise.present ? data.netPaise.value : this.netPaise,
+      paymentDueOn: data.paymentDueOn.present
+          ? data.paymentDueOn.value
+          : this.paymentDueOn,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SalesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('soldOn: $soldOn, ')
+          ..write('buyerPartyId: $buyerPartyId, ')
+          ..write('saleType: $saleType, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('ratePaise: $ratePaise, ')
+          ..write('deductions: $deductions, ')
+          ..write('netPaise: $netPaise, ')
+          ..write('paymentDueOn: $paymentDueOn, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    soldOn,
+    buyerPartyId,
+    saleType,
+    quantity,
+    unit,
+    gradeCode,
+    ratePaise,
+    deductions,
+    netPaise,
+    paymentDueOn,
+    mode,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SalesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.soldOn == this.soldOn &&
+          other.buyerPartyId == this.buyerPartyId &&
+          other.saleType == this.saleType &&
+          other.quantity == this.quantity &&
+          other.unit == this.unit &&
+          other.gradeCode == this.gradeCode &&
+          other.ratePaise == this.ratePaise &&
+          other.deductions == this.deductions &&
+          other.netPaise == this.netPaise &&
+          other.paymentDueOn == this.paymentDueOn &&
+          other.mode == this.mode &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class SalesCompanion extends UpdateCompanion<SalesData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> soldOn;
+  final Value<String?> buyerPartyId;
+  final Value<String> saleType;
+  final Value<int> quantity;
+  final Value<String> unit;
+  final Value<String?> gradeCode;
+  final Value<int> ratePaise;
+  final Value<String> deductions;
+  final Value<int> netPaise;
+  final Value<String?> paymentDueOn;
+  final Value<String> mode;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const SalesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.soldOn = const Value.absent(),
+    this.buyerPartyId = const Value.absent(),
+    this.saleType = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    this.ratePaise = const Value.absent(),
+    this.deductions = const Value.absent(),
+    this.netPaise = const Value.absent(),
+    this.paymentDueOn = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SalesCompanion.insert({
+    required String id,
+    required String farmId,
+    required String soldOn,
+    this.buyerPartyId = const Value.absent(),
+    this.saleType = const Value.absent(),
+    required int quantity,
+    this.unit = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    required int ratePaise,
+    this.deductions = const Value.absent(),
+    required int netPaise,
+    this.paymentDueOn = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       soldOn = Value(soldOn),
+       quantity = Value(quantity),
+       ratePaise = Value(ratePaise),
+       netPaise = Value(netPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<SalesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? soldOn,
+    Expression<String>? buyerPartyId,
+    Expression<String>? saleType,
+    Expression<int>? quantity,
+    Expression<String>? unit,
+    Expression<String>? gradeCode,
+    Expression<int>? ratePaise,
+    Expression<String>? deductions,
+    Expression<int>? netPaise,
+    Expression<String>? paymentDueOn,
+    Expression<String>? mode,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (soldOn != null) 'sold_on': soldOn,
+      if (buyerPartyId != null) 'buyer_party_id': buyerPartyId,
+      if (saleType != null) 'sale_type': saleType,
+      if (quantity != null) 'quantity': quantity,
+      if (unit != null) 'unit': unit,
+      if (gradeCode != null) 'grade_code': gradeCode,
+      if (ratePaise != null) 'rate_paise': ratePaise,
+      if (deductions != null) 'deductions': deductions,
+      if (netPaise != null) 'net_paise': netPaise,
+      if (paymentDueOn != null) 'payment_due_on': paymentDueOn,
+      if (mode != null) 'mode': mode,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SalesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? soldOn,
+    Value<String?>? buyerPartyId,
+    Value<String>? saleType,
+    Value<int>? quantity,
+    Value<String>? unit,
+    Value<String?>? gradeCode,
+    Value<int>? ratePaise,
+    Value<String>? deductions,
+    Value<int>? netPaise,
+    Value<String?>? paymentDueOn,
+    Value<String>? mode,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return SalesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      soldOn: soldOn ?? this.soldOn,
+      buyerPartyId: buyerPartyId ?? this.buyerPartyId,
+      saleType: saleType ?? this.saleType,
+      quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
+      gradeCode: gradeCode ?? this.gradeCode,
+      ratePaise: ratePaise ?? this.ratePaise,
+      deductions: deductions ?? this.deductions,
+      netPaise: netPaise ?? this.netPaise,
+      paymentDueOn: paymentDueOn ?? this.paymentDueOn,
+      mode: mode ?? this.mode,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (soldOn.present) {
+      map['sold_on'] = Variable<String>(soldOn.value);
+    }
+    if (buyerPartyId.present) {
+      map['buyer_party_id'] = Variable<String>(buyerPartyId.value);
+    }
+    if (saleType.present) {
+      map['sale_type'] = Variable<String>(saleType.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (gradeCode.present) {
+      map['grade_code'] = Variable<String>(gradeCode.value);
+    }
+    if (ratePaise.present) {
+      map['rate_paise'] = Variable<int>(ratePaise.value);
+    }
+    if (deductions.present) {
+      map['deductions'] = Variable<String>(deductions.value);
+    }
+    if (netPaise.present) {
+      map['net_paise'] = Variable<int>(netPaise.value);
+    }
+    if (paymentDueOn.present) {
+      map['payment_due_on'] = Variable<String>(paymentDueOn.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<String>(mode.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SalesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('soldOn: $soldOn, ')
+          ..write('buyerPartyId: $buyerPartyId, ')
+          ..write('saleType: $saleType, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('ratePaise: $ratePaise, ')
+          ..write('deductions: $deductions, ')
+          ..write('netPaise: $netPaise, ')
+          ..write('paymentDueOn: $paymentDueOn, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class SaleLots extends Table with TableInfo<SaleLots, SaleLotsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4063,8 +16733,54 @@ class SaleLots extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  SaleLotsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SaleLotsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      saleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sale_id'],
+      )!,
+      lotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}lot_id'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -4076,7 +16792,374 @@ class SaleLots extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class SalePayments extends Table with TableInfo {
+class SaleLotsData extends DataClass implements Insertable<SaleLotsData> {
+  final String id;
+  final String farmId;
+  final String saleId;
+  final String lotId;
+  final int quantity;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const SaleLotsData({
+    required this.id,
+    required this.farmId,
+    required this.saleId,
+    required this.lotId,
+    required this.quantity,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['sale_id'] = Variable<String>(saleId);
+    map['lot_id'] = Variable<String>(lotId);
+    map['quantity'] = Variable<int>(quantity);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  SaleLotsCompanion toCompanion(bool nullToAbsent) {
+    return SaleLotsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      saleId: Value(saleId),
+      lotId: Value(lotId),
+      quantity: Value(quantity),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory SaleLotsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SaleLotsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      saleId: serializer.fromJson<String>(json['saleId']),
+      lotId: serializer.fromJson<String>(json['lotId']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'saleId': serializer.toJson<String>(saleId),
+      'lotId': serializer.toJson<String>(lotId),
+      'quantity': serializer.toJson<int>(quantity),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  SaleLotsData copyWith({
+    String? id,
+    String? farmId,
+    String? saleId,
+    String? lotId,
+    int? quantity,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => SaleLotsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    saleId: saleId ?? this.saleId,
+    lotId: lotId ?? this.lotId,
+    quantity: quantity ?? this.quantity,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  SaleLotsData copyWithCompanion(SaleLotsCompanion data) {
+    return SaleLotsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      saleId: data.saleId.present ? data.saleId.value : this.saleId,
+      lotId: data.lotId.present ? data.lotId.value : this.lotId,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SaleLotsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('saleId: $saleId, ')
+          ..write('lotId: $lotId, ')
+          ..write('quantity: $quantity, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    saleId,
+    lotId,
+    quantity,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SaleLotsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.saleId == this.saleId &&
+          other.lotId == this.lotId &&
+          other.quantity == this.quantity &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class SaleLotsCompanion extends UpdateCompanion<SaleLotsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> saleId;
+  final Value<String> lotId;
+  final Value<int> quantity;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const SaleLotsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.saleId = const Value.absent(),
+    this.lotId = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SaleLotsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String saleId,
+    required String lotId,
+    required int quantity,
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       saleId = Value(saleId),
+       lotId = Value(lotId),
+       quantity = Value(quantity),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<SaleLotsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? saleId,
+    Expression<String>? lotId,
+    Expression<int>? quantity,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (saleId != null) 'sale_id': saleId,
+      if (lotId != null) 'lot_id': lotId,
+      if (quantity != null) 'quantity': quantity,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SaleLotsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? saleId,
+    Value<String>? lotId,
+    Value<int>? quantity,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return SaleLotsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      saleId: saleId ?? this.saleId,
+      lotId: lotId ?? this.lotId,
+      quantity: quantity ?? this.quantity,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (saleId.present) {
+      map['sale_id'] = Variable<String>(saleId.value);
+    }
+    if (lotId.present) {
+      map['lot_id'] = Variable<String>(lotId.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SaleLotsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('saleId: $saleId, ')
+          ..write('lotId: $lotId, ')
+          ..write('quantity: $quantity, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class SalePayments extends Table
+    with TableInfo<SalePayments, SalePaymentsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4211,8 +17294,62 @@ class SalePayments extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  SalePaymentsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SalePaymentsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      saleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sale_id'],
+      )!,
+      receivedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}received_on'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mode'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -4224,7 +17361,428 @@ class SalePayments extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class OtherIncome extends Table with TableInfo {
+class SalePaymentsData extends DataClass
+    implements Insertable<SalePaymentsData> {
+  final String id;
+  final String farmId;
+  final String saleId;
+  final String receivedOn;
+  final int amountPaise;
+  final String mode;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const SalePaymentsData({
+    required this.id,
+    required this.farmId,
+    required this.saleId,
+    required this.receivedOn,
+    required this.amountPaise,
+    required this.mode,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['sale_id'] = Variable<String>(saleId);
+    map['received_on'] = Variable<String>(receivedOn);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['mode'] = Variable<String>(mode);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  SalePaymentsCompanion toCompanion(bool nullToAbsent) {
+    return SalePaymentsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      saleId: Value(saleId),
+      receivedOn: Value(receivedOn),
+      amountPaise: Value(amountPaise),
+      mode: Value(mode),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory SalePaymentsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SalePaymentsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      saleId: serializer.fromJson<String>(json['saleId']),
+      receivedOn: serializer.fromJson<String>(json['receivedOn']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      mode: serializer.fromJson<String>(json['mode']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'saleId': serializer.toJson<String>(saleId),
+      'receivedOn': serializer.toJson<String>(receivedOn),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'mode': serializer.toJson<String>(mode),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  SalePaymentsData copyWith({
+    String? id,
+    String? farmId,
+    String? saleId,
+    String? receivedOn,
+    int? amountPaise,
+    String? mode,
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => SalePaymentsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    saleId: saleId ?? this.saleId,
+    receivedOn: receivedOn ?? this.receivedOn,
+    amountPaise: amountPaise ?? this.amountPaise,
+    mode: mode ?? this.mode,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  SalePaymentsData copyWithCompanion(SalePaymentsCompanion data) {
+    return SalePaymentsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      saleId: data.saleId.present ? data.saleId.value : this.saleId,
+      receivedOn: data.receivedOn.present
+          ? data.receivedOn.value
+          : this.receivedOn,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SalePaymentsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('saleId: $saleId, ')
+          ..write('receivedOn: $receivedOn, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    saleId,
+    receivedOn,
+    amountPaise,
+    mode,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SalePaymentsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.saleId == this.saleId &&
+          other.receivedOn == this.receivedOn &&
+          other.amountPaise == this.amountPaise &&
+          other.mode == this.mode &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class SalePaymentsCompanion extends UpdateCompanion<SalePaymentsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> saleId;
+  final Value<String> receivedOn;
+  final Value<int> amountPaise;
+  final Value<String> mode;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const SalePaymentsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.saleId = const Value.absent(),
+    this.receivedOn = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SalePaymentsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String saleId,
+    required String receivedOn,
+    required int amountPaise,
+    this.mode = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       saleId = Value(saleId),
+       receivedOn = Value(receivedOn),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<SalePaymentsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? saleId,
+    Expression<String>? receivedOn,
+    Expression<int>? amountPaise,
+    Expression<String>? mode,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (saleId != null) 'sale_id': saleId,
+      if (receivedOn != null) 'received_on': receivedOn,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (mode != null) 'mode': mode,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SalePaymentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? saleId,
+    Value<String>? receivedOn,
+    Value<int>? amountPaise,
+    Value<String>? mode,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return SalePaymentsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      saleId: saleId ?? this.saleId,
+      receivedOn: receivedOn ?? this.receivedOn,
+      amountPaise: amountPaise ?? this.amountPaise,
+      mode: mode ?? this.mode,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (saleId.present) {
+      map['sale_id'] = Variable<String>(saleId.value);
+    }
+    if (receivedOn.present) {
+      map['received_on'] = Variable<String>(receivedOn.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<String>(mode.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SalePaymentsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('saleId: $saleId, ')
+          ..write('receivedOn: $receivedOn, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('mode: $mode, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class OtherIncome extends Table with TableInfo<OtherIncome, OtherIncomeData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4358,8 +17916,62 @@ class OtherIncome extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  OtherIncomeData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OtherIncomeData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      receivedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}received_on'],
+      )!,
+      sourceCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_code'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      cropCycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_cycle_id'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -4371,7 +17983,436 @@ class OtherIncome extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class MarketPrices extends Table with TableInfo {
+class OtherIncomeData extends DataClass implements Insertable<OtherIncomeData> {
+  final String id;
+  final String farmId;
+  final String receivedOn;
+  final String sourceCode;
+  final int amountPaise;
+  final String? cropCycleId;
+  final String? notes;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const OtherIncomeData({
+    required this.id,
+    required this.farmId,
+    required this.receivedOn,
+    required this.sourceCode,
+    required this.amountPaise,
+    this.cropCycleId,
+    this.notes,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['received_on'] = Variable<String>(receivedOn);
+    map['source_code'] = Variable<String>(sourceCode);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    if (!nullToAbsent || cropCycleId != null) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OtherIncomeCompanion toCompanion(bool nullToAbsent) {
+    return OtherIncomeCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      receivedOn: Value(receivedOn),
+      sourceCode: Value(sourceCode),
+      amountPaise: Value(amountPaise),
+      cropCycleId: cropCycleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropCycleId),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory OtherIncomeData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OtherIncomeData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      receivedOn: serializer.fromJson<String>(json['receivedOn']),
+      sourceCode: serializer.fromJson<String>(json['sourceCode']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      cropCycleId: serializer.fromJson<String?>(json['cropCycleId']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'receivedOn': serializer.toJson<String>(receivedOn),
+      'sourceCode': serializer.toJson<String>(sourceCode),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'cropCycleId': serializer.toJson<String?>(cropCycleId),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  OtherIncomeData copyWith({
+    String? id,
+    String? farmId,
+    String? receivedOn,
+    String? sourceCode,
+    int? amountPaise,
+    Value<String?> cropCycleId = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => OtherIncomeData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    receivedOn: receivedOn ?? this.receivedOn,
+    sourceCode: sourceCode ?? this.sourceCode,
+    amountPaise: amountPaise ?? this.amountPaise,
+    cropCycleId: cropCycleId.present ? cropCycleId.value : this.cropCycleId,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  OtherIncomeData copyWithCompanion(OtherIncomeCompanion data) {
+    return OtherIncomeData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      receivedOn: data.receivedOn.present
+          ? data.receivedOn.value
+          : this.receivedOn,
+      sourceCode: data.sourceCode.present
+          ? data.sourceCode.value
+          : this.sourceCode,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      cropCycleId: data.cropCycleId.present
+          ? data.cropCycleId.value
+          : this.cropCycleId,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OtherIncomeData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('receivedOn: $receivedOn, ')
+          ..write('sourceCode: $sourceCode, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    receivedOn,
+    sourceCode,
+    amountPaise,
+    cropCycleId,
+    notes,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OtherIncomeData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.receivedOn == this.receivedOn &&
+          other.sourceCode == this.sourceCode &&
+          other.amountPaise == this.amountPaise &&
+          other.cropCycleId == this.cropCycleId &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OtherIncomeCompanion extends UpdateCompanion<OtherIncomeData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> receivedOn;
+  final Value<String> sourceCode;
+  final Value<int> amountPaise;
+  final Value<String?> cropCycleId;
+  final Value<String?> notes;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OtherIncomeCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.receivedOn = const Value.absent(),
+    this.sourceCode = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.cropCycleId = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OtherIncomeCompanion.insert({
+    required String id,
+    required String farmId,
+    required String receivedOn,
+    required String sourceCode,
+    required int amountPaise,
+    this.cropCycleId = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       receivedOn = Value(receivedOn),
+       sourceCode = Value(sourceCode),
+       amountPaise = Value(amountPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<OtherIncomeData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? receivedOn,
+    Expression<String>? sourceCode,
+    Expression<int>? amountPaise,
+    Expression<String>? cropCycleId,
+    Expression<String>? notes,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (receivedOn != null) 'received_on': receivedOn,
+      if (sourceCode != null) 'source_code': sourceCode,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (cropCycleId != null) 'crop_cycle_id': cropCycleId,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OtherIncomeCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? receivedOn,
+    Value<String>? sourceCode,
+    Value<int>? amountPaise,
+    Value<String?>? cropCycleId,
+    Value<String?>? notes,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OtherIncomeCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      receivedOn: receivedOn ?? this.receivedOn,
+      sourceCode: sourceCode ?? this.sourceCode,
+      amountPaise: amountPaise ?? this.amountPaise,
+      cropCycleId: cropCycleId ?? this.cropCycleId,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (receivedOn.present) {
+      map['received_on'] = Variable<String>(receivedOn.value);
+    }
+    if (sourceCode.present) {
+      map['source_code'] = Variable<String>(sourceCode.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (cropCycleId.present) {
+      map['crop_cycle_id'] = Variable<String>(cropCycleId.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OtherIncomeCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('receivedOn: $receivedOn, ')
+          ..write('sourceCode: $sourceCode, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('cropCycleId: $cropCycleId, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class MarketPrices extends Table
+    with TableInfo<MarketPrices, MarketPricesData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4524,8 +18565,70 @@ class MarketPrices extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  MarketPricesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MarketPricesData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      ),
+      cropId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_id'],
+      )!,
+      gradeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grade_code'],
+      ),
+      market: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}market'],
+      )!,
+      pricePaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}price_paise'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      publishedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}published_at'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -4537,7 +18640,479 @@ class MarketPrices extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class PriceAlerts extends Table with TableInfo {
+class MarketPricesData extends DataClass
+    implements Insertable<MarketPricesData> {
+  final String id;
+  final String? farmId;
+  final String cropId;
+  final String? gradeCode;
+  final String market;
+  final int pricePaise;
+  final String unit;
+  final String source;
+  final int publishedAt;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const MarketPricesData({
+    required this.id,
+    this.farmId,
+    required this.cropId,
+    this.gradeCode,
+    required this.market,
+    required this.pricePaise,
+    required this.unit,
+    required this.source,
+    required this.publishedAt,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || farmId != null) {
+      map['farm_id'] = Variable<String>(farmId);
+    }
+    map['crop_id'] = Variable<String>(cropId);
+    if (!nullToAbsent || gradeCode != null) {
+      map['grade_code'] = Variable<String>(gradeCode);
+    }
+    map['market'] = Variable<String>(market);
+    map['price_paise'] = Variable<int>(pricePaise);
+    map['unit'] = Variable<String>(unit);
+    map['source'] = Variable<String>(source);
+    map['published_at'] = Variable<int>(publishedAt);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  MarketPricesCompanion toCompanion(bool nullToAbsent) {
+    return MarketPricesCompanion(
+      id: Value(id),
+      farmId: farmId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(farmId),
+      cropId: Value(cropId),
+      gradeCode: gradeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gradeCode),
+      market: Value(market),
+      pricePaise: Value(pricePaise),
+      unit: Value(unit),
+      source: Value(source),
+      publishedAt: Value(publishedAt),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory MarketPricesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MarketPricesData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String?>(json['farmId']),
+      cropId: serializer.fromJson<String>(json['cropId']),
+      gradeCode: serializer.fromJson<String?>(json['gradeCode']),
+      market: serializer.fromJson<String>(json['market']),
+      pricePaise: serializer.fromJson<int>(json['pricePaise']),
+      unit: serializer.fromJson<String>(json['unit']),
+      source: serializer.fromJson<String>(json['source']),
+      publishedAt: serializer.fromJson<int>(json['publishedAt']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String?>(farmId),
+      'cropId': serializer.toJson<String>(cropId),
+      'gradeCode': serializer.toJson<String?>(gradeCode),
+      'market': serializer.toJson<String>(market),
+      'pricePaise': serializer.toJson<int>(pricePaise),
+      'unit': serializer.toJson<String>(unit),
+      'source': serializer.toJson<String>(source),
+      'publishedAt': serializer.toJson<int>(publishedAt),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  MarketPricesData copyWith({
+    String? id,
+    Value<String?> farmId = const Value.absent(),
+    String? cropId,
+    Value<String?> gradeCode = const Value.absent(),
+    String? market,
+    int? pricePaise,
+    String? unit,
+    String? source,
+    int? publishedAt,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => MarketPricesData(
+    id: id ?? this.id,
+    farmId: farmId.present ? farmId.value : this.farmId,
+    cropId: cropId ?? this.cropId,
+    gradeCode: gradeCode.present ? gradeCode.value : this.gradeCode,
+    market: market ?? this.market,
+    pricePaise: pricePaise ?? this.pricePaise,
+    unit: unit ?? this.unit,
+    source: source ?? this.source,
+    publishedAt: publishedAt ?? this.publishedAt,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  MarketPricesData copyWithCompanion(MarketPricesCompanion data) {
+    return MarketPricesData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      cropId: data.cropId.present ? data.cropId.value : this.cropId,
+      gradeCode: data.gradeCode.present ? data.gradeCode.value : this.gradeCode,
+      market: data.market.present ? data.market.value : this.market,
+      pricePaise: data.pricePaise.present
+          ? data.pricePaise.value
+          : this.pricePaise,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      source: data.source.present ? data.source.value : this.source,
+      publishedAt: data.publishedAt.present
+          ? data.publishedAt.value
+          : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MarketPricesData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropId: $cropId, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('market: $market, ')
+          ..write('pricePaise: $pricePaise, ')
+          ..write('unit: $unit, ')
+          ..write('source: $source, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    cropId,
+    gradeCode,
+    market,
+    pricePaise,
+    unit,
+    source,
+    publishedAt,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MarketPricesData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.cropId == this.cropId &&
+          other.gradeCode == this.gradeCode &&
+          other.market == this.market &&
+          other.pricePaise == this.pricePaise &&
+          other.unit == this.unit &&
+          other.source == this.source &&
+          other.publishedAt == this.publishedAt &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class MarketPricesCompanion extends UpdateCompanion<MarketPricesData> {
+  final Value<String> id;
+  final Value<String?> farmId;
+  final Value<String> cropId;
+  final Value<String?> gradeCode;
+  final Value<String> market;
+  final Value<int> pricePaise;
+  final Value<String> unit;
+  final Value<String> source;
+  final Value<int> publishedAt;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const MarketPricesCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.cropId = const Value.absent(),
+    this.gradeCode = const Value.absent(),
+    this.market = const Value.absent(),
+    this.pricePaise = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.source = const Value.absent(),
+    this.publishedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MarketPricesCompanion.insert({
+    required String id,
+    this.farmId = const Value.absent(),
+    required String cropId,
+    this.gradeCode = const Value.absent(),
+    required String market,
+    required int pricePaise,
+    this.unit = const Value.absent(),
+    required String source,
+    required int publishedAt,
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       cropId = Value(cropId),
+       market = Value(market),
+       pricePaise = Value(pricePaise),
+       source = Value(source),
+       publishedAt = Value(publishedAt),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<MarketPricesData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? cropId,
+    Expression<String>? gradeCode,
+    Expression<String>? market,
+    Expression<int>? pricePaise,
+    Expression<String>? unit,
+    Expression<String>? source,
+    Expression<int>? publishedAt,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (cropId != null) 'crop_id': cropId,
+      if (gradeCode != null) 'grade_code': gradeCode,
+      if (market != null) 'market': market,
+      if (pricePaise != null) 'price_paise': pricePaise,
+      if (unit != null) 'unit': unit,
+      if (source != null) 'source': source,
+      if (publishedAt != null) 'published_at': publishedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MarketPricesCompanion copyWith({
+    Value<String>? id,
+    Value<String?>? farmId,
+    Value<String>? cropId,
+    Value<String?>? gradeCode,
+    Value<String>? market,
+    Value<int>? pricePaise,
+    Value<String>? unit,
+    Value<String>? source,
+    Value<int>? publishedAt,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return MarketPricesCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      cropId: cropId ?? this.cropId,
+      gradeCode: gradeCode ?? this.gradeCode,
+      market: market ?? this.market,
+      pricePaise: pricePaise ?? this.pricePaise,
+      unit: unit ?? this.unit,
+      source: source ?? this.source,
+      publishedAt: publishedAt ?? this.publishedAt,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (cropId.present) {
+      map['crop_id'] = Variable<String>(cropId.value);
+    }
+    if (gradeCode.present) {
+      map['grade_code'] = Variable<String>(gradeCode.value);
+    }
+    if (market.present) {
+      map['market'] = Variable<String>(market.value);
+    }
+    if (pricePaise.present) {
+      map['price_paise'] = Variable<int>(pricePaise.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<int>(publishedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MarketPricesCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('cropId: $cropId, ')
+          ..write('gradeCode: $gradeCode, ')
+          ..write('market: $market, ')
+          ..write('pricePaise: $pricePaise, ')
+          ..write('unit: $unit, ')
+          ..write('source: $source, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class PriceAlerts extends Table with TableInfo<PriceAlerts, PriceAlertsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4682,8 +19257,66 @@ class PriceAlerts extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  PriceAlertsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PriceAlertsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      cropId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_id'],
+      )!,
+      market: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}market'],
+      ),
+      thresholdPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}threshold_paise'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_active'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
   }
 
   @override
@@ -4695,7 +19328,448 @@ class PriceAlerts extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class EventLog extends Table with TableInfo {
+class PriceAlertsData extends DataClass implements Insertable<PriceAlertsData> {
+  final String id;
+  final String farmId;
+  final String userId;
+  final String cropId;
+  final String? market;
+  final int thresholdPaise;
+  final String direction;
+  final int isActive;
+  final int createdAt;
+  final String? createdBy;
+  final int updatedAt;
+  final String? updatedBy;
+  final int version;
+  final int? deletedAt;
+  const PriceAlertsData({
+    required this.id,
+    required this.farmId,
+    required this.userId,
+    required this.cropId,
+    this.market,
+    required this.thresholdPaise,
+    required this.direction,
+    required this.isActive,
+    required this.createdAt,
+    this.createdBy,
+    required this.updatedAt,
+    this.updatedBy,
+    required this.version,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['user_id'] = Variable<String>(userId);
+    map['crop_id'] = Variable<String>(cropId);
+    if (!nullToAbsent || market != null) {
+      map['market'] = Variable<String>(market);
+    }
+    map['threshold_paise'] = Variable<int>(thresholdPaise);
+    map['direction'] = Variable<String>(direction);
+    map['is_active'] = Variable<int>(isActive);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  PriceAlertsCompanion toCompanion(bool nullToAbsent) {
+    return PriceAlertsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      userId: Value(userId),
+      cropId: Value(cropId),
+      market: market == null && nullToAbsent
+          ? const Value.absent()
+          : Value(market),
+      thresholdPaise: Value(thresholdPaise),
+      direction: Value(direction),
+      isActive: Value(isActive),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedAt: Value(updatedAt),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      version: Value(version),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory PriceAlertsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PriceAlertsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      userId: serializer.fromJson<String>(json['userId']),
+      cropId: serializer.fromJson<String>(json['cropId']),
+      market: serializer.fromJson<String?>(json['market']),
+      thresholdPaise: serializer.fromJson<int>(json['thresholdPaise']),
+      direction: serializer.fromJson<String>(json['direction']),
+      isActive: serializer.fromJson<int>(json['isActive']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      version: serializer.fromJson<int>(json['version']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'userId': serializer.toJson<String>(userId),
+      'cropId': serializer.toJson<String>(cropId),
+      'market': serializer.toJson<String?>(market),
+      'thresholdPaise': serializer.toJson<int>(thresholdPaise),
+      'direction': serializer.toJson<String>(direction),
+      'isActive': serializer.toJson<int>(isActive),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'version': serializer.toJson<int>(version),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  PriceAlertsData copyWith({
+    String? id,
+    String? farmId,
+    String? userId,
+    String? cropId,
+    Value<String?> market = const Value.absent(),
+    int? thresholdPaise,
+    String? direction,
+    int? isActive,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+    int? updatedAt,
+    Value<String?> updatedBy = const Value.absent(),
+    int? version,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => PriceAlertsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    userId: userId ?? this.userId,
+    cropId: cropId ?? this.cropId,
+    market: market.present ? market.value : this.market,
+    thresholdPaise: thresholdPaise ?? this.thresholdPaise,
+    direction: direction ?? this.direction,
+    isActive: isActive ?? this.isActive,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    version: version ?? this.version,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  PriceAlertsData copyWithCompanion(PriceAlertsCompanion data) {
+    return PriceAlertsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      cropId: data.cropId.present ? data.cropId.value : this.cropId,
+      market: data.market.present ? data.market.value : this.market,
+      thresholdPaise: data.thresholdPaise.present
+          ? data.thresholdPaise.value
+          : this.thresholdPaise,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      version: data.version.present ? data.version.value : this.version,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PriceAlertsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('userId: $userId, ')
+          ..write('cropId: $cropId, ')
+          ..write('market: $market, ')
+          ..write('thresholdPaise: $thresholdPaise, ')
+          ..write('direction: $direction, ')
+          ..write('isActive: $isActive, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    userId,
+    cropId,
+    market,
+    thresholdPaise,
+    direction,
+    isActive,
+    createdAt,
+    createdBy,
+    updatedAt,
+    updatedBy,
+    version,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PriceAlertsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.userId == this.userId &&
+          other.cropId == this.cropId &&
+          other.market == this.market &&
+          other.thresholdPaise == this.thresholdPaise &&
+          other.direction == this.direction &&
+          other.isActive == this.isActive &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.version == this.version &&
+          other.deletedAt == this.deletedAt);
+}
+
+class PriceAlertsCompanion extends UpdateCompanion<PriceAlertsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> userId;
+  final Value<String> cropId;
+  final Value<String?> market;
+  final Value<int> thresholdPaise;
+  final Value<String> direction;
+  final Value<int> isActive;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> updatedAt;
+  final Value<String?> updatedBy;
+  final Value<int> version;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const PriceAlertsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.cropId = const Value.absent(),
+    this.market = const Value.absent(),
+    this.thresholdPaise = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PriceAlertsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String userId,
+    required String cropId,
+    this.market = const Value.absent(),
+    required int thresholdPaise,
+    this.direction = const Value.absent(),
+    this.isActive = const Value.absent(),
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    required int updatedAt,
+    this.updatedBy = const Value.absent(),
+    this.version = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       userId = Value(userId),
+       cropId = Value(cropId),
+       thresholdPaise = Value(thresholdPaise),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<PriceAlertsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? userId,
+    Expression<String>? cropId,
+    Expression<String>? market,
+    Expression<int>? thresholdPaise,
+    Expression<String>? direction,
+    Expression<int>? isActive,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? version,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (userId != null) 'user_id': userId,
+      if (cropId != null) 'crop_id': cropId,
+      if (market != null) 'market': market,
+      if (thresholdPaise != null) 'threshold_paise': thresholdPaise,
+      if (direction != null) 'direction': direction,
+      if (isActive != null) 'is_active': isActive,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (version != null) 'version': version,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PriceAlertsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? userId,
+    Value<String>? cropId,
+    Value<String?>? market,
+    Value<int>? thresholdPaise,
+    Value<String>? direction,
+    Value<int>? isActive,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? updatedAt,
+    Value<String?>? updatedBy,
+    Value<int>? version,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return PriceAlertsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      userId: userId ?? this.userId,
+      cropId: cropId ?? this.cropId,
+      market: market ?? this.market,
+      thresholdPaise: thresholdPaise ?? this.thresholdPaise,
+      direction: direction ?? this.direction,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      version: version ?? this.version,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (cropId.present) {
+      map['crop_id'] = Variable<String>(cropId.value);
+    }
+    if (market.present) {
+      map['market'] = Variable<String>(market.value);
+    }
+    if (thresholdPaise.present) {
+      map['threshold_paise'] = Variable<int>(thresholdPaise.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<int>(isActive.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PriceAlertsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('userId: $userId, ')
+          ..write('cropId: $cropId, ')
+          ..write('market: $market, ')
+          ..write('thresholdPaise: $thresholdPaise, ')
+          ..write('direction: $direction, ')
+          ..write('isActive: $isActive, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('version: $version, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class EventLog extends Table with TableInfo<EventLog, EventLogData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4811,8 +19885,54 @@ class EventLog extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  EventLogData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return EventLogData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      entity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_id'],
+      )!,
+      action: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action'],
+      )!,
+      summary: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}summary'],
+      )!,
+      oldValues: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}old_values'],
+      ),
+      newValues: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}new_values'],
+      ),
+      occurredOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occurred_on'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+    );
   }
 
   @override
@@ -4824,7 +19944,375 @@ class EventLog extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Outbox extends Table with TableInfo {
+class EventLogData extends DataClass implements Insertable<EventLogData> {
+  final String id;
+  final String farmId;
+  final String entity;
+  final String entityId;
+  final String action;
+  final String summary;
+  final String? oldValues;
+  final String? newValues;
+  final String occurredOn;
+  final int createdAt;
+  final String? createdBy;
+  const EventLogData({
+    required this.id,
+    required this.farmId,
+    required this.entity,
+    required this.entityId,
+    required this.action,
+    required this.summary,
+    this.oldValues,
+    this.newValues,
+    required this.occurredOn,
+    required this.createdAt,
+    this.createdBy,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['entity'] = Variable<String>(entity);
+    map['entity_id'] = Variable<String>(entityId);
+    map['action'] = Variable<String>(action);
+    map['summary'] = Variable<String>(summary);
+    if (!nullToAbsent || oldValues != null) {
+      map['old_values'] = Variable<String>(oldValues);
+    }
+    if (!nullToAbsent || newValues != null) {
+      map['new_values'] = Variable<String>(newValues);
+    }
+    map['occurred_on'] = Variable<String>(occurredOn);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    return map;
+  }
+
+  EventLogCompanion toCompanion(bool nullToAbsent) {
+    return EventLogCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      entity: Value(entity),
+      entityId: Value(entityId),
+      action: Value(action),
+      summary: Value(summary),
+      oldValues: oldValues == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oldValues),
+      newValues: newValues == null && nullToAbsent
+          ? const Value.absent()
+          : Value(newValues),
+      occurredOn: Value(occurredOn),
+      createdAt: Value(createdAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+    );
+  }
+
+  factory EventLogData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return EventLogData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      entity: serializer.fromJson<String>(json['entity']),
+      entityId: serializer.fromJson<String>(json['entityId']),
+      action: serializer.fromJson<String>(json['action']),
+      summary: serializer.fromJson<String>(json['summary']),
+      oldValues: serializer.fromJson<String?>(json['oldValues']),
+      newValues: serializer.fromJson<String?>(json['newValues']),
+      occurredOn: serializer.fromJson<String>(json['occurredOn']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'entity': serializer.toJson<String>(entity),
+      'entityId': serializer.toJson<String>(entityId),
+      'action': serializer.toJson<String>(action),
+      'summary': serializer.toJson<String>(summary),
+      'oldValues': serializer.toJson<String?>(oldValues),
+      'newValues': serializer.toJson<String?>(newValues),
+      'occurredOn': serializer.toJson<String>(occurredOn),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+    };
+  }
+
+  EventLogData copyWith({
+    String? id,
+    String? farmId,
+    String? entity,
+    String? entityId,
+    String? action,
+    String? summary,
+    Value<String?> oldValues = const Value.absent(),
+    Value<String?> newValues = const Value.absent(),
+    String? occurredOn,
+    int? createdAt,
+    Value<String?> createdBy = const Value.absent(),
+  }) => EventLogData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    entity: entity ?? this.entity,
+    entityId: entityId ?? this.entityId,
+    action: action ?? this.action,
+    summary: summary ?? this.summary,
+    oldValues: oldValues.present ? oldValues.value : this.oldValues,
+    newValues: newValues.present ? newValues.value : this.newValues,
+    occurredOn: occurredOn ?? this.occurredOn,
+    createdAt: createdAt ?? this.createdAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+  );
+  EventLogData copyWithCompanion(EventLogCompanion data) {
+    return EventLogData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      entity: data.entity.present ? data.entity.value : this.entity,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
+      action: data.action.present ? data.action.value : this.action,
+      summary: data.summary.present ? data.summary.value : this.summary,
+      oldValues: data.oldValues.present ? data.oldValues.value : this.oldValues,
+      newValues: data.newValues.present ? data.newValues.value : this.newValues,
+      occurredOn: data.occurredOn.present
+          ? data.occurredOn.value
+          : this.occurredOn,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EventLogData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('entityId: $entityId, ')
+          ..write('action: $action, ')
+          ..write('summary: $summary, ')
+          ..write('oldValues: $oldValues, ')
+          ..write('newValues: $newValues, ')
+          ..write('occurredOn: $occurredOn, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    entity,
+    entityId,
+    action,
+    summary,
+    oldValues,
+    newValues,
+    occurredOn,
+    createdAt,
+    createdBy,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EventLogData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.entity == this.entity &&
+          other.entityId == this.entityId &&
+          other.action == this.action &&
+          other.summary == this.summary &&
+          other.oldValues == this.oldValues &&
+          other.newValues == this.newValues &&
+          other.occurredOn == this.occurredOn &&
+          other.createdAt == this.createdAt &&
+          other.createdBy == this.createdBy);
+}
+
+class EventLogCompanion extends UpdateCompanion<EventLogData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> entity;
+  final Value<String> entityId;
+  final Value<String> action;
+  final Value<String> summary;
+  final Value<String?> oldValues;
+  final Value<String?> newValues;
+  final Value<String> occurredOn;
+  final Value<int> createdAt;
+  final Value<String?> createdBy;
+  final Value<int> rowid;
+  const EventLogCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.entity = const Value.absent(),
+    this.entityId = const Value.absent(),
+    this.action = const Value.absent(),
+    this.summary = const Value.absent(),
+    this.oldValues = const Value.absent(),
+    this.newValues = const Value.absent(),
+    this.occurredOn = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  EventLogCompanion.insert({
+    required String id,
+    required String farmId,
+    required String entity,
+    required String entityId,
+    required String action,
+    this.summary = const Value.absent(),
+    this.oldValues = const Value.absent(),
+    this.newValues = const Value.absent(),
+    required String occurredOn,
+    required int createdAt,
+    this.createdBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       entity = Value(entity),
+       entityId = Value(entityId),
+       action = Value(action),
+       occurredOn = Value(occurredOn),
+       createdAt = Value(createdAt);
+  static Insertable<EventLogData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? entity,
+    Expression<String>? entityId,
+    Expression<String>? action,
+    Expression<String>? summary,
+    Expression<String>? oldValues,
+    Expression<String>? newValues,
+    Expression<String>? occurredOn,
+    Expression<int>? createdAt,
+    Expression<String>? createdBy,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (entity != null) 'entity': entity,
+      if (entityId != null) 'entity_id': entityId,
+      if (action != null) 'action': action,
+      if (summary != null) 'summary': summary,
+      if (oldValues != null) 'old_values': oldValues,
+      if (newValues != null) 'new_values': newValues,
+      if (occurredOn != null) 'occurred_on': occurredOn,
+      if (createdAt != null) 'created_at': createdAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  EventLogCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? entity,
+    Value<String>? entityId,
+    Value<String>? action,
+    Value<String>? summary,
+    Value<String?>? oldValues,
+    Value<String?>? newValues,
+    Value<String>? occurredOn,
+    Value<int>? createdAt,
+    Value<String?>? createdBy,
+    Value<int>? rowid,
+  }) {
+    return EventLogCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      entity: entity ?? this.entity,
+      entityId: entityId ?? this.entityId,
+      action: action ?? this.action,
+      summary: summary ?? this.summary,
+      oldValues: oldValues ?? this.oldValues,
+      newValues: newValues ?? this.newValues,
+      occurredOn: occurredOn ?? this.occurredOn,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (entity.present) {
+      map['entity'] = Variable<String>(entity.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<String>(entityId.value);
+    }
+    if (action.present) {
+      map['action'] = Variable<String>(action.value);
+    }
+    if (summary.present) {
+      map['summary'] = Variable<String>(summary.value);
+    }
+    if (oldValues.present) {
+      map['old_values'] = Variable<String>(oldValues.value);
+    }
+    if (newValues.present) {
+      map['new_values'] = Variable<String>(newValues.value);
+    }
+    if (occurredOn.present) {
+      map['occurred_on'] = Variable<String>(occurredOn.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EventLogCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('entityId: $entityId, ')
+          ..write('action: $action, ')
+          ..write('summary: $summary, ')
+          ..write('oldValues: $oldValues, ')
+          ..write('newValues: $newValues, ')
+          ..write('occurredOn: $occurredOn, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Outbox extends Table with TableInfo<Outbox, OutboxData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4933,8 +20421,50 @@ class Outbox extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  OutboxData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OutboxData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      entity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity'],
+      )!,
+      rowId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}row_id'],
+      )!,
+      baseVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base_version'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
   }
 
   @override
@@ -4946,7 +20476,332 @@ class Outbox extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class SyncState extends Table with TableInfo {
+class OutboxData extends DataClass implements Insertable<OutboxData> {
+  final int id;
+  final String farmId;
+  final String entity;
+  final String rowId;
+  final int baseVersion;
+  final String status;
+  final int attempts;
+  final String? lastError;
+  final int createdAt;
+  final int updatedAt;
+  const OutboxData({
+    required this.id,
+    required this.farmId,
+    required this.entity,
+    required this.rowId,
+    required this.baseVersion,
+    required this.status,
+    required this.attempts,
+    this.lastError,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['entity'] = Variable<String>(entity);
+    map['row_id'] = Variable<String>(rowId);
+    map['base_version'] = Variable<int>(baseVersion);
+    map['status'] = Variable<String>(status);
+    map['attempts'] = Variable<int>(attempts);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  OutboxCompanion toCompanion(bool nullToAbsent) {
+    return OutboxCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      entity: Value(entity),
+      rowId: Value(rowId),
+      baseVersion: Value(baseVersion),
+      status: Value(status),
+      attempts: Value(attempts),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory OutboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OutboxData(
+      id: serializer.fromJson<int>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      entity: serializer.fromJson<String>(json['entity']),
+      rowId: serializer.fromJson<String>(json['rowId']),
+      baseVersion: serializer.fromJson<int>(json['baseVersion']),
+      status: serializer.fromJson<String>(json['status']),
+      attempts: serializer.fromJson<int>(json['attempts']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'entity': serializer.toJson<String>(entity),
+      'rowId': serializer.toJson<String>(rowId),
+      'baseVersion': serializer.toJson<int>(baseVersion),
+      'status': serializer.toJson<String>(status),
+      'attempts': serializer.toJson<int>(attempts),
+      'lastError': serializer.toJson<String?>(lastError),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  OutboxData copyWith({
+    int? id,
+    String? farmId,
+    String? entity,
+    String? rowId,
+    int? baseVersion,
+    String? status,
+    int? attempts,
+    Value<String?> lastError = const Value.absent(),
+    int? createdAt,
+    int? updatedAt,
+  }) => OutboxData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    entity: entity ?? this.entity,
+    rowId: rowId ?? this.rowId,
+    baseVersion: baseVersion ?? this.baseVersion,
+    status: status ?? this.status,
+    attempts: attempts ?? this.attempts,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  OutboxData copyWithCompanion(OutboxCompanion data) {
+    return OutboxData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      entity: data.entity.present ? data.entity.value : this.entity,
+      rowId: data.rowId.present ? data.rowId.value : this.rowId,
+      baseVersion: data.baseVersion.present
+          ? data.baseVersion.value
+          : this.baseVersion,
+      status: data.status.present ? data.status.value : this.status,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OutboxData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('rowId: $rowId, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('status: $status, ')
+          ..write('attempts: $attempts, ')
+          ..write('lastError: $lastError, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    entity,
+    rowId,
+    baseVersion,
+    status,
+    attempts,
+    lastError,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OutboxData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.entity == this.entity &&
+          other.rowId == this.rowId &&
+          other.baseVersion == this.baseVersion &&
+          other.status == this.status &&
+          other.attempts == this.attempts &&
+          other.lastError == this.lastError &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class OutboxCompanion extends UpdateCompanion<OutboxData> {
+  final Value<int> id;
+  final Value<String> farmId;
+  final Value<String> entity;
+  final Value<String> rowId;
+  final Value<int> baseVersion;
+  final Value<String> status;
+  final Value<int> attempts;
+  final Value<String?> lastError;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  const OutboxCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.entity = const Value.absent(),
+    this.rowId = const Value.absent(),
+    this.baseVersion = const Value.absent(),
+    this.status = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  OutboxCompanion.insert({
+    this.id = const Value.absent(),
+    required String farmId,
+    required String entity,
+    required String rowId,
+    required int baseVersion,
+    this.status = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.lastError = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+  }) : farmId = Value(farmId),
+       entity = Value(entity),
+       rowId = Value(rowId),
+       baseVersion = Value(baseVersion),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<OutboxData> custom({
+    Expression<int>? id,
+    Expression<String>? farmId,
+    Expression<String>? entity,
+    Expression<String>? rowId,
+    Expression<int>? baseVersion,
+    Expression<String>? status,
+    Expression<int>? attempts,
+    Expression<String>? lastError,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (entity != null) 'entity': entity,
+      if (rowId != null) 'row_id': rowId,
+      if (baseVersion != null) 'base_version': baseVersion,
+      if (status != null) 'status': status,
+      if (attempts != null) 'attempts': attempts,
+      if (lastError != null) 'last_error': lastError,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  OutboxCompanion copyWith({
+    Value<int>? id,
+    Value<String>? farmId,
+    Value<String>? entity,
+    Value<String>? rowId,
+    Value<int>? baseVersion,
+    Value<String>? status,
+    Value<int>? attempts,
+    Value<String?>? lastError,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+  }) {
+    return OutboxCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      entity: entity ?? this.entity,
+      rowId: rowId ?? this.rowId,
+      baseVersion: baseVersion ?? this.baseVersion,
+      status: status ?? this.status,
+      attempts: attempts ?? this.attempts,
+      lastError: lastError ?? this.lastError,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (entity.present) {
+      map['entity'] = Variable<String>(entity.value);
+    }
+    if (rowId.present) {
+      map['row_id'] = Variable<String>(rowId.value);
+    }
+    if (baseVersion.present) {
+      map['base_version'] = Variable<int>(baseVersion.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OutboxCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('rowId: $rowId, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('status: $status, ')
+          ..write('attempts: $attempts, ')
+          ..write('lastError: $lastError, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class SyncState extends Table with TableInfo<SyncState, SyncStateData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4994,8 +20849,26 @@ class SyncState extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {farmId, entity};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  SyncStateData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncStateData(
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      entity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity'],
+      )!,
+      cursor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cursor'],
+      )!,
+      pulledAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pulled_at'],
+      ),
+    );
   }
 
   @override
@@ -5009,7 +20882,194 @@ class SyncState extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class Conflicts extends Table with TableInfo {
+class SyncStateData extends DataClass implements Insertable<SyncStateData> {
+  final String farmId;
+  final String entity;
+  final int cursor;
+  final int? pulledAt;
+  const SyncStateData({
+    required this.farmId,
+    required this.entity,
+    required this.cursor,
+    this.pulledAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['farm_id'] = Variable<String>(farmId);
+    map['entity'] = Variable<String>(entity);
+    map['cursor'] = Variable<int>(cursor);
+    if (!nullToAbsent || pulledAt != null) {
+      map['pulled_at'] = Variable<int>(pulledAt);
+    }
+    return map;
+  }
+
+  SyncStateCompanion toCompanion(bool nullToAbsent) {
+    return SyncStateCompanion(
+      farmId: Value(farmId),
+      entity: Value(entity),
+      cursor: Value(cursor),
+      pulledAt: pulledAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pulledAt),
+    );
+  }
+
+  factory SyncStateData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncStateData(
+      farmId: serializer.fromJson<String>(json['farmId']),
+      entity: serializer.fromJson<String>(json['entity']),
+      cursor: serializer.fromJson<int>(json['cursor']),
+      pulledAt: serializer.fromJson<int?>(json['pulledAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'farmId': serializer.toJson<String>(farmId),
+      'entity': serializer.toJson<String>(entity),
+      'cursor': serializer.toJson<int>(cursor),
+      'pulledAt': serializer.toJson<int?>(pulledAt),
+    };
+  }
+
+  SyncStateData copyWith({
+    String? farmId,
+    String? entity,
+    int? cursor,
+    Value<int?> pulledAt = const Value.absent(),
+  }) => SyncStateData(
+    farmId: farmId ?? this.farmId,
+    entity: entity ?? this.entity,
+    cursor: cursor ?? this.cursor,
+    pulledAt: pulledAt.present ? pulledAt.value : this.pulledAt,
+  );
+  SyncStateData copyWithCompanion(SyncStateCompanion data) {
+    return SyncStateData(
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      entity: data.entity.present ? data.entity.value : this.entity,
+      cursor: data.cursor.present ? data.cursor.value : this.cursor,
+      pulledAt: data.pulledAt.present ? data.pulledAt.value : this.pulledAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncStateData(')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('cursor: $cursor, ')
+          ..write('pulledAt: $pulledAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(farmId, entity, cursor, pulledAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncStateData &&
+          other.farmId == this.farmId &&
+          other.entity == this.entity &&
+          other.cursor == this.cursor &&
+          other.pulledAt == this.pulledAt);
+}
+
+class SyncStateCompanion extends UpdateCompanion<SyncStateData> {
+  final Value<String> farmId;
+  final Value<String> entity;
+  final Value<int> cursor;
+  final Value<int?> pulledAt;
+  final Value<int> rowid;
+  const SyncStateCompanion({
+    this.farmId = const Value.absent(),
+    this.entity = const Value.absent(),
+    this.cursor = const Value.absent(),
+    this.pulledAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncStateCompanion.insert({
+    required String farmId,
+    required String entity,
+    this.cursor = const Value.absent(),
+    this.pulledAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : farmId = Value(farmId),
+       entity = Value(entity);
+  static Insertable<SyncStateData> custom({
+    Expression<String>? farmId,
+    Expression<String>? entity,
+    Expression<int>? cursor,
+    Expression<int>? pulledAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (farmId != null) 'farm_id': farmId,
+      if (entity != null) 'entity': entity,
+      if (cursor != null) 'cursor': cursor,
+      if (pulledAt != null) 'pulled_at': pulledAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncStateCompanion copyWith({
+    Value<String>? farmId,
+    Value<String>? entity,
+    Value<int>? cursor,
+    Value<int?>? pulledAt,
+    Value<int>? rowid,
+  }) {
+    return SyncStateCompanion(
+      farmId: farmId ?? this.farmId,
+      entity: entity ?? this.entity,
+      cursor: cursor ?? this.cursor,
+      pulledAt: pulledAt ?? this.pulledAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (entity.present) {
+      map['entity'] = Variable<String>(entity.value);
+    }
+    if (cursor.present) {
+      map['cursor'] = Variable<int>(cursor.value);
+    }
+    if (pulledAt.present) {
+      map['pulled_at'] = Variable<int>(pulledAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncStateCompanion(')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('cursor: $cursor, ')
+          ..write('pulledAt: $pulledAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Conflicts extends Table with TableInfo<Conflicts, ConflictsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -5125,8 +21185,54 @@ class Conflicts extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  ConflictsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ConflictsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      entity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity'],
+      )!,
+      rowId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}row_id'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      fields: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fields'],
+      )!,
+      mine: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mine'],
+      ),
+      theirs: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theirs'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      resolvedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}resolved_at'],
+      ),
+      resolution: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolution'],
+      ),
+    );
   }
 
   @override
@@ -5138,7 +21244,379 @@ class Conflicts extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class PhotoUploads extends Table with TableInfo {
+class ConflictsData extends DataClass implements Insertable<ConflictsData> {
+  final String id;
+  final String farmId;
+  final String entity;
+  final String rowId;
+  final String kind;
+  final String fields;
+  final String? mine;
+  final String? theirs;
+  final int createdAt;
+  final int? resolvedAt;
+  final String? resolution;
+  const ConflictsData({
+    required this.id,
+    required this.farmId,
+    required this.entity,
+    required this.rowId,
+    required this.kind,
+    required this.fields,
+    this.mine,
+    this.theirs,
+    required this.createdAt,
+    this.resolvedAt,
+    this.resolution,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['entity'] = Variable<String>(entity);
+    map['row_id'] = Variable<String>(rowId);
+    map['kind'] = Variable<String>(kind);
+    map['fields'] = Variable<String>(fields);
+    if (!nullToAbsent || mine != null) {
+      map['mine'] = Variable<String>(mine);
+    }
+    if (!nullToAbsent || theirs != null) {
+      map['theirs'] = Variable<String>(theirs);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || resolvedAt != null) {
+      map['resolved_at'] = Variable<int>(resolvedAt);
+    }
+    if (!nullToAbsent || resolution != null) {
+      map['resolution'] = Variable<String>(resolution);
+    }
+    return map;
+  }
+
+  ConflictsCompanion toCompanion(bool nullToAbsent) {
+    return ConflictsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      entity: Value(entity),
+      rowId: Value(rowId),
+      kind: Value(kind),
+      fields: Value(fields),
+      mine: mine == null && nullToAbsent ? const Value.absent() : Value(mine),
+      theirs: theirs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(theirs),
+      createdAt: Value(createdAt),
+      resolvedAt: resolvedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolvedAt),
+      resolution: resolution == null && nullToAbsent
+          ? const Value.absent()
+          : Value(resolution),
+    );
+  }
+
+  factory ConflictsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ConflictsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      entity: serializer.fromJson<String>(json['entity']),
+      rowId: serializer.fromJson<String>(json['rowId']),
+      kind: serializer.fromJson<String>(json['kind']),
+      fields: serializer.fromJson<String>(json['fields']),
+      mine: serializer.fromJson<String?>(json['mine']),
+      theirs: serializer.fromJson<String?>(json['theirs']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      resolvedAt: serializer.fromJson<int?>(json['resolvedAt']),
+      resolution: serializer.fromJson<String?>(json['resolution']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'entity': serializer.toJson<String>(entity),
+      'rowId': serializer.toJson<String>(rowId),
+      'kind': serializer.toJson<String>(kind),
+      'fields': serializer.toJson<String>(fields),
+      'mine': serializer.toJson<String?>(mine),
+      'theirs': serializer.toJson<String?>(theirs),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'resolvedAt': serializer.toJson<int?>(resolvedAt),
+      'resolution': serializer.toJson<String?>(resolution),
+    };
+  }
+
+  ConflictsData copyWith({
+    String? id,
+    String? farmId,
+    String? entity,
+    String? rowId,
+    String? kind,
+    String? fields,
+    Value<String?> mine = const Value.absent(),
+    Value<String?> theirs = const Value.absent(),
+    int? createdAt,
+    Value<int?> resolvedAt = const Value.absent(),
+    Value<String?> resolution = const Value.absent(),
+  }) => ConflictsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    entity: entity ?? this.entity,
+    rowId: rowId ?? this.rowId,
+    kind: kind ?? this.kind,
+    fields: fields ?? this.fields,
+    mine: mine.present ? mine.value : this.mine,
+    theirs: theirs.present ? theirs.value : this.theirs,
+    createdAt: createdAt ?? this.createdAt,
+    resolvedAt: resolvedAt.present ? resolvedAt.value : this.resolvedAt,
+    resolution: resolution.present ? resolution.value : this.resolution,
+  );
+  ConflictsData copyWithCompanion(ConflictsCompanion data) {
+    return ConflictsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      entity: data.entity.present ? data.entity.value : this.entity,
+      rowId: data.rowId.present ? data.rowId.value : this.rowId,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      fields: data.fields.present ? data.fields.value : this.fields,
+      mine: data.mine.present ? data.mine.value : this.mine,
+      theirs: data.theirs.present ? data.theirs.value : this.theirs,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      resolvedAt: data.resolvedAt.present
+          ? data.resolvedAt.value
+          : this.resolvedAt,
+      resolution: data.resolution.present
+          ? data.resolution.value
+          : this.resolution,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConflictsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('rowId: $rowId, ')
+          ..write('kind: $kind, ')
+          ..write('fields: $fields, ')
+          ..write('mine: $mine, ')
+          ..write('theirs: $theirs, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('resolution: $resolution')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    entity,
+    rowId,
+    kind,
+    fields,
+    mine,
+    theirs,
+    createdAt,
+    resolvedAt,
+    resolution,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ConflictsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.entity == this.entity &&
+          other.rowId == this.rowId &&
+          other.kind == this.kind &&
+          other.fields == this.fields &&
+          other.mine == this.mine &&
+          other.theirs == this.theirs &&
+          other.createdAt == this.createdAt &&
+          other.resolvedAt == this.resolvedAt &&
+          other.resolution == this.resolution);
+}
+
+class ConflictsCompanion extends UpdateCompanion<ConflictsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> entity;
+  final Value<String> rowId;
+  final Value<String> kind;
+  final Value<String> fields;
+  final Value<String?> mine;
+  final Value<String?> theirs;
+  final Value<int> createdAt;
+  final Value<int?> resolvedAt;
+  final Value<String?> resolution;
+  final Value<int> rowid;
+  const ConflictsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.entity = const Value.absent(),
+    this.rowId = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.fields = const Value.absent(),
+    this.mine = const Value.absent(),
+    this.theirs = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.resolution = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ConflictsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String entity,
+    required String rowId,
+    required String kind,
+    this.fields = const Value.absent(),
+    this.mine = const Value.absent(),
+    this.theirs = const Value.absent(),
+    required int createdAt,
+    this.resolvedAt = const Value.absent(),
+    this.resolution = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       entity = Value(entity),
+       rowId = Value(rowId),
+       kind = Value(kind),
+       createdAt = Value(createdAt);
+  static Insertable<ConflictsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? entity,
+    Expression<String>? rowId,
+    Expression<String>? kind,
+    Expression<String>? fields,
+    Expression<String>? mine,
+    Expression<String>? theirs,
+    Expression<int>? createdAt,
+    Expression<int>? resolvedAt,
+    Expression<String>? resolution,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (entity != null) 'entity': entity,
+      if (rowId != null) 'row_id': rowId,
+      if (kind != null) 'kind': kind,
+      if (fields != null) 'fields': fields,
+      if (mine != null) 'mine': mine,
+      if (theirs != null) 'theirs': theirs,
+      if (createdAt != null) 'created_at': createdAt,
+      if (resolvedAt != null) 'resolved_at': resolvedAt,
+      if (resolution != null) 'resolution': resolution,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ConflictsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? entity,
+    Value<String>? rowId,
+    Value<String>? kind,
+    Value<String>? fields,
+    Value<String?>? mine,
+    Value<String?>? theirs,
+    Value<int>? createdAt,
+    Value<int?>? resolvedAt,
+    Value<String?>? resolution,
+    Value<int>? rowid,
+  }) {
+    return ConflictsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      entity: entity ?? this.entity,
+      rowId: rowId ?? this.rowId,
+      kind: kind ?? this.kind,
+      fields: fields ?? this.fields,
+      mine: mine ?? this.mine,
+      theirs: theirs ?? this.theirs,
+      createdAt: createdAt ?? this.createdAt,
+      resolvedAt: resolvedAt ?? this.resolvedAt,
+      resolution: resolution ?? this.resolution,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (entity.present) {
+      map['entity'] = Variable<String>(entity.value);
+    }
+    if (rowId.present) {
+      map['row_id'] = Variable<String>(rowId.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (fields.present) {
+      map['fields'] = Variable<String>(fields.value);
+    }
+    if (mine.present) {
+      map['mine'] = Variable<String>(mine.value);
+    }
+    if (theirs.present) {
+      map['theirs'] = Variable<String>(theirs.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (resolvedAt.present) {
+      map['resolved_at'] = Variable<int>(resolvedAt.value);
+    }
+    if (resolution.present) {
+      map['resolution'] = Variable<String>(resolution.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConflictsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('rowId: $rowId, ')
+          ..write('kind: $kind, ')
+          ..write('fields: $fields, ')
+          ..write('mine: $mine, ')
+          ..write('theirs: $theirs, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('resolution: $resolution, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class PhotoUploads extends Table
+    with TableInfo<PhotoUploads, PhotoUploadsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -5237,8 +21715,46 @@ class PhotoUploads extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  PhotoUploadsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PhotoUploadsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      farmId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farm_id'],
+      )!,
+      entity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity'],
+      )!,
+      rowId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}row_id'],
+      )!,
+      localPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_path'],
+      )!,
+      remotePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_path'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
   }
 
   @override
@@ -5250,7 +21766,321 @@ class PhotoUploads extends Table with TableInfo {
   bool get dontWriteConstraints => true;
 }
 
-class AppSettings extends Table with TableInfo {
+class PhotoUploadsData extends DataClass
+    implements Insertable<PhotoUploadsData> {
+  final String id;
+  final String farmId;
+  final String entity;
+  final String rowId;
+  final String localPath;
+  final String? remotePath;
+  final String status;
+  final int attempts;
+  final int createdAt;
+  const PhotoUploadsData({
+    required this.id,
+    required this.farmId,
+    required this.entity,
+    required this.rowId,
+    required this.localPath,
+    this.remotePath,
+    required this.status,
+    required this.attempts,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['farm_id'] = Variable<String>(farmId);
+    map['entity'] = Variable<String>(entity);
+    map['row_id'] = Variable<String>(rowId);
+    map['local_path'] = Variable<String>(localPath);
+    if (!nullToAbsent || remotePath != null) {
+      map['remote_path'] = Variable<String>(remotePath);
+    }
+    map['status'] = Variable<String>(status);
+    map['attempts'] = Variable<int>(attempts);
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  PhotoUploadsCompanion toCompanion(bool nullToAbsent) {
+    return PhotoUploadsCompanion(
+      id: Value(id),
+      farmId: Value(farmId),
+      entity: Value(entity),
+      rowId: Value(rowId),
+      localPath: Value(localPath),
+      remotePath: remotePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remotePath),
+      status: Value(status),
+      attempts: Value(attempts),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory PhotoUploadsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PhotoUploadsData(
+      id: serializer.fromJson<String>(json['id']),
+      farmId: serializer.fromJson<String>(json['farmId']),
+      entity: serializer.fromJson<String>(json['entity']),
+      rowId: serializer.fromJson<String>(json['rowId']),
+      localPath: serializer.fromJson<String>(json['localPath']),
+      remotePath: serializer.fromJson<String?>(json['remotePath']),
+      status: serializer.fromJson<String>(json['status']),
+      attempts: serializer.fromJson<int>(json['attempts']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'farmId': serializer.toJson<String>(farmId),
+      'entity': serializer.toJson<String>(entity),
+      'rowId': serializer.toJson<String>(rowId),
+      'localPath': serializer.toJson<String>(localPath),
+      'remotePath': serializer.toJson<String?>(remotePath),
+      'status': serializer.toJson<String>(status),
+      'attempts': serializer.toJson<int>(attempts),
+      'createdAt': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  PhotoUploadsData copyWith({
+    String? id,
+    String? farmId,
+    String? entity,
+    String? rowId,
+    String? localPath,
+    Value<String?> remotePath = const Value.absent(),
+    String? status,
+    int? attempts,
+    int? createdAt,
+  }) => PhotoUploadsData(
+    id: id ?? this.id,
+    farmId: farmId ?? this.farmId,
+    entity: entity ?? this.entity,
+    rowId: rowId ?? this.rowId,
+    localPath: localPath ?? this.localPath,
+    remotePath: remotePath.present ? remotePath.value : this.remotePath,
+    status: status ?? this.status,
+    attempts: attempts ?? this.attempts,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  PhotoUploadsData copyWithCompanion(PhotoUploadsCompanion data) {
+    return PhotoUploadsData(
+      id: data.id.present ? data.id.value : this.id,
+      farmId: data.farmId.present ? data.farmId.value : this.farmId,
+      entity: data.entity.present ? data.entity.value : this.entity,
+      rowId: data.rowId.present ? data.rowId.value : this.rowId,
+      localPath: data.localPath.present ? data.localPath.value : this.localPath,
+      remotePath: data.remotePath.present
+          ? data.remotePath.value
+          : this.remotePath,
+      status: data.status.present ? data.status.value : this.status,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhotoUploadsData(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('rowId: $rowId, ')
+          ..write('localPath: $localPath, ')
+          ..write('remotePath: $remotePath, ')
+          ..write('status: $status, ')
+          ..write('attempts: $attempts, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    farmId,
+    entity,
+    rowId,
+    localPath,
+    remotePath,
+    status,
+    attempts,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PhotoUploadsData &&
+          other.id == this.id &&
+          other.farmId == this.farmId &&
+          other.entity == this.entity &&
+          other.rowId == this.rowId &&
+          other.localPath == this.localPath &&
+          other.remotePath == this.remotePath &&
+          other.status == this.status &&
+          other.attempts == this.attempts &&
+          other.createdAt == this.createdAt);
+}
+
+class PhotoUploadsCompanion extends UpdateCompanion<PhotoUploadsData> {
+  final Value<String> id;
+  final Value<String> farmId;
+  final Value<String> entity;
+  final Value<String> rowId;
+  final Value<String> localPath;
+  final Value<String?> remotePath;
+  final Value<String> status;
+  final Value<int> attempts;
+  final Value<int> createdAt;
+  final Value<int> rowid;
+  const PhotoUploadsCompanion({
+    this.id = const Value.absent(),
+    this.farmId = const Value.absent(),
+    this.entity = const Value.absent(),
+    this.rowId = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.remotePath = const Value.absent(),
+    this.status = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PhotoUploadsCompanion.insert({
+    required String id,
+    required String farmId,
+    required String entity,
+    required String rowId,
+    required String localPath,
+    this.remotePath = const Value.absent(),
+    this.status = const Value.absent(),
+    this.attempts = const Value.absent(),
+    required int createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmId = Value(farmId),
+       entity = Value(entity),
+       rowId = Value(rowId),
+       localPath = Value(localPath),
+       createdAt = Value(createdAt);
+  static Insertable<PhotoUploadsData> custom({
+    Expression<String>? id,
+    Expression<String>? farmId,
+    Expression<String>? entity,
+    Expression<String>? rowId,
+    Expression<String>? localPath,
+    Expression<String>? remotePath,
+    Expression<String>? status,
+    Expression<int>? attempts,
+    Expression<int>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (farmId != null) 'farm_id': farmId,
+      if (entity != null) 'entity': entity,
+      if (rowId != null) 'row_id': rowId,
+      if (localPath != null) 'local_path': localPath,
+      if (remotePath != null) 'remote_path': remotePath,
+      if (status != null) 'status': status,
+      if (attempts != null) 'attempts': attempts,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PhotoUploadsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? farmId,
+    Value<String>? entity,
+    Value<String>? rowId,
+    Value<String>? localPath,
+    Value<String?>? remotePath,
+    Value<String>? status,
+    Value<int>? attempts,
+    Value<int>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return PhotoUploadsCompanion(
+      id: id ?? this.id,
+      farmId: farmId ?? this.farmId,
+      entity: entity ?? this.entity,
+      rowId: rowId ?? this.rowId,
+      localPath: localPath ?? this.localPath,
+      remotePath: remotePath ?? this.remotePath,
+      status: status ?? this.status,
+      attempts: attempts ?? this.attempts,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (farmId.present) {
+      map['farm_id'] = Variable<String>(farmId.value);
+    }
+    if (entity.present) {
+      map['entity'] = Variable<String>(entity.value);
+    }
+    if (rowId.present) {
+      map['row_id'] = Variable<String>(rowId.value);
+    }
+    if (localPath.present) {
+      map['local_path'] = Variable<String>(localPath.value);
+    }
+    if (remotePath.present) {
+      map['remote_path'] = Variable<String>(remotePath.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhotoUploadsCompanion(')
+          ..write('id: $id, ')
+          ..write('farmId: $farmId, ')
+          ..write('entity: $entity, ')
+          ..write('rowId: $rowId, ')
+          ..write('localPath: $localPath, ')
+          ..write('remotePath: $remotePath, ')
+          ..write('status: $status, ')
+          ..write('attempts: $attempts, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class AppSettings extends Table with TableInfo<AppSettings, AppSettingsData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -5281,8 +22111,18 @@ class AppSettings extends Table with TableInfo {
   @override
   Set<GeneratedColumn> get $primaryKey => {key};
   @override
-  Never map(Map<String, dynamic> data, {String? tablePrefix}) {
-    throw UnsupportedError('TableInfo.map in schema verification code');
+  AppSettingsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppSettingsData(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}value'],
+      )!,
+    );
   }
 
   @override
@@ -5292,6 +22132,134 @@ class AppSettings extends Table with TableInfo {
 
   @override
   bool get dontWriteConstraints => true;
+}
+
+class AppSettingsData extends DataClass implements Insertable<AppSettingsData> {
+  final String key;
+  final String value;
+  const AppSettingsData({required this.key, required this.value});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['value'] = Variable<String>(value);
+    return map;
+  }
+
+  AppSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AppSettingsCompanion(key: Value(key), value: Value(value));
+  }
+
+  factory AppSettingsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppSettingsData(
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+    };
+  }
+
+  AppSettingsData copyWith({String? key, String? value}) =>
+      AppSettingsData(key: key ?? this.key, value: value ?? this.value);
+  AppSettingsData copyWithCompanion(AppSettingsCompanion data) {
+    return AppSettingsData(
+      key: data.key.present ? data.key.value : this.key,
+      value: data.value.present ? data.value.value : this.value,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsData(')
+          ..write('key: $key, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(key, value);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppSettingsData &&
+          other.key == this.key &&
+          other.value == this.value);
+}
+
+class AppSettingsCompanion extends UpdateCompanion<AppSettingsData> {
+  final Value<String> key;
+  final Value<String> value;
+  final Value<int> rowid;
+  const AppSettingsCompanion({
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AppSettingsCompanion.insert({
+    required String key,
+    required String value,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       value = Value(value);
+  static Insertable<AppSettingsData> custom({
+    Expression<String>? key,
+    Expression<String>? value,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AppSettingsCompanion copyWith({
+    Value<String>? key,
+    Value<String>? value,
+    Value<int>? rowid,
+  }) {
+    return AppSettingsCompanion(
+      key: key ?? this.key,
+      value: value ?? this.value,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsCompanion(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
 }
 
 class DatabaseAtV1 extends GeneratedDatabase {

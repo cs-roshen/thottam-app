@@ -55,7 +55,7 @@ export the new version (bump `schemaVersion` and add its migration step first):
 ```
 dart run build_runner build
 dart run drift_dev make-migrations
-dart run drift_dev schema generate drift_schemas/app/ test/core/db/generated/
+dart run drift_dev schema generate --data-classes --companions drift_schemas/app/ test/core/db/generated/
 ```
 
 SQL in Dart goes in raw strings (`r'...'`), which the string check passes.

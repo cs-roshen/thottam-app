@@ -23,10 +23,15 @@ class AppDatabase extends _$AppDatabase {
 /// Opens the signed-in user's database on a background isolate, so queries
 /// never block the interface. One file per user: signing in as someone else
 /// on the same phone never shows the first user's data.
-AppDatabase openAppDatabase(String userId) => AppDatabase(
+/// [directory] is for tests; the app uses the documents directory.
+AppDatabase openAppDatabase(String userId, {String? directory}) => AppDatabase(
   driftDatabase(
     name: 'thottam_$userId',
-    native: const DriftNativeOptions(setup: applyPragmas),
+    native: DriftNativeOptions(
+      setup: applyPragmas,
+      databaseDirectory: directory == null ? null : () async => directory,
+      tempDirectoryPath: directory == null ? null : () async => directory,
+    ),
   ),
 );
 

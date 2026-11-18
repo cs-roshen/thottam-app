@@ -65,8 +65,9 @@ const listQueries = [
   ),
   ListQuery(
     'crop cycle expense total',
-    'SELECT SUM(amount_paise) FROM expense_allocations '
-        'WHERE crop_cycle_id = :cycle AND deleted_at IS NULL',
+    'SELECT SUM(a.amount_paise) FROM expense_allocations a '
+        'JOIN expenses e ON e.id = a.expense_id AND e.deleted_at IS NULL '
+        'WHERE a.crop_cycle_id = :cycle AND a.deleted_at IS NULL',
   ),
   ListQuery(
     'crop cycle labour total for a period',
@@ -83,15 +84,32 @@ const listQueries = [
   ),
   ListQuery(
     'profit and loss for a season, labour by crop cycle',
-    'SELECT crop_cycle_id, SUM(amount_paise) FROM labour_entries '
-        'WHERE farm_id = :farm AND deleted_at IS NULL AND work_date BETWEEN :from AND :to '
-        'GROUP BY crop_cycle_id',
+    // an entry split across a mixed plot has no crop cycle of its own: its
+    // labour_allocations carry the parts
+    'SELECT cycle, SUM(paise) FROM ('
+        'SELECT crop_cycle_id AS cycle, amount_paise AS paise FROM labour_entries '
+        'WHERE farm_id = :farm AND deleted_at IS NULL AND crop_cycle_id IS NOT NULL '
+        'AND work_date BETWEEN :from AND :to '
+        'UNION ALL SELECT a.crop_cycle_id, a.amount_paise FROM labour_entries l '
+        'JOIN labour_allocations a ON a.labour_entry_id = l.id AND a.deleted_at IS NULL '
+        'WHERE l.farm_id = :farm AND l.deleted_at IS NULL AND l.crop_cycle_id IS NULL '
+        'AND l.work_date BETWEEN :from AND :to) GROUP BY cycle',
     budgetMs: 150,
   ),
   ListQuery(
     'profit and loss for a season, sales',
-    'SELECT SUM(net_paise) FROM sales WHERE farm_id = :farm AND deleted_at IS NULL '
-        'AND sold_on BETWEEN :from AND :to',
+    // income reaches a crop through the lots each sale drew from
+    'SELECT l.crop_cycle_id, SUM(s.net_paise * sl.quantity / s.quantity) FROM sales s '
+        'JOIN sale_lots sl ON sl.sale_id = s.id AND sl.deleted_at IS NULL '
+        'JOIN lots l ON l.id = sl.lot_id '
+        'WHERE s.farm_id = :farm AND s.deleted_at IS NULL AND s.sold_on BETWEEN :from AND :to '
+        'GROUP BY l.crop_cycle_id',
+    budgetMs: 150,
+  ),
+  ListQuery(
+    'profit and loss for a season, other income',
+    'SELECT crop_cycle_id, SUM(amount_paise) FROM other_income WHERE farm_id = :farm '
+        'AND deleted_at IS NULL AND received_on BETWEEN :from AND :to GROUP BY crop_cycle_id',
     budgetMs: 150,
   ),
   ListQuery(
@@ -114,9 +132,13 @@ const listQueries = [
   ),
   ListQuery(
     'lots with stock left',
+    // stock is derived, so no index can hold "has stock left"; reading only the
+    // lots of active crop cycles keeps this from growing with every season
     'SELECT l.id, l.quantity - COALESCE((SELECT SUM(s.quantity) FROM sale_lots s '
         'WHERE s.lot_id = l.id AND s.deleted_at IS NULL), 0) AS stock_left '
-        'FROM lots l WHERE l.farm_id = :farm AND l.deleted_at IS NULL AND stock_left > 0',
+        'FROM crop_cycles c JOIN lots l ON l.crop_cycle_id = c.id AND l.deleted_at IS NULL '
+        "WHERE c.farm_id = :farm AND c.status = 'active' AND c.deleted_at IS NULL "
+        'AND stock_left > 0',
   ),
   ListQuery(
     'crop cycles on a plot',
