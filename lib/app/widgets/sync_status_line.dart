@@ -31,7 +31,10 @@ class SyncStatusLine extends StatelessWidget {
                   ),
             style: text.bodyLarge,
           ),
-          Text(l10n.syncWaiting(status.waiting), style: text.bodyMedium),
+          // "Everything is synced" only when it is true
+          if (status.waiting > 0 ||
+              (last != null && status.conflicts == 0 && status.rejected == 0))
+            Text(l10n.syncWaiting(status.waiting), style: text.bodyMedium),
           if (status.conflicts > 0)
             Text(l10n.syncConflicts(status.conflicts), style: text.bodyMedium),
           if (status.rejected > 0)

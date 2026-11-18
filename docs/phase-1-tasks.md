@@ -45,6 +45,25 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [ ] D5. Closed beta build.
 - [ ] D6. Phone OTP sign-in as a second method beside Google, once everything above works. Same offline and per-user database rules as B6. Decide with the owner whether one account can have both phone and Google linked, and how a member who signs in by phone only is invited.
 
+## Review follow-ups
+
+From the independent reviews of B1 to B7 (2026-11-19). Each belongs to the task named; do
+it there, with its test.
+
+- C1: set-up stores the template version the farm starts from in `farms.accepted_template_version`, so "update available" starts clear.
+- C2: deleting a plot or crop cycle while another phone has already uploaded a new row under it goes through silently; decide with the owner whether the delete should ask, and whether deleting a parent deletes its children.
+- C4: repositories use shared query definitions, so the query-plan and benchmark gates test the queries the app runs; the benchmark seed fills the tables it leaves empty (labour payments and allocations, harvest teams, notes, tasks, other income) and the benchmark reports the slowest run as well as the median.
+- C5: a harvest save writes each row as separate statements (about 140 for 30 rows); measure against the 150 ms save budget and batch them if it is missed.
+- C7: restoring an older event warns when the row has changed since.
+- C8: the profit and loss queries replace the stand-ins in `test/core/db/list_queries.dart`, with the family-labour switch.
+- C10: reset removes only the field being reset from an override row; screens can show the value a reset would go back to.
+- C12: the admin console retires template items (`is_active`) instead of deleting them.
+- D1: measure the database file with five years of data (all seasons stay on the phone).
+- D3: a member whose access narrows drops the rows they can no longer read from the phone (removal already drops the farm).
+- Before schema version 2: copy the database file before a migration and run an integrity check (implementation plan section 12).
+- Before the beta (D5): sync on connectivity and in the background, and skip on low battery (`lib/core/sync/sync_scheduler.dart`).
+- Search: a phone-only search table with normalised Malayalam, English and Manglish text, when the first searchable list is built.
+
 ## Owner decisions
 
 Decided (2026-11-17):

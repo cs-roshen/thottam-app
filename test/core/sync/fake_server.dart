@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:thottam/core/db/synced_tables.dart';
 import 'package:thottam/core/sync/sync_server.dart';
 
@@ -15,8 +17,19 @@ class FakeServer {
   /// Apply the next batch, then lose the reply.
   bool loseNextReply = false;
 
-  /// Tables a user may not write (a permission the server refuses).
+  /// Tables a user may not write (a permission the server refuses); their
+  /// history rows are refused too, as row-level security does.
   final denied = <String, Set<String>>{};
+
+  /// Rows a user may not read, as row-level security would hide them.
+  bool Function(String user, String table, Map<String, Object?> row)? hidden;
+
+  /// Fail the next push before applying anything (the request never arrived).
+  bool failNextPush = false;
+
+  /// Runs after a push is applied and before its reply reaches the phone,
+  /// as a farmer saving while the request is in flight.
+  Future<void> Function()? duringPush;
 
   /// Pushes received, for checking what was sent.
   final pushes = <List<PushRow>>[];
@@ -46,7 +59,24 @@ class FakeServer {
         'area',
         'area_share',
         'deductions',
+        'unit',
+        'piece_unit',
+        'area_unit',
       }.contains(field);
+
+  /// jsonb equality: maps and lists compare by content.
+  static bool same(Object? a, Object? b) => jsonEncode(a) == jsonEncode(b);
+
+  static const _managed = {
+    'id',
+    'farm_id',
+    'created_at',
+    'created_by',
+    'updated_at',
+    'updated_by',
+    'version',
+    'deleted_at',
+  };
 
   SyncServer as(String userId) => _Session(this, userId);
 
@@ -74,13 +104,26 @@ class FakeServer {
 
     for (final p in rows) {
       final ref = RowRef(p.entity, p.id);
-      if (denied[user]?.contains(p.entity) ?? false) {
+      final deniedTable = p.entity == 'event_log'
+          ? p.row['entity'] as String?
+          : p.entity;
+      if (denied[user]?.contains(deniedTable) ?? false) {
         rejected.add(Rejection(ref, '42501', 'permission'));
+        continue;
+      }
+      // a reference to a row that does not exist fails that row (foreign key)
+      final missing = [
+        for (final MapEntry(:key, :value) in parents.entries)
+          if (p.row[key] case final String id when row(value, id) == null) key,
+      ];
+      if (p.entity != 'event_log' && missing.isNotEmpty) {
+        rejected.add(Rejection(ref, '23503', 'missing $missing'));
         continue;
       }
       final existing = row(p.entity, p.id);
       // like the server trigger: the signed-in user is stamped, the creator kept
       final up = {
+        ...?existing,
         ...p.row,
         if (p.entity != 'event_log') ...{
           'created_by': existing == null ? user : existing['created_by'],
@@ -115,22 +158,32 @@ class FakeServer {
         }
         continue;
       }
-      if (p.entity == 'event_log' || p.baseVersion == 0) {
+      if (p.entity == 'event_log') {
         accepted.add(ref);
         continue;
       }
       final serverVersion = existing['version']! as int;
-      if (serverVersion == p.baseVersion) {
+      if (p.baseVersion > 0 && serverVersion == p.baseVersion) {
         put(p.entity, up);
         accepted.add(ref);
         continue;
       }
 
-      // Another phone changed the row since this one's base version.
+      // Another phone changed the row since this one's base version, or made
+      // the same row (a shared id) while this one was offline.
+      final changes = p.baseVersion == 0
+          ? {
+              for (final k in p.row.keys)
+                if (!_managed.contains(k)) k: null,
+            }
+          : p.changes;
       final iDelete =
-          p.changes.containsKey('deleted_at') && up['deleted_at'] != null;
+          changes.containsKey('deleted_at') &&
+          up['deleted_at'] != null &&
+          changes['deleted_at'] == null;
       final theyDeleted = existing['deleted_at'] != null;
-      if (iDelete != theyDeleted) {
+      final edits = {...changes}..remove('deleted_at');
+      if (iDelete != theyDeleted && (iDelete || edits.isNotEmpty)) {
         conflicts.add(
           ServerConflict(ref, 'delete_edit', const ['deleted_at'], existing),
         );
@@ -142,25 +195,43 @@ class FakeServer {
       }
       final merged = {...existing};
       final clash = <String>[];
-      for (final MapEntry(key: f, value: base) in p.changes.entries) {
-        if (existing[f] == base) {
-          merged[f] = up[f];
-        } else if (existing[f] == up[f]) {
+      var took = false;
+      for (final MapEntry(key: f, value: base) in changes.entries) {
+        if (const {
+              'id',
+              'created_at',
+              'created_by',
+              'updated_at',
+            }.contains(f) ||
+            f == 'version' ||
+            f == 'updated_by' ||
+            f == 'farm_id') {
+          continue;
+        }
+        // changed and changed back on the phone: not a change at all
+        if (p.baseVersion > 0 && same(up[f], base)) continue;
+        if (same(existing[f], up[f])) {
           // the same value on both phones is not a conflict
+        } else if (same(existing[f], base)) {
+          merged[f] = up[f];
+          took = true;
         } else if (moneyOrQuantity(f)) {
           clash.add(f);
         } else {
           merged[f] = up[f]; // the upload that reaches the server later wins
+          took = true;
         }
       }
-      merged['version'] =
-          (serverVersion > (up['version']! as int)
-              ? serverVersion
-              : up['version']! as int) +
-          1;
-      merged['updated_at'] = up['updated_at'];
-      merged['updated_by'] = user;
-      put(p.entity, merged);
+      if (took) {
+        merged['version'] =
+            (serverVersion > (up['version']! as int)
+                ? serverVersion
+                : up['version']! as int) +
+            1;
+        merged['updated_at'] = up['updated_at'];
+        merged['updated_by'] = user;
+        put(p.entity, merged);
+      }
       if (clash.isEmpty) {
         accepted.add(ref);
       } else {
@@ -182,7 +253,7 @@ class FakeServer {
         (r) => r.entity == 'sale_lots' && r.row['lot_id'] == lot,
       )) {
         final ref = RowRef(p.entity, p.id);
-        accepted.remove(ref);
+        if (!accepted.remove(ref)) continue;
         conflicts.add(
           ServerConflict(ref, 'oversell', const [
             'quantity',
@@ -201,6 +272,7 @@ class FakeServer {
   }
 
   List<Map<String, Object?>> _pull(
+    String user,
     String table, {
     required int after,
     required int limit,
@@ -211,6 +283,7 @@ class FakeServer {
     final rows =
         (tables[table]?.values ?? const <Map<String, Object?>>[])
             .where((r) => (r['server_seq']! as int) > after)
+            .where((r) => hidden?.call(user, table, r) != true)
             .where(
               (r) => userId != null
                   ? r['user_id'] == userId
@@ -238,10 +311,20 @@ class _Session implements SyncServer {
   Future<PushResult> push(
     String batchId,
     String farmId,
-    List<PushRow> rows,
-  ) async {
+    List<PushRow> rows, {
+    required String userId,
+  }) async {
     _check();
+    if (userId != user) throw const SyncUnavailable('signed in as another');
+    if (server.failNextPush) {
+      server.failNextPush = false;
+      throw const SyncUnavailable('request lost');
+    }
     final result = server._push(user, batchId, farmId, rows);
+    if (server.duringPush case final during?) {
+      server.duringPush = null;
+      await during();
+    }
     if (server.loseNextReply) {
       server.loseNextReply = false;
       throw const SyncUnavailable('reply lost');
@@ -259,6 +342,7 @@ class _Session implements SyncServer {
   }) async {
     _check();
     return server._pull(
+      user,
       table,
       after: after,
       limit: limit,

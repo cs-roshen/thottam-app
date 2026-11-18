@@ -20460,6 +20460,10 @@ class Outbox extends Table with TableInfo<Outbox, OutboxData> {
         DriftSqlType.string,
         data['${effectivePrefix}status'],
       )!,
+      batchId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}batch_id'],
+      ),
       attempts: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}attempts'],
@@ -20495,6 +20499,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
   final String rowId;
   final int baseVersion;
   final String status;
+  final String? batchId;
   final int attempts;
   final String? lastError;
   final int createdAt;
@@ -20506,6 +20511,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
     required this.rowId,
     required this.baseVersion,
     required this.status,
+    this.batchId,
     required this.attempts,
     this.lastError,
     required this.createdAt,
@@ -20520,6 +20526,9 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
     map['row_id'] = Variable<String>(rowId);
     map['base_version'] = Variable<int>(baseVersion);
     map['status'] = Variable<String>(status);
+    if (!nullToAbsent || batchId != null) {
+      map['batch_id'] = Variable<String>(batchId);
+    }
     map['attempts'] = Variable<int>(attempts);
     if (!nullToAbsent || lastError != null) {
       map['last_error'] = Variable<String>(lastError);
@@ -20537,6 +20546,9 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
       rowId: Value(rowId),
       baseVersion: Value(baseVersion),
       status: Value(status),
+      batchId: batchId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(batchId),
       attempts: Value(attempts),
       lastError: lastError == null && nullToAbsent
           ? const Value.absent()
@@ -20558,6 +20570,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
       rowId: serializer.fromJson<String>(json['rowId']),
       baseVersion: serializer.fromJson<int>(json['baseVersion']),
       status: serializer.fromJson<String>(json['status']),
+      batchId: serializer.fromJson<String?>(json['batchId']),
       attempts: serializer.fromJson<int>(json['attempts']),
       lastError: serializer.fromJson<String?>(json['lastError']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
@@ -20574,6 +20587,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
       'rowId': serializer.toJson<String>(rowId),
       'baseVersion': serializer.toJson<int>(baseVersion),
       'status': serializer.toJson<String>(status),
+      'batchId': serializer.toJson<String?>(batchId),
       'attempts': serializer.toJson<int>(attempts),
       'lastError': serializer.toJson<String?>(lastError),
       'createdAt': serializer.toJson<int>(createdAt),
@@ -20588,6 +20602,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
     String? rowId,
     int? baseVersion,
     String? status,
+    Value<String?> batchId = const Value.absent(),
     int? attempts,
     Value<String?> lastError = const Value.absent(),
     int? createdAt,
@@ -20599,6 +20614,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
     rowId: rowId ?? this.rowId,
     baseVersion: baseVersion ?? this.baseVersion,
     status: status ?? this.status,
+    batchId: batchId.present ? batchId.value : this.batchId,
     attempts: attempts ?? this.attempts,
     lastError: lastError.present ? lastError.value : this.lastError,
     createdAt: createdAt ?? this.createdAt,
@@ -20614,6 +20630,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
           ? data.baseVersion.value
           : this.baseVersion,
       status: data.status.present ? data.status.value : this.status,
+      batchId: data.batchId.present ? data.batchId.value : this.batchId,
       attempts: data.attempts.present ? data.attempts.value : this.attempts,
       lastError: data.lastError.present ? data.lastError.value : this.lastError,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -20630,6 +20647,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
           ..write('rowId: $rowId, ')
           ..write('baseVersion: $baseVersion, ')
           ..write('status: $status, ')
+          ..write('batchId: $batchId, ')
           ..write('attempts: $attempts, ')
           ..write('lastError: $lastError, ')
           ..write('createdAt: $createdAt, ')
@@ -20646,6 +20664,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
     rowId,
     baseVersion,
     status,
+    batchId,
     attempts,
     lastError,
     createdAt,
@@ -20661,6 +20680,7 @@ class OutboxData extends DataClass implements Insertable<OutboxData> {
           other.rowId == this.rowId &&
           other.baseVersion == this.baseVersion &&
           other.status == this.status &&
+          other.batchId == this.batchId &&
           other.attempts == this.attempts &&
           other.lastError == this.lastError &&
           other.createdAt == this.createdAt &&
@@ -20674,6 +20694,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
   final Value<String> rowId;
   final Value<int> baseVersion;
   final Value<String> status;
+  final Value<String?> batchId;
   final Value<int> attempts;
   final Value<String?> lastError;
   final Value<int> createdAt;
@@ -20685,6 +20706,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
     this.rowId = const Value.absent(),
     this.baseVersion = const Value.absent(),
     this.status = const Value.absent(),
+    this.batchId = const Value.absent(),
     this.attempts = const Value.absent(),
     this.lastError = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -20697,6 +20719,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
     required String rowId,
     required int baseVersion,
     this.status = const Value.absent(),
+    this.batchId = const Value.absent(),
     this.attempts = const Value.absent(),
     this.lastError = const Value.absent(),
     required int createdAt,
@@ -20714,6 +20737,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
     Expression<String>? rowId,
     Expression<int>? baseVersion,
     Expression<String>? status,
+    Expression<String>? batchId,
     Expression<int>? attempts,
     Expression<String>? lastError,
     Expression<int>? createdAt,
@@ -20726,6 +20750,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
       if (rowId != null) 'row_id': rowId,
       if (baseVersion != null) 'base_version': baseVersion,
       if (status != null) 'status': status,
+      if (batchId != null) 'batch_id': batchId,
       if (attempts != null) 'attempts': attempts,
       if (lastError != null) 'last_error': lastError,
       if (createdAt != null) 'created_at': createdAt,
@@ -20740,6 +20765,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
     Value<String>? rowId,
     Value<int>? baseVersion,
     Value<String>? status,
+    Value<String?>? batchId,
     Value<int>? attempts,
     Value<String?>? lastError,
     Value<int>? createdAt,
@@ -20752,6 +20778,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
       rowId: rowId ?? this.rowId,
       baseVersion: baseVersion ?? this.baseVersion,
       status: status ?? this.status,
+      batchId: batchId ?? this.batchId,
       attempts: attempts ?? this.attempts,
       lastError: lastError ?? this.lastError,
       createdAt: createdAt ?? this.createdAt,
@@ -20780,6 +20807,9 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
     if (status.present) {
       map['status'] = Variable<String>(status.value);
     }
+    if (batchId.present) {
+      map['batch_id'] = Variable<String>(batchId.value);
+    }
     if (attempts.present) {
       map['attempts'] = Variable<int>(attempts.value);
     }
@@ -20804,6 +20834,7 @@ class OutboxCompanion extends UpdateCompanion<OutboxData> {
           ..write('rowId: $rowId, ')
           ..write('baseVersion: $baseVersion, ')
           ..write('status: $status, ')
+          ..write('batchId: $batchId, ')
           ..write('attempts: $attempts, ')
           ..write('lastError: $lastError, ')
           ..write('createdAt: $createdAt, ')
@@ -22516,6 +22547,10 @@ class DatabaseAtV1 extends GeneratedDatabase {
     'outbox_pending',
     'CREATE UNIQUE INDEX outbox_pending ON outbox (entity, row_id) WHERE status = \'pending\'',
   );
+  late final Index outboxRow = Index(
+    'outbox_row',
+    'CREATE INDEX outbox_row ON outbox (entity, row_id, status)',
+  );
   late final SyncState syncState = SyncState(this);
   late final Conflicts conflicts = Conflicts(this);
   late final Index conflictsOpen = Index(
@@ -22617,6 +22652,7 @@ class DatabaseAtV1 extends GeneratedDatabase {
     outbox,
     outboxQueue,
     outboxPending,
+    outboxRow,
     syncState,
     conflicts,
     conflictsOpen,

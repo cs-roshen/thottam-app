@@ -36,7 +36,8 @@ void main() {
       ),
     );
     expect(find.text('Last synced 18 Nov, 9:05 AM'), findsOneWidget);
-    expect(find.text('Everything is synced'), findsOneWidget);
+    // never "everything is synced" while choices or refusals wait
+    expect(find.text('Everything is synced'), findsNothing);
     expect(find.text('2 changes need your choice'), findsOneWidget);
     expect(find.text('1 change the server refused'), findsOneWidget);
     expect(tester.takeException(), isNull);

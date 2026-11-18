@@ -22,9 +22,9 @@ class Phone {
     this.user, {
     Duration skew = Duration.zero,
     int seed = 1,
-  }) : db = AppDatabase(NativeDatabase.memory()) {
-    var t = DateTime.utc(2026, 11, 18, 8).add(skew);
-    DateTime clock() => t = t.add(const Duration(milliseconds: 10));
+  }) : db = AppDatabase(NativeDatabase.memory()),
+       now = DateTime.utc(2026, 11, 18, 8).add(skew) {
+    DateTime clock() => now = now.add(const Duration(milliseconds: 10));
     history = History(db, userId: user, clock: clock, random: Random(seed));
     engine = SyncEngine(
       db,
@@ -39,6 +39,9 @@ class Phone {
 
   final String user;
   final AppDatabase db;
+
+  /// The phone's clock; tests move it to make it jump.
+  DateTime now;
   late final History history;
   late final SyncEngine engine;
 
@@ -328,9 +331,9 @@ void main() {
       },
       baseVersion: 0,
     );
-    final first = await session.push('batch-1', farm, [row]);
+    final first = await session.push('batch-1', farm, [row], userId: owner);
     final seq = server.tables['notes']!['n2']!['server_seq'];
-    final second = await session.push('batch-1', farm, [row]);
+    final second = await session.push('batch-1', farm, [row], userId: owner);
     expect(second.accepted, first.accepted);
     expect(server.tables['notes']!['n2']!['server_seq'], seq);
   });
@@ -563,6 +566,261 @@ void main() {
     await a.sync();
     await b.sync();
     expect(await b.row('notes', 'n5'), isNull);
+    // and the farm leaves that phone: money included
+    expect(await b.row('expenses', 'e1'), isNull);
+    expect(await b.row('farms', farm), isNull);
+    expect(await b.count('SELECT COUNT(*) FROM event_log'), 0);
+  });
+
+  test('an edit made while an upload is in flight is not lost', () async {
+    await setUpFarm();
+    await a.write([
+      const UpdateRow('expenses', 'e1', {'amount_paise': 370000}),
+    ]);
+    await a.sync();
+    await b.write([
+      const UpdateRow('expenses', 'e1', {'amount_paise': 380000}),
+    ]);
+    // the farmer saves a note while the conflicting upload is on its way
+    server.duringPush = () => b.write([
+      const UpdateRow('expenses', 'e1', {'notes': 'said while sending'}),
+    ]);
+    await b.engine.upload();
+    expect(await b.count('SELECT COUNT(*) FROM conflicts'), 1);
+    expect((await b.row('expenses', 'e1'))!['notes'], 'said while sending');
+    await b.sync();
+    await a.sync();
+    expect((await a.row('expenses', 'e1'))!['notes'], 'said while sending');
+  });
+
+  test('a change undone before it synced is not a change', () async {
+    await setUpFarm();
+    final edit = await a.write([
+      const UpdateRow('expenses', 'e1', {'amount_paise': 370000}),
+    ]);
+    await a.history.restore(edit.single); // back to 360000
+    await b.write([
+      const UpdateRow('expenses', 'e1', {'amount_paise': 380000}),
+    ]);
+    await b.sync();
+    await a.sync();
+    expect(await a.count('SELECT COUNT(*) FROM conflicts'), 0);
+    expect((await a.row('expenses', 'e1'))!['amount_paise'], 380000);
+    expect(server.row('expenses', 'e1')!['amount_paise'], 380000);
+  });
+
+  test(
+    'a delete undone before it synced keeps the other phone edits',
+    () async {
+      await setUpFarm();
+      final del = await a.write([const DeleteRow('expenses', 'e1')]);
+      await a.history.restore(del.single);
+      await b.write([
+        const UpdateRow('expenses', 'e1', {'notes': 'from B'}),
+      ]);
+      await b.sync();
+      await a.sync();
+      expect(server.row('expenses', 'e1')!['notes'], 'from B');
+      expect(server.row('expenses', 'e1')!['deleted_at'], isNull);
+      expect(await a.count('SELECT COUNT(*) FROM conflicts'), 0);
+    },
+  );
+
+  test(
+    'two phones working out the same lot cost: a different amount is a choice',
+    () async {
+      await setUpFarm();
+      await a.write([
+        const CreateRow('lots', {
+          'id': 'lot1',
+          'farm_id': farm,
+          'crop_cycle_id': 'c1',
+          'quantity': 120000,
+        }),
+      ]);
+      await a.sync();
+      await b.sync();
+      // both money phones work out the supervisor's lot while offline
+      await a.write([
+        const CreateRow('lot_costs', {
+          'id': 'lot1',
+          'farm_id': farm,
+          'cost_paise': 2856000,
+        }),
+      ]);
+      await b.write([
+        const CreateRow('lot_costs', {
+          'id': 'lot1',
+          'farm_id': farm,
+          'cost_paise': 3000000,
+          'cost_overridden': true,
+        }),
+      ]);
+      await a.sync();
+      await b.sync();
+      final c =
+          (await b.db.customSelect('SELECT * FROM conflicts').getSingle()).data;
+      expect(c['kind'], 'same_field');
+      expect(c['row_id'], 'lot1');
+    },
+  );
+
+  test(
+    'two phones working out the same lot cost alike need no choice',
+    () async {
+      await setUpFarm();
+      await a.write([
+        const CreateRow('lots', {
+          'id': 'lot2',
+          'farm_id': farm,
+          'crop_cycle_id': 'c1',
+          'quantity': 1000,
+        }),
+      ]);
+      await a.sync();
+      await b.sync();
+      for (final p in [a, b]) {
+        await p.write([
+          const CreateRow('lot_costs', {
+            'id': 'lot2',
+            'farm_id': farm,
+            'cost_paise': 1000,
+          }),
+        ]);
+      }
+      await a.sync();
+      await b.sync();
+      expect(await b.count('SELECT COUNT(*) FROM conflicts'), 0);
+    },
+  );
+
+  test(
+    'a clock that jumps back does not drop an edit from the merge',
+    () async {
+      await setUpFarm();
+      a.now = a.now.add(const Duration(hours: 5)); // a fast clock
+      await a.write([
+        const UpdateRow('expenses', 'e1', {'notes': 'first'}),
+      ]);
+      a.now = a.now.subtract(
+        const Duration(hours: 5),
+      ); // corrected by the network
+      await a.write([
+        const UpdateRow('expenses', 'e1', {'category_code': 'seeds'}),
+      ]);
+      await b.write([
+        const UpdateRow('expenses', 'e1', {'mode': 'upi'}),
+      ]);
+      await b.sync();
+      await a.sync();
+      final e = server.row('expenses', 'e1')!;
+      expect(e['category_code'], 'seeds');
+      expect(e['notes'], 'first');
+      expect(e['mode'], 'upi');
+    },
+  );
+
+  test('a cut-off upload goes again parents first', () async {
+    await setUpFarm();
+    await b.write([
+      const CreateRow('workers', {'id': 'w1', 'farm_id': farm, 'name': 'Ravi'}),
+      const CreateRow('labour_entries', {
+        'id': 'l1',
+        'farm_id': farm,
+        'work_date': '2026-11-18',
+        'worker_id': 'w1',
+        'rate_paise': 90000,
+        'amount_paise': 90000,
+      }),
+    ]);
+    await b.sync();
+    // the entry is edited, then moved to a worker added after it
+    await b.write([
+      const UpdateRow('labour_entries', 'l1', {'task_code': 'weeding'}),
+    ]);
+    await b.write([
+      const CreateRow('workers', {'id': 'w2', 'farm_id': farm, 'name': 'Sita'}),
+    ]);
+    await b.write([
+      const UpdateRow('labour_entries', 'l1', {'worker_id': 'w2'}),
+    ]);
+    server.failNextPush = true;
+    await expectLater(b.engine.upload(), throwsA(isA<SyncUnavailable>()));
+    await b.sync();
+    expect(server.row('labour_entries', 'l1')!['worker_id'], 'w2');
+    expect((await b.engine.watchStatus().first).rejected, 0);
+  });
+
+  test('a refused change gives way to the server row', () async {
+    await setUpFarm();
+    await a.write([
+      const UpdateRow('expenses', 'e1', {'notes': 'owner note'}),
+    ]);
+    await a.sync();
+    server.denied[manager] = {'expenses'};
+    await b.write([
+      const UpdateRow('expenses', 'e1', {'notes': 'refused note'}),
+    ]);
+    await b.sync();
+    expect((await b.engine.watchStatus().first).rejected, 1);
+    expect((await b.row('expenses', 'e1'))!['notes'], 'owner note');
+  });
+
+  test('wider access brings the history that was hidden before', () async {
+    await setUpFarm();
+    // a supervisor joins, and cannot see money history
+    const sup = 'user-supervisor';
+    server.put('farm_members', {
+      ...server.row('farm_members', 'm-manager')!,
+      'id': 'm-sup',
+      'user_id': sup,
+      'role': 'supervisor',
+    });
+    server.hidden = (user, table, row) =>
+        user == sup &&
+        server.row('farm_members', 'm-sup')!['role'] == 'supervisor' &&
+        table == 'event_log' &&
+        row['entity'] == 'expenses';
+    await a.write([
+      const CreateRow('notes', {
+        'id': 'n9',
+        'farm_id': farm,
+        'noted_on': '2026-11-18',
+        'body': 'daily',
+      }),
+    ]);
+    await a.sync();
+    final s = Phone(server, sup, seed: 3);
+    addTearDown(s.db.close);
+    await s.sync();
+    const money = "SELECT COUNT(*) FROM event_log WHERE entity = 'expenses'";
+    expect(await s.count(money), 0);
+    expect(await s.row('notes', 'n9'), isNotNull);
+    // the owner makes them accountant: the money history arrives
+    server.put('farm_members', {
+      ...server.row('farm_members', 'm-sup')!,
+      'role': 'accountant',
+      'version': 2,
+    });
+    await s.sync();
+    expect(await s.count(money), greaterThan(0));
+  });
+
+  test('an upload for one person is never sent as another', () async {
+    await setUpFarm();
+    final wrong = SyncEngine(a.db, server.as(manager), userId: owner);
+    await a.write([
+      const CreateRow('notes', {
+        'id': 'n10',
+        'farm_id': farm,
+        'noted_on': '2026-11-18',
+        'body': 'x',
+      }),
+    ]);
+    await expectLater(wrong.upload(), throwsA(isA<SyncUnavailable>()));
+    expect(server.row('notes', 'n10'), isNull);
+    await a.sync();
+    expect(server.row('notes', 'n10')!['created_by'], owner);
   });
 
   test(

@@ -27201,6 +27201,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'outbox_pending',
     'CREATE UNIQUE INDEX outbox_pending ON outbox (entity, row_id) WHERE status = \'pending\'',
   );
+  late final Index outboxRow = Index(
+    'outbox_row',
+    'CREATE INDEX outbox_row ON outbox (entity, row_id, status)',
+  );
   late final SyncState syncState = SyncState(this);
   late final Conflicts conflicts = Conflicts(this);
   late final Index conflictsOpen = Index(
@@ -27302,6 +27306,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     outbox,
     outboxQueue,
     outboxPending,
+    outboxRow,
     syncState,
     conflicts,
     conflictsOpen,

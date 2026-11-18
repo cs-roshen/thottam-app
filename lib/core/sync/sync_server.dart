@@ -114,8 +114,14 @@ class SyncUnavailable implements Exception {
 abstract interface class SyncServer {
   /// Applies [rows] of one farm in one server transaction and returns what
   /// happened to each. Sending the same [batchId] again changes nothing and
-  /// returns the first answer.
-  Future<PushResult> push(String batchId, String farmId, List<PushRow> rows);
+  /// returns the first answer. [userId] is whose queue this is; the server
+  /// refuses the batch, as worth retrying, when someone else is signed in.
+  Future<PushResult> push(
+    String batchId,
+    String farmId,
+    List<PushRow> rows, {
+    required String userId,
+  });
 
   /// Rows of [table] with server_seq above [after], in server_seq order:
   /// those of [farmId], or with [farmId] null the master rows (no farm), or

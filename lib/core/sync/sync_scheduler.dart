@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'sync_engine.dart';
-import 'sync_server.dart';
 
 /// When sync runs (implementation plan section 13): a few seconds after a
 /// local write, when the app comes to the foreground, and every [period]
@@ -49,16 +48,18 @@ class SyncScheduler {
     _periodic = Timer.periodic(period, (_) => runNow());
   }
 
-  /// A local write happened: sync once things settle.
+  /// A local write happened: upload once things settle. Pulling waits for
+  /// the foreground and the periodic run, so a farmer entering one row
+  /// after another does not pull the whole farm each time.
   void poke() {
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(debounce, runNow);
+    _debounceTimer = Timer(debounce, () => runNow(uploadOnly: true));
   }
 
   /// The app came to the foreground.
   void onForeground() => runNow();
 
-  Future<void> runNow() async {
+  Future<void> runNow({bool uploadOnly = false}) async {
     if (_running) {
       _again = true;
       return;
@@ -66,9 +67,10 @@ class SyncScheduler {
     _running = true;
     _retry?.cancel();
     try {
-      await engine.sync();
+      uploadOnly ? await engine.upload() : await engine.sync();
       _failures = 0;
-    } on SyncUnavailable {
+    } on Object {
+      // offline, or anything unexpected: never crash, try again later
       _retry = Timer(_backoff(_failures++), runNow);
     } finally {
       _running = false;

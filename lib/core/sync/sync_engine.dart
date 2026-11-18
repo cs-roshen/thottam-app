@@ -59,7 +59,8 @@ class SyncEngine {
   Future<void> upload() async {
     // A batch cut off by a lost connection goes again first, with its id, so
     // the server applies it once.
-    final sending = await _outbox("status = 'sending'");
+    final sending = await _outbox("status = 'sending'")
+      ..sort(_byDependency);
     final byBatch = <String, List<Map<String, Object?>>>{};
     for (final o in sending) {
       (byBatch[o['batch_id']! as String] ??= []).add(o);
@@ -68,13 +69,8 @@ class SyncEngine {
       await _send(batchId, rows);
     }
 
-    final pending = await _outbox("status = 'pending'");
-    pending.sort((a, b) {
-      final f = (a['farm_id']! as String).compareTo(b['farm_id']! as String);
-      if (f != 0) return f;
-      final t = _order[a['entity']]!.compareTo(_order[b['entity']]!);
-      return t != 0 ? t : (a['id']! as int).compareTo(b['id']! as int);
-    });
+    final pending = await _outbox("status = 'pending'")
+      ..sort(_byDependency);
     var i = 0;
     while (i < pending.length) {
       final farm = pending[i]['farm_id'];
@@ -103,6 +99,13 @@ class SyncEngine {
     }
   }
 
+  static int _byDependency(Map<String, Object?> a, Map<String, Object?> b) {
+    final f = (a['farm_id']! as String).compareTo(b['farm_id']! as String);
+    if (f != 0) return f;
+    final t = _order[a['entity']]!.compareTo(_order[b['entity']]!);
+    return t != 0 ? t : (a['id']! as int).compareTo(b['id']! as int);
+  }
+
   Future<void> _send(String batchId, List<Map<String, Object?>> outbox) async {
     final farmId = outbox.first['farm_id']! as String;
     final rows = <PushRow>[];
@@ -121,20 +124,31 @@ class SyncEngine {
           baseVersion: base,
           changes: base == 0
               ? const {}
-              : await _changes(entity, id, o['created_at']! as int),
+              : await _changes(entity, id, o['id']! as int),
         ),
       );
     }
 
     final PushResult result;
     try {
-      result = await server.push(batchId, farmId, rows);
+      result = await server.push(batchId, farmId, rows, userId: userId);
     } on SyncUnavailable {
       await db.customStatement(
         'UPDATE outbox SET attempts = attempts + 1 WHERE batch_id = ?',
         [batchId],
       );
       rethrow;
+    } on Object catch (e) {
+      // The server will never take this batch as it is (a malformed row, a
+      // limit). It leaves the queue and is shown, so it cannot stop every
+      // later upload and pull.
+      await db.customStatement(
+        "UPDATE outbox SET status = 'rejected', last_error = ?, updated_at = ? "
+        'WHERE batch_id = ?',
+        ['$e', _clock().millisecondsSinceEpoch, batchId],
+      );
+      _notify({'outbox'});
+      return;
     }
 
     final now = _clock().millisecondsSinceEpoch;
@@ -148,6 +162,15 @@ class SyncEngine {
           'updated_at = ? WHERE batch_id = ? AND entity = ? AND row_id = ?',
           ['${r.code} ${r.message}', now, batchId, r.ref.entity, r.ref.id],
         );
+        // The phone keeps a value the server will never take, and pulls
+        // skipped this row while it waited. Read the table again, so the
+        // server's row comes back (history is insert-only: nothing to undo).
+        if (r.ref.entity != 'event_log') {
+          await db.customStatement(
+            'UPDATE sync_state SET "cursor" = 0 WHERE farm_id = ? AND entity = ?',
+            [farmId, r.ref.entity],
+          );
+        }
       }
       for (final c in result.conflicts) {
         settled.add(c.ref);
@@ -168,8 +191,23 @@ class SyncEngine {
           ],
         );
         // The phone shows the server's row until the farmer chooses; their
-        // own version waits in the conflict.
-        if (c.theirs != null) {
+        // own version waits in the conflict. Not when the farmer changed the
+        // row again while this batch was out: that newer change is pending
+        // and merges on its own. And never for orphan or oversell, where
+        // "theirs" is this phone's own row.
+        final waiting = await db
+            .customSelect(
+              'SELECT 1 FROM outbox WHERE entity = ? AND row_id = ? '
+              "AND status = 'pending' LIMIT 1",
+              variables: [
+                Variable.withString(c.ref.entity),
+                Variable.withString(c.ref.id),
+              ],
+            )
+            .getSingleOrNull();
+        if (c.theirs != null &&
+            waiting == null &&
+            (c.kind == 'same_field' || c.kind == 'delete_edit')) {
           await _upsert(c.ref.entity, toLocalRow(table, c.theirs!));
           touched.add(c.ref.entity);
         }
@@ -184,25 +222,27 @@ class SyncEngine {
   }
 
   /// The value each field had at the base version: the old values of this
-  /// row's history since the upload was queued, earliest first.
+  /// row's history queued after the row's upload, earliest first.
   Future<Map<String, Object?>> _changes(
     String entity,
     String id,
-    int since,
+    int outboxId,
   ) async {
-    // Only this phone's own history not yet uploaded: history pulled from
-    // other phones describes their changes, not this one's.
+    // Only this phone's own history not yet uploaded (history pulled from
+    // other phones describes their changes), and only what was queued after
+    // this upload of the row, by queue order rather than by the clock, which
+    // can jump.
     final events = await db
         .customSelect(
           'SELECT e.old_values FROM event_log e JOIN outbox o '
           "ON o.entity = 'event_log' AND o.row_id = e.id "
           "AND o.status IN ('pending', 'sending') "
-          'WHERE e.entity = ? AND e.entity_id = ? AND e.created_at >= ? '
-          'AND e.old_values IS NOT NULL ORDER BY e.created_at, e.id',
+          'WHERE e.entity = ? AND e.entity_id = ? AND o.id > ? '
+          'AND e.old_values IS NOT NULL ORDER BY o.id',
           variables: [
             Variable.withString(entity),
             Variable.withString(id),
-            Variable.withInt(since),
+            Variable.withInt(outboxId),
           ],
         )
         .get();
@@ -232,7 +272,9 @@ class SyncEngine {
     // only within one farm (each farm's writes take that farm's lock), so a
     // cursor here could step over a late commit. They are a handful of rows:
     // read them all every time.
+    final before = await _myMemberships();
     await _pullTable('farm_members', myMemberships, userId: userId, all: true);
+    await _followMemberships(before, await _myMemberships());
     final farms = await db
         .customSelect(
           'SELECT farm_id FROM farm_members WHERE user_id = ? '
@@ -250,6 +292,70 @@ class SyncEngine {
         await _pullTable(t, farm, farmId: farm);
       }
     }
+  }
+
+  /// This person's memberships: farm to role, permissions and whether active.
+  Future<Map<String, (String, String, bool)>> _myMemberships() async => {
+    for (final r
+        in await db
+            .customSelect(
+              'SELECT farm_id, role, permissions, deleted_at FROM farm_members '
+              'WHERE user_id = ?',
+              variables: [Variable.withString(userId)],
+            )
+            .get())
+      r.read<String>('farm_id'): (
+        r.read<String>('role'),
+        r.read<String>('permissions'),
+        r.readNullable<int>('deleted_at') == null,
+      ),
+  };
+
+  /// A removed member's phone drops the farm; a member whose role or
+  /// permissions changed pulls the farm again from the start, because rows
+  /// they could not see before (money history, other members) lie behind
+  /// their cursors.
+  // shortcut: a narrower role keeps what it already pulled until removal;
+  // dropping per access class waits for the role checks (D3).
+  Future<void> _followMemberships(
+    Map<String, (String, String, bool)> before,
+    Map<String, (String, String, bool)> after,
+  ) async {
+    for (final MapEntry(key: farm, value: was) in before.entries) {
+      final now = after[farm];
+      if (!was.$3) continue;
+      if (now == null || !now.$3) {
+        await _dropFarm(farm);
+      } else if (now.$1 != was.$1 || now.$2 != was.$2) {
+        await db.customStatement('DELETE FROM sync_state WHERE farm_id = ?', [
+          farm,
+        ]);
+      }
+    }
+  }
+
+  /// Removes a farm this person no longer belongs to from the phone. Only
+  /// this phone's copy goes; the farm stays whole on the server.
+  Future<void> _dropFarm(String farm) async {
+    await db.transaction(() async {
+      for (final (table, column) in syncedTables) {
+        if (column == null) continue;
+        await db.customStatement('DELETE FROM $table WHERE "$column" = ?', [
+          farm,
+        ]);
+      }
+      for (final table in const [
+        'outbox',
+        'conflicts',
+        'photo_uploads',
+        'sync_state',
+      ]) {
+        await db.customStatement('DELETE FROM $table WHERE farm_id = ?', [
+          farm,
+        ]);
+      }
+    });
+    _notify({for (final (t, _) in syncedTables) t, 'outbox', 'conflicts'});
   }
 
   Future<void> _pullTable(
@@ -324,7 +430,8 @@ class SyncEngine {
         'SELECT '
         "(SELECT COUNT(*) FROM outbox WHERE status IN ('pending', 'sending') "
         "AND entity <> 'event_log') AS waiting, "
-        "(SELECT COUNT(*) FROM outbox WHERE status = 'rejected') AS rejected, "
+        "(SELECT COUNT(*) FROM outbox WHERE status = 'rejected' "
+        "AND entity <> 'event_log') AS rejected, "
         '(SELECT COUNT(*) FROM conflicts WHERE resolved_at IS NULL) AS open, '
         "(SELECT value FROM app_settings WHERE \"key\" = 'sync.last_synced_at') "
         'AS last',
