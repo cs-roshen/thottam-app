@@ -1,0 +1,48 @@
+# Gates
+
+The checks from `docs/implementation-plan.md` section 16. They run the same way
+locally and in CI (`.github/workflows/ci.yml`). Run them all before a pull request:
+
+```
+dart format --output=none --set-exit-if-changed lib test tool
+flutter analyze
+dart run tool/check.dart
+flutter test
+```
+
+| Gate | Where |
+| --- | --- |
+| `dart format` | CI step |
+| `flutter analyze` (strict) | `analysis_options.yaml` |
+| `flutter test` | `test/` |
+| String check | `tool/check.dart`: text with letters in a string literal in `lib/`, outside `lib/l10n/`, the theme and the debug seed. Codes (`cash`), keys (`more.gallery`), paths (`/home`) and raw strings pass. Put `// gate: not user-facing` at the end of a line, or alone on the line before, for format patterns and assert messages. |
+| ARB check | `test/l10n/arb_test.dart`: same keys, a description on every key, same placeholders, no indexed keys or sample data |
+| Token check | `tool/check.dart`: `Color(0x..)`, `Colors.*` (except `transparent`) or a font name outside `lib/app/theme/` |
+| Layering check | `tool/check.dart`: `ui/` importing Drift or Supabase; `domain/` importing Flutter, Drift or Supabase; Supabase outside `lib/core/sync/` and `lib/core/auth/` |
+| Write-path check | `tool/check.dart`: Drift `into(`, `update(`, `delete(` or `customStatement(` in a `data/` folder; writes go through `writeWithHistory` in `lib/core/history/` (B4) |
+| Query-plan tests | Added with the Drift schema (B2) |
+| Benchmark test | Added with the Drift schema (B2); loads `generateBenchmarkSeed()` from `lib/core/dev/benchmark_seed.dart` |
+| Schema check | Added with the server schema rework (B1) and the Drift schema (B2) |
+
+## Golden images
+
+Golden tests (`@Tags(['golden'])`) render with the bundled fonts and are
+created on Windows, which is why CI runs on Windows. After an intended visual
+change, regenerate and look at every changed image before committing:
+
+```
+flutter test --update-goldens --tags golden
+```
+
+## Fonts
+
+`tool/build_fonts.py` rebuilds `assets/fonts/` from the Google Fonts variable
+fonts; see its header for the source commit.
+
+## Benchmark seed
+
+`generateBenchmarkSeed()` gives one farm with three years of data at the sizes
+in section 14: 8 plots, 20 crop cycles, 40 workers, 10 groups, 15,000 labour
+entries, 6,000 expenses with allocations, 1,500 harvests and lots, 1,200 sales
+and about 48,000 event-log rows. Rows use the draft schema's column names;
+B2 adapts them to the Drift tables.

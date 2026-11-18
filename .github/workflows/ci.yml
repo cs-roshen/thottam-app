@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gates:
+    # Golden images are rendered on Windows; Linux draws fonts differently.
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.50.0
+          cache: true
+      - run: flutter pub get
+      - name: Format
+        run: dart format --output=none --set-exit-if-changed lib test tool
+      - name: Analyze
+        run: flutter analyze
+      - name: Source gates (strings, tokens, layering, write path)
+        run: dart run tool/check.dart
+      - name: Tests (unit, widget, golden, ARB)
+        run: flutter test
