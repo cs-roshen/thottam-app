@@ -97,12 +97,12 @@ select pg_temp.check('a merge is stored at the highest version plus one',
 select pg_temp.check('the merge is stamped with who made it',
   (select updated_by = pg_temp.u('manager') from public.expenses where id = pg_temp.id('e1')));
 
--- the same plain field: later upload wins
+-- a field only this phone changed is taken
 select pg_temp.push(pg_temp.u('owner'), 'b4', pg_temp.id('farm'), jsonb_build_array(
   pg_temp.r('expenses', pg_temp.id('e1'), pg_temp.id('farm'), jsonb_build_object('spent_on', '2026-11-17',
     'category_code', 'seeds', 'amount_paise', 360000, 'mode', 'cash', 'plot_id', pg_temp.id('p1'), 'notes', 'later'),
     3, 2, '{"notes": "neem"}')));
-select pg_temp.check('the same plain field: the later upload wins',
+select pg_temp.check('a field only this phone changed is taken',
   (select notes = 'later' from public.expenses where id = pg_temp.id('e1')));
 
 -- the same money field: the farmer chooses
