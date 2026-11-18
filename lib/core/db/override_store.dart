@@ -20,24 +20,36 @@ Stream<Overrides> watchOverrides(AppDatabase db, String farmId) {
     "'id', id, 'scope', scope, 'scope_id', scope_id, "
     "'template_item_id', template_item_id, 'crop_id', crop_id, "
     "'list_type', list_type, 'code', code, 'name_ml', name_ml, "
-    "'name_en', name_en, 'data', json(data), 'hidden', hidden)) "
+    "'name_en', name_en, 'data', json(data), 'hidden', hidden, "
+    "'updated_at', updated_at)) "
     'FROM template_overrides WHERE farm_id = ?1 AND deleted_at IS NULL) '
     'AS overrides, '
     '(SELECT accepted_template_version FROM farms WHERE id = ?1) AS accepted',
     variables: [Variable.withString(farmId)],
     readsFrom: {db.templateItems, db.templateOverrides, db.farms},
   );
-  return query.watchSingle().map((row) {
-    List<Map<String, Object?>> list(String col) => [
-      for (final e in jsonDecode(row.read<String>(col)) as List)
-        (e as Map).cast<String, Object?>(),
-    ];
-    return Overrides(
-      items: [for (final r in list('items')) _item(r)],
-      overrides: [for (final r in list('overrides')) _override(r)],
-      acceptedVersion: row.readNullable<int>('accepted') ?? 0,
-    );
-  });
+  // any write to farms wakes the query; only a real change is decoded again
+  return query
+      .watchSingle()
+      .map(
+        (row) => (
+          row.read<String>('items'),
+          row.read<String>('overrides'),
+          row.readNullable<int>('accepted'),
+        ),
+      )
+      .distinct()
+      .map((raw) {
+        List<Map<String, Object?>> list(String json) => [
+          for (final e in jsonDecode(json) as List)
+            (e as Map).cast<String, Object?>(),
+        ];
+        return Overrides(
+          items: [for (final r in list(raw.$1)) _item(r)],
+          overrides: [for (final r in list(raw.$2)) ?_override(r)],
+          acceptedVersion: raw.$3 ?? 0,
+        );
+      });
 }
 
 TemplateItem _item(Map<String, Object?> r) => TemplateItem(
@@ -53,20 +65,30 @@ TemplateItem _item(Map<String, Object?> r) => TemplateItem(
   templateVersion: r['template_version']! as int,
 );
 
-TemplateOverride _override(Map<String, Object?> r) => TemplateOverride(
-  id: r['id']! as String,
-  scope: switch (r['scope']) {
+/// Null for a scope this version does not know, so it never applies farm-wide.
+TemplateOverride? _override(Map<String, Object?> r) {
+  final scope = switch (r['scope']) {
+    'farm' => Level.farm,
     'plot' => Level.plot,
     'crop_cycle' => Level.cropCycle,
-    _ => Level.farm,
-  },
-  scopeId: r['scope_id'] as String?,
-  templateItemId: r['template_item_id'] as String?,
-  cropId: r['crop_id'] as String?,
-  listType: r['list_type'] as String?,
-  code: r['code'] as String?,
-  nameMl: r['name_ml'] as String?,
-  nameEn: r['name_en'] as String?,
-  data: (r['data'] as Map?)?.cast<String, Object?>() ?? const {},
-  hidden: r['hidden'] == 1,
-);
+    _ => null,
+  };
+  if (scope == null) return null;
+  return _overrideAt(r, scope);
+}
+
+TemplateOverride _overrideAt(Map<String, Object?> r, Level scope) =>
+    TemplateOverride(
+      id: r['id']! as String,
+      scope: scope,
+      scopeId: r['scope_id'] as String?,
+      templateItemId: r['template_item_id'] as String?,
+      cropId: r['crop_id'] as String?,
+      listType: r['list_type'] as String?,
+      code: r['code'] as String?,
+      nameMl: r['name_ml'] as String?,
+      nameEn: r['name_en'] as String?,
+      data: (r['data'] as Map?)?.cast<String, Object?>() ?? const {},
+      hidden: r['hidden'] == null ? null : r['hidden'] == 1,
+      updatedAt: r['updated_at'] as int? ?? 0,
+    );

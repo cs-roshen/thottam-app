@@ -48,7 +48,8 @@ class TemplateOverride {
     this.nameMl,
     this.nameEn,
     this.data = const {},
-    this.hidden = false,
+    this.hidden,
+    this.updatedAt = 0,
   });
 
   final String id;
@@ -65,7 +66,13 @@ class TemplateOverride {
   final String? nameMl;
   final String? nameEn;
   final Map<String, Object?> data;
-  final bool hidden;
+
+  /// True hides the item at this level, false shows it again, null leaves it.
+  final bool? hidden;
+
+  /// Milliseconds; breaks ties between two rows at one level (two phones
+  /// each setting the farm rate offline), so every phone shows the same one.
+  final int updatedAt;
 }
 
 /// Where a value is being used.
@@ -99,6 +106,7 @@ class ListItem {
     required this.hidden,
     required this.isOwn,
     required this.updateAvailable,
+    this.retired = false,
   });
 
   final String code;
@@ -113,8 +121,12 @@ class ListItem {
   /// The farmer's own item, not from the templates.
   final bool isOwn;
 
-  /// The templates changed this item after the farm last accepted an update.
+  /// The farmer changed this item and the templates changed it after the
+  /// farm last accepted an update.
   final bool updateAvailable;
+
+  /// The template item is switched off; it is left out of lists.
+  final bool retired;
 }
 
 class Overrides {
@@ -122,7 +134,7 @@ class Overrides {
     required Iterable<TemplateItem> items,
     required Iterable<TemplateOverride> overrides,
     this.acceptedVersion = 0,
-  }) : _items = items.where((i) => i.isActive).toList(),
+  }) : _items = items.toList(),
        _overrides = overrides.toList();
 
   final List<TemplateItem> _items;
@@ -161,7 +173,8 @@ class Overrides {
   List<ListItem> list(String listType, Scope scope) {
     final codes = <String>{
       for (final i in _items)
-        if (i.listType == listType &&
+        if (i.isActive &&
+            i.listType == listType &&
             (i.cropId == null || i.cropId == scope.cropId))
           i.code,
       for (final o in _overrides)
@@ -171,7 +184,12 @@ class Overrides {
             _applies(o, scope))
           ?o.code,
     };
-    final out = [for (final c in codes) ?_listItem(listType, c, scope)];
+    final out = [
+      for (final c in codes)
+        if (_listItem(listType, c, scope) case final item?
+            when !(item.retired && !item.isOwn))
+          item,
+    ];
     out.sort((a, b) {
       final s = a.sortOrder.compareTo(b.sortOrder);
       return s != 0 ? s : a.code.compareTo(b.code);
@@ -201,8 +219,11 @@ class Overrides {
       for (final MapEntry(:key, :value) in o.data.entries) {
         data[key] = Resolved(value, o.scope, o.id);
       }
-      hidden = o.hidden;
+      if (o.hidden case final h?) hidden = h;
     }
+    // a farmer's own item may have a name in one language only
+    nameMl ??= nameEn;
+    nameEn ??= nameMl;
     if (nameMl == null || nameEn == null) return null;
     return ListItem(
       code: code,
@@ -212,7 +233,14 @@ class Overrides {
       sortOrder: item?.sortOrder ?? 1 << 30,
       hidden: hidden,
       isOwn: item == null,
-      updateAvailable: item != null && item.templateVersion > acceptedVersion,
+      retired: item != null && !item.isActive,
+      // only an item the farmer changed needs a choice; untouched items
+      // follow the templates by themselves. Set-up (C1) stores the template
+      // version a new farm starts from in farms.accepted_template_version.
+      updateAvailable:
+          item != null &&
+          layers.isNotEmpty &&
+          item.templateVersion > acceptedVersion,
     );
   }
 
@@ -228,20 +256,39 @@ class Overrides {
   }
 
   /// The overrides that apply to an item in [scope], least specific first.
+  /// A row tied to the all-crops item still applies after the admin adds a
+  /// crop's own item with the same code, so the farmer's change survives.
   Iterable<TemplateOverride> _layers(
     TemplateItem? item,
     String listType,
     String code,
     Scope scope,
   ) {
+    final sameItem = {
+      for (final i in _items)
+        if (i.listType == listType &&
+            i.code == code &&
+            (i.cropId == null || i.cropId == scope.cropId))
+          i.id: i.cropId == null ? 0 : 1,
+    };
+    int specific(TemplateOverride o) =>
+        o.templateItemId == null ? 2 : sameItem[o.templateItemId]!;
     final matching = _overrides.where((o) {
       if (!_applies(o, scope)) return false;
-      if (o.templateItemId != null) return o.templateItemId == item?.id;
-      return o.listType == listType &&
-          o.code == code &&
-          (o.cropId == null || o.cropId == scope.cropId);
+      if (o.cropId != null && o.cropId != scope.cropId) return false;
+      if (o.templateItemId != null) {
+        return sameItem.containsKey(o.templateItemId);
+      }
+      return o.listType == listType && o.code == code;
     }).toList();
-    matching.sort((a, b) => a.scope.index.compareTo(b.scope.index));
+    matching.sort((a, b) {
+      final level = a.scope.index.compareTo(b.scope.index);
+      if (level != 0) return level;
+      final s = specific(a).compareTo(specific(b));
+      if (s != 0) return s;
+      final t = a.updatedAt.compareTo(b.updatedAt);
+      return t != 0 ? t : a.id.compareTo(b.id);
+    });
     return matching;
   }
 

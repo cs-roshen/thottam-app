@@ -236,6 +236,236 @@ void main() {
     );
   });
 
+  test('an entry value of 0 or false still wins', () {
+    final o = Overrides(items: const [climber], overrides: const []);
+    expect(
+      o
+          .value(
+            'rate_class',
+            'climber',
+            'default_rate_paise',
+            here,
+            entryValue: 0,
+          )!
+          .value,
+      0,
+    );
+    expect(
+      o
+          .value(
+            'rate_class',
+            'climber',
+            'default_rate_paise',
+            here,
+            entryValue: false,
+          )!
+          .level,
+      Level.entry,
+    );
+  });
+
+  test(
+    'a farmer change survives the admin adding a crop item of the same code',
+    () {
+      final edited = rate('o-farm', Level.farm, 110000);
+      const hide = TemplateOverride(
+        id: 'o-hide',
+        scope: Level.farm,
+        templateItemId: 'item-climber',
+        hidden: true,
+      );
+      const pepperClimber = TemplateItem(
+        id: 'item-climber-pepper',
+        cropId: pepper,
+        listType: 'rate_class',
+        code: 'climber',
+        nameMl: 'കയറ്റക്കാർ',
+        nameEn: 'Climbers',
+        data: {'default_rate_paise': 130000},
+        templateVersion: 2,
+      );
+      final o = Overrides(
+        items: const [climber, pepperClimber],
+        overrides: [edited, hide],
+        acceptedVersion: 1,
+      );
+      final r = o.value('rate_class', 'climber', 'default_rate_paise', here)!;
+      expect(r.value, 110000);
+      expect(r.level, Level.farm);
+      expect(o.list('rate_class', here).single.hidden, isTrue);
+      expect(o.list('rate_class', here).single.updateAvailable, isTrue);
+    },
+  );
+
+  test('a change for one crop does not leak into another', () {
+    const pepperOnly = TemplateOverride(
+      id: 'o-pepper',
+      scope: Level.farm,
+      templateItemId: 'item-climber',
+      cropId: pepper,
+      data: {'default_rate_paise': 130000},
+    );
+    final o = Overrides(items: const [climber], overrides: const [pepperOnly]);
+    expect(
+      o.value('rate_class', 'climber', 'default_rate_paise', here)!.value,
+      130000,
+    );
+    expect(
+      o
+          .value(
+            'rate_class',
+            'climber',
+            'default_rate_paise',
+            const Scope(cropId: coconut),
+          )!
+          .value,
+      120000,
+    );
+  });
+
+  test('a more specific level can show what the farm hides, and leaves it alone otherwise', () {
+    const farmHides = TemplateOverride(
+      id: 'o-hide',
+      scope: Level.farm,
+      templateItemId: 'item-climber',
+      hidden: true,
+    );
+    const plotRate = TemplateOverride(
+      id: 'o-plot-rate',
+      scope: Level.plot,
+      scopeId: plot,
+      templateItemId: 'item-climber',
+      data: {'default_rate_paise': 1},
+    );
+    const plotShows = TemplateOverride(
+      id: 'o-plot-show',
+      scope: Level.plot,
+      scopeId: plot,
+      templateItemId: 'item-climber',
+      hidden: false,
+    );
+    expect(
+      Overrides(
+        items: const [climber],
+        overrides: const [farmHides, plotRate],
+      ).list('rate_class', here).single.hidden,
+      isTrue,
+    );
+    expect(
+      Overrides(
+        items: const [climber],
+        overrides: const [farmHides, plotShows],
+      ).list('rate_class', here).single.hidden,
+      isFalse,
+    );
+  });
+
+  test('two rows at one level settle the same way on every phone', () {
+    final older = TemplateOverride(
+      id: 'o-b',
+      scope: Level.farm,
+      templateItemId: climber.id,
+      data: const {'default_rate_paise': 110000},
+      updatedAt: 1,
+    );
+    final newer = TemplateOverride(
+      id: 'o-a',
+      scope: Level.farm,
+      templateItemId: climber.id,
+      data: const {'default_rate_paise': 130000},
+      updatedAt: 2,
+    );
+    for (final order in [
+      [older, newer],
+      [newer, older],
+    ]) {
+      expect(
+        Overrides(
+          items: const [climber],
+          overrides: order,
+        ).value('rate_class', 'climber', 'default_rate_paise', here)!.value,
+        130000,
+      );
+    }
+  });
+
+  test('update available only for items the farmer changed', () {
+    final o = Overrides(
+      items: const [
+        TemplateItem(
+          id: 'item-climber',
+          listType: 'rate_class',
+          code: 'climber',
+          nameMl: 'കയറ്റക്കാർ',
+          nameEn: 'Climbers',
+          templateVersion: 3,
+        ),
+        TemplateItem(
+          id: 'item-general',
+          listType: 'rate_class',
+          code: 'general',
+          nameMl: 'സാധാരണ പണി',
+          nameEn: 'General work',
+          templateVersion: 3,
+        ),
+      ],
+      overrides: [rate('o-farm', Level.farm, 110000)],
+      acceptedVersion: 2,
+    );
+    final items = {for (final i in o.list('rate_class', here)) i.code: i};
+    expect(items['climber']!.updateAvailable, isTrue);
+    expect(items['general']!.updateAvailable, isFalse);
+    final accepted = Overrides(
+      items: const [climber],
+      overrides: [rate('o-farm', Level.farm, 110000)],
+      acceptedVersion: 1,
+    );
+    expect(accepted.list('rate_class', here).single.updateAvailable, isFalse);
+  });
+
+  test(
+    'a switched-off item still resolves for old entries but leaves the lists',
+    () {
+      const retired = TemplateItem(
+        id: 'item-quintal',
+        listType: 'unit',
+        code: 'quintal',
+        nameMl: 'ക്വിന്റൽ',
+        nameEn: 'quintal',
+        data: {'factor': 100},
+        isActive: false,
+      );
+      const farmFactor = TemplateOverride(
+        id: 'o-q',
+        scope: Level.farm,
+        templateItemId: 'item-quintal',
+        data: {'factor': 98},
+      );
+      final o = Overrides(
+        items: const [retired],
+        overrides: const [farmFactor],
+      );
+      expect(o.value('unit', 'quintal', 'factor', here)!.value, 98);
+      expect(o.list('unit', here), isEmpty);
+    },
+  );
+
+  test('an own item named in one language only is still listed', () {
+    const own = TemplateOverride(
+      id: 'o-own',
+      scope: Level.farm,
+      listType: 'expense_category',
+      code: 'pooja',
+      nameMl: 'പൂജ',
+    );
+    final item = Overrides(
+      items: const [],
+      overrides: const [own],
+    ).list('expense_category', here).single;
+    expect(item.nameEn.value, 'പൂജ');
+    expect(item.isOwn, isTrue);
+  });
+
   test(
     'the store loads from the database and loads again on every change',
     () async {
@@ -263,8 +493,24 @@ void main() {
         'INSERT INTO template_overrides (id, farm_id, scope, template_item_id, data, created_at, updated_at) '
         "VALUES ('o1', 'f1', 'farm', 'item-climber', '{\"default_rate_paise\": 110000}', 0, 0)",
       );
+      // another farm's override never applies here
+      await db.customStatement(
+        'INSERT INTO template_overrides (id, farm_id, scope, template_item_id, data, created_at, updated_at) '
+        "VALUES ('o-other', 'f2', 'farm', 'item-climber', '{\"default_rate_paise\": 1}', 0, 0)",
+      );
       db.notifyUpdates({TableUpdate.onTable(db.templateOverrides)});
       expect(await values, [120000, 110000]);
+      // a new template version reaches the screen without a restart
+      final reloaded = stream.skip(1).first;
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      await db.customStatement(
+        "UPDATE template_items SET template_version = 5 WHERE id = 'item-climber'",
+      );
+      db.notifyUpdates({TableUpdate.onTable(db.templateItems)});
+      expect(
+        (await reloaded).list('rate_class', here).single.updateAvailable,
+        isTrue,
+      );
       // a soft-deleted override (a reset) no longer applies
       await db.customStatement(
         'UPDATE template_overrides SET deleted_at = 1 WHERE id = ?',

@@ -120,7 +120,7 @@ CREATE TABLE template_overrides (
   name_ml TEXT,
   name_en TEXT,
   data TEXT NOT NULL DEFAULT '{}',
-  hidden BOOLEAN NOT NULL DEFAULT FALSE,
+  hidden BOOLEAN,
   created_at INTEGER NOT NULL,
   created_by TEXT,
   updated_at INTEGER NOT NULL,

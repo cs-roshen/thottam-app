@@ -3413,11 +3413,10 @@ class TemplateOverrides extends Table
   late final GeneratedColumn<int> hidden = GeneratedColumn<int>(
     'hidden',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
+    $customConstraints: '',
   );
   late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
     'created_at',
@@ -3547,7 +3546,7 @@ class TemplateOverrides extends Table
       hidden: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}hidden'],
-      )!,
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -3597,7 +3596,7 @@ class TemplateOverridesData extends DataClass
   final String? nameMl;
   final String? nameEn;
   final String data;
-  final int hidden;
+  final int? hidden;
   final int createdAt;
   final String? createdBy;
   final int updatedAt;
@@ -3616,7 +3615,7 @@ class TemplateOverridesData extends DataClass
     this.nameMl,
     this.nameEn,
     required this.data,
-    required this.hidden,
+    this.hidden,
     required this.createdAt,
     this.createdBy,
     required this.updatedAt,
@@ -3652,7 +3651,9 @@ class TemplateOverridesData extends DataClass
       map['name_en'] = Variable<String>(nameEn);
     }
     map['data'] = Variable<String>(data);
-    map['hidden'] = Variable<int>(hidden);
+    if (!nullToAbsent || hidden != null) {
+      map['hidden'] = Variable<int>(hidden);
+    }
     map['created_at'] = Variable<int>(createdAt);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
@@ -3693,7 +3694,9 @@ class TemplateOverridesData extends DataClass
           ? const Value.absent()
           : Value(nameEn),
       data: Value(data),
-      hidden: Value(hidden),
+      hidden: hidden == null && nullToAbsent
+          ? const Value.absent()
+          : Value(hidden),
       createdAt: Value(createdAt),
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
@@ -3726,7 +3729,7 @@ class TemplateOverridesData extends DataClass
       nameMl: serializer.fromJson<String?>(json['nameMl']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       data: serializer.fromJson<String>(json['data']),
-      hidden: serializer.fromJson<int>(json['hidden']),
+      hidden: serializer.fromJson<int?>(json['hidden']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
@@ -3750,7 +3753,7 @@ class TemplateOverridesData extends DataClass
       'nameMl': serializer.toJson<String?>(nameMl),
       'nameEn': serializer.toJson<String?>(nameEn),
       'data': serializer.toJson<String>(data),
-      'hidden': serializer.toJson<int>(hidden),
+      'hidden': serializer.toJson<int?>(hidden),
       'createdAt': serializer.toJson<int>(createdAt),
       'createdBy': serializer.toJson<String?>(createdBy),
       'updatedAt': serializer.toJson<int>(updatedAt),
@@ -3772,7 +3775,7 @@ class TemplateOverridesData extends DataClass
     Value<String?> nameMl = const Value.absent(),
     Value<String?> nameEn = const Value.absent(),
     String? data,
-    int? hidden,
+    Value<int?> hidden = const Value.absent(),
     int? createdAt,
     Value<String?> createdBy = const Value.absent(),
     int? updatedAt,
@@ -3793,7 +3796,7 @@ class TemplateOverridesData extends DataClass
     nameMl: nameMl.present ? nameMl.value : this.nameMl,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     data: data ?? this.data,
-    hidden: hidden ?? this.hidden,
+    hidden: hidden.present ? hidden.value : this.hidden,
     createdAt: createdAt ?? this.createdAt,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -3909,7 +3912,7 @@ class TemplateOverridesCompanion
   final Value<String?> nameMl;
   final Value<String?> nameEn;
   final Value<String> data;
-  final Value<int> hidden;
+  final Value<int?> hidden;
   final Value<int> createdAt;
   final Value<String?> createdBy;
   final Value<int> updatedAt;
@@ -4019,7 +4022,7 @@ class TemplateOverridesCompanion
     Value<String?>? nameMl,
     Value<String?>? nameEn,
     Value<String>? data,
-    Value<int>? hidden,
+    Value<int?>? hidden,
     Value<int>? createdAt,
     Value<String?>? createdBy,
     Value<int>? updatedAt,

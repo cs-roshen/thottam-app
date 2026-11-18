@@ -4111,11 +4111,10 @@ class TemplateOverrides extends Table
   late final GeneratedColumn<bool> hidden = GeneratedColumn<bool>(
     'hidden',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.bool,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
+    $customConstraints: '',
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -4391,7 +4390,7 @@ class TemplateOverrides extends Table
       hidden: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}hidden'],
-      )!,
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -4441,7 +4440,7 @@ class TemplateOverrideRow extends DataClass
   final String? nameMl;
   final String? nameEn;
   final String data;
-  final bool hidden;
+  final bool? hidden;
   final int createdAt;
   final String? createdBy;
   final int updatedAt;
@@ -4460,7 +4459,7 @@ class TemplateOverrideRow extends DataClass
     this.nameMl,
     this.nameEn,
     required this.data,
-    required this.hidden,
+    this.hidden,
     required this.createdAt,
     this.createdBy,
     required this.updatedAt,
@@ -4496,7 +4495,9 @@ class TemplateOverrideRow extends DataClass
       map['name_en'] = Variable<String>(nameEn);
     }
     map['data'] = Variable<String>(data);
-    map['hidden'] = Variable<bool>(hidden);
+    if (!nullToAbsent || hidden != null) {
+      map['hidden'] = Variable<bool>(hidden);
+    }
     map['created_at'] = Variable<int>(createdAt);
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
@@ -4537,7 +4538,9 @@ class TemplateOverrideRow extends DataClass
           ? const Value.absent()
           : Value(nameEn),
       data: Value(data),
-      hidden: Value(hidden),
+      hidden: hidden == null && nullToAbsent
+          ? const Value.absent()
+          : Value(hidden),
       createdAt: Value(createdAt),
       createdBy: createdBy == null && nullToAbsent
           ? const Value.absent()
@@ -4570,7 +4573,7 @@ class TemplateOverrideRow extends DataClass
       nameMl: serializer.fromJson<String?>(json['name_ml']),
       nameEn: serializer.fromJson<String?>(json['name_en']),
       data: serializer.fromJson<String>(json['data']),
-      hidden: serializer.fromJson<bool>(json['hidden']),
+      hidden: serializer.fromJson<bool?>(json['hidden']),
       createdAt: serializer.fromJson<int>(json['created_at']),
       createdBy: serializer.fromJson<String?>(json['created_by']),
       updatedAt: serializer.fromJson<int>(json['updated_at']),
@@ -4594,7 +4597,7 @@ class TemplateOverrideRow extends DataClass
       'name_ml': serializer.toJson<String?>(nameMl),
       'name_en': serializer.toJson<String?>(nameEn),
       'data': serializer.toJson<String>(data),
-      'hidden': serializer.toJson<bool>(hidden),
+      'hidden': serializer.toJson<bool?>(hidden),
       'created_at': serializer.toJson<int>(createdAt),
       'created_by': serializer.toJson<String?>(createdBy),
       'updated_at': serializer.toJson<int>(updatedAt),
@@ -4616,7 +4619,7 @@ class TemplateOverrideRow extends DataClass
     Value<String?> nameMl = const Value.absent(),
     Value<String?> nameEn = const Value.absent(),
     String? data,
-    bool? hidden,
+    Value<bool?> hidden = const Value.absent(),
     int? createdAt,
     Value<String?> createdBy = const Value.absent(),
     int? updatedAt,
@@ -4637,7 +4640,7 @@ class TemplateOverrideRow extends DataClass
     nameMl: nameMl.present ? nameMl.value : this.nameMl,
     nameEn: nameEn.present ? nameEn.value : this.nameEn,
     data: data ?? this.data,
-    hidden: hidden ?? this.hidden,
+    hidden: hidden.present ? hidden.value : this.hidden,
     createdAt: createdAt ?? this.createdAt,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -4752,7 +4755,7 @@ class TemplateOverridesCompanion extends UpdateCompanion<TemplateOverrideRow> {
   final Value<String?> nameMl;
   final Value<String?> nameEn;
   final Value<String> data;
-  final Value<bool> hidden;
+  final Value<bool?> hidden;
   final Value<int> createdAt;
   final Value<String?> createdBy;
   final Value<int> updatedAt;
@@ -4862,7 +4865,7 @@ class TemplateOverridesCompanion extends UpdateCompanion<TemplateOverrideRow> {
     Value<String?>? nameMl,
     Value<String?>? nameEn,
     Value<String>? data,
-    Value<bool>? hidden,
+    Value<bool?>? hidden,
     Value<int>? createdAt,
     Value<String?>? createdBy,
     Value<int>? updatedAt,
@@ -29194,7 +29197,7 @@ typedef $TemplateOverridesCreateCompanionBuilder =
       Value<String?> nameMl,
       Value<String?> nameEn,
       Value<String> data,
-      Value<bool> hidden,
+      Value<bool?> hidden,
       required int createdAt,
       Value<String?> createdBy,
       required int updatedAt,
@@ -29216,7 +29219,7 @@ typedef $TemplateOverridesUpdateCompanionBuilder =
       Value<String?> nameMl,
       Value<String?> nameEn,
       Value<String> data,
-      Value<bool> hidden,
+      Value<bool?> hidden,
       Value<int> createdAt,
       Value<String?> createdBy,
       Value<int> updatedAt,
@@ -29538,7 +29541,7 @@ class $TemplateOverridesTableManager
                 Value<String?> nameMl = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<String> data = const Value.absent(),
-                Value<bool> hidden = const Value.absent(),
+                Value<bool?> hidden = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
@@ -29580,7 +29583,7 @@ class $TemplateOverridesTableManager
                 Value<String?> nameMl = const Value.absent(),
                 Value<String?> nameEn = const Value.absent(),
                 Value<String> data = const Value.absent(),
-                Value<bool> hidden = const Value.absent(),
+                Value<bool?> hidden = const Value.absent(),
                 required int createdAt,
                 Value<String?> createdBy = const Value.absent(),
                 required int updatedAt,
