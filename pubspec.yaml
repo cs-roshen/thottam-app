@@ -62,6 +62,33 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Static cuts of the Google Fonts variable fonts; see tool/build_fonts.py.
+  fonts:
+    - family: AnekMalayalam
+      fonts:
+        - asset: assets/fonts/AnekMalayalam-600.ttf
+          weight: 600
+        - asset: assets/fonts/AnekMalayalam-700.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-400.ttf
+        - asset: assets/fonts/Inter-500.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-600.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-700.ttf
+          weight: 700
+    - family: NotoSansMalayalam
+      fonts:
+        - asset: assets/fonts/NotoSansMalayalam-400.ttf
+        - asset: assets/fonts/NotoSansMalayalam-500.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansMalayalam-600.ttf
+          weight: 600
+        - asset: assets/fonts/NotoSansMalayalam-700.ttf
+          weight: 700
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
