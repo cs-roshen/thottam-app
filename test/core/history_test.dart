@@ -291,6 +291,25 @@ void main() {
     );
   });
 
+  test('screens watching a table see the write', () async {
+    final seen = db
+        .customSelect(
+          'SELECT COUNT(*) AS n FROM plots WHERE deleted_at IS NULL',
+          readsFrom: {db.plots},
+        )
+        .watchSingle()
+        .map((r) => r.read<int>('n'))
+        .take(3)
+        .toList();
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    final created = await history.writeWithHistory([
+      const CreateRow('plots', {'id': 'p1', 'farm_id': farm, 'name': 'Plot 1'}),
+    ]);
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    await history.restore(created.single);
+    expect(await seen, [0, 1, 0]);
+  });
+
   test('a new farm is its own farm', () async {
     await history.writeWithHistory([
       const CreateRow('farms', {'id': farm, 'name': 'Thottam'}),

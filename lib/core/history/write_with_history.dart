@@ -83,7 +83,7 @@ class History {
   /// history rows written, for undo; an update that changes nothing writes
   /// nothing.
   Future<List<String>> writeWithHistory(List<RowWrite> writes) =>
-      db.transaction(() async {
+      _notifying({for (final w in writes) w.table}, () async {
         final events = <String>[];
         for (final w in writes) {
           final event = switch (w) {
@@ -100,7 +100,18 @@ class History {
   /// values, a deleted row back in place, a new row deleted (the undo of a
   /// save). The restore is itself a logged write. Returns its history id, or
   /// null when the row is already that way.
-  Future<String?> restore(String eventId) => db.transaction(() async {
+  Future<String?> restore(String eventId) async {
+    final entity = await db
+        .customSelect(
+          'SELECT entity FROM event_log WHERE id = ?',
+          variables: [Variable.withString(eventId)],
+        )
+        .getSingleOrNull();
+    if (entity == null) throw ArgumentError.value(eventId, 'eventId');
+    return _notifying({entity.read<String>('entity')}, () => _restore(eventId));
+  }
+
+  Future<String?> _restore(String eventId) async {
     final event = await db
         .customSelect(
           'SELECT * FROM event_log WHERE id = ?',
@@ -131,7 +142,22 @@ class History {
       'restore',
       _Meta(e['occurred_on']! as String, summary),
     );
-  });
+  }
+
+  /// Runs [body] in one transaction, then tells every watching query that
+  /// [tables], the history and the upload queue changed (raw statements do
+  /// not do that on their own).
+  Future<T> _notifying<T>(Set<String> tables, Future<T> Function() body) async {
+    final result = await db.transaction(body);
+    db.notifyUpdates({
+      for (final t in db.allTables)
+        if (tables.contains(t.actualTableName) ||
+            t.actualTableName == 'event_log' ||
+            t.actualTableName == 'outbox')
+          TableUpdate.onTable(t),
+    });
+    return result;
+  }
 
   Future<String> _create(CreateRow w) async {
     final columns = _columnsOf(w.table);
