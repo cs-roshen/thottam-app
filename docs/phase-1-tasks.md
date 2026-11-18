@@ -8,7 +8,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [x] A2. Theme and tokens from `docs/design-tokens.md`; load fonts (Anek Malayalam, Inter, Noto Sans Malayalam) as bundled assets so they work offline.
 - [x] A3. Localisation: wire ARB files, language switch (ml, en, mixed), large-text mode. Clean up ARB keys from the prototype export (rename indexed keys, add descriptions). Add placeholders and plural rules for every string that carries a number, amount, date or name; renaming keys alone is not enough.
 - [x] A4. Shared widgets: primary and outline buttons, choice chip, segmented control, switch row, stepper, tint icon tile, card, toast with undo, bottom sheet, bottom nav with centre add button, amount input, empty state, "last time" banner, stale-data tag.
-- [ ] A5. Router and shell: four tabs (three when the role cannot open Money) plus add sheet; empty placeholder screens.
+- [x] A5. Router and shell: four tabs (three when the role cannot open Money) plus add sheet; empty placeholder screens.
 - [ ] A6. Gates and benchmark seed: check scripts in `tool/` and a CI workflow (implementation plan section 16); a debug-only seed generator with three years of data for one farm (section 14). Done before B1.
 
 ## B. Data core

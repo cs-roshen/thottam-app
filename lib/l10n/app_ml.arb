@@ -832,5 +832,9 @@
   "amountInputHint": "തുക രൂപയിൽ",
   "@amountInputHint": {
     "description": "Screen reader hint on the large amount input."
+  },
+  "debugWidgetGallery": "വിജറ്റ് ഗാലറി (ഡീബഗ്)",
+  "@debugWidgetGallery": {
+    "description": "Link on More to the shared widget gallery; shown in debug builds only."
   }
 }

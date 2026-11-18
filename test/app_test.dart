@@ -8,7 +8,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: ThottamApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('തോട്ടം'), findsOneWidget);
+    expect(find.widgetWithText(AppBar, 'ഹോം'), findsOneWidget);
   });
 
   testWidgets('supports Malayalam and English', (tester) async {
