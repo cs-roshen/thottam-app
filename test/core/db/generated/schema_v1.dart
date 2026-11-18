@@ -20370,6 +20370,14 @@ class Outbox extends Table with TableInfo<Outbox, OutboxData> {
     $customConstraints: 'NOT NULL DEFAULT \'pending\'',
     defaultValue: const CustomExpression('\'pending\''),
   );
+  late final GeneratedColumn<String> batchId = GeneratedColumn<String>(
+    'batch_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
     'attempts',
     aliasedName,
@@ -20411,6 +20419,7 @@ class Outbox extends Table with TableInfo<Outbox, OutboxData> {
     rowId,
     baseVersion,
     status,
+    batchId,
     attempts,
     lastError,
     createdAt,

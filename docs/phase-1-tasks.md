@@ -53,12 +53,17 @@ Decided (2026-11-17):
 - Supabase: project `Thottam-App` (`mtkxbzwkxupcdjrbmxnf`), region ap-southeast-1 (Singapore). Chosen 2026-11-18 in place of the paused `thottam` project.
 - Pilot district: Idukki. Crops: wave 1 (coconut, rubber, pepper, banana, paddy, cardamom).
 
+Decided (2026-11-18):
+
+- History on the phone: every season stays on the phone; nothing is cut off or fetched on demand.
+- B1 and B7 server tests run against the owner's Supabase cloud project (in a transaction that is rolled back), instead of a local Supabase instance.
+- B6 waits for the Google Cloud project and OAuth client ids; B7 is built against a fake server and the server tests until then.
+
 Open:
 
 - Google Cloud project and OAuth client ids for Google sign-in (needed by B6).
 - SMS provider for phone OTP, and sender and template registration (needed by D6).
 - Whether one account can have both Google and phone sign-in linked, and how a phone-only member is invited (needed by D6).
-- How many seasons of history stay on the phone; older events are fetched from the server (needed by B7).
 - Partner organisation for the pilot (needed by the field test).
 - Which price sources are licensed for use (needed by C11).
 - Test phone: one low-end Android phone typical of the pilot district, for all performance budgets (needed by A6).

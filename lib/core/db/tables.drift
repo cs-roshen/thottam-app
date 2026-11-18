@@ -633,6 +633,7 @@ CREATE TABLE outbox (
   row_id TEXT NOT NULL,
   base_version INTEGER NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending', -- pending, sending, rejected
+  batch_id TEXT,               -- set when sent; a retry resends the same batch
   attempts INTEGER NOT NULL DEFAULT 0,
   last_error TEXT,
   created_at INTEGER NOT NULL,

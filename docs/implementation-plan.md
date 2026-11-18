@@ -156,7 +156,7 @@ No app code. The output is corrected docs and answered decisions.
 | Google Cloud project and OAuth client ids for Google sign-in | B6 | Open |
 | SMS provider for phone OTP and its registration (see section 17) | D6 | Open |
 | Whether one account can have both Google and phone sign-in linked, and how a phone-only member is invited | D6 | Open |
-| How many seasons of history stay on the phone (section 12) | B7 | Open |
+| How many seasons of history stay on the phone (section 12) | B7 | All of them (2026-11-18) |
 | Test phone: one low-end Android phone typical of the pilot district | A6 | Open |
 | Pilot district and crops | B1 seed data | Idukki; wave 1 crops (coconut, rubber, pepper, banana, paddy, cardamom) |
 | Partner organisation for the pilot | Field test (phase 6) | Open |
@@ -948,9 +948,10 @@ not scan the whole table.
 
 ### Event log growth
 
-- Changed fields only for updates (B4). Paginate. Keep everything locally for the current and
-  previous two seasons; older events stay on the server and are fetched on demand when the
-  farmer scrolls that far back. Decide this cut-off with the owner before B7.
+- Changed fields only for updates (B4). Paginate. Every season stays on the phone (owner
+  decision, 2026-11-18): nothing is cut off and nothing is fetched on demand. The three-year
+  benchmark seed is 50.4 MB; measure the file again at D1 and with five years of data before
+  the beta, and tell the owner if it nears the storage budget.
 
 ### Photos
 
