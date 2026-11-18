@@ -68,8 +68,15 @@ void main() {
     expect(event['entity'], 'plots');
     expect(event['entity_id'], plotRow['id']);
     expect(event['old_values'], isNull);
-    expect(json(event['new_values'])['name'], 'Plot 1');
-    expect(json(event['new_values'])['version'], 1);
+    // the full row as stored, defaults included, without what the event row
+    // already says (id, farm, times, author, version)
+    expect(json(event['new_values']), {
+      'name': 'Plot 1',
+      'area': null,
+      'area_unit': 'cent',
+      'tenure': 'owned',
+      'details': '{}',
+    });
     expect(event['occurred_on'], '2026-11-18');
 
     final outbox = await rows(
@@ -340,6 +347,163 @@ void main() {
       expect(json(g['default_rates']), {'general': 80000});
     },
   );
+
+  test('undoing the delete of an own crop brings it back', () async {
+    final del = await history.writeWithHistory([
+      const CreateRow('crops', {
+        'id': 'own',
+        'owner_farm_id': farm,
+        'code': 'jackfruit',
+        'name_ml': 'പ്ലാവ്',
+        'name_en': 'Jackfruit',
+        'kind': 'perennial',
+      }),
+      const DeleteRow('crops', 'own'),
+    ]);
+    await history.restore(del.last);
+    expect(
+      (await rows('SELECT deleted_at FROM crops')).single['deleted_at'],
+      isNull,
+    );
+  });
+
+  test('restoring a delete keeps edits made after it', () async {
+    final id = await addExpense();
+    final del = await history.writeWithHistory([DeleteRow('expenses', id)]);
+    await history.restore(del.single);
+    await history.writeWithHistory([
+      UpdateRow('expenses', id, const {'notes': 'kept'}),
+    ]);
+    await history.writeWithHistory([DeleteRow('expenses', id)]);
+    // restoring the first delete again brings the row back with the later note
+    await history.restore(del.single);
+    final e = (await rows('SELECT * FROM expenses')).single;
+    expect(e['deleted_at'], isNull);
+    expect(e['notes'], 'kept');
+  });
+
+  test('undo pressed twice does nothing the second time', () async {
+    await addExpense();
+    final create =
+        (await rows('SELECT id FROM event_log')).single['id']! as String;
+    expect(await history.restore(create), isNotNull);
+    final before = (await rows('SELECT COUNT(*) AS n FROM event_log')).single;
+    expect(await history.restore(create), isNull);
+    expect((await rows('SELECT COUNT(*) AS n FROM event_log')).single, before);
+  });
+
+  test('a restore shows the restored values in its summary', () async {
+    final id = await addExpense();
+    final edit = await history.writeWithHistory([
+      UpdateRow(
+        'expenses',
+        id,
+        const {'amount_paise': 380000},
+        summary: const {'amount_paise': 380000, 'plot': 'Plot 1'},
+      ),
+    ]);
+    await history.restore(edit.single);
+    final r = (await rows(
+      "SELECT summary FROM event_log WHERE \"action\" = 'restore'",
+    )).single;
+    expect(json(r['summary']), {'amount_paise': 360000, 'plot': 'Plot 1'});
+  });
+
+  test('one undo takes back a whole save, all or nothing', () async {
+    final events = await history.writeWithHistory([
+      const CreateRow('plots', {'id': 'p1', 'farm_id': farm, 'name': 'Plot 1'}),
+      const CreateRow('crop_cycles', {
+        'id': 'c1',
+        'farm_id': farm,
+        'plot_id': 'p1',
+        'crop_id': 'coconut',
+      }),
+    ]);
+    await expectLater(
+      history.undo([...events, 'missing']),
+      throwsArgumentError,
+    );
+    expect(
+      (await rows('SELECT deleted_at FROM plots')).single['deleted_at'],
+      isNull,
+    );
+    final undone = await history.undo(events);
+    expect(undone.length, 2);
+    expect(
+      (await rows('SELECT deleted_at FROM plots')).single['deleted_at'],
+      isNotNull,
+    );
+    expect(
+      (await rows('SELECT deleted_at FROM crop_cycles')).single['deleted_at'],
+      isNotNull,
+    );
+  });
+
+  test(
+    'an edit after a refused upload keeps the version the server has',
+    () async {
+      final id = await addExpense();
+      // the create reached the server (version 1); an edit (version 2) was refused
+      await db.customStatement('DELETE FROM outbox');
+      await history.writeWithHistory([
+        UpdateRow('expenses', id, const {'notes': 'refused'}),
+      ]);
+      await db.customStatement(
+        "UPDATE outbox SET status = 'rejected' WHERE entity = 'expenses'",
+      );
+      await history.writeWithHistory([
+        UpdateRow('expenses', id, const {'notes': 'again'}),
+      ]);
+      final pending = (await rows(
+        "SELECT base_version FROM outbox WHERE entity = 'expenses' "
+        "AND status = 'pending'",
+      )).single;
+      expect(pending['base_version'], 1);
+    },
+  );
+
+  test(
+    'an edit to a row another phone deleted is refused, not hidden',
+    () async {
+      final id = await addExpense();
+      await history.writeWithHistory([DeleteRow('expenses', id)]);
+      await expectLater(
+        history.writeWithHistory([
+          UpdateRow('expenses', id, const {'notes': 'late'}),
+        ]),
+        throwsStateError,
+      );
+    },
+  );
+
+  test('values of the wrong kind are refused before they are stored', () async {
+    Future<void> create(Map<String, Object?> v) => history.writeWithHistory([
+      CreateRow('expenses', {
+        'farm_id': farm,
+        'spent_on': '2026-11-10',
+        'category_code': 'seeds',
+        'amount_paise': 100,
+        ...v,
+      }),
+    ]);
+    await expectLater(
+      create({'spent_on': DateTime(2026, 11, 10)}),
+      throwsArgumentError,
+    );
+    await expectLater(create({'spent_on': '10-11-2026'}), throwsArgumentError);
+    await expectLater(create({'amount_paise': 100.5}), throwsArgumentError);
+    await expectLater(create({'amount_paise': '100'}), throwsArgumentError);
+    await expectLater(
+      history.writeWithHistory([
+        const CreateRow('plots', {
+          'farm_id': farm,
+          'name': 'x',
+        }, occurredOn: 'today'),
+      ]),
+      throwsArgumentError,
+    );
+    expect(await rows('SELECT * FROM expenses'), isEmpty);
+  });
 
   test('history rows are ordered by time for the diary', () async {
     await addExpense();

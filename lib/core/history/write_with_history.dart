@@ -100,15 +100,32 @@ class History {
   /// values, a deleted row back in place, a new row deleted (the undo of a
   /// save). The restore is itself a logged write. Returns its history id, or
   /// null when the row is already that way.
-  Future<String?> restore(String eventId) async {
-    final entity = await db
-        .customSelect(
-          'SELECT entity FROM event_log WHERE id = ?',
-          variables: [Variable.withString(eventId)],
-        )
-        .getSingleOrNull();
-    if (entity == null) throw ArgumentError.value(eventId, 'eventId');
-    return _notifying({entity.read<String>('entity')}, () => _restore(eventId));
+  // shortcut: restoring an old event does not warn when the row changed since;
+  // the History screen (C7) asks before calling this on anything but the latest.
+  Future<String?> restore(String eventId) async =>
+      (await undo([eventId])).firstOrNull;
+
+  /// The undo of one save: restores every history row [eventIds] it returned,
+  /// newest first, all or nothing. Returns the new history ids.
+  Future<List<String>> undo(List<String> eventIds) async {
+    final entities = <String>{};
+    for (final id in eventIds) {
+      final e = await db
+          .customSelect(
+            'SELECT entity FROM event_log WHERE id = ?',
+            variables: [Variable.withString(id)],
+          )
+          .getSingleOrNull();
+      if (e == null) throw ArgumentError.value(id, 'eventIds');
+      entities.add(e.read<String>('entity'));
+    }
+    return _notifying(entities, () async {
+      final restored = <String>[];
+      for (final id in eventIds.reversed) {
+        if (await _restore(id) case final r?) restored.add(r);
+      }
+      return restored;
+    });
   }
 
   Future<String?> _restore(String eventId) async {
@@ -126,15 +143,15 @@ class History {
               .cast<String, Object?>();
     final target = switch (e['action']) {
       'create' => {'deleted_at': _clock().millisecondsSinceEpoch},
-      'delete' => {
-        for (final MapEntry(:key, :value) in old.entries)
-          if (!commonColumns.contains(key)) key: value,
-        'deleted_at': null,
-      },
+      'delete' => {'deleted_at': null},
       _ => old,
     };
-    final summary = (jsonDecode(e['summary']! as String) as Map)
-        .cast<String, Object?>();
+    final summary = {
+      for (final MapEntry(:key, :value) in (jsonDecode(
+        e['summary']! as String,
+      ) as Map).cast<String, Object?>().entries)
+        key: target.containsKey(key) ? target[key] : value,
+    };
     return _update(
       e['entity']! as String,
       e['entity_id']! as String,
@@ -161,10 +178,11 @@ class History {
 
   Future<String> _create(CreateRow w) async {
     final columns = _columnsOf(w.table);
-    for (final key in w.values.keys) {
-      if (!columns.contains(key) || _managed.contains(key)) {
+    for (final MapEntry(:key, :value) in w.values.entries) {
+      if (!columns.containsKey(key) || _managed.contains(key)) {
         throw ArgumentError.value(key, 'values', 'not settable on ${w.table}');
       }
+      _checkKind(columns[key]!, value, w.table);
     }
     final now = _clock().millisecondsSinceEpoch;
     final id = (w.values['id'] as String?) ?? _newId();
@@ -187,7 +205,15 @@ class History {
       [for (final c in cols) row[c]],
     );
     await _enqueue(w.table, id, farmId, 0, now);
-    return _log(w.table, id, farmId, 'create', null, row, w, now);
+    // the row as stored, defaults included; the event row already carries
+    // the id, farm, times, author and version
+    final stored = await _current(w.table, id);
+    final shown = {
+      for (final MapEntry(:key, :value) in stored.entries)
+        if (!commonColumns.contains(key) && key != _farmColumn[w.table])
+          key: value,
+    };
+    return _log(w.table, id, farmId, 'create', null, shown, w, now);
   }
 
   Future<String?> _update(
@@ -199,11 +225,15 @@ class History {
   ) async {
     final columns = _columnsOf(table);
     final current = await _current(table, id);
+    if (action == 'update' && current['deleted_at'] != null) {
+      // another phone deleted it; saving onto a hidden row would lose the edit
+      throw StateError('$table row $id is deleted');
+    }
     final farmColumn = _farmColumn[table];
     final changed = <String, Object?>{};
     for (final MapEntry(:key, :value) in changes.entries) {
       final allowed =
-          columns.contains(key) &&
+          columns.containsKey(key) &&
           key != 'id' &&
           key != farmColumn &&
           (!_managed.contains(key) ||
@@ -211,8 +241,12 @@ class History {
       if (!allowed) {
         throw ArgumentError.value(key, 'changes', 'not settable on $table');
       }
+      _checkKind(columns[key]!, value, table);
       final v = toSqlValue(value);
-      if (current[key] != v) changed[key] = v;
+      final same = key == 'deleted_at'
+          ? (current[key] == null) == (v == null)
+          : current[key] == v;
+      if (!same) changed[key] = v;
     }
     if (changed.isEmpty) return null;
     final now = _clock().millisecondsSinceEpoch;
@@ -269,7 +303,7 @@ class History {
     int now,
   ) async {
     final (occurredOn, summary) = switch (meta) {
-      RowWrite w => (w.occurredOn ?? _today(), w.summary),
+      RowWrite w => (_dayOf(w.occurredOn) ?? _today(), w.summary),
       _Meta m => (m.occurredOn, m.summary),
       _ => throw StateError('meta'),
     };
@@ -297,7 +331,9 @@ class History {
   }
 
   /// One pending upload per row: a later edit folds into it and keeps its
-  /// base version (the version the server last had).
+  /// base version (the version the server last had). While an earlier upload
+  /// of the row is in flight or was refused, the server never took the
+  /// phone's newer versions, so the new upload keeps that upload's base.
   Future<void> _enqueue(
     String table,
     String id,
@@ -306,10 +342,12 @@ class History {
     int now,
   ) => db.customStatement(
     'INSERT INTO outbox (farm_id, entity, row_id, base_version, status, '
-    "attempts, created_at, updated_at) VALUES (?, ?, ?, ?, 'pending', 0, ?, ?) "
+    'attempts, created_at, updated_at) VALUES (?, ?, ?, COALESCE((SELECT '
+    'MIN(base_version) FROM outbox WHERE entity = ? AND row_id = ?), ?), '
+    "'pending', 0, ?, ?) "
     "ON CONFLICT (entity, row_id) WHERE status = 'pending' "
     'DO UPDATE SET updated_at = excluded.updated_at',
-    [farmId, table, id, baseVersion, now, now],
+    [farmId, table, id, table, id, baseVersion, now, now],
   );
 
   Future<Map<String, Object?>> _current(String table, String id) async {
@@ -323,12 +361,37 @@ class History {
     return row.data;
   }
 
-  Set<String> _columnsOf(String table) {
+  Map<String, GeneratedColumn<Object>> _columnsOf(String table) {
     if (!_farmColumn.containsKey(table) || _notWritable.contains(table)) {
       throw ArgumentError.value(table, 'table', 'not written through history');
     }
     final info = db.allTables.firstWhere((t) => t.actualTableName == table);
-    return {for (final c in info.$columns) c.name};
+    return {for (final c in info.$columns) c.name: c};
+  }
+
+  static final _day = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+
+  /// Refuses a value of the wrong kind for its column, which would otherwise
+  /// be stored, never match on the next save, or never sync: text for text
+  /// (or a map or list for JSON), whole numbers or times for integers, true
+  /// or false for booleans, and 'YYYY-MM-DD' for days of work.
+  static void _checkKind(GeneratedColumn<Object> c, Object? v, String table) {
+    if (v == null) return;
+    final ok = switch (c.type) {
+      DriftSqlType.string =>
+        v is Map ||
+            v is List ||
+            (v is String &&
+                (!(c.name.endsWith('_on') || c.name == 'work_date') ||
+                    _day.hasMatch(v))),
+      DriftSqlType.int || DriftSqlType.bigInt => v is int || v is DateTime,
+      // history keeps booleans as 0 and 1
+      DriftSqlType.bool => v is bool || v == 0 || v == 1,
+      _ => true,
+    };
+    if (!ok) {
+      throw ArgumentError.value(v, c.name, 'not a value for $table.${c.name}');
+    }
   }
 
   String _farmOf(String table, Map<String, Object?> row) {
@@ -340,6 +403,13 @@ class History {
   }
 
   String _newId() => uuidV7(_clock(), _random);
+
+  static String? _dayOf(String? day) {
+    if (day != null && !_day.hasMatch(day)) {
+      throw ArgumentError.value(day, 'occurredOn', 'not YYYY-MM-DD');
+    }
+    return day;
+  }
 
   String _today() {
     final d = _clock();

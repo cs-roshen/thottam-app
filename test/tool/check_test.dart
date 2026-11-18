@@ -82,6 +82,41 @@ void main() {
     );
   });
 
+  test('every kind of Drift write is caught, in data/ and elsewhere', () {
+    for (final (path, line) in const [
+      (
+        'lib/features/land/data/plot_repository.dart',
+        "db.customUpdate('UPDATE plots');",
+      ),
+      ('lib/features/land/data/plot_repository.dart', 'db.batch((b) {});'),
+      ('lib/core/overrides/overrides.dart', 'db.into(db.plots).insert(row);'),
+      (
+        'lib/features/land/ui/plot_screen.dart',
+        "db.customStatement('DELETE');",
+      ),
+    ]) {
+      expect(
+        checkFile(path, '$line\n').where((p) => p.contains('write outside')),
+        hasLength(1),
+        reason: path,
+      );
+    }
+    expect(
+      checkFile(
+        'lib/core/dev/load_seed.dart',
+        "b.customStatement('INSERT');\n",
+      ),
+      isEmpty,
+    );
+    expect(
+      checkFile(
+        'lib/core/money/money_format.dart',
+        'groups.insert(0, head);\n',
+      ),
+      isEmpty,
+    );
+  });
+
   test('the marker skips a line on purpose', () {
     expect(
       checkFile(
