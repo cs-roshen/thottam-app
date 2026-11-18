@@ -253,11 +253,18 @@ select pg_temp.check('a new farm keeps its template version and version',
 
 -- the batch belongs to one person, on a farm they are in, and is not huge
 do $$
+declare
+  -- worked out before the role switch: the signed-in role cannot run pg_temp functions
+  v_farm uuid := pg_temp.id('farm');
+  v_farm2 uuid := pg_temp.id('farm2');
+  v_owner uuid := pg_temp.u('owner');
+  v_manager uuid := pg_temp.u('manager');
+  v_supervisor uuid := pg_temp.u('supervisor');
 begin
-  perform set_config('request.jwt.claims', json_build_object('sub', pg_temp.u('manager'), 'role', 'authenticated')::text, true);
+  perform set_config('request.jwt.claims', json_build_object('sub', v_manager, 'role', 'authenticated')::text, true);
   set local role authenticated;
   begin
-    perform public.sync_push(gen_random_uuid(), pg_temp.id('farm'), '[]', pg_temp.u('owner'));
+    perform public.sync_push(gen_random_uuid(), v_farm, '[]', v_owner);
     reset role;
     perform pg_temp.check('a batch for another person is refused, as worth retrying', false);
   exception when others then
@@ -265,9 +272,9 @@ begin
     perform pg_temp.check('a batch for another person is refused, as worth retrying', sqlstate like '28%', sqlstate);
   end;
   set local role authenticated;
-  perform set_config('request.jwt.claims', json_build_object('sub', pg_temp.u('supervisor'), 'role', 'authenticated')::text, true);
+  perform set_config('request.jwt.claims', json_build_object('sub', v_supervisor, 'role', 'authenticated')::text, true);
   begin
-    perform public.sync_push(gen_random_uuid(), pg_temp.id('farm2'), '[]', pg_temp.u('supervisor'));
+    perform public.sync_push(gen_random_uuid(), v_farm2, '[]', v_supervisor);
     reset role;
     perform pg_temp.check('someone outside a farm cannot take its lock', false);
   exception when others then
@@ -276,8 +283,8 @@ begin
   end;
   set local role authenticated;
   begin
-    perform public.sync_push(gen_random_uuid(), pg_temp.id('farm'),
-      (select jsonb_agg(jsonb_build_object('entity', 'notes')) from generate_series(1, 501)), pg_temp.u('supervisor'));
+    perform public.sync_push(gen_random_uuid(), v_farm,
+      (select jsonb_agg(jsonb_build_object('entity', 'notes')) from generate_series(1, 501)), v_supervisor);
     reset role;
     perform pg_temp.check('a batch of more than 500 rows is refused', false);
   exception when others then
@@ -289,10 +296,12 @@ end $$;
 
 -- a change made straight through the API still leaves a trace on the server
 do $$
+declare
+  v_e1 uuid := pg_temp.id('e1');
 begin
   perform set_config('request.jwt.claims', json_build_object('sub', pg_temp.u('manager'), 'role', 'authenticated')::text, true);
   set local role authenticated;
-  update public.expenses set amount_paise = 1 where id = pg_temp.id('e1');
+  update public.expenses set amount_paise = 1 where id = v_e1;
   reset role;
   perform set_config('request.jwt.claims', '', true);
 end $$;
