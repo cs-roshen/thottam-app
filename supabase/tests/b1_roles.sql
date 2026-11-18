@@ -1,9 +1,9 @@
--- B1 role and safety tests (implementation plan section 6, B1 "Tests").
+-- B1 role and safety tests (implementation plan section 6, B1 "Tests"). Run with tool/server_tests.py.
 --
 -- Run against a database that has the migrations applied:
 --   supabase db query --remote=<project ref> -f supabase/tests/b1_roles.sql
--- Everything runs in one transaction that is rolled back at the end, so the test users,
--- farms and rows never stay in the database. The last result lists every failed check.
+-- Everything runs in one transaction that ends by raising its summary as an error, so the
+-- test users, farms and rows never stay in the database. Look for "TEST SUMMARY" in the output.
 
 begin;
 
@@ -172,7 +172,8 @@ begin
     where t.name not in ('template_items', 'farms', 'farm_members', 'farm_invites', 'crops', 'event_log')
     order by t.sort_order
   loop
-    v_id := pg_temp.fx_id('a', r.name);
+    -- a lot's cost row has its lot's id
+    v_id := pg_temp.fx_id('a', case when r.name = 'lot_costs' then 'lots' else r.name end);
     execute format('select to_jsonb(x) from public.%I x where id = %L', r.name, v_id) into v_json;
     if v_json is null then
       perform pg_temp.check(r.name || ' fixture exists', false);
@@ -414,8 +415,19 @@ select pg_temp.check('removed supervisor still sees their own membership, so the
   pg_temp.try_as(pg_temp.u('supervisor_a'), format('select 1 from public.farm_members where id = %L', pg_temp.fx_id('a', 'm_supervisor'))) = 'ok:1');
 
 -- ---------- result ----------
-select count(*) filter (where ok) as passed, count(*) filter (where not ok) as failed,
-  coalesce(string_agg(name || ' -> ' || coalesce(detail, ''), E'\n' order by n) filter (where not ok), '') as failures
-from results;
+-- Always raises, so nothing above can be committed; the message is the summary.
+do $$
+declare
+  v_passed integer;
+  v_failed integer;
+  v_failures text;
+begin
+  select count(*) filter (where ok), count(*) filter (where not ok),
+    coalesce(string_agg(name || ' -> ' || coalesce(detail, ''), chr(10) order by n) filter (where not ok), '')
+    into v_passed, v_failed, v_failures
+  from results;
+  raise exception 'TEST SUMMARY b1_roles: passed=% failed=% %', v_passed, v_failed,
+    case when v_failed > 0 then chr(10) || v_failures else '' end;
+end $$;
 
 rollback;

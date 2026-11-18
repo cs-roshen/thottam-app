@@ -152,7 +152,7 @@ No app code. The output is corrected docs and answered decisions.
 | Decision | Needed by | Answer (2026-11-17) |
 | --- | --- | --- |
 | App id (package name) and store account | A1 | `app.thottam`; the owner's existing Google Play developer account |
-| Supabase project (new or existing) and region | B1 | The owner's existing project, in its current region |
+| Supabase project (new or existing) and region | B1 | `Thottam-App` (`mtkxbzwkxupcdjrbmxnf`), ap-southeast-1 (Singapore), 2026-11-18 |
 | Google Cloud project and OAuth client ids for Google sign-in | B6 | Open |
 | SMS provider for phone OTP and its registration (see section 17) | D6 | Open |
 | Whether one account can have both Google and phone sign-in linked, and how a phone-only member is invited | D6 | Open |
