@@ -1,0 +1,685 @@
+-- The phone's database (task B2). Synced tables mirror supabase/migrations/0001_init.sql
+-- column for column, without the server-only server_seq; test/core/db/schema_check_test.dart
+-- fails when the two disagree.
+--
+-- Types: ids are UUID text (version 7 when made on the phone); money is integer paise;
+-- quantities, areas, hours, attendance and shares are integer thousandths; dates of work are
+-- 'YYYY-MM-DD' text so ranges use an index; timestamps are integer milliseconds since the
+-- epoch, UTC; jsonb columns are JSON text.
+--
+-- There are no foreign keys here: pulled pages arrive table by table, so a child can land
+-- before its parent. The server enforces references; the phone's repositories write parents
+-- first.
+
+-- ---------- people and farms ----------
+CREATE TABLE profiles (
+  id TEXT NOT NULL PRIMARY KEY,
+  full_name TEXT NOT NULL DEFAULT '',
+  phone TEXT,
+  language TEXT NOT NULL DEFAULT 'ml',
+  large_text BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+) AS ProfileRow;
+
+CREATE TABLE farms (
+  id TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  district TEXT,
+  settings TEXT NOT NULL DEFAULT '{}',
+  accepted_template_version INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS FarmRow;
+
+CREATE TABLE farm_members (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  role TEXT NOT NULL,
+  permissions TEXT NOT NULL DEFAULT '{}',
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS FarmMemberRow;
+
+CREATE INDEX farm_members_user ON farm_members (user_id, farm_id);
+
+CREATE TABLE farm_invites (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  email TEXT NOT NULL,
+  role TEXT NOT NULL,
+  permissions TEXT NOT NULL DEFAULT '{}',
+  accepted_at INTEGER,
+  accepted_by TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS FarmInviteRow;
+
+CREATE INDEX farm_invites_farm ON farm_invites (farm_id);
+
+-- ---------- templates ----------
+CREATE TABLE crops (
+  id TEXT NOT NULL PRIMARY KEY,
+  code TEXT NOT NULL,
+  name_ml TEXT NOT NULL,
+  name_en TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  default_unit TEXT NOT NULL DEFAULT 'kg',
+  owner_farm_id TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS CropRow;
+
+CREATE INDEX crops_owner ON crops (owner_farm_id, code);
+
+CREATE TABLE template_items (
+  id TEXT NOT NULL PRIMARY KEY,
+  crop_id TEXT,
+  list_type TEXT NOT NULL,
+  code TEXT NOT NULL,
+  name_ml TEXT NOT NULL,
+  name_en TEXT NOT NULL,
+  data TEXT NOT NULL DEFAULT '{}',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  template_version INTEGER NOT NULL DEFAULT 1,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+) AS TemplateItemRow;
+
+CREATE INDEX template_items_list ON template_items (list_type, crop_id, sort_order);
+
+CREATE TABLE template_overrides (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  scope TEXT NOT NULL,
+  scope_id TEXT,
+  template_item_id TEXT,
+  crop_id TEXT,
+  list_type TEXT,
+  code TEXT,
+  name_ml TEXT,
+  name_en TEXT,
+  data TEXT NOT NULL DEFAULT '{}',
+  hidden BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS TemplateOverrideRow;
+
+CREATE INDEX template_overrides_farm ON template_overrides (farm_id) WHERE deleted_at IS NULL;
+
+-- ---------- land and crops ----------
+CREATE TABLE plots (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  area INTEGER,
+  area_unit TEXT NOT NULL DEFAULT 'cent',
+  tenure TEXT NOT NULL DEFAULT 'owned',
+  details TEXT NOT NULL DEFAULT '{}',
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS PlotRow;
+
+CREATE INDEX plots_farm ON plots (farm_id, name) WHERE deleted_at IS NULL;
+
+CREATE TABLE crop_cycles (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  plot_id TEXT NOT NULL,
+  crop_id TEXT NOT NULL,
+  variety TEXT,
+  plant_count INTEGER,
+  area_share INTEGER,
+  season TEXT,
+  planted_on TEXT,
+  started_on TEXT,
+  ended_on TEXT,
+  status TEXT NOT NULL DEFAULT 'active',
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS CropCycleRow;
+
+CREATE INDEX crop_cycles_plot ON crop_cycles (plot_id, status) WHERE deleted_at IS NULL;
+CREATE INDEX crop_cycles_farm ON crop_cycles (farm_id, status) WHERE deleted_at IS NULL;
+
+CREATE TABLE tasks (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  crop_cycle_id TEXT,
+  plot_id TEXT,
+  title TEXT NOT NULL,
+  due_on TEXT,
+  done_at INTEGER,
+  source TEXT NOT NULL DEFAULT 'manual',
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS TaskRow;
+
+CREATE INDEX tasks_farm_day ON tasks (farm_id, due_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX tasks_cycle_day ON tasks (crop_cycle_id, due_on) WHERE deleted_at IS NULL;
+
+CREATE TABLE notes (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  noted_on TEXT NOT NULL,
+  body TEXT NOT NULL,
+  plot_id TEXT,
+  crop_cycle_id TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS NoteRow;
+
+CREATE INDEX notes_farm_day ON notes (farm_id, noted_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX notes_cycle_day ON notes (crop_cycle_id, noted_on) WHERE deleted_at IS NULL;
+
+-- ---------- parties ----------
+CREATE TABLE parties (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phone TEXT,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS PartyRow;
+
+CREATE INDEX parties_farm ON parties (farm_id, kind, name) WHERE deleted_at IS NULL;
+
+-- ---------- labour ----------
+CREATE TABLE workers (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phone TEXT,
+  skill TEXT,
+  wage_type TEXT NOT NULL DEFAULT 'daily',
+  default_rate_paise INTEGER NOT NULL DEFAULT 0,
+  is_family BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS WorkerRow;
+
+CREATE INDEX workers_farm ON workers (farm_id, name) WHERE deleted_at IS NULL;
+
+CREATE TABLE labour_groups (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  label TEXT NOT NULL,
+  is_named BOOLEAN NOT NULL DEFAULT FALSE,
+  leader_worker_id TEXT,
+  usual_size INTEGER,
+  default_rates TEXT NOT NULL DEFAULT '{}',
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LabourGroupRow;
+
+CREATE INDEX labour_groups_farm ON labour_groups (farm_id, label) WHERE deleted_at IS NULL;
+
+CREATE TABLE labour_group_members (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  group_id TEXT NOT NULL,
+  worker_id TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LabourGroupMemberRow;
+
+CREATE INDEX labour_group_members_group ON labour_group_members (group_id) WHERE deleted_at IS NULL;
+CREATE INDEX labour_group_members_worker ON labour_group_members (worker_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE harvests (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  crop_cycle_id TEXT NOT NULL,
+  plot_id TEXT NOT NULL,
+  harvested_on TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  unit TEXT NOT NULL DEFAULT 'kg',
+  grade_code TEXT,
+  per_team_quantity BOOLEAN NOT NULL DEFAULT FALSE,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS HarvestRow;
+
+CREATE INDEX harvests_farm_day ON harvests (farm_id, harvested_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX harvests_cycle_day ON harvests (crop_cycle_id, harvested_on) WHERE deleted_at IS NULL;
+
+CREATE TABLE labour_entries (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  work_date TEXT NOT NULL,
+  worker_id TEXT,
+  group_id TEXT,
+  crop_cycle_id TEXT,
+  plot_id TEXT,
+  harvest_id TEXT,
+  task_code TEXT,
+  rate_class TEXT,
+  head_count INTEGER NOT NULL DEFAULT 1,
+  attendance INTEGER NOT NULL DEFAULT 1000,
+  wage_type TEXT NOT NULL DEFAULT 'daily',
+  hours INTEGER,
+  overtime_hours INTEGER,
+  overtime_rate_paise INTEGER,
+  rate_paise INTEGER NOT NULL DEFAULT 0,
+  piece_quantity INTEGER,
+  piece_unit TEXT,
+  amount_paise INTEGER NOT NULL DEFAULT 0,
+  amount_overridden BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LabourEntryRow;
+
+CREATE INDEX labour_entries_farm_day ON labour_entries (farm_id, work_date, id) WHERE deleted_at IS NULL;
+CREATE INDEX labour_entries_cycle_day ON labour_entries (crop_cycle_id, work_date) WHERE deleted_at IS NULL;
+CREATE INDEX labour_entries_worker_day ON labour_entries (worker_id, work_date) WHERE deleted_at IS NULL;
+CREATE INDEX labour_entries_group_day ON labour_entries (group_id, work_date) WHERE deleted_at IS NULL;
+CREATE INDEX labour_entries_harvest ON labour_entries (harvest_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE labour_allocations (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  labour_entry_id TEXT NOT NULL,
+  crop_cycle_id TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  is_manual BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LabourAllocationRow;
+
+CREATE INDEX labour_allocations_entry ON labour_allocations (labour_entry_id) WHERE deleted_at IS NULL;
+CREATE INDEX labour_allocations_cycle ON labour_allocations (crop_cycle_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE labour_payments (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  paid_on TEXT NOT NULL,
+  worker_id TEXT,
+  group_id TEXT,
+  kind TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  mode TEXT NOT NULL DEFAULT 'cash',
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LabourPaymentRow;
+
+CREATE INDEX labour_payments_farm_day ON labour_payments (farm_id, paid_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX labour_payments_worker_day ON labour_payments (worker_id, paid_on) WHERE deleted_at IS NULL;
+CREATE INDEX labour_payments_group_day ON labour_payments (group_id, paid_on) WHERE deleted_at IS NULL;
+
+-- ---------- expenses ----------
+CREATE TABLE expenses (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  spent_on TEXT NOT NULL,
+  category_code TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  plot_id TEXT,
+  vendor_party_id TEXT,
+  mode TEXT NOT NULL DEFAULT 'cash',
+  due_on TEXT,
+  notes TEXT,
+  photo_path TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS ExpenseRow;
+
+CREATE INDEX expenses_farm_day ON expenses (farm_id, spent_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX expenses_plot_day ON expenses (plot_id, spent_on) WHERE deleted_at IS NULL;
+
+CREATE TABLE expense_allocations (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  expense_id TEXT NOT NULL,
+  crop_cycle_id TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  is_manual BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS ExpenseAllocationRow;
+
+CREATE INDEX expense_allocations_expense ON expense_allocations (expense_id) WHERE deleted_at IS NULL;
+CREATE INDEX expense_allocations_cycle ON expense_allocations (crop_cycle_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE expense_payments (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  expense_id TEXT NOT NULL,
+  paid_on TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  mode TEXT NOT NULL DEFAULT 'cash',
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS ExpensePaymentRow;
+
+CREATE INDEX expense_payments_farm_day ON expense_payments (farm_id, paid_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX expense_payments_expense ON expense_payments (expense_id) WHERE deleted_at IS NULL;
+
+-- ---------- lots and sales ----------
+CREATE TABLE lots (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  crop_cycle_id TEXT NOT NULL,
+  harvest_id TEXT,
+  label TEXT,
+  quantity INTEGER NOT NULL,
+  unit TEXT NOT NULL DEFAULT 'kg',
+  grade_code TEXT,
+  teams_stamp TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LotRow;
+
+CREATE INDEX lots_cycle ON lots (crop_cycle_id) WHERE deleted_at IS NULL;
+CREATE INDEX lots_farm ON lots (farm_id, created_at) WHERE deleted_at IS NULL;
+CREATE INDEX lots_harvest ON lots (harvest_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE lot_costs (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  cost_paise INTEGER NOT NULL DEFAULT 0,
+  cost_overridden BOOLEAN NOT NULL DEFAULT FALSE,
+  teams_stamp TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS LotCostRow;
+
+CREATE TABLE sales (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  sold_on TEXT NOT NULL,
+  buyer_party_id TEXT,
+  sale_type TEXT NOT NULL DEFAULT 'trader',
+  quantity INTEGER NOT NULL,
+  unit TEXT NOT NULL DEFAULT 'kg',
+  grade_code TEXT,
+  rate_paise INTEGER NOT NULL,
+  deductions TEXT NOT NULL DEFAULT '[]',
+  net_paise INTEGER NOT NULL,
+  payment_due_on TEXT,
+  mode TEXT NOT NULL DEFAULT 'cash',
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS SaleRow;
+
+CREATE INDEX sales_farm_day ON sales (farm_id, sold_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX sales_buyer_day ON sales (buyer_party_id, sold_on) WHERE deleted_at IS NULL;
+
+CREATE TABLE sale_lots (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  sale_id TEXT NOT NULL,
+  lot_id TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS SaleLotRow;
+
+CREATE INDEX sale_lots_sale ON sale_lots (sale_id) WHERE deleted_at IS NULL;
+CREATE INDEX sale_lots_lot ON sale_lots (lot_id, quantity) WHERE deleted_at IS NULL;
+
+CREATE TABLE sale_payments (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  sale_id TEXT NOT NULL,
+  received_on TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  mode TEXT NOT NULL DEFAULT 'cash',
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS SalePaymentRow;
+
+CREATE INDEX sale_payments_farm_day ON sale_payments (farm_id, received_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX sale_payments_sale ON sale_payments (sale_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE other_income (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  received_on TEXT NOT NULL,
+  source_code TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  crop_cycle_id TEXT,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS OtherIncomeRow;
+
+CREATE INDEX other_income_farm_day ON other_income (farm_id, received_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX other_income_cycle_day ON other_income (crop_cycle_id, received_on) WHERE deleted_at IS NULL;
+
+-- ---------- prices ----------
+CREATE TABLE market_prices (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT,
+  crop_id TEXT NOT NULL,
+  grade_code TEXT,
+  market TEXT NOT NULL,
+  price_paise INTEGER NOT NULL,
+  unit TEXT NOT NULL DEFAULT 'kg',
+  source TEXT NOT NULL,
+  published_at INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS MarketPriceRow;
+
+CREATE INDEX market_prices_crop ON market_prices (crop_id, market, published_at) WHERE deleted_at IS NULL;
+
+CREATE TABLE price_alerts (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  crop_id TEXT NOT NULL,
+  market TEXT,
+  threshold_paise INTEGER NOT NULL,
+  direction TEXT NOT NULL DEFAULT 'above',
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS PriceAlertRow;
+
+CREATE INDEX price_alerts_crop ON price_alerts (crop_id) WHERE deleted_at IS NULL;
+
+-- ---------- history ----------
+CREATE TABLE event_log (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  "action" TEXT NOT NULL,
+  summary TEXT NOT NULL DEFAULT '{}',
+  old_values TEXT,
+  new_values TEXT,
+  occurred_on TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by TEXT
+) AS EventLogRow;
+
+CREATE INDEX event_log_farm_day ON event_log (farm_id, occurred_on, created_at, id);
+CREATE INDEX event_log_entity ON event_log (entity, entity_id, created_at);
+
+-- ---------- phone only ----------
+-- What to upload. One pending row per changed row: later edits update it (coalescing).
+-- base_version is the row's version as last received from the server (0 for a new row),
+-- so the server can tell "I changed version N" however many edits were folded together.
+CREATE TABLE outbox (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  farm_id TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  row_id TEXT NOT NULL,
+  base_version INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending', -- pending, sending, rejected
+  attempts INTEGER NOT NULL DEFAULT 0,
+  last_error TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+) AS OutboxRow;
+
+CREATE INDEX outbox_queue ON outbox (status, created_at);
+CREATE UNIQUE INDEX outbox_pending ON outbox (entity, row_id) WHERE status = 'pending';
+
+-- The last server_seq pulled, per farm and table ('' farm for master data).
+CREATE TABLE sync_state (
+  farm_id TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  cursor INTEGER NOT NULL DEFAULT 0,
+  pulled_at INTEGER,
+  PRIMARY KEY (farm_id, entity)
+) AS SyncStateRow;
+
+-- Changes the server could not merge on its own; shown to the farmer to choose.
+CREATE TABLE conflicts (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  row_id TEXT NOT NULL,
+  kind TEXT NOT NULL,          -- same_field, delete_edit, orphan, oversell
+  fields TEXT NOT NULL DEFAULT '[]',
+  mine TEXT,                   -- this phone's row, JSON
+  theirs TEXT,                 -- the server's row, JSON
+  created_at INTEGER NOT NULL,
+  resolved_at INTEGER,
+  resolution TEXT
+) AS ConflictRow;
+
+CREATE INDEX conflicts_open ON conflicts (farm_id, created_at) WHERE resolved_at IS NULL;
+
+-- Photos upload from their own queue so a large photo never delays entries.
+CREATE TABLE photo_uploads (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  row_id TEXT NOT NULL,
+  local_path TEXT NOT NULL,
+  remote_path TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  attempts INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL
+) AS PhotoUploadRow;
+
+CREATE INDEX photo_uploads_queue ON photo_uploads (status, created_at);
+
+CREATE TABLE app_settings (
+  "key" TEXT NOT NULL PRIMARY KEY,
+  value TEXT NOT NULL
+) AS AppSettingRow;

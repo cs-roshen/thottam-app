@@ -20,9 +20,9 @@ flutter test
 | Token check | `tool/check.dart`: `Color(0x..)`, `Colors.*` (except `transparent`) or a font name outside `lib/app/theme/` |
 | Layering check | `tool/check.dart`: `ui/` importing Drift or Supabase; `domain/` importing Flutter, Drift or Supabase; Supabase outside `lib/core/sync/` and `lib/core/auth/` |
 | Write-path check | `tool/check.dart`: Drift `into(`, `update(`, `delete(` or `customStatement(` in a `data/` folder; writes go through `writeWithHistory` in `lib/core/history/` (B4) |
-| Query-plan tests | Added with the Drift schema (B2) |
-| Benchmark test | Added with the Drift schema (B2); loads `generateBenchmarkSeed()` from `lib/core/dev/benchmark_seed.dart` |
-| Schema check | Added with the server schema rework (B1) and the Drift schema (B2) |
+| Query-plan tests | `test/core/db/query_plan_test.dart`: every query in `test/core/db/list_queries.dart` searches an index, and pages come out in index order |
+| Benchmark test | `test/core/db/benchmark_test.dart`: loads `generateBenchmarkSeed()`, times every list query against twice its budget, checks the file stays under 60 MB |
+| Schema check | `test/core/db/schema_check_test.dart`: `supabase/migrations` and `lib/core/db/tables.drift` have the same tables and columns, apart from `server_seq` |
 
 ## Golden images
 
@@ -45,4 +45,17 @@ fonts; see its header for the source commit.
 in section 14: 8 plots, 20 crop cycles, 40 workers, 10 groups, 15,000 labour
 entries, 6,000 expenses with allocations, 1,500 harvests and lots, 1,200 sales
 and about 48,000 event-log rows. Rows use the draft schema's column names;
-B2 adapts them to the Drift tables.
+`loadSeed()` in `lib/core/dev/load_seed.dart` inserts them.
+
+## Phone database
+
+The schema is `lib/core/db/tables.drift`. After changing it, regenerate and
+export the new version (bump `schemaVersion` and add its migration step first):
+
+```
+dart run build_runner build
+dart run drift_dev make-migrations
+dart run drift_dev schema generate drift_schemas/app/ test/core/db/generated/
+```
+
+SQL in Dart goes in raw strings (`r'...'`), which the string check passes.

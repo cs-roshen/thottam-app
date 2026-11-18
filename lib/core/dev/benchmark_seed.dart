@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import '../ids/uuid_v7.dart';
+import '../money/money.dart';
 
-/// Rows per table, keyed by the table names in the draft schema.
+/// Rows per table, keyed by table name, with the columns of the schema in
+/// `lib/core/db/tables.drift` (timestamps as DateTime, JSON as maps and lists).
 typedef SeedTables = Map<String, List<Map<String, Object?>>>;
 
 /// Three years of realistic data for one farm (implementation plan section
@@ -84,17 +86,45 @@ class _Seed {
       'id': uuidV7(_at(from), r),
       'name': 'Thottam benchmark farm', // gate: not user-facing
       'created_at': from,
+      'created_by': user,
+      'updated_at': from,
+      'updated_by': user,
       'version': 1,
       'deleted_at': null,
     };
     farmId = farm['id']! as String;
     t['farms'] = [farm];
 
+    // Standard crops, as the first sync brings them from the templates.
+    final crops = <String, String>{};
+    for (final code in const [
+      'coconut',
+      'rubber',
+      'pepper',
+      'banana',
+      'paddy',
+      'cardamom',
+    ]) {
+      final at = _at(from);
+      crops[code] = uuidV7(at, r);
+      (t['crops'] ??= []).add({
+        'id': crops[code],
+        'code': code,
+        'name_ml': code,
+        'name_en': code,
+        'kind': 'perennial',
+        'owner_farm_id': null,
+        'created_at': at,
+        'updated_at': at,
+        'version': 1,
+      });
+    }
+
     final plots = [
       for (var i = 0; i < 8; i++)
         _row('plots', from, {
           'name': 'plot_${i + 1}',
-          'area': 25 + r.nextInt(400),
+          'area': (25 + r.nextInt(400)) * 1000, // thousandths of a cent
           'area_unit': 'cent',
           'tenure': i == 7 ? 'leased' : 'owned',
         }),
@@ -103,15 +133,8 @@ class _Seed {
       for (var i = 0; i < 20; i++)
         _row('crop_cycles', from, {
           'plot_id': plots[i % 8]['id'],
-          'crop_code': _pick([
-            'coconut',
-            'rubber',
-            'pepper',
-            'banana',
-            'paddy',
-            'cardamom',
-          ]),
-          'area_share': i < 8 ? 60 : 40,
+          'crop_id': _pick(crops.values.toList()),
+          'area_share': i < 8 ? 60000 : 40000, // thousandths of a percent
           'status': 'active',
         }),
     ];
@@ -125,7 +148,7 @@ class _Seed {
     final groups = [
       for (var i = 0; i < 10; i++)
         _row('labour_groups', from, {
-          'name': 'group_${i + 1}',
+          'label': 'group_${i + 1}',
           'is_named': i < 4,
         }),
     ];
@@ -135,7 +158,7 @@ class _Seed {
       final cycle = _pick(cycles);
       final byGroup = r.nextInt(5) == 0;
       final heads = byGroup ? 3 + r.nextInt(8) : 1;
-      final attendance = byGroup ? 1.0 : _pick([1.0, 1.0, 1.0, 0.5, 0.0]);
+      final attendance = byGroup ? 1000 : _pick([1000, 1000, 1000, 500, 0]);
       final rate = (700 + r.nextInt(5) * 100) * 100;
       final entry = _row('labour_entries', day, {
         'work_date': _date(day),
@@ -146,7 +169,7 @@ class _Seed {
         'head_count': heads,
         'attendance': attendance,
         'rate_paise': rate,
-        'amount_paise': (rate * heads * attendance).round(),
+        'amount_paise': mulDivRound(rate * heads, attendance, 1000),
       });
       _maybeEdit('labour_entries', entry, 'rate_paise', rate + 5000, day);
     }
@@ -191,32 +214,39 @@ class _Seed {
         'quantity': qty,
         'unit': 'kg',
       });
-      lots.add(
-        _row('lots', day, {
-          'harvest_id': harvest['id'],
-          'crop_cycle_id': cycle['id'],
-          'quantity': qty,
-          'remaining': qty,
-          'cost_paise': qty ~/ 1000 * (40 + r.nextInt(200)) * 100,
-          'unit': 'kg',
-        }),
-      );
+      final lot = _row('lots', day, {
+        'harvest_id': harvest['id'],
+        'crop_cycle_id': cycle['id'],
+        'quantity': qty,
+        'unit': 'kg',
+      });
+      lots.add(lot);
+      _row('lot_costs', day, {
+        'id': lot['id'],
+        'cost_paise': qty ~/ 1000 * (40 + r.nextInt(200)) * 100,
+      });
     }
 
+    final stockLeft = <String, int>{};
     for (var i = 0; i < 1200; i++) {
       final lotIndex = (i * 1500) ~/ 1200;
       final lot = lots[lotIndex];
       final day = DateTime.parse(
         (t['harvests']![lotIndex]['harvested_on'])! as String,
       ).add(Duration(days: 1 + r.nextInt(20)));
-      final qty = (lot['remaining']! as int) ~/ 2;
+      final left = stockLeft[lot['id']] ?? (lot['quantity']! as int);
+      final qty = left ~/ 2;
       final rate = (100 + r.nextInt(700)) * 100;
+      final deduction = r.nextInt(500) * 100;
       final sale = _row('sales', day, {
         'sold_on': _date(day.isAfter(until) ? until : day),
-        'crop_cycle_id': lot['crop_cycle_id'],
         'quantity': qty,
+        'unit': 'kg',
         'rate_paise': rate,
-        'deductions_paise': r.nextInt(500) * 100,
+        'deductions': [
+          {'code': 'commission', 'amount_paise': deduction},
+        ],
+        'net_paise': amountForQuantity(qty, rate) - deduction,
         'mode': _pick(['cash', 'upi', 'bank', 'credit']),
       });
       _row('sale_lots', day, {
@@ -224,7 +254,7 @@ class _Seed {
         'lot_id': lot['id'],
         'quantity': qty,
       });
-      lot['remaining'] = (lot['remaining']! as int) - qty;
+      stockLeft[lot['id']! as String] = left - qty;
     }
     return t;
   }

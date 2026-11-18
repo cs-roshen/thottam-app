@@ -14,7 +14,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 ## B. Data core
 
 - [x] B1. Validate `supabase/migrations/0001_init.sql` against Supabase (`tool/server_tests.py`); fix errors; add seed data for wave 1 crop templates (coconut, rubber, pepper, banana, paddy, cardamom).
-- [ ] B2. Drift schema mirroring the phase 1 tables, with the common columns and an outbox table.
+- [x] B2. Drift schema mirroring the phase 1 tables, with the common columns and an outbox table.
 - [x] B3. Money (integer paise, Indian formatting) and unit conversion helpers, with tests.
 - [ ] B4. Event log: every repository write records old and new values; restore function; tests.
 - [ ] B5. Override resolver (app → farm → plot or crop → entry) with tests.
