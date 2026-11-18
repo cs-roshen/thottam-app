@@ -43,6 +43,12 @@ List<String> checkFile(String path, String source) {
   final inTheme = p.startsWith('lib/app/theme/');
   final generated = p.startsWith('lib/l10n/') || p.endsWith('.g.dart');
   final devSeed = p.startsWith('lib/core/dev/');
+  // SQL and developer errors only; these layers never show text to a farmer.
+  final dataLayer = const [
+    'lib/core/db/',
+    'lib/core/history/',
+    'lib/core/sync/',
+  ].any(p.startsWith);
   final lines = source.split('\n');
   for (var n = 0; n < lines.length; n++) {
     final raw = lines[n];
@@ -56,6 +62,7 @@ List<String> checkFile(String path, String source) {
 
     if (!generated &&
         !devSeed &&
+        !dataLayer &&
         !inTheme &&
         !isDirective &&
         !raw.trimRight().endsWith(_marker) &&

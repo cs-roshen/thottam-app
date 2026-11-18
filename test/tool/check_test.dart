@@ -24,6 +24,20 @@ void main() {
     }
   });
 
+  test('SQL in the data layer and generated code pass the string check', () {
+    const sql =
+        "db.customStatement('UPDATE plots SET name = ? WHERE id = ?');\n";
+    expect(checkFile('lib/core/history/write_with_history.dart', sql), isEmpty);
+    expect(
+      checkFile('lib/core/db/database.g.dart', "Text('NOT NULL');\n"),
+      isEmpty,
+    );
+    expect(
+      checkFile('lib/features/plots/ui/plot_screen.dart', sql),
+      isNotEmpty,
+    );
+  });
+
   test('allows colours and fonts in the theme', () {
     expect(
       checkFile(
