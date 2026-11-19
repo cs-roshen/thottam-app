@@ -224,7 +224,7 @@ class LabourRepository {
             id: r.read<String>('id'),
             day: r.read<String>('paid_on'),
             paise: r.read<int>('amount_paise'),
-            kind: PaymentKind.values.asNameMap()[r.read<String>('kind')],
+            kind: PaymentKind.of(r.read<String>('kind')),
           ),
       ]..sort((a, b) => b.day.compareTo(a.day));
       return lines;
@@ -517,7 +517,7 @@ class LabourRepository {
         'paid_on': day,
         'worker_id': workerId,
         'group_id': groupId,
-        'kind': kind.name,
+        'kind': kind.code,
         'amount_paise': amountPaise,
         'mode': mode,
       },
@@ -527,7 +527,7 @@ class LabourRepository {
         'group_id': ?groupId,
         'worker': ?name,
         'amount_paise': amountPaise,
-        'kind': kind.name,
+        'kind': kind.code,
       },
     ),
   ]);

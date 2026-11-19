@@ -59,8 +59,21 @@ class GroupLine {
 int groupWage(Iterable<GroupLine> lines) =>
     lines.fold(0, (sum, l) => sum + l.paise);
 
-/// Kinds of labour payment (product spec, Labour).
-enum PaymentKind { advance, part, settlement, bonus, deduction }
+/// Kinds of labour payment (product spec, Labour), with the code the
+/// server stores (`labour_payments.kind`).
+enum PaymentKind {
+  advance('advance'),
+  part('part_payment'),
+  settlement('settlement'),
+  bonus('bonus'),
+  deduction('deduction');
+
+  const PaymentKind(this.code);
+  final String code;
+
+  static PaymentKind? of(String code) =>
+      values.where((k) => k.code == code).firstOrNull;
+}
 
 /// What a worker or group is owed: wages earned, less money paid and
 /// deductions. A bonus is money paid for something earned on top of wages,
