@@ -305,7 +305,7 @@ void main() {
       // and the same totals, live rows only
       for (final col in const ['amount_paise', 'net_paise', 'quantity']) {
         if (onA.isEmpty || !onA.values.first.containsKey(col)) continue;
-        int total(Iterable<Map> rows) => rows
+        int total(Iterable<Map<String, Object?>> rows) => rows
             .where((r) => r['deleted_at'] == null)
             .fold(0, (s, r) => s + (r[col]! as int));
         expect(total(onServer.values), total(onA.values), reason: '$t $col');
