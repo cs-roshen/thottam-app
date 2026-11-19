@@ -75,6 +75,7 @@ void main() {
       );
     }
     await tester.ensureVisible(f);
+    await tester.pump(); // the scroll lands on the next frame
     await tester.tap(f);
     await settle(tester);
     // page transitions on Android take up to 800 ms

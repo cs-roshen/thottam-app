@@ -61,7 +61,8 @@ class AppShell extends ConsumerWidget {
   }
 }
 
-/// Placeholder quick add sheet; tiles open their entry screens from C9.
+/// Quick add sheet; tiles open their entry screens as each task lands (C9
+/// finishes it).
 class QuickAddSheet extends StatelessWidget {
   const QuickAddSheet({super.key});
 
@@ -69,7 +70,13 @@ class QuickAddSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
-    Widget tile(IconData icon, String label, Color bg, Color fg) => SizedBox(
+    Widget tile(
+      IconData icon,
+      String label,
+      Color bg,
+      Color fg, [
+      String? path,
+    ]) => SizedBox(
       width: 96,
       child: Column(
         children: [
@@ -79,7 +86,10 @@ class QuickAddSheet extends StatelessWidget {
             foreground: fg,
             size: t.tintTileLarge,
             label: label,
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () {
+              Navigator.of(context).pop();
+              if (path != null) GoRouter.of(context).push(path);
+            },
           ),
           const SizedBox(height: 6),
           Text(
@@ -111,6 +121,7 @@ class QuickAddSheet extends StatelessWidget {
               l10n.labourTitle,
               t.infoTint,
               t.onInfoTint,
+              '/add/labour',
             ),
             tile(
               Icons.agriculture_outlined,

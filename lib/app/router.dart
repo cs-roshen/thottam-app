@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../core/access/access.dart';
+import '../features/labour/ui/labour_screen.dart';
+import '../features/labour/ui/team_screen.dart';
 import '../features/land/ui/cycle_form_screen.dart';
 import '../features/land/ui/land_screen.dart';
 import '../features/land/ui/plot_detail_screen.dart';
@@ -65,6 +67,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/signin', builder: (_, _) => const SignInScreen()),
       GoRoute(path: '/invites', builder: (_, _) => const InvitesScreen()),
       GoRoute(path: '/setup', builder: (_, _) => const SetupScreen()),
+      GoRoute(
+        path: '/add/labour',
+        builder: (_, s) => LabourScreen(plotId: s.uri.queryParameters['plot']),
+      ),
+      GoRoute(path: '/labour/team', builder: (_, _) => const TeamScreen()),
+      GoRoute(
+        path: '/labour/worker/:id',
+        builder: (_, s) => LedgerScreen(workerId: s.pathParameters['id']),
+      ),
+      GoRoute(
+        path: '/labour/group/:id',
+        builder: (_, s) => LedgerScreen(groupId: s.pathParameters['id']),
+      ),
       // stand-ins until their tasks: History (C7), expense (C4), harvest (C5)
       for (final (path, title, icon)
           in <(String, String Function(AppLocalizations), IconData)>[
