@@ -270,9 +270,10 @@ select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members s
 -- ---------- invites ----------
 select pg_temp.check('owner invites a newcomer',
   pg_temp.run_as(pg_temp.u('owner_a'), format(
-    'insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L), (%L, %L, %L, %L)',
+    'insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L), (%L, %L, %L, %L), (%L, %L, %L, %L)',
     pg_temp.fx_id('a', 'invite_new'), pg_temp.fx_id('farm', 'a'), 'newcomer@example.com', 'accountant',
-    pg_temp.fx_id('a', 'invite_stranger'), pg_temp.fx_id('farm', 'a'), 'stranger@example.com', 'viewer')) = 'ok:2');
+    pg_temp.fx_id('a', 'invite_new2'), pg_temp.fx_id('farm', 'a'), 'newcomer@example.com', 'viewer',
+    pg_temp.fx_id('a', 'invite_stranger'), pg_temp.fx_id('farm', 'a'), 'stranger@example.com', 'viewer')) = 'ok:3');
 select pg_temp.check('owner withdraws an invite',
   pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_invites set deleted_at = now() where id = %L',
     pg_temp.fx_id('a', 'invite_stranger'))) = 'ok:1');
@@ -281,17 +282,63 @@ select pg_temp.check('manager cannot invite',
     gen_random_uuid(), pg_temp.fx_id('farm', 'a'), 'x@example.com', 'viewer')) like 'err:%');
 select pg_temp.check('manager cannot read invites',
   pg_temp.try_as(pg_temp.u('manager_a'), 'select 1 from public.farm_invites') = 'ok:0');
-select pg_temp.check('newcomer accepts the invite at sign-in',
-  pg_temp.run_as(pg_temp.u('newcomer'), 'select public.accept_invites()') = 'ok:1');
+-- nobody is added to a farm until they accept
+select pg_temp.check('an invite alone adds nobody',
+  not exists (select 1 from public.farm_members where user_id = pg_temp.u('newcomer')));
+select pg_temp.check('newcomer sees the invite with the farm''s name and role',
+  pg_temp.run_as(pg_temp.u('newcomer'), format('select 1 from public.my_invites() where id = %L and farm_name = %L and role = %L',
+    pg_temp.fx_id('a', 'invite_new'), 'Farm A', 'accountant')) = 'ok:1');
+select pg_temp.check('nobody else sees the invite',
+  pg_temp.run_as(pg_temp.u('stranger'), 'select 1 from public.my_invites()') = 'ok:0');
+select pg_temp.check('nobody else can accept the invite',
+  pg_temp.run_as(pg_temp.u('stranger'), format('select 1 from public.accept_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_new'))) = 'ok:0');
+select pg_temp.check('nobody else can decline the invite',
+  pg_temp.run_as(pg_temp.u('stranger'), format('select 1 from public.decline_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_new'))) = 'ok:0');
+select pg_temp.check('newcomer joins by accepting the invite',
+  pg_temp.run_as(pg_temp.u('newcomer'), format('select 1 from public.accept_invite(%L) f where f = %L',
+    pg_temp.fx_id('a', 'invite_new'), pg_temp.fx_id('farm', 'a'))) = 'ok:1');
 select pg_temp.check('newcomer is now an accountant on farm A',
   exists (select 1 from public.farm_members where farm_id = pg_temp.fx_id('farm', 'a')
           and user_id = pg_temp.u('newcomer') and role = 'accountant' and deleted_at is null));
 select pg_temp.check('newcomer reads farm A money',
   pg_temp.try_as(pg_temp.u('newcomer'), format('select 1 from public.expenses where id = %L', pg_temp.fx_id('a', 'expenses'))) = 'ok:1');
 select pg_temp.check('an accepted invite is not accepted twice',
-  pg_temp.run_as(pg_temp.u('newcomer'), 'select public.accept_invites()') = 'ok:0');
+  pg_temp.run_as(pg_temp.u('newcomer'), format('select 1 from public.accept_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_new'))) = 'ok:0');
+select pg_temp.check('accepting closes every open invite from that farm to the same email',
+  (select accepted_at is not null and accepted_by = pg_temp.u('newcomer') from public.farm_invites
+   where id = pg_temp.fx_id('a', 'invite_new2')));
+select pg_temp.check('a member sees no invites to their own farm',
+  pg_temp.run_as(pg_temp.u('newcomer'), 'select 1 from public.my_invites()') = 'ok:0');
+select pg_temp.check('a withdrawn invite never shows',
+  pg_temp.run_as(pg_temp.u('stranger'), 'select 1 from public.my_invites()') = 'ok:0');
 select pg_temp.check('a withdrawn invite is never accepted',
-  pg_temp.run_as(pg_temp.u('stranger'), 'select public.accept_invites()') = 'ok:0');
+  pg_temp.run_as(pg_temp.u('stranger'), format('select 1 from public.accept_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_stranger'))) = 'ok:0');
+
+-- declining closes every open invite from that farm to that email, and adds nobody
+select pg_temp.run_as(pg_temp.u('owner_a'), format(
+  'insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L), (%L, %L, %L, %L)',
+  pg_temp.fx_id('a', 'invite_decline1'), pg_temp.fx_id('farm', 'a'), 'stranger@example.com', 'viewer',
+  pg_temp.fx_id('a', 'invite_decline2'), pg_temp.fx_id('farm', 'a'), 'stranger@example.com', 'manager'));
+select pg_temp.check('the invitee sees both invites',
+  pg_temp.run_as(pg_temp.u('stranger'), 'select 1 from public.my_invites()') = 'ok:2');
+select pg_temp.check('the invitee declines',
+  pg_temp.run_as(pg_temp.u('stranger'), format('select 1 from public.decline_invite(%L) f where f = %L',
+    pg_temp.fx_id('a', 'invite_decline1'), pg_temp.fx_id('farm', 'a'))) = 'ok:1');
+select pg_temp.check('declining closes both invites and adds nobody',
+  (select count(*) from public.farm_invites where id in (pg_temp.fx_id('a', 'invite_decline1'),
+     pg_temp.fx_id('a', 'invite_decline2')) and deleted_at is not null and accepted_at is null) = 2
+  and not exists (select 1 from public.farm_members where farm_id = pg_temp.fx_id('farm', 'a')
+                  and user_id = pg_temp.u('stranger')));
+select pg_temp.check('a declined invite cannot be accepted',
+  pg_temp.run_as(pg_temp.u('stranger'), format('select 1 from public.accept_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_decline2'))) = 'ok:0');
+select pg_temp.check('declining is written to history under the invitee',
+  exists (select 1 from public.event_log where entity = 'farm_invites' and action = 'delete'
+          and entity_id = pg_temp.fx_id('a', 'invite_decline1') and created_by = pg_temp.u('stranger')));
 select pg_temp.check('stranger still cannot read farm A',
   pg_temp.try_as(pg_temp.u('stranger'), format('select 1 from public.plots where id = %L', pg_temp.fx_id('a', 'plots'))) = 'ok:0');
 
@@ -420,8 +467,11 @@ select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members s
 select pg_temp.check('a member trusted with members can invite the owner''s email',
   pg_temp.run_as(pg_temp.u('manager_a'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
     pg_temp.fx_id('a', 'invite_owner'), pg_temp.fx_id('farm', 'a'), 'owner_a@example.com', 'viewer')) = 'ok:1');
-select pg_temp.check('the owner accepts it at the next sync',
-  pg_temp.run_as(pg_temp.u('owner_a'), 'select public.accept_invites()') = 'ok:1');
+select pg_temp.check('an invite to a farm the person is already in does not show',
+  pg_temp.run_as(pg_temp.u('owner_a'), 'select 1 from public.my_invites()') = 'ok:0');
+select pg_temp.check('the owner accepting it',
+  pg_temp.run_as(pg_temp.u('owner_a'), format('select 1 from public.accept_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_owner'))) = 'ok:1');
 select pg_temp.check('the owner is still the owner',
   (select role = 'owner' and deleted_at is null from public.farm_members where id = pg_temp.fx_id('a', 'm_owner')));
 select pg_temp.check('an accepted invite cannot be reopened',
@@ -434,8 +484,11 @@ select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members s
 select pg_temp.run_as(pg_temp.u('owner_a'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
   pg_temp.fx_id('a', 'invite_emailonly'), pg_temp.fx_id('farm', 'a'), 'emailonly@example.com', 'viewer'));
 -- (a statement cannot see what a function it calls wrote, so each check is its own statement)
+select pg_temp.check('an account without a Google sign-in sees no invite',
+  pg_temp.run_as(pg_temp.u('emailonly'), 'select 1 from public.my_invites()') = 'ok:0');
 select pg_temp.check('an account without a Google sign-in claims nothing',
-  pg_temp.run_as(pg_temp.u('emailonly'), 'select public.accept_invites()') = 'ok:0');
+  pg_temp.run_as(pg_temp.u('emailonly'), format('select 1 from public.accept_invite(%L) f where f is not null',
+    pg_temp.fx_id('a', 'invite_emailonly'))) = 'ok:0');
 select pg_temp.check('an account without a Google sign-in gets no membership',
   not exists (select 1 from public.farm_members where user_id = pg_temp.u('emailonly')));
 
@@ -448,7 +501,8 @@ select pg_temp.check('accepting an invite is written to history',
 select pg_temp.run_as(pg_temp.u('owner_b'), format('insert into public.farm_invites (id, farm_id, email, role) values (%L, %L, %L, %L)',
   pg_temp.fx_id('a', 'm_owner'), pg_temp.fx_id('farm', 'b'), 'stranger@example.com', 'viewer'));
 select pg_temp.check('an invite reusing a membership id is still accepted',
-  pg_temp.run_as(pg_temp.u('stranger'), 'select public.accept_invites()') = 'ok:1');
+  pg_temp.run_as(pg_temp.u('stranger'), format('select 1 from public.accept_invite(%L) f where f = %L',
+    pg_temp.fx_id('a', 'm_owner'), pg_temp.fx_id('farm', 'b'))) = 'ok:1');
 select pg_temp.check('an invite reusing a membership id cannot block the invitee',
   exists (select 1 from public.farm_members where farm_id = pg_temp.fx_id('farm', 'b') and user_id = pg_temp.u('stranger')));
 

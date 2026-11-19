@@ -851,59 +851,115 @@ language sql set search_path = '' as $$
   values (gen_random_uuid(), p_farm_id, p_entity, p_entity_id, p_action, p_old, p_new, current_date)
 $$;
 
--- Turns the signed-in account's open invites into memberships. Called at sign-in and on
--- every sync. Invites are by Google email, so only an email a Google sign-in confirmed
--- matches; a withdrawn invite (deleted_at) never does. An invite only adds a person or
--- brings back a removed one: it never changes an active membership, so it cannot demote
--- anyone. Every change is written to history.
-create function public.accept_invites() returns setof uuid
+-- Invites go by Google email, so only an email a Google sign-in confirmed counts: the
+-- signed-in account's, or null.
+create function public.my_invite_email() returns text
+language sql stable security definer set search_path = '' as $$
+  select lower(u.email) from auth.users u
+  where u.id = auth.uid() and u.email_confirmed_at is not null
+    and exists (select 1 from auth.identities i where i.user_id = u.id and i.provider = 'google'
+                and lower(i.identity_data ->> 'email') = lower(u.email))
+$$;
+
+-- The signed-in account's open invites, so the person can choose to join or decline: nobody
+-- is added to a farm until they accept. Shows the farm's name, the role and who invited them;
+-- a withdrawn or declined invite never shows, nor one to a farm they are already active in.
+create function public.my_invites()
+returns table (id uuid, farm_id uuid, farm_name text, role text, invited_by text, created_at timestamptz)
+language sql stable security definer set search_path = '' as $$
+  select i.id, i.farm_id, f.name, i.role, p.full_name, i.created_at
+  from public.farm_invites i
+  join public.farms f on f.id = i.farm_id and f.deleted_at is null
+  left join public.profiles p on p.id = i.created_by
+  where i.email = public.my_invite_email() and i.accepted_at is null and i.deleted_at is null
+    and not exists (select 1 from public.farm_members m
+                    where m.farm_id = i.farm_id and m.user_id = auth.uid() and m.deleted_at is null)
+  order by i.created_at, i.id
+$$;
+
+-- Joins the farm of one open invite when the person taps Join. An invite only adds a person
+-- or brings back a removed one: it never changes an active membership, so it cannot demote
+-- anyone. Every open invite from that farm to the same email closes with it, so an old one
+-- cannot bring the person back after a later removal. Returns the farm id, or null when the
+-- invite is not theirs or no longer open. Every change is written to history.
+create function public.accept_invite(p_invite uuid) returns uuid
 language plpgsql security definer set search_path = '' as $$
 declare
   v_uid uuid := auth.uid();
-  v_email text;
+  v_email text := public.my_invite_email();
+  v_invite public.farm_invites;
   r public.farm_invites;
   v_old public.farm_members;
   v_new public.farm_members;
   v_now timestamptz := now();
 begin
-  select lower(u.email) into v_email from auth.users u
-  where u.id = v_uid and u.email_confirmed_at is not null
-    and exists (select 1 from auth.identities i where i.user_id = u.id and i.provider = 'google'
-                and lower(i.identity_data ->> 'email') = lower(u.email));
-  if v_email is null then
-    return;
+  select * into v_invite from public.farm_invites i
+  where i.id = p_invite and i.email = v_email and i.accepted_at is null and i.deleted_at is null
+  for update;
+  if not found then
+    return null;
+  end if;
+  select * into v_old from public.farm_members m where m.farm_id = v_invite.farm_id and m.user_id = v_uid;
+  if not found then
+    insert into public.farm_members (id, farm_id, user_id, role, permissions)
+    values (gen_random_uuid(), v_invite.farm_id, v_uid, v_invite.role, v_invite.permissions)
+    returning * into v_new;
+    perform public.log_event('farm_members', v_new.id, v_invite.farm_id, 'create', null,
+      jsonb_build_object('user_id', v_uid, 'role', v_new.role, 'permissions', v_new.permissions::text));
+  elsif v_old.deleted_at is not null then
+    update public.farm_members
+      set role = v_invite.role, permissions = v_invite.permissions, deleted_at = null,
+          updated_at = v_now, version = version + 1
+      where id = v_old.id
+      returning * into v_new;
+    perform public.log_event('farm_members', v_old.id, v_invite.farm_id, 'update',
+      jsonb_build_object('role', v_old.role, 'permissions', v_old.permissions::text,
+        'deleted_at', public.epoch_ms(v_old.deleted_at)),
+      jsonb_build_object('role', v_new.role, 'permissions', v_new.permissions::text, 'deleted_at', null));
   end if;
   for r in
     select * from public.farm_invites i
-    where i.email = v_email and i.accepted_at is null and i.deleted_at is null
-    order by i.farm_id, i.created_at
+    where i.farm_id = v_invite.farm_id and i.email = v_email and i.accepted_at is null and i.deleted_at is null
+    order by i.created_at, i.id
   loop
-    select * into v_old from public.farm_members m where m.farm_id = r.farm_id and m.user_id = v_uid;
-    if not found then
-      insert into public.farm_members (id, farm_id, user_id, role, permissions)
-      values (gen_random_uuid(), r.farm_id, v_uid, r.role, r.permissions)
-      returning * into v_new;
-      perform public.log_event('farm_members', v_new.id, r.farm_id, 'create', null,
-        jsonb_build_object('user_id', v_uid, 'role', v_new.role, 'permissions', v_new.permissions::text));
-    elsif v_old.deleted_at is not null then
-      update public.farm_members
-        set role = r.role, permissions = r.permissions, deleted_at = null,
-            updated_at = v_now, version = version + 1
-        where id = v_old.id
-        returning * into v_new;
-      perform public.log_event('farm_members', v_old.id, r.farm_id, 'update',
-        jsonb_build_object('role', v_old.role, 'permissions', v_old.permissions::text,
-          'deleted_at', public.epoch_ms(v_old.deleted_at)),
-        jsonb_build_object('role', v_new.role, 'permissions', v_new.permissions::text, 'deleted_at', null));
-    end if;
     update public.farm_invites
       set accepted_at = v_now, accepted_by = v_uid, updated_at = v_now, version = version + 1
       where id = r.id;
     perform public.log_event('farm_invites', r.id, r.farm_id, 'update',
       jsonb_build_object('accepted_at', null, 'accepted_by', null),
       jsonb_build_object('accepted_at', public.epoch_ms(v_now), 'accepted_by', v_uid));
-    return next r.farm_id;
   end loop;
+  return v_invite.farm_id;
+end $$;
+
+-- Declines one open invite when the person taps Decline: every open invite from that farm to
+-- the same email closes (deleted_at, as if withdrawn), written to history under their name.
+-- Returns the farm id, or null when the invite is not theirs or no longer open.
+create function public.decline_invite(p_invite uuid) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare
+  v_email text := public.my_invite_email();
+  v_farm uuid;
+  r public.farm_invites;
+  v_now timestamptz := now();
+begin
+  select i.farm_id into v_farm from public.farm_invites i
+  where i.id = p_invite and i.email = v_email and i.accepted_at is null and i.deleted_at is null;
+  if v_farm is null then
+    return null;
+  end if;
+  for r in
+    select * from public.farm_invites i
+    where i.farm_id = v_farm and i.email = v_email and i.accepted_at is null and i.deleted_at is null
+    order by i.created_at, i.id
+  loop
+    update public.farm_invites
+      set deleted_at = v_now, updated_at = v_now, version = version + 1
+      where id = r.id;
+    perform public.log_event('farm_invites', r.id, r.farm_id, 'delete',
+      jsonb_build_object('email', r.email, 'role', r.role), null);
+  end loop;
+  return v_farm;
 end $$;
 
 -- ---------- row-level security ----------
@@ -924,7 +980,7 @@ create policy farms_select on public.farms for select to authenticated
 create policy farms_update on public.farms for update to authenticated
   using (id in (select public.my_farms('setup', 2))) with check (id in (select public.my_farms('setup', 2)));
 
--- Memberships are created by create_farm and accept_invites; clients only change them.
+-- Memberships are created by create_farm and accept_invite; clients only change them.
 alter table public.farm_members enable row level security;
 create policy farm_members_select on public.farm_members for select to authenticated
   using (user_id = (select auth.uid()) or farm_id in (select public.my_farms('members', 1)));
@@ -1052,6 +1108,7 @@ alter default privileges in schema public revoke execute on functions from anon;
 -- PUBLIC's right to run new functions is a global default, not a per-schema one
 alter default privileges revoke execute on functions from public;
 grant execute on function public.create_farm(uuid, uuid, text, text, jsonb, timestamptz),
-  public.accept_invites(), public.my_farms(text, integer), public.my_owned_farms(),
+  public.my_invites(), public.accept_invite(uuid), public.decline_invite(uuid),
+  public.my_farms(text, integer), public.my_owned_farms(),
   public.my_entities(integer), public.my_co_members(), public.access_level(text, jsonb, text)
   to authenticated;
