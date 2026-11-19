@@ -70,7 +70,7 @@ it there, with its test.
 Decided (2026-11-17):
 
 - App id: `app.thottam`. Store account: the owner's existing Google Play developer account.
-- Supabase: project `Thottam-App` (`mtkxbzwkxupcdjrbmxnf`), region ap-southeast-1 (Singapore). Chosen 2026-11-18 in place of the paused `thottam` project. Migrations 0001 to 0003 applied on 2026-11-19.
+- Supabase: project `Thottam-App` (`mtkxbzwkxupcdjrbmxnf`), region ap-southeast-1 (Singapore). Chosen 2026-11-18 in place of the paused `thottam` project. Migrations 0001 to 0005 applied on 2026-11-19.
 - Pilot district: Idukki. Crops: wave 1 (coconut, rubber, pepper, banana, paddy, cardamom).
 
 Decided (2026-11-18):
