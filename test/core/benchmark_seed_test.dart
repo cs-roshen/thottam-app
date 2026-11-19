@@ -11,12 +11,18 @@ void main() {
     expect(count('crop_cycles'), 20);
     expect(count('workers'), 40);
     expect(count('labour_groups'), 10);
-    expect(count('labour_entries'), 15000);
+    // 15,000 days of work, plus the teams on each harvest
+    expect(count('labour_entries'), inInclusiveRange(16500, 18000));
+    expect(count('labour_allocations'), greaterThan(1000));
+    expect(count('labour_payments'), 36 * 50);
+    expect(count('notes'), 1000);
+    expect(count('tasks'), 1500);
+    expect(count('other_income'), 150);
     expect(count('expenses'), 6000);
     expect(count('harvests'), 1500);
     expect(count('lots'), 1500);
     expect(count('sales'), 1200);
-    expect(count('event_log'), inInclusiveRange(45000, 55000));
+    expect(count('event_log'), inInclusiveRange(60000, 75000));
   });
 
   test('the same seed gives the same rows', () {

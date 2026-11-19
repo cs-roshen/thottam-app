@@ -1,9 +1,8 @@
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:thottam/core/db/database.dart';
 
-import 'list_queries.dart';
+import 'package:thottam/core/db/queries.dart';
 
 /// Section 12: every list and total query uses an index and never scans a
 /// whole table; pages come out in index order.
@@ -31,10 +30,20 @@ void main() {
         reason: plan.join('\n'),
       );
       // reading every row of the farm is a scan in disguise, unless it is a
-      // page taken in index order
+      // page taken in index order, or a set-up table that stays small (a
+      // farm has tens of workers, groups, plots and crop cycles)
       if (!q.ordered) {
+        const small = {
+          'workers_farm',
+          'labour_groups_farm',
+          'plots_farm',
+          'crop_cycles_farm',
+        };
         expect(
-          plan.where((d) => RegExp(r'INDEX \w+ \(farm_id=\?\)$').hasMatch(d)),
+          plan.where((d) {
+            final m = RegExp(r'INDEX (\w+) \(farm_id=\?\)$').firstMatch(d);
+            return m != null && !small.contains(m[1]);
+          }),
           isEmpty,
           reason: plan.join('\n'),
         );
@@ -48,16 +57,4 @@ void main() {
       }
     });
   }
-}
-
-/// Turns `:name` parameters into `?` with values from [values] (or a
-/// placeholder when planning).
-(String, List<Variable>) bindNamed(String sql, Map<String, Object> values) {
-  final args = <Variable>[];
-  final out = sql.replaceAllMapped(RegExp(r':(\w+)'), (m) {
-    final v = values[m.group(1)] ?? 'x';
-    args.add(v is int ? Variable.withInt(v) : Variable.withString('$v'));
-    return '?';
-  });
-  return (out, args);
 }

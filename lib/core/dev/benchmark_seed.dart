@@ -160,17 +160,32 @@ class _Seed {
       final heads = byGroup ? 3 + r.nextInt(8) : 1;
       final attendance = byGroup ? 1000 : _pick([1000, 1000, 1000, 500, 0]);
       final rate = (700 + r.nextInt(5) * 100) * 100;
+      final amount = mulDivRound(rate * heads, attendance, 1000);
+      final onPlot = cycles
+          .where((c) => c['plot_id'] == cycle['plot_id'])
+          .toList();
+      // about a quarter of the days on a mixed plot split across its crops
+      final split = onPlot.length > 1 && r.nextInt(4) == 0;
       final entry = _row('labour_entries', day, {
         'work_date': _date(day),
         'worker_id': byGroup ? null : _pick(workers)['id'],
         'group_id': byGroup ? _pick(groups)['id'] : null,
-        'crop_cycle_id': cycle['id'],
+        'crop_cycle_id': split ? null : cycle['id'],
         'plot_id': cycle['plot_id'],
         'head_count': heads,
         'attendance': attendance,
         'rate_paise': rate,
-        'amount_paise': mulDivRound(rate * heads, attendance, 1000),
+        'amount_paise': amount,
       });
+      if (split) {
+        for (final (c, share) in _split(amount, onPlot)) {
+          _row('labour_allocations', day, {
+            'labour_entry_id': entry['id'],
+            'crop_cycle_id': c['id'],
+            'amount_paise': share,
+          });
+        }
+      }
       _maybeEdit('labour_entries', entry, 'rate_paise', rate + 5000, day);
     }
 
@@ -214,6 +229,21 @@ class _Seed {
         'quantity': qty,
         'unit': 'kg',
       });
+      // one or two teams picked it: groups paid by the day
+      for (var k = 0; k < 1 + r.nextInt(2); k++) {
+        const rate = 80000;
+        final heads = 2 + r.nextInt(6);
+        _row('labour_entries', day, {
+          'work_date': _date(day),
+          'group_id': _pick(groups)['id'],
+          'harvest_id': harvest['id'],
+          'crop_cycle_id': cycle['id'],
+          'plot_id': cycle['plot_id'],
+          'head_count': heads,
+          'rate_paise': rate,
+          'amount_paise': rate * heads,
+        });
+      }
       final lot = _row('lots', day, {
         'harvest_id': harvest['id'],
         'crop_cycle_id': cycle['id'],
@@ -255,6 +285,67 @@ class _Seed {
         'quantity': qty,
       });
       stockLeft[lot['id']! as String] = left - qty;
+    }
+    // what each worker and group was paid, about once a month
+    for (var month = 0; month < 36; month++) {
+      final day = from.add(Duration(days: month * 30 + 29));
+      for (final payee in [...workers, ...groups]) {
+        final isWorker = workers.contains(payee);
+        _row('labour_payments', day, {
+          'paid_on': _date(day),
+          'worker_id': isWorker ? payee['id'] : null,
+          'group_id': isWorker ? null : payee['id'],
+          'kind': _pick(['settlement', 'settlement', 'part', 'advance']),
+          'amount_paise': (1000 + r.nextInt(20000)) * 100,
+          'mode': _pick(['cash', 'upi']),
+        });
+      }
+    }
+
+    for (var i = 0; i < 1000; i++) {
+      final day = _day(i, 1000);
+      final cycle = _pick(cycles);
+      _row('notes', day, {
+        'noted_on': _date(day),
+        'body': 'note_${i + 1}',
+        'plot_id': cycle['plot_id'],
+        'crop_cycle_id': r.nextBool() ? cycle['id'] : null,
+      });
+    }
+
+    for (var i = 0; i < 1500; i++) {
+      final day = _day(i, 1500);
+      final cycle = _pick(cycles);
+      final task = _row('tasks', day, {
+        'title': 'task_${i + 1}',
+        'due_on': _date(day.add(Duration(days: r.nextInt(10)))),
+        'crop_cycle_id': cycle['id'],
+        'plot_id': cycle['plot_id'],
+        'source': _pick(['manual', 'calendar']),
+      });
+      // most past tasks were ticked off; the last few weeks' are open
+      if (i < 1450) {
+        final at = _at(day);
+        task['done_at'] = at;
+        _event(
+          'tasks',
+          task['id']! as String,
+          'update',
+          at,
+          {'done_at': null},
+          {'done_at': at.millisecondsSinceEpoch},
+        );
+      }
+    }
+
+    for (var i = 0; i < 150; i++) {
+      final day = _day(i, 150);
+      _row('other_income', day, {
+        'received_on': _date(day),
+        'source_code': _pick(['subsidy', 'rent', 'other']),
+        'amount_paise': (500 + r.nextInt(20000)) * 100,
+        'crop_cycle_id': r.nextBool() ? _pick(cycles)['id'] : null,
+      });
     }
     return t;
   }
