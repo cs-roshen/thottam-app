@@ -1558,5 +1558,135 @@
   "expenseDate": "തീയതി",
   "@expenseDate": {
     "description": "Label for the day of an expense."
+  },
+  "harvestCrop": "വിള",
+  "@harvestCrop": {
+    "description": "Label above the crop choices on the harvest screen."
+  },
+  "harvestPieceRate": "കിട്ടുന്ന അളവിനനുസരിച്ച് കൂലി",
+  "@harvestPieceRate": {
+    "description": "Switch on a harvest team: paid per unit harvested instead of per day."
+  },
+  "harvestRatePerUnit": "കൂലി (₹ / {unit})",
+  "@harvestRatePerUnit": {
+    "description": "Rate field of a piece-rate team. The unit is always in English.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestWageNamed": "ദിവസക്കൂലി (₹)",
+  "@harvestWageNamed": {
+    "description": "Wage field of a named worker on a harvest."
+  },
+  "harvestTeamWage": "കൂലി {amount}",
+  "@harvestTeamWage": {
+    "description": "A team's wage on its card.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestTeamRates": "ഒരാൾക്ക് {perPerson} · {unit}-ന് {cost}",
+  "@harvestTeamRates": {
+    "description": "A team's quantity per person and labour cost per unit.",
+    "placeholders": {
+      "perPerson": {
+        "type": "String"
+      },
+      "cost": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestFamilyLine": "കുടുംബത്തിന്റെ പണി (ചെലവിൽ കൂട്ടില്ല)",
+  "@harvestFamilyLine": {
+    "description": "Summary line for family labour on a harvest; kept out of the cost."
+  },
+  "harvestPaidWages": "കൊടുത്ത കൂലി",
+  "@harvestPaidWages": {
+    "description": "Summary line: wages paid for this harvest."
+  },
+  "harvestNoTeams": "ആരാണ് വിളവെടുത്തത് എന്ന് ചേർക്കുക",
+  "@harvestNoTeams": {
+    "description": "Error when saving a harvest with no team."
+  },
+  "harvestNoQuantity": "എത്ര കിട്ടി എന്ന് നൽകുക",
+  "@harvestNoQuantity": {
+    "description": "Error when saving a harvest with no quantity."
+  },
+  "harvestNoCrop": "ഈ പ്ലോട്ടിൽ വിളകളില്ല. ആദ്യം വിള ചേർക്കുക.",
+  "@harvestNoCrop": {
+    "description": "Shown when the chosen plot has nothing to harvest."
+  },
+  "harvestChooseWorker": "പണിക്കാരനെ തിരഞ്ഞെടുക്കുക",
+  "@harvestChooseWorker": {
+    "description": "Title of the sheet that adds a named worker to a harvest."
+  },
+  "harvestReadOnly": "വിളവെടുപ്പ് രേഖപ്പെടുത്താൻ ഉടമയ്ക്കോ മാനേജർക്കോ സൂപ്പർവൈസർക്കോ മാത്രമേ കഴിയൂ.",
+  "@harvestReadOnly": {
+    "description": "Shown on the harvest screen to a role that cannot record daily work."
+  },
+  "lotTitle": "വിളവെടുപ്പ് · {day}",
+  "@lotTitle": {
+    "description": "Title of a saved harvest's screen.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "lotCost": "ഈ ലോട്ടിന്റെ ചെലവ്",
+  "@lotCost": {
+    "description": "Label of a lot's cost."
+  },
+  "lotCostPerUnit": "{unit}-ന് {cost}",
+  "@lotCostPerUnit": {
+    "description": "A lot's cost per unit. The unit is always in English.",
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "lotCostPending": "ഇതുവരെ കണക്കാക്കിയിട്ടില്ല",
+  "@lotCostPending": {
+    "description": "A lot's cost saved by someone who cannot see money; an owner's, manager's or accountant's phone works it out."
+  },
+  "lotCostEdited": "കൈകൊണ്ട് മാറ്റിയത്",
+  "@lotCostEdited": {
+    "description": "Tag on a lot cost the farmer edited."
+  },
+  "lotEditCost": "ചെലവ് മാറ്റുക",
+  "@lotEditCost": {
+    "description": "Button to type a lot's cost by hand."
+  },
+  "lotRecalculate": "വീണ്ടും കണക്കാക്കുക",
+  "@lotRecalculate": {
+    "description": "Button to work out a lot's cost again from the entries."
+  },
+  "lotReset": "പഴയതുപോലെ കണക്കാക്കുക",
+  "@lotReset": {
+    "description": "Button to drop a hand-edited lot cost and work it out from the entries."
+  },
+  "lotEditTeams": "ടീമുകൾ മാറ്റുക",
+  "@lotEditTeams": {
+    "description": "Button to change the teams of a saved harvest."
+  },
+  "lotCostHint": "കഴിഞ്ഞ വിളവെടുപ്പിനു ശേഷം ഈ വിളയ്ക്ക് ചെലവായതും ഈ വിളവെടുപ്പിന്റെ കൂലിയും",
+  "@lotCostHint": {
+    "description": "How a lot's cost is worked out, under the cost."
+  },
+  "saleComingSoon": "വിൽപ്പന അടുത്ത ഘട്ടത്തിൽ",
+  "@saleComingSoon": {
+    "description": "Placeholder until the selling screen exists."
   }
 }

@@ -5,6 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../core/access/access.dart';
 import '../features/expenses/ui/expense_screen.dart';
+import '../features/harvest/ui/harvest_screen.dart';
+import '../features/harvest/ui/lot_screen.dart';
 import '../features/labour/ui/labour_screen.dart';
 import '../features/labour/ui/team_screen.dart';
 import '../features/land/ui/cycle_form_screen.dart';
@@ -73,6 +75,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, s) => ExpenseScreen(plotId: s.uri.queryParameters['plot']),
       ),
       GoRoute(
+        path: '/add/harvest',
+        builder: (_, s) => HarvestScreen(
+          plotId: s.uri.queryParameters['plot'],
+          editId: s.uri.queryParameters['edit'],
+        ),
+      ),
+      GoRoute(
+        path: '/harvest/:id',
+        builder: (_, s) => LotScreen(harvestId: s.pathParameters['id']!),
+      ),
+      GoRoute(
         path: '/add/labour',
         builder: (_, s) => LabourScreen(plotId: s.uri.queryParameters['plot']),
       ),
@@ -85,11 +98,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/labour/group/:id',
         builder: (_, s) => LedgerScreen(groupId: s.pathParameters['id']),
       ),
-      // stand-ins until their tasks: History (C7), harvest (C5)
+      // stand-ins until their tasks: History (C7), selling (C6)
       for (final (path, title, icon)
           in <(String, String Function(AppLocalizations), IconData)>[
             ('/history', (l) => l.historyTitle, Icons.history),
-            ('/add/harvest', (l) => l.harvestTitle, Icons.agriculture_outlined),
+            ('/add/sale', (l) => l.saleTitle, Icons.sell_outlined),
           ])
         GoRoute(
           path: path,

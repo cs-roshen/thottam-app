@@ -1558,5 +1558,135 @@
   "expenseDate": "Date",
   "@expenseDate": {
     "description": "Label for the day of an expense."
+  },
+  "harvestCrop": "Crop",
+  "@harvestCrop": {
+    "description": "Label above the crop choices on the harvest screen."
+  },
+  "harvestPieceRate": "Paid by quantity",
+  "@harvestPieceRate": {
+    "description": "Switch on a harvest team: paid per unit harvested instead of per day."
+  },
+  "harvestRatePerUnit": "Wage (₹ / {unit})",
+  "@harvestRatePerUnit": {
+    "description": "Rate field of a piece-rate team. The unit is always in English.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestWageNamed": "Wage for the day (₹)",
+  "@harvestWageNamed": {
+    "description": "Wage field of a named worker on a harvest."
+  },
+  "harvestTeamWage": "Wage {amount}",
+  "@harvestTeamWage": {
+    "description": "A team's wage on its card.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestTeamRates": "{perPerson} per person · {cost} per {unit}",
+  "@harvestTeamRates": {
+    "description": "A team's quantity per person and labour cost per unit.",
+    "placeholders": {
+      "perPerson": {
+        "type": "String"
+      },
+      "cost": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestFamilyLine": "Family work (not in the cost)",
+  "@harvestFamilyLine": {
+    "description": "Summary line for family labour on a harvest; kept out of the cost."
+  },
+  "harvestPaidWages": "Wages paid",
+  "@harvestPaidWages": {
+    "description": "Summary line: wages paid for this harvest."
+  },
+  "harvestNoTeams": "Add who harvested",
+  "@harvestNoTeams": {
+    "description": "Error when saving a harvest with no team."
+  },
+  "harvestNoQuantity": "Enter how much was harvested",
+  "@harvestNoQuantity": {
+    "description": "Error when saving a harvest with no quantity."
+  },
+  "harvestNoCrop": "This plot has no crops. Add a crop first.",
+  "@harvestNoCrop": {
+    "description": "Shown when the chosen plot has nothing to harvest."
+  },
+  "harvestChooseWorker": "Choose a worker",
+  "@harvestChooseWorker": {
+    "description": "Title of the sheet that adds a named worker to a harvest."
+  },
+  "harvestReadOnly": "Only the owner, a manager or a supervisor can record a harvest.",
+  "@harvestReadOnly": {
+    "description": "Shown on the harvest screen to a role that cannot record daily work."
+  },
+  "lotTitle": "Harvest · {day}",
+  "@lotTitle": {
+    "description": "Title of a saved harvest's screen.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "lotCost": "Cost of this lot",
+  "@lotCost": {
+    "description": "Label of a lot's cost."
+  },
+  "lotCostPerUnit": "{cost} per {unit}",
+  "@lotCostPerUnit": {
+    "description": "A lot's cost per unit. The unit is always in English.",
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "lotCostPending": "Not yet worked out",
+  "@lotCostPending": {
+    "description": "A lot's cost saved by someone who cannot see money; an owner's, manager's or accountant's phone works it out."
+  },
+  "lotCostEdited": "Changed by hand",
+  "@lotCostEdited": {
+    "description": "Tag on a lot cost the farmer edited."
+  },
+  "lotEditCost": "Change cost",
+  "@lotEditCost": {
+    "description": "Button to type a lot's cost by hand."
+  },
+  "lotRecalculate": "Work out again",
+  "@lotRecalculate": {
+    "description": "Button to work out a lot's cost again from the entries."
+  },
+  "lotReset": "Reset to worked out",
+  "@lotReset": {
+    "description": "Button to drop a hand-edited lot cost and work it out from the entries."
+  },
+  "lotEditTeams": "Edit teams",
+  "@lotEditTeams": {
+    "description": "Button to change the teams of a saved harvest."
+  },
+  "lotCostHint": "Everything spent on this crop since the last harvest, plus this harvest's wages",
+  "@lotCostHint": {
+    "description": "How a lot's cost is worked out, under the cost."
+  },
+  "saleComingSoon": "Selling comes in the next round",
+  "@saleComingSoon": {
+    "description": "Placeholder until the selling screen exists."
   }
 }
