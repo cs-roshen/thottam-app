@@ -157,6 +157,7 @@ class QuickAddSheet extends StatelessWidget {
               l10n.quickAddNote,
               t.primaryTint,
               t.primaryDark,
+              '/add/note',
             ),
           ],
         ),

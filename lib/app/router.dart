@@ -8,6 +8,8 @@ import '../features/expenses/ui/expense_screen.dart';
 import '../features/harvest/ui/harvest_screen.dart';
 import '../features/harvest/ui/lot_screen.dart';
 import '../features/history/ui/history_screen.dart';
+import '../features/home/ui/home_screen.dart';
+import '../features/home/ui/note_screen.dart';
 import '../features/labour/ui/labour_screen.dart';
 import '../features/money/ui/money_screen.dart';
 import '../features/sales/ui/buyers_screen.dart';
@@ -115,6 +117,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/labour/team', builder: (_, _) => const TeamScreen()),
       GoRoute(
+        path: '/add/note',
+        builder: (_, s) => NoteScreen(plotId: s.uri.queryParameters['plot']),
+      ),
+      GoRoute(
         path: '/labour/worker/:id',
         builder: (_, s) => LedgerScreen(workerId: s.pathParameters['id']),
       ),
@@ -134,7 +140,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
-          _branch('/home', (l) => l.navHome, Icons.home_outlined),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(

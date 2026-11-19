@@ -209,6 +209,8 @@ extension HistoryLabels on AppLocalizations {
           )
         : null;
     return [
+      // a note's or task's own words
+      if (s['text'] case final String t) t,
       ?crop,
       if (s['plot'] case final String p) p,
       if (s['worker'] case final String w) w,

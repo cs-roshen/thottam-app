@@ -12,7 +12,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.widgetWithText(AppBar, 'ഹോം'), findsOneWidget);
+    expect(find.text('നമസ്കാരം, Ravi'), findsOneWidget);
   });
 
   testWidgets('supports Malayalam and English', (tester) async {

@@ -35,6 +35,7 @@ const listQueries = [
   ...saleQueries,
   ...historyQueries,
   ...moneyQueries,
+  ...homeQueries,
   ListQuery(
     'labour day page',
     'SELECT * FROM labour_entries WHERE farm_id = :farm AND deleted_at IS NULL '
@@ -630,6 +631,26 @@ const qProfitAndLoss = ListQuery(
 );
 
 const moneyQueries = [qProfitAndLoss];
+
+// ---------- home (screen 2) ----------
+
+const qTodayTasks = ListQuery(
+  "today's tasks",
+  // open tasks due today or before, and those ticked since :created (the
+  // start of today), so a tick can be taken back the same day
+  'SELECT t.id, t.title, t.due_on, t.done_at, t.crop_cycle_id, '
+      'COALESCE(t.plot_id, c.plot_id) AS plot_id, p.name AS plot, '
+      'r.name_ml AS crop_ml, r.name_en AS crop_en '
+      'FROM tasks t LEFT JOIN crop_cycles c ON c.id = t.crop_cycle_id '
+      'LEFT JOIN plots p ON p.id = COALESCE(t.plot_id, c.plot_id) '
+      'LEFT JOIN crops r ON r.id = c.crop_id '
+      'WHERE t.farm_id = :farm AND t.deleted_at IS NULL AND t.due_on <= :day '
+      'AND (t.done_at IS NULL OR t.done_at >= :created) '
+      'ORDER BY t.due_on, t.id LIMIT 50',
+  ordered: true,
+);
+
+const homeQueries = [qTodayTasks];
 
 // ---------- running them ----------
 

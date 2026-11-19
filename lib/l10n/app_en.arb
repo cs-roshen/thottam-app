@@ -306,13 +306,13 @@
   "@homeCardDues": {
     "description": "Home card title: dues."
   },
-  "homeSeasonProfit": "This season · Profit",
+  "homeSeasonProfit": "This year · Profit",
   "@homeSeasonProfit": {
-    "description": "Label on the season profit card."
+    "description": "Home profit card title: this financial year (April to March)."
   },
-  "homeDuesSummary": "Wages due {amount} · {count, plural, =1{1 worker} other{{count} workers}}",
+  "homeDuesSummary": "Wages due {amount} · {count, plural, =1{1 to pay} other{{count} to pay}}",
   "@homeDuesSummary": {
-    "description": "Wages due line on Home: amount and number of workers.",
+    "description": "Wages owed to workers and groups (amount formatted in code).",
     "placeholders": {
       "amount": {
         "type": "String"
@@ -796,7 +796,7 @@
       }
     }
   },
-  "malayalamDate": "{month} {day}",
+  "malayalamDate": "{month} {day}",
   "@malayalamDate": {
     "description": "Malayalam calendar date: month name and day.",
     "placeholders": {
@@ -1952,5 +1952,38 @@
         "type": "String"
       }
     }
+  },
+  "homeLanguageBadge": "മ",
+  "@homeLanguageBadge": {
+    "description": "Badge on Home's language button: the language it switches to (EN from Malayalam, മ from English)."
+  },
+  "homeLanguageSwitch": "Switch language",
+  "@homeLanguageSwitch": {
+    "description": "Label of Home's language button."
+  },
+  "homeNoTasks": "Nothing due today.",
+  "@homeNoTasks": {
+    "description": "Today's tasks card with no task due."
+  },
+  "homeTaskDue": "Due {day}",
+  "@homeTaskDue": {
+    "description": "A task due before today: the day it was due (formatted in code).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "homeYearLoss": "This year · Loss",
+  "@homeYearLoss": {
+    "description": "Home profit card title when expense is more than income."
+  },
+  "noteText": "What happened?",
+  "@noteText": {
+    "description": "Label of the note's text field."
+  },
+  "noteTextRequired": "Write the note first.",
+  "@noteTextRequired": {
+    "description": "Error when saving an empty note."
   }
 }
