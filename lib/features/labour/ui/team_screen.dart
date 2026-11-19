@@ -237,7 +237,7 @@ class LedgerScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   line.kind != null
-                                      ? l10n.paymentKind(line.kind!.name)
+                                      ? l10n.paymentKind(line.kind!.code)
                                       : worker != null
                                       ? l10n.attendanceName(
                                           Attendance.of(
@@ -350,7 +350,7 @@ class _PaymentFormState extends ConsumerState<_PaymentForm> {
               for (final k in PaymentKind.values)
                 ChoiceChipX(
                   key: Key('pay.kind.${k.name}'),
-                  label: l10n.paymentKind(k.name),
+                  label: l10n.paymentKind(k.code),
                   selected: _kind == k,
                   onSelected: (_) => setState(() => _kind = k),
                 ),

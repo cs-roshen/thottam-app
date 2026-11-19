@@ -1436,7 +1436,7 @@
   "@paymentBank": {
     "description": "Payment mode: bank transfer."
   },
-  "paymentKind": "{kind, select, advance{Advance} part{Part payment} settlement{Settlement} bonus{Bonus} deduction{Deduction} other{Payment}}",
+  "paymentKind": "{kind, select, advance{Advance} part_payment{Part payment} settlement{Settlement} bonus{Bonus} deduction{Deduction} other{Payment}}",
   "@paymentKind": {
     "description": "Kind of labour payment.",
     "placeholders": {

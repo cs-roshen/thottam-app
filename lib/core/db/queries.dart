@@ -286,7 +286,7 @@ const landQueries = [
 // ---------- labour (screens 8, 11) ----------
 
 const _paidOrDeducted =
-    "SUM(CASE WHEN kind IN ('advance', 'part', 'settlement', 'deduction') "
+    "SUM(CASE WHEN kind IN ('advance', 'part_payment', 'settlement', 'deduction') "
     'THEN amount_paise ELSE 0 END)';
 
 const qWorkers = ListQuery(
