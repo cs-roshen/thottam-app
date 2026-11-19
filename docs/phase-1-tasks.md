@@ -32,7 +32,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [x] C7. History: timelines per entity, farm diary, filters, change log and restore.
 - [x] C8. Profit and loss with family-labour switch; report export.
 - [x] C9. Home dashboard and tasks; quick add sheet with Note.
-- [ ] C10. Settings: pages on/off, home cards, reset; farms (switch and add); members and roles (owner only); account and sign out; sync status; My lists (farmer templates).
+- [x] C10. Settings: pages on/off, home cards, reset; farms (switch and add); members and roles (owner only); account and sign out; sync status; My lists (farmer templates).
 - [ ] C11. Prices: table and manual entry first; source integration after data access is confirmed.
 - [ ] C12. Admin console (minimal): seed SQL plus one web page behind admin sign-in to edit template items in Malayalam and English and publish a new version (screen 23). Service-role access stays on the server side.
 
