@@ -7,6 +7,7 @@ import '../core/access/access.dart';
 import '../features/expenses/ui/expense_screen.dart';
 import '../features/harvest/ui/harvest_screen.dart';
 import '../features/harvest/ui/lot_screen.dart';
+import '../features/history/ui/history_screen.dart';
 import '../features/labour/ui/labour_screen.dart';
 import '../features/sales/ui/buyers_screen.dart';
 import '../features/sales/ui/sell_screen.dart';
@@ -97,6 +98,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, s) => BuyerScreen(buyerId: s.pathParameters['id']!),
       ),
       GoRoute(
+        path: '/history',
+        builder: (_, s) => HistoryScreen(plotId: s.uri.queryParameters['plot']),
+      ),
+      GoRoute(
+        path: '/history/:entity/:id',
+        builder: (_, s) => HistoryScreen(
+          entity: s.pathParameters['entity'],
+          entityId: s.pathParameters['id'],
+        ),
+      ),
+      GoRoute(
         path: '/add/labour',
         builder: (_, s) => LabourScreen(plotId: s.uri.queryParameters['plot']),
       ),
@@ -109,10 +121,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/labour/group/:id',
         builder: (_, s) => LedgerScreen(groupId: s.pathParameters['id']),
       ),
-      // stand-ins until their tasks: History (C7), prices (C11)
+      // stand-ins until their tasks: prices (C11)
       for (final (path, title, icon)
           in <(String, String Function(AppLocalizations), IconData)>[
-            ('/history', (l) => l.historyTitle, Icons.history),
             ('/prices', (l) => l.pricesTitle, Icons.show_chart),
           ])
         GoRoute(
