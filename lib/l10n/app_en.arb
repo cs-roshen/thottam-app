@@ -1688,5 +1688,143 @@
   "saleComingSoon": "Selling comes in the next round",
   "@saleComingSoon": {
     "description": "Placeholder until the selling screen exists."
+  },
+  "saleFrom": "Sell from",
+  "@saleFrom": {
+    "description": "Label above the lots to sell from."
+  },
+  "saleLotChip": "{day} · {quantity}",
+  "@saleLotChip": {
+    "description": "A lot to sell from: its harvest day and stock left.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "saleNoStock": "Nothing in stock to sell. Recording a harvest adds stock.",
+  "@saleNoStock": {
+    "description": "Empty state of the sell screen."
+  },
+  "saleTooMuch": "Only {quantity} in stock",
+  "@saleTooMuch": {
+    "description": "Error when selling more than the chosen lots hold.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "saleNoQuantity": "Enter how much is sold",
+  "@saleNoQuantity": {
+    "description": "Error when the sale quantity is empty."
+  },
+  "saleNoRate": "Enter the rate",
+  "@saleNoRate": {
+    "description": "Error when the sale rate is empty."
+  },
+  "saleNoUnitWay": "This unit does not convert from the lot's",
+  "@saleNoUnitWay": {
+    "description": "Error when the sale unit cannot be converted from the lot's unit."
+  },
+  "saleNewBuyer": "New buyer",
+  "@saleNewBuyer": {
+    "description": "Choice to name a buyer for the first time."
+  },
+  "saleBuyerName": "Buyer's name (optional)",
+  "@saleBuyerName": {
+    "description": "Field for a new buyer's name."
+  },
+  "saleType": "{type, select, trader{Trader} society{Society} direct{Direct to people} other{Other}}",
+  "@saleType": {
+    "description": "Kind of buyer.",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "saleDeductions": "Deductions",
+  "@saleDeductions": {
+    "description": "Heading of a sale's deductions."
+  },
+  "saleAddDeduction": "Add a deduction",
+  "@saleAddDeduction": {
+    "description": "Button to add a deduction line to a sale."
+  },
+  "saleDeductionLabel": "For what (commission, weighing…)",
+  "@saleDeductionLabel": {
+    "description": "Label field of a sale deduction."
+  },
+  "salePaid": "Paid",
+  "@salePaid": {
+    "description": "Payment status: paid in full."
+  },
+  "salePartPaid": "Part paid",
+  "@salePartPaid": {
+    "description": "Payment status: part of it received."
+  },
+  "saleDue": "Due",
+  "@saleDue": {
+    "description": "Payment status: nothing received yet."
+  },
+  "saleReceivedNow": "Received now",
+  "@saleReceivedNow": {
+    "description": "Amount received now on a part-paid sale."
+  },
+  "salePerUnitNet": "{amount} per {unit} after deductions",
+  "@salePerUnitNet": {
+    "description": "Net per sale unit, shown under the net. The unit is always in English.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleCostLine": "your cost {cost} per {unit}",
+  "@saleCostLine": {
+    "description": "The lot cost per sale unit under the profit.",
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleReadOnly": "Only the owner, a manager or an accountant can record a sale.",
+  "@saleReadOnly": {
+    "description": "Shown on the sell screen to a role that cannot record money."
+  },
+  "buyersTitle": "Buyers",
+  "@buyersTitle": {
+    "description": "Title of the buyer book."
+  },
+  "buyersNone": "No buyers yet. A buyer is added when you sell.",
+  "@buyersNone": {
+    "description": "Empty buyer book."
+  },
+  "buyerReceive": "Record money received",
+  "@buyerReceive": {
+    "description": "Button to record money received on a sale."
+  },
+  "buyerSaleLine": "{quantity} · {amount}",
+  "@buyerSaleLine": {
+    "description": "A sale in a buyer's book: quantity and net.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }

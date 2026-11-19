@@ -150,6 +150,7 @@ class QuickAddSheet extends StatelessWidget {
               l10n.quickAddSale,
               t.accentTint,
               t.onAccentTint,
+              '/add/sale',
             ),
             tile(
               Icons.edit_note_outlined,
