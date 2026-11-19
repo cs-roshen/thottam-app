@@ -38,7 +38,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 
 ## D. Release readiness
 
-- [ ] D1. Offline test: seven days of entries in flight mode, then sync with no loss or duplicates.
+- [x] D1. Offline test: seven days of entries in flight mode, then sync with no loss or duplicates.
 - [ ] D2. Malayalam rendering pass on a low-end Android device, including large text.
 - [ ] D3. Role checks: the role defaults in `docs/product-spec.md` rule 7 (supervisor cannot see money or profit; accountant cannot write daily work; viewer cannot write), in the app and on the server.
 - [ ] D4. Backup and full export (Excel, PDF).
@@ -59,7 +59,7 @@ it there, with its test.
 - C8: the profit and loss queries replace the stand-ins in `test/core/db/list_queries.dart`, with the family-labour switch.
 - C10: reset removes only the field being reset from an override row; screens can show the value a reset would go back to.
 - C12: the admin console retires template items (`is_active`) instead of deleting them.
-- D1: measure the database file with five years of data (all seasons stay on the phone).
+- D1: measure the database file with five years of data (all seasons stay on the phone). Done: 112.5 MB for five years, 67.6 MB for three; the budget is the owner's call.
 - D3: a member whose access narrows drops the rows they can no longer read from the phone (removal already drops the farm).
 - Before schema version 2: copy the database file before a migration and run an integrity check (implementation plan section 12).
 - Before the beta (D5): sync on connectivity and in the background, and skip on low battery (`lib/core/sync/sync_scheduler.dart`).
@@ -93,4 +93,5 @@ Open:
 - Whether one account can have both Google and phone sign-in linked, and how a phone-only member is invited (needed by D6).
 - Partner organisation for the pilot (needed by the field test).
 - Which price sources are licensed for use (needed by C11).
+- Database size budget: the benchmark farm measures 67.6 MB for three years and 112.5 MB for five, against a planned 60 MB (needed before the beta).
 - Test phone: one low-end Android phone typical of the pilot district, for all performance budgets (needed by A6).
