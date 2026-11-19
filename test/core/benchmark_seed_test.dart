@@ -43,8 +43,8 @@ void main() {
     final ids = <Object?>{};
     for (final MapEntry(key: table, value: rows) in seed.entries) {
       for (final row in rows) {
-        expect(ids.add(row['id']), isTrue, reason: table);
-        if (table != 'farms' && table != 'event_log') {
+        expect(ids.add('$table/${row['id']}'), isTrue, reason: table);
+        if (!const {'farms', 'event_log', 'crops'}.contains(table)) {
           expect(
             row.keys,
             containsAll(<String>[
@@ -70,8 +70,16 @@ void main() {
       dates.reduce((a, b) => a.compareTo(b) > 0 ? a : b),
       startsWith('2026-11'),
     );
+    final sold = <Object?, int>{};
+    for (final s in seed['sale_lots']!) {
+      sold.update(
+        s['lot_id'],
+        (v) => v + (s['quantity']! as int),
+        ifAbsent: () => s['quantity']! as int,
+      );
+    }
     for (final lot in seed['lots']!) {
-      expect(lot['remaining']! as int, greaterThanOrEqualTo(0));
+      expect(sold[lot['id']] ?? 0, lessThanOrEqualTo(lot['quantity']! as int));
     }
   });
 }

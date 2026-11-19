@@ -294,7 +294,7 @@ create table public.template_overrides (
   name_ml text,
   name_en text,
   data jsonb not null default '{}',
-  hidden boolean not null default false,
+  hidden boolean,                                 -- null: this level leaves it as it is
   created_at timestamptz not null default now(),
   created_by uuid,
   updated_at timestamptz not null default now(),

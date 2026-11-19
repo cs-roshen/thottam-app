@@ -836,5 +836,45 @@
   "debugWidgetGallery": "വിജറ്റ് ഗാലറി (ഡീബഗ്)",
   "@debugWidgetGallery": {
     "description": "Link on More to the shared widget gallery; shown in debug builds only."
+  },
+  "syncLastSynced": "അവസാനം സിങ്ക് ചെയ്തത് {time}",
+  "@syncLastSynced": {
+    "description": "Sync status line in Settings: when the phone last synced. time is a short date and time.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNever": "ഇതുവരെ സിങ്ക് ചെയ്തിട്ടില്ല",
+  "@syncNever": {
+    "description": "Sync status line in Settings before the first sync."
+  },
+  "syncWaiting": "{count, plural, =0{എല്ലാം സിങ്ക് ചെയ്തു} =1{1 മാറ്റം സിങ്ക് ചെയ്യാനുണ്ട്} other{{count} മാറ്റങ്ങൾ സിങ്ക് ചെയ്യാനുണ്ട്}}",
+  "@syncWaiting": {
+    "description": "Sync status line in Settings: changes saved on the phone and not yet uploaded.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncRejected": "{count, plural, =1{സെർവർ സ്വീകരിക്കാത്ത 1 മാറ്റം} other{സെർവർ സ്വീകരിക്കാത്ത {count} മാറ്റങ്ങൾ}}",
+  "@syncRejected": {
+    "description": "Sync status line in Settings: changes the server will not accept (for example no permission).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncConflicts": "{count, plural, =1{1 മാറ്റത്തിന് നിങ്ങളുടെ തീരുമാനം വേണം} other{{count} മാറ്റങ്ങൾക്ക് നിങ്ങളുടെ തീരുമാനം വേണം}}",
+  "@syncConflicts": {
+    "description": "Sync status line in Settings: changes made on two phones that the farmer must choose between.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -836,5 +836,45 @@
   "debugWidgetGallery": "Widget gallery (debug)",
   "@debugWidgetGallery": {
     "description": "Link on More to the shared widget gallery; shown in debug builds only."
+  },
+  "syncLastSynced": "Last synced {time}",
+  "@syncLastSynced": {
+    "description": "Sync status line in Settings: when the phone last synced. time is a short date and time.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNever": "Not synced yet",
+  "@syncNever": {
+    "description": "Sync status line in Settings before the first sync."
+  },
+  "syncWaiting": "{count, plural, =0{Everything is synced} =1{1 change waiting to sync} other{{count} changes waiting to sync}}",
+  "@syncWaiting": {
+    "description": "Sync status line in Settings: changes saved on the phone and not yet uploaded.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncRejected": "{count, plural, =1{1 change the server refused} other{{count} changes the server refused}}",
+  "@syncRejected": {
+    "description": "Sync status line in Settings: changes the server will not accept (for example no permission).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncConflicts": "{count, plural, =1{1 change needs your choice} other{{count} changes need your choice}}",
+  "@syncConflicts": {
+    "description": "Sync status line in Settings: changes made on two phones that the farmer must choose between.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

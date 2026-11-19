@@ -156,7 +156,7 @@ No app code. The output is corrected docs and answered decisions.
 | Google Cloud project and OAuth client ids for Google sign-in | B6 | Open |
 | SMS provider for phone OTP and its registration (see section 17) | D6 | Open |
 | Whether one account can have both Google and phone sign-in linked, and how a phone-only member is invited | D6 | Open |
-| How many seasons of history stay on the phone (section 12) | B7 | Open |
+| How many seasons of history stay on the phone (section 12) | B7 | All of them (2026-11-18) |
 | Test phone: one low-end Android phone typical of the pilot district | A6 | Open |
 | Pilot district and crops | B1 seed data | Idukki; wave 1 crops (coconut, rubber, pepper, banana, paddy, cardamom) |
 | Partner organisation for the pilot | Field test (phase 6) | Open |
@@ -194,7 +194,7 @@ flag, and who writes `lots`), fixed the same day.
 | Does sale profit per kg subtract deductions? | Yes: net amount per kg minus lot cost per kg. The spec example becomes 35,080 / 50 − 238 = ₹463.60. Show the deductions line so the farmer sees why. | `product-spec.md` |
 | Where do leftover paise go in a split? | Largest-remainder method: give each crop its rounded-down share, then hand out the remaining paise one at a time to the largest fractional parts; ties go to the crop cycle listed first. | `product-spec.md`, `screens.md` |
 | How are per-kg and per-person figures rounded? | Keep full precision in calculation; round only for display, to one decimal for quantities and to whole paise for money. | `product-spec.md` |
-| What does "mixed" language show? | Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin. | `product-spec.md`, `screens.md` |
+| What does "mixed" language show? | Malayalam interface, with crop and category names shown in Malayalam followed by English. Units and numbers are always in English with Latin digits, in every language (owner decision, 2026-11-19). | `product-spec.md`, `screens.md` |
 | Who owns the record `version`? | The device increments `version` on every local write. The server changes it only when it settles a conflict between two devices. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
 | Which tables carry the common columns? | Every farm-owned, synced table, including a farmer's own crops and locally entered prices. Standard master data with no owning farm (`crops`, `template_items`, official `market_prices`) and `event_log` are exempt, and say so. | `CLAUDE.md` |
 
@@ -302,7 +302,7 @@ Fixes to make:
 | Deletes | Split every `for all` policy into select, insert and update. No client delete policy on any table; deleting means setting `deleted_at`. |
 | Farm creation | One security-definer function `create_farm(...)` that inserts the farm and the owner's `farm_members` row in one transaction and returns the farm. Clients do not insert into `farms` directly. |
 | Profiles | Create the `profiles` row automatically when an auth user is created. |
-| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account next signs in or syncs. `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
+| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). The invited account sees its open invites (`my_invites`) and chooses: `accept_invite` turns one into a `farm_members` row and `decline_invite` closes it. Nobody is added to a farm until they accept (owner decision, 2026-11-19). `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
 | Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
 | Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)` and drop `sales.lot_id`. Add `sale_payments` for part payments. Both new tables carry the common columns. Keep `sales.received_paise` only if it is derived. |
@@ -338,7 +338,7 @@ can be hard-deleted by a client.
 - `Money` as integer paise: add, subtract, multiply by a quantity or ratio with the rounding
   rule in `product-spec.md` rule 8 (once, when saved, half away from zero), split by weights
   using the largest-remainder rule from phase 0, format and parse with Indian grouping.
-- Units with conversions from templates, including local units and custom ratios.
+- Standard units with conversions from templates, and the farmer's own ratios (no traditional local measures; owner decision, 2026-11-19).
 - Property-style tests: a split always sums to the original for random amounts and weights;
   formatting then parsing returns the same value.
 
@@ -421,7 +421,7 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
 
 - Three steps, each skippable except name and farm name. Finishing creates the farm, one plot
   and the crop cycles from templates in a single local transaction.
-- An account that already has a farm (its own, or by invite) skips set-up: sign-in runs the
+- An account that already has a farm (its own, or one it joined from an invite) skips set-up: sign-in runs the
   first sync (section 13) and opens Home.
 - Works fully offline after the sign-in step; templates needed for set-up ship inside the app as a
   bundled seed so the first run does not depend on a download.
@@ -948,9 +948,10 @@ not scan the whole table.
 
 ### Event log growth
 
-- Changed fields only for updates (B4). Paginate. Keep everything locally for the current and
-  previous two seasons; older events stay on the server and are fetched on demand when the
-  farmer scrolls that far back. Decide this cut-off with the owner before B7.
+- Changed fields only for updates (B4). Paginate. Every season stays on the phone (owner
+  decision, 2026-11-18): nothing is cut off and nothing is fetched on demand. The three-year
+  benchmark seed is 50.4 MB; measure the file again at D1 and with five years of data before
+  the beta, and tell the owner if it nears the storage budget.
 
 ### Photos
 
