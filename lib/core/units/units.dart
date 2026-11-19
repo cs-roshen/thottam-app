@@ -23,7 +23,7 @@ class Unit {
 }
 
 /// A farmer's own conversion: one [from] holds [factor] of [to]
-/// ("1 para of paddy is 7 kg"). It defines [from]: every conversion of [from]
+/// ("1 bunch of banana is 12.5 kg"). It defines [from]: every conversion of [from]
 /// goes through it, ahead of any template factor [from] has.
 class UnitRatio {
   const UnitRatio(this.from, this.to, this.factor);
@@ -38,9 +38,9 @@ typedef _Fraction = (BigInt, BigInt);
 /// factors and the farmer's own ratios. A converted quantity is stored to
 /// thousandths, half away from zero (product spec rule 8). A factor that is
 /// not a positive number is ignored, so one bad entry cannot break the rest.
-// shortcut: a path uses at most one farmer ratio at each end (para -> kg, or
-// kg -> para); chains such as edangazhi -> para -> kg wait for the owner's
-// answer on whether local units chain.
+// shortcut: a path uses at most one farmer ratio at each end (bunch -> kg, or
+// kg -> bunch), never a chain of them; standard units need none (owner
+// decision, 2026-11-19). Add chains if local measures ever come back.
 class Units {
   Units(Iterable<Unit> units, {Iterable<UnitRatio> ratios = const []}) {
     for (final u in units) {

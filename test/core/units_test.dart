@@ -2,7 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:thottam/core/units/units.dart';
 
 void main() {
-  // The same factors the wave 1 template seed carries.
+  // The wave 1 template factors, and one unit of the farmer's own (from My
+  // lists) that has no template factor.
   final templates = [
     Unit.fromTemplate('kg', {'dimension': 'mass', 'factor': 1}),
     Unit.fromTemplate('g', {'dimension': 'mass', 'factor': 0.001}),
@@ -11,7 +12,7 @@ void main() {
     Unit.fromTemplate('acre', {'dimension': 'area', 'factor': 100}),
     Unit.fromTemplate('hectare', {'dimension': 'area', 'factor': 247.105381}),
     Unit.fromTemplate('bunch', {'dimension': 'count', 'factor': 1}),
-    Unit.fromTemplate('para', {'dimension': 'mass', 'factor': null}),
+    Unit.fromTemplate('sack', {'dimension': 'mass', 'factor': null}),
   ];
 
   test('same dimension converts through the base unit', () {
@@ -26,18 +27,18 @@ void main() {
   test('no conversion across dimensions or to a unit without a factor', () {
     final u = Units(templates);
     expect(u.convert(1000, 'kg', 'cent'), isNull);
-    expect(u.convert(1000, 'para', 'kg'), isNull);
+    expect(u.convert(1000, 'sack', 'kg'), isNull);
     expect(u.convert(1000, 'kg', 'unknown'), isNull);
   });
 
-  test('a farmer\'s own ratio converts local units, both ways', () {
-    final u = Units(templates, ratios: [const UnitRatio('para', 'kg', '7')]);
-    expect(u.convert(3000, 'para', 'kg'), 21000);
-    expect(u.convert(21000, 'kg', 'para'), 3000);
-    expect(u.convert(10000, 'kg', 'para'), 1429); // 1.428571… → 1.429
-    // one hop further through the template: 3 para → 21 kg → 0.21 quintal
-    expect(u.convert(3000, 'para', 'quintal'), 210);
-    expect(u.convert(210, 'quintal', 'para'), 3000);
+  test('a farmer\'s own ratio converts their own unit, both ways', () {
+    final u = Units(templates, ratios: [const UnitRatio('sack', 'kg', '7')]);
+    expect(u.convert(3000, 'sack', 'kg'), 21000);
+    expect(u.convert(21000, 'kg', 'sack'), 3000);
+    expect(u.convert(10000, 'kg', 'sack'), 1429); // 1.428571… → 1.429
+    // one hop further through the template: 3 sack → 21 kg → 0.21 quintal
+    expect(u.convert(3000, 'sack', 'quintal'), 210);
+    expect(u.convert(210, 'quintal', 'sack'), 3000);
   });
 
   test('a farmer\'s ratio wins over the template for that pair', () {
@@ -49,7 +50,7 @@ void main() {
   });
 
   test('the farmer ratio defines its unit for every conversion', () {
-    // a local "quintal" of 98 kg, though the template says 100
+    // a farmer's "quintal" of 98 kg, though the template says 100
     final u = Units(
       templates,
       ratios: [const UnitRatio('quintal', 'kg', '98')],
@@ -69,19 +70,19 @@ void main() {
         Unit.fromTemplate('broken', {'dimension': 'mass', 'factor': 'lots'}),
       ],
       ratios: [
-        const UnitRatio('para', 'kg', '7 kg'),
+        const UnitRatio('sack', 'kg', '7 kg'),
         const UnitRatio('bunch', 'kg', '-12'),
       ],
     );
     expect(u.convert(1000000000, 'ug', 'kg'), 1);
     expect(u.convert(1000, 'broken', 'kg'), isNull);
-    expect(u.convert(1000, 'para', 'kg'), isNull);
+    expect(u.convert(1000, 'sack', 'kg'), isNull);
     expect(u.convert(1000, 'bunch', 'kg'), isNull);
     expect(u.convert(1500, 'quintal', 'kg'), 150000);
   });
 
   test('a zero ratio gives no conversion instead of a crash', () {
-    final u = Units(templates, ratios: [const UnitRatio('para', 'kg', '0')]);
-    expect(u.convert(1000, 'kg', 'para'), isNull);
+    final u = Units(templates, ratios: [const UnitRatio('sack', 'kg', '0')]);
+    expect(u.convert(1000, 'kg', 'sack'), isNull);
   });
 }

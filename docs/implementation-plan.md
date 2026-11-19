@@ -338,7 +338,7 @@ can be hard-deleted by a client.
 - `Money` as integer paise: add, subtract, multiply by a quantity or ratio with the rounding
   rule in `product-spec.md` rule 8 (once, when saved, half away from zero), split by weights
   using the largest-remainder rule from phase 0, format and parse with Indian grouping.
-- Units with conversions from templates, including local units and custom ratios.
+- Standard units with conversions from templates, and the farmer's own ratios (no traditional local measures; owner decision, 2026-11-19).
 - Property-style tests: a split always sums to the original for random amounts and weights;
   formatting then parsing returns the same value.
 

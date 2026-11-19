@@ -412,6 +412,14 @@ select pg_temp.check('every seeded crop has activities, grades and labour tasks'
   (select count(*) from public.crops c where c.owner_farm_id is null and
      (select count(distinct t.list_type) from public.template_items t
       where t.crop_id = c.id and t.list_type in ('activity', 'grade', 'labour_task', 'setting')) = 4) = 6);
+select pg_temp.check('only standard units are offered',
+  (select array_agg(code order by code) from public.template_items
+   where list_type = 'unit' and is_active)
+  = array['acre', 'are', 'bunch', 'cent', 'g', 'hectare', 'kg', 'litre', 'nut', 'piece',
+          'quintal', 'sheet', 'tonne']);
+select pg_temp.check('a retired unit is kept for entries that used it',
+  exists (select 1 from public.template_items where list_type = 'unit' and code = 'para'
+          and not is_active and template_version = 2));
 select pg_temp.check('viewer reads templates',
   pg_temp.try_as(pg_temp.u('viewer_a'), 'select 1 from public.template_items limit 1') = 'ok:1');
 select pg_temp.check('clients cannot write templates',
