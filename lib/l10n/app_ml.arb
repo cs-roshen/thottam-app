@@ -437,7 +437,7 @@
   },
   "labourGroupName": "ഗ്രൂപ്പിന്റെ പേര് (വേണമെങ്കിൽ)",
   "@labourGroupName": {
-    "description": "Optional group name field."
+    "description": "Group name field."
   },
   "labourGroupHint": "പേരുകൾ വേണ്ട, എണ്ണം മതി. പിന്നീട് പേരും ലീഡറും ചേർക്കാം. ഗ്രൂപ്പിന്റെ പഴയ കണക്കുകൾ ചരിത്രത്തിൽ കാണാം.",
   "@labourGroupHint": {
@@ -1321,5 +1321,198 @@
   "historyComingSoon": "മുഴുവൻ ചരിത്രം അടുത്ത ഘട്ടത്തിൽ വരും",
   "@historyComingSoon": {
     "description": "Placeholder until the History screen exists."
+  },
+  "attendanceOvertime": "ഓവർടൈം",
+  "@attendanceOvertime": {
+    "description": "Attendance choice: a full day plus extra hours."
+  },
+  "labourOvertimeHours": "അധിക മണിക്കൂർ",
+  "@labourOvertimeHours": {
+    "description": "Overtime hours stepper for one worker."
+  },
+  "labourOvertimeRate": "ഓവർടൈം നിരക്ക് (മണിക്കൂറിന്)",
+  "@labourOvertimeRate": {
+    "description": "Overtime rate field on the attendance screen; comes from the templates and can be changed for this day."
+  },
+  "labourNoWorkers": "പണിക്കാരെ ചേർത്തിട്ടില്ല. പേര് ചേർക്കുക, അല്ലെങ്കിൽ എണ്ണം മാത്രം നൽകാൻ ഗ്രൂപ്പ് ഉപയോഗിക്കുക.",
+  "@labourNoWorkers": {
+    "description": "Shown on the named-workers tab when there are none."
+  },
+  "labourAddWorker": "പണിക്കാരനെ ചേർക്കുക",
+  "@labourAddWorker": {
+    "description": "Button to add a named worker."
+  },
+  "labourWorkerName": "പേര്",
+  "@labourWorkerName": {
+    "description": "Worker name field."
+  },
+  "labourWorkerNameRequired": "പേര് നൽകുക",
+  "@labourWorkerNameRequired": {
+    "description": "Error when the worker name is empty."
+  },
+  "labourDailyRate": "ദിവസക്കൂലി",
+  "@labourDailyRate": {
+    "description": "A worker's usual daily wage field."
+  },
+  "labourFamily": "കുടുംബാംഗം",
+  "@labourFamily": {
+    "description": "Switch: this worker is family."
+  },
+  "labourFamilyHint": "കുടുംബത്തിന്റെ പണി വേറെ കാണിക്കും; ചെലവിൽ കൂട്ടില്ല",
+  "@labourFamilyHint": {
+    "description": "Hint under the family switch."
+  },
+  "labourDate": "തീയതി",
+  "@labourDate": {
+    "description": "Label for the day of work."
+  },
+  "labourPlot": "പ്ലോട്ട്",
+  "@labourPlot": {
+    "description": "Label above the plot choices on an entry."
+  },
+  "labourTask": "പണി",
+  "@labourTask": {
+    "description": "Label above the labour task choices."
+  },
+  "labourOneCrop": "ഏത് വിളയ്ക്ക്",
+  "@labourOneCrop": {
+    "description": "Label above the crop choices when labour goes to one crop."
+  },
+  "labourLumpSum": "ഗ്രൂപ്പിന് ഒറ്റ തുക",
+  "@labourLumpSum": {
+    "description": "Switch: pay the group one lump sum instead of a rate per head."
+  },
+  "labourLumpSumAmount": "ഗ്രൂപ്പിന്റെ തുക",
+  "@labourLumpSumAmount": {
+    "description": "Lump-sum amount field."
+  },
+  "labourHours": "എത്ര മണിക്കൂർ",
+  "@labourHours": {
+    "description": "Hours worked by a group, optional."
+  },
+  "labourNewGroup": "പുതിയ ഗ്രൂപ്പ്",
+  "@labourNewGroup": {
+    "description": "Choice for a group made on this entry."
+  },
+  "labourUnnamedGroup": "പേരില്ലാത്ത ഗ്രൂപ്പ്",
+  "@labourUnnamedGroup": {
+    "description": "Shown for a group that has no name yet."
+  },
+  "labourTeam": "പണിക്കാരും ഗ്രൂപ്പുകളും",
+  "@labourTeam": {
+    "description": "Title of the screen listing workers and groups, and the link to it."
+  },
+  "labourWorkers": "പണിക്കാർ",
+  "@labourWorkers": {
+    "description": "Heading above named workers."
+  },
+  "labourGroups": "ഗ്രൂപ്പുകൾ",
+  "@labourGroups": {
+    "description": "Heading above groups."
+  },
+  "labourBalanceDue": "കൊടുക്കാനുള്ളത് {amount}",
+  "@labourBalanceDue": {
+    "description": "Wages still owed to a worker or group.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "labourBalanceAhead": "മുൻകൂർ കൊടുത്തത് {amount}",
+  "@labourBalanceAhead": {
+    "description": "A worker or group was paid more than earned so far.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "labourBalanceClear": "തീർത്തു",
+  "@labourBalanceClear": {
+    "description": "Nothing owed either way."
+  },
+  "paymentBank": "ബാങ്ക്",
+  "@paymentBank": {
+    "description": "Payment mode: bank transfer."
+  },
+  "paymentKind": "{kind, select, advance{അഡ്വാൻസ്} part{ഭാഗിക തുക} settlement{കണക്ക് തീർക്കൽ} bonus{ബോണസ്} deduction{കിഴിവ്} other{തുക}}",
+  "@paymentKind": {
+    "description": "Kind of labour payment.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "labourPaymentTitle": "{name} - പണം",
+  "@labourPaymentTitle": {
+    "description": "Title of the payment sheet for a worker or group.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "labourPaid": "പണം രേഖപ്പെടുത്തി",
+  "@labourPaid": {
+    "description": "Toast after saving a labour payment."
+  },
+  "labourPeople": "{count} പേർ",
+  "@labourPeople": {
+    "description": "A head count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labourGroupLeader": "മേസ്തിരി",
+  "@labourGroupLeader": {
+    "description": "Group leader field."
+  },
+  "labourGroupUsualSize": "സാധാരണ എത്ര പേർ",
+  "@labourGroupUsualSize": {
+    "description": "Usual head count of a group."
+  },
+  "labourGroupMembers": "അംഗങ്ങൾ (വേണമെങ്കിൽ)",
+  "@labourGroupMembers": {
+    "description": "Heading above the member choices of a group."
+  },
+  "labourNoGroups": "ഗ്രൂപ്പുകളില്ല. ഹാജർ രേഖപ്പെടുത്തുമ്പോൾ ഗ്രൂപ്പ് ഉണ്ടാക്കാം.",
+  "@labourNoGroups": {
+    "description": "Shown when there are no groups."
+  },
+  "labourReadOnly": "പണി രേഖപ്പെടുത്താൻ ഉടമയ്ക്കോ മാനേജർക്കോ സൂപ്പർവൈസർക്കോ മാത്രമേ കഴിയൂ.",
+  "@labourReadOnly": {
+    "description": "Shown on the attendance screen to a role that cannot record work."
+  },
+  "labourNothingToCopy": "പകർത്താൻ മുമ്പത്തെ ദിവസമില്ല",
+  "@labourNothingToCopy": {
+    "description": "Toast when Same as yesterday finds nothing."
+  },
+  "labourNothingMarked": "ആരുടെയെങ്കിലും ഹാജർ നൽകുക",
+  "@labourNothingMarked": {
+    "description": "Error when saving a day with nobody marked."
+  },
+  "labourNoHeads": "എത്ര പേർ എന്ന് നൽകുക",
+  "@labourNoHeads": {
+    "description": "Error when saving a group with no people and no lump sum."
+  },
+  "labourChangeRate": "ഈ ദിവസത്തെ കൂലി",
+  "@labourChangeRate": {
+    "description": "Title of the dialog to change one worker's wage for this day only."
+  },
+  "labourDayWorked": "{attendance} · {amount}",
+  "@labourDayWorked": {
+    "description": "A day in a worker's history: attendance and wage.",
+    "placeholders": {
+      "attendance": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -69,6 +69,7 @@ void main() {
       );
     }
     await tester.ensureVisible(find.byKey(Key(key)));
+    await tester.pump(); // the scroll lands on the next frame
   }
 
   Future<void> tap(WidgetTester tester, String key) async {

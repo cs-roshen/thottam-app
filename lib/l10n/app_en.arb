@@ -437,7 +437,7 @@
   },
   "labourGroupName": "Group name (optional)",
   "@labourGroupName": {
-    "description": "Optional group name field."
+    "description": "Group name field."
   },
   "labourGroupHint": "No names needed, just the count. You can add names and a leader later. The group keeps its own history.",
   "@labourGroupHint": {
@@ -1321,5 +1321,198 @@
   "historyComingSoon": "The full history comes in the next round",
   "@historyComingSoon": {
     "description": "Placeholder until the History screen exists."
+  },
+  "attendanceOvertime": "Overtime",
+  "@attendanceOvertime": {
+    "description": "Attendance choice: a full day plus extra hours."
+  },
+  "labourOvertimeHours": "Extra hours",
+  "@labourOvertimeHours": {
+    "description": "Overtime hours stepper for one worker."
+  },
+  "labourOvertimeRate": "Overtime rate per hour",
+  "@labourOvertimeRate": {
+    "description": "Overtime rate field on the attendance screen; comes from the templates and can be changed for this day."
+  },
+  "labourNoWorkers": "No workers yet. Add the people who work here, or use Group for a head count.",
+  "@labourNoWorkers": {
+    "description": "Shown on the named-workers tab when there are none."
+  },
+  "labourAddWorker": "Add a worker",
+  "@labourAddWorker": {
+    "description": "Button to add a named worker."
+  },
+  "labourWorkerName": "Name",
+  "@labourWorkerName": {
+    "description": "Worker name field."
+  },
+  "labourWorkerNameRequired": "Enter a name",
+  "@labourWorkerNameRequired": {
+    "description": "Error when the worker name is empty."
+  },
+  "labourDailyRate": "Wage per day",
+  "@labourDailyRate": {
+    "description": "A worker's usual daily wage field."
+  },
+  "labourFamily": "Family member",
+  "@labourFamily": {
+    "description": "Switch: this worker is family."
+  },
+  "labourFamilyHint": "Family work is shown apart and left out of costs",
+  "@labourFamilyHint": {
+    "description": "Hint under the family switch."
+  },
+  "labourDate": "Date",
+  "@labourDate": {
+    "description": "Label for the day of work."
+  },
+  "labourPlot": "Plot",
+  "@labourPlot": {
+    "description": "Label above the plot choices on an entry."
+  },
+  "labourTask": "Work",
+  "@labourTask": {
+    "description": "Label above the labour task choices."
+  },
+  "labourOneCrop": "Which crop",
+  "@labourOneCrop": {
+    "description": "Label above the crop choices when labour goes to one crop."
+  },
+  "labourLumpSum": "One amount for the group",
+  "@labourLumpSum": {
+    "description": "Switch: pay the group one lump sum instead of a rate per head."
+  },
+  "labourLumpSumAmount": "Amount for the group",
+  "@labourLumpSumAmount": {
+    "description": "Lump-sum amount field."
+  },
+  "labourHours": "Hours worked",
+  "@labourHours": {
+    "description": "Hours worked by a group, optional."
+  },
+  "labourNewGroup": "New group",
+  "@labourNewGroup": {
+    "description": "Choice for a group made on this entry."
+  },
+  "labourUnnamedGroup": "Unnamed group",
+  "@labourUnnamedGroup": {
+    "description": "Shown for a group that has no name yet."
+  },
+  "labourTeam": "Workers and groups",
+  "@labourTeam": {
+    "description": "Title of the screen listing workers and groups, and the link to it."
+  },
+  "labourWorkers": "Workers",
+  "@labourWorkers": {
+    "description": "Heading above named workers."
+  },
+  "labourGroups": "Groups",
+  "@labourGroups": {
+    "description": "Heading above groups."
+  },
+  "labourBalanceDue": "Due {amount}",
+  "@labourBalanceDue": {
+    "description": "Wages still owed to a worker or group.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "labourBalanceAhead": "Paid ahead {amount}",
+  "@labourBalanceAhead": {
+    "description": "A worker or group was paid more than earned so far.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "labourBalanceClear": "Settled",
+  "@labourBalanceClear": {
+    "description": "Nothing owed either way."
+  },
+  "paymentBank": "Bank",
+  "@paymentBank": {
+    "description": "Payment mode: bank transfer."
+  },
+  "paymentKind": "{kind, select, advance{Advance} part{Part payment} settlement{Settlement} bonus{Bonus} deduction{Deduction} other{Payment}}",
+  "@paymentKind": {
+    "description": "Kind of labour payment.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "labourPaymentTitle": "Pay {name}",
+  "@labourPaymentTitle": {
+    "description": "Title of the payment sheet for a worker or group.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "labourPaid": "Payment saved",
+  "@labourPaid": {
+    "description": "Toast after saving a labour payment."
+  },
+  "labourPeople": "{count, plural, =1{1 person} other{{count} people}}",
+  "@labourPeople": {
+    "description": "A head count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labourGroupLeader": "Leader",
+  "@labourGroupLeader": {
+    "description": "Group leader field."
+  },
+  "labourGroupUsualSize": "Usual size",
+  "@labourGroupUsualSize": {
+    "description": "Usual head count of a group."
+  },
+  "labourGroupMembers": "Members (optional)",
+  "@labourGroupMembers": {
+    "description": "Heading above the member choices of a group."
+  },
+  "labourNoGroups": "No groups yet. A group is made when you record a group's day.",
+  "@labourNoGroups": {
+    "description": "Shown when there are no groups."
+  },
+  "labourReadOnly": "Only the owner, a manager or a supervisor can record work.",
+  "@labourReadOnly": {
+    "description": "Shown on the attendance screen to a role that cannot record work."
+  },
+  "labourNothingToCopy": "No earlier day to copy",
+  "@labourNothingToCopy": {
+    "description": "Toast when Same as yesterday finds nothing."
+  },
+  "labourNothingMarked": "Mark at least one worker",
+  "@labourNothingMarked": {
+    "description": "Error when saving a day with nobody marked."
+  },
+  "labourNoHeads": "Enter how many people",
+  "@labourNoHeads": {
+    "description": "Error when saving a group with no people and no lump sum."
+  },
+  "labourChangeRate": "Wage for this day",
+  "@labourChangeRate": {
+    "description": "Title of the dialog to change one worker's wage for this day only."
+  },
+  "labourDayWorked": "{attendance} · {amount}",
+  "@labourDayWorked": {
+    "description": "A day in a worker's history: attendance and wage.",
+    "placeholders": {
+      "attendance": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }
