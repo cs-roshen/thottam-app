@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- primary in docs/design-tokens.md -->
+    <color name="ic_launcher_background">#1B6B3A</color>
+</resources>
