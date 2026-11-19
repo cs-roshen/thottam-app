@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../../core/db/database.dart';
+import '../../../core/db/queries.dart';
 import '../../../core/history/write_with_history.dart';
 import '../domain/land.dart';
 
@@ -100,41 +101,27 @@ class LandRepository {
   // ---------- reading ----------
 
   /// The farm's live plots with the crops growing now and the next task.
-  Stream<List<PlotView>> watchPlots() => _watch(
-    {'plots', 'crop_cycles', 'crops', 'tasks'},
-    () async {
-      final cycles = await _cycles(
-        'c.farm_id = ? AND c.deleted_at IS NULL AND c.status <> ?',
-        [farmId, 'closed'],
-      );
-      final tasks = {
-        for (final r in await _rows(
-          // the next open task per plot, its own or its crops'
-          'SELECT COALESCE(t.plot_id, c.plot_id) AS plot, t.title, t.due_on '
-          'FROM tasks t LEFT JOIN crop_cycles c ON c.id = t.crop_cycle_id '
-          'WHERE t.farm_id = ? AND t.deleted_at IS NULL AND t.done_at IS NULL '
-          // later rows win: the earliest due day comes last
-          'ORDER BY t.due_on IS NOT NULL, t.due_on DESC, t.id DESC',
-          [farmId],
-        ))
-          r.readNullable<String>('plot'): (
-            r.read<String>('title'),
-            r.readNullable<String>('due_on'),
-          ),
-      };
-      return [
-        for (final r in await _rows(
-          'SELECT * FROM plots WHERE farm_id = ? AND deleted_at IS NULL '
-          'ORDER BY name, id',
-          [farmId],
-        ))
-          _plot(r, [
-            for (final c in cycles)
-              if (c.plotId == r.read<String>('id')) c,
-          ], tasks[r.read<String>('id')]),
-      ];
-    },
-  );
+  Stream<List<PlotView>> watchPlots() =>
+      _watch({'plots', 'crop_cycles', 'crops', 'tasks'}, () async {
+        final cycles = [
+          for (final r in await select(db, qFarmCycles, {'farm': farmId}))
+            _cycle(r),
+        ];
+        final tasks = {
+          for (final r in await select(db, qOpenTasks, {'farm': farmId}))
+            r.readNullable<String>('plot'): (
+              r.read<String>('title'),
+              r.readNullable<String>('due_on'),
+            ),
+        };
+        return [
+          for (final r in await select(db, qPlots, {'farm': farmId}))
+            _plot(r, [
+              for (final c in cycles)
+                if (c.plotId == r.read<String>('id')) c,
+            ], tasks[r.read<String>('id')]),
+        ];
+      });
 
   /// One plot with every crop cycle on it, closed seasons included; null
   /// once deleted.
@@ -145,11 +132,10 @@ class LandRepository {
           [plotId],
         );
         if (rows.isEmpty) return null;
-        return _plot(
-          rows.single,
-          await _cycles('c.plot_id = ? AND c.deleted_at IS NULL', [plotId]),
-          null,
-        );
+        return _plot(rows.single, [
+          for (final r in await select(db, qPlotCycles, {'plot': plotId}))
+            _cycle(r),
+        ], null);
       });
 
   PlotView _plot(QueryRow r, List<CycleView> cycles, (String, String?)? task) =>
@@ -163,28 +149,20 @@ class LandRepository {
         nextTask: task,
       );
 
-  Future<List<CycleView>> _cycles(String where, List<Object?> args) async => [
-    for (final r in await _rows(
-      'SELECT c.*, k.name_ml, k.name_en, k.kind FROM crop_cycles c '
-      'JOIN crops k ON k.id = c.crop_id WHERE $where '
-      'ORDER BY c.status = ?, c.created_at, c.id',
-      [...args, 'closed'],
-    ))
-      CycleView(
-        id: r.read<String>('id'),
-        plotId: r.read<String>('plot_id'),
-        cropId: r.read<String>('crop_id'),
-        nameMl: r.read<String>('name_ml'),
-        nameEn: r.read<String>('name_en'),
-        kind: r.read<String>('kind'),
-        variety: r.readNullable<String>('variety'),
-        plantCount: r.readNullable<int>('plant_count'),
-        areaShare: r.readNullable<int>('area_share'),
-        season: r.readNullable<String>('season'),
-        plantedOn: r.readNullable<String>('planted_on'),
-        status: r.read<String>('status'),
-      ),
-  ];
+  static CycleView _cycle(QueryRow r) => CycleView(
+    id: r.read<String>('id'),
+    plotId: r.read<String>('plot_id'),
+    cropId: r.read<String>('crop_id'),
+    nameMl: r.read<String>('name_ml'),
+    nameEn: r.read<String>('name_en'),
+    kind: r.read<String>('kind'),
+    variety: r.readNullable<String>('variety'),
+    plantCount: r.readNullable<int>('plant_count'),
+    areaShare: r.readNullable<int>('area_share'),
+    season: r.readNullable<String>('season'),
+    plantedOn: r.readNullable<String>('planted_on'),
+    status: r.read<String>('status'),
+  );
 
   /// Cost and yield of each live crop cycle on [plotId]. Entries count
   /// whatever happened to their plot; deleted entries do not.
@@ -200,38 +178,15 @@ class LandRepository {
     },
     () async {
       final yields = <String, Map<String, int>>{};
-      for (final r in await _rows(
-        'SELECT h.crop_cycle_id AS cycle, h.unit, SUM(h.quantity) AS q '
-        'FROM harvests h JOIN crop_cycles c ON c.id = h.crop_cycle_id '
-        'WHERE c.plot_id = ? AND c.deleted_at IS NULL AND h.deleted_at IS NULL '
-        'GROUP BY h.crop_cycle_id, h.unit',
-        [plotId],
-      )) {
+      for (final r in await select(db, qPlotYields, {'plot': plotId})) {
         (yields[r.read<String>('cycle')] ??= {})[r.read<String>('unit')] = r
             .read<int>('q');
       }
       return [
-        for (final r in await _rows(
-          'SELECT c.id, '
-          '(SELECT COALESCE(SUM(a.amount_paise), 0) FROM expense_allocations a '
-          'JOIN expenses e ON e.id = a.expense_id AND e.deleted_at IS NULL '
-          'WHERE a.crop_cycle_id = c.id AND a.deleted_at IS NULL) AS expense, '
-          // labour on one crop cycle carries it; labour split across a
-          // mixed plot has none, and its allocations carry the parts
-          '(SELECT COALESCE(SUM(l.amount_paise), 0) FROM labour_entries l '
-          'LEFT JOIN workers w ON w.id = l.worker_id '
-          'WHERE l.crop_cycle_id = c.id AND l.deleted_at IS NULL '
-          'AND COALESCE(w.is_family, 0) = 0) + '
-          '(SELECT COALESCE(SUM(a.amount_paise), 0) FROM labour_allocations a '
-          'JOIN labour_entries l ON l.id = a.labour_entry_id '
-          'AND l.deleted_at IS NULL AND l.crop_cycle_id IS NULL '
-          'LEFT JOIN workers w ON w.id = l.worker_id '
-          'WHERE a.crop_cycle_id = c.id AND a.deleted_at IS NULL '
-          'AND COALESCE(w.is_family, 0) = 0) AS labour '
-          'FROM crop_cycles c WHERE c.plot_id = ? AND c.deleted_at IS NULL '
-          'ORDER BY c.created_at, c.id',
-          [plotId],
-        ))
+        for (final r in await select(db, qCycleTotals, {
+          'plot': plotId,
+          'farm': farmId,
+        }))
           CycleTotals(
             r.read<String>('id'),
             expensePaise: r.read<int>('expense'),
@@ -254,31 +209,10 @@ class LandRepository {
       'workers',
     },
     () async => [
-      for (final r in await _rows(
-        'SELECT code, SUM(paise) AS paise FROM ('
-        'SELECT e.category_code AS code, a.amount_paise AS paise '
-        'FROM expense_allocations a '
-        'JOIN expenses e ON e.id = a.expense_id AND e.deleted_at IS NULL '
-        'JOIN crop_cycles c ON c.id = a.crop_cycle_id '
-        "WHERE c.plot_id = ?1 AND c.deleted_at IS NULL AND c.status <> 'closed' "
-        'AND a.deleted_at IS NULL '
-        'UNION ALL '
-        "SELECT 'wages', l.amount_paise FROM labour_entries l "
-        'LEFT JOIN workers w ON w.id = l.worker_id '
-        'JOIN crop_cycles c ON c.id = l.crop_cycle_id '
-        "WHERE c.plot_id = ?1 AND c.deleted_at IS NULL AND c.status <> 'closed' "
-        'AND l.deleted_at IS NULL AND COALESCE(w.is_family, 0) = 0 '
-        'UNION ALL '
-        "SELECT 'wages', a.amount_paise FROM labour_allocations a "
-        'JOIN labour_entries l ON l.id = a.labour_entry_id '
-        'AND l.deleted_at IS NULL AND l.crop_cycle_id IS NULL '
-        'LEFT JOIN workers w ON w.id = l.worker_id '
-        'JOIN crop_cycles c ON c.id = a.crop_cycle_id '
-        "WHERE c.plot_id = ?1 AND c.deleted_at IS NULL AND c.status <> 'closed' "
-        'AND a.deleted_at IS NULL AND COALESCE(w.is_family, 0) = 0'
-        ') GROUP BY code HAVING SUM(paise) <> 0 ORDER BY paise DESC, code',
-        [plotId],
-      ))
+      for (final r in await select(db, qPlotCosts, {
+        'plot': plotId,
+        'farm': farmId,
+      }))
         (r.read<String>('code'), r.read<int>('paise')),
     ],
   );
@@ -289,13 +223,7 @@ class LandRepository {
   ) => _watch({'market_prices'}, () async {
     final out = <String, (int, String, int)>{};
     for (final crop in cropIds) {
-      final r = await _rows(
-        'SELECT price_paise, unit, published_at FROM market_prices '
-        'WHERE crop_id = ? AND deleted_at IS NULL '
-        'AND (farm_id IS NULL OR farm_id = ?) '
-        'ORDER BY published_at DESC LIMIT 1',
-        [crop, farmId],
-      );
+      final r = await select(db, qLatestPrice, {'row': crop, 'farm': farmId});
       if (r.isNotEmpty) {
         out[crop] = (
           r.single.read<int>('price_paise'),
@@ -312,14 +240,12 @@ class LandRepository {
       _watch(
         {'event_log'},
         () async => [
-          for (final r in await _rows(
-            'SELECT entity, "action", occurred_on, summary FROM event_log '
-            'WHERE farm_id = ? AND (entity_id = ?2 '
-            "OR json_extract(summary, '\$.plot_id') = ?2) "
-            "AND entity NOT LIKE '%allocations' "
-            'ORDER BY occurred_on DESC, created_at DESC, id DESC LIMIT ?3',
-            [farmId, plotId, limit],
-          ))
+          for (final r in await select(db, qPlotHistory, {
+            'farm': farmId,
+            'plot': plotId,
+            'limit': limit,
+            'from': _daysBefore(history.today(), 90),
+          }))
             PlotEvent(
               entity: r.read<String>('entity'),
               action: r.read<String>('action'),
@@ -329,6 +255,12 @@ class LandRepository {
             ),
         ],
       );
+
+  static String _daysBefore(String day, int days) =>
+      DateTime.parse(day)
+          .subtract(Duration(days: days))
+          .toIso8601String()
+          .substring(0, 10);
 
   /// The crops this farm can grow: the standard ones and its own.
   Future<List<CropOption>> crops() async => [

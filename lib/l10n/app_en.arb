@@ -1514,5 +1514,49 @@
         "type": "String"
       }
     }
+  },
+  "expenseAmountRequired": "Enter the amount",
+  "@expenseAmountRequired": {
+    "description": "Error when saving an expense with no amount."
+  },
+  "expenseCategoryRequired": "Choose what it was for",
+  "@expenseCategoryRequired": {
+    "description": "Error when saving an expense with no category."
+  },
+  "expenseVendor": "Shop or person (optional)",
+  "@expenseVendor": {
+    "description": "Vendor field shown for an expense bought on credit."
+  },
+  "expenseCreditHint": "Bought on credit: kept as a payable until it is paid",
+  "@expenseCreditHint": {
+    "description": "Hint under the payment choices when credit is chosen."
+  },
+  "expenseNoCrops": "This plot has no crops; the cost stays with the plot.",
+  "@expenseNoCrops": {
+    "description": "Shown when the chosen plot has no crops to split the expense across."
+  },
+  "expenseReadOnly": "Only the owner, a manager or an accountant can record expenses.",
+  "@expenseReadOnly": {
+    "description": "Shown on the expense screen to a role that cannot record money."
+  },
+  "splitModeShare": "Usual share",
+  "@splitModeShare": {
+    "description": "Split choice: by each crop's default cost share."
+  },
+  "splitModeArea": "By area",
+  "@splitModeArea": {
+    "description": "Split choice: by each crop's share of the plot's area."
+  },
+  "splitModePlants": "By plants",
+  "@splitModePlants": {
+    "description": "Split choice: by each crop's number of plants."
+  },
+  "splitModeEqual": "Equally",
+  "@splitModeEqual": {
+    "description": "Split choice: equal parts."
+  },
+  "expenseDate": "Date",
+  "@expenseDate": {
+    "description": "Label for the day of an expense."
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../../core/db/database.dart';
+import '../../../core/db/queries.dart';
 import '../../../core/history/write_with_history.dart';
 import '../../../core/money/money.dart';
 import '../domain/wages.dart';
@@ -148,26 +149,13 @@ class LabourRepository {
       )
       .get();
 
-  static const _payments =
-      "SUM(CASE WHEN kind IN ('advance', 'part_payment', 'settlement', 'deduction') "
-      'THEN amount_paise ELSE 0 END)';
-
   // ---------- reading ----------
 
   /// Workers by name, each with their balance.
   Stream<List<WorkerView>> watchWorkers() => _watch(
     {'workers', 'labour_entries', 'labour_payments'},
     () async => [
-      for (final r in await _rows(
-        'SELECT w.*, '
-        '(SELECT COALESCE(SUM(amount_paise), 0) FROM labour_entries l '
-        'WHERE l.worker_id = w.id AND l.deleted_at IS NULL) - '
-        '(SELECT COALESCE($_payments, 0) FROM labour_payments p '
-        'WHERE p.worker_id = w.id AND p.deleted_at IS NULL) AS balance '
-        'FROM workers w WHERE w.farm_id = ? AND w.deleted_at IS NULL '
-        'ORDER BY w.name, w.id',
-        [farmId],
-      ))
+      for (final r in await select(db, qWorkers, {'farm': farmId}))
         WorkerView(
           id: r.read<String>('id'),
           name: r.read<String>('name'),
@@ -189,26 +177,13 @@ class LabourRepository {
     },
     () async {
       final members = <String, List<String>>{};
-      for (final r in await _rows(
-        'SELECT group_id, worker_id FROM labour_group_members '
-        'WHERE farm_id = ? AND deleted_at IS NULL ORDER BY created_at, id',
-        [farmId],
-      )) {
+      for (final r in await select(db, qGroupMembers, {'farm': farmId})) {
         (members[r.read<String>('group_id')] ??= []).add(
           r.read<String>('worker_id'),
         );
       }
       return [
-        for (final r in await _rows(
-          'SELECT g.*, '
-          '(SELECT COALESCE(SUM(amount_paise), 0) FROM labour_entries l '
-          'WHERE l.group_id = g.id AND l.deleted_at IS NULL) - '
-          '(SELECT COALESCE($_payments, 0) FROM labour_payments p '
-          'WHERE p.group_id = g.id AND p.deleted_at IS NULL) AS balance '
-          'FROM labour_groups g WHERE g.farm_id = ? AND g.deleted_at IS NULL '
-          'ORDER BY g.is_named DESC, g.label, g.created_at DESC',
-          [farmId],
-        ))
+        for (final r in await select(db, qGroups, {'farm': farmId}))
           GroupView(
             id: r.read<String>('id'),
             label: r.read<String>('label'),
@@ -230,16 +205,12 @@ class LabourRepository {
 
   /// A worker's or group's days of work and payments, newest first.
   Stream<List<LedgerLine>> watchLedger({String? workerId, String? groupId}) {
-    final column = workerId != null ? 'worker_id' : 'group_id';
-    final id = workerId ?? groupId!;
+    final (days, payments, key, id) = workerId != null
+        ? (qWorkerDays, qWorkerPayments, 'worker', workerId)
+        : (qGroupDays, qGroupPayments, 'group', groupId!);
     return _watch({'labour_entries', 'labour_payments'}, () async {
       final lines = [
-        for (final r in await _rows(
-          'SELECT id, work_date, amount_paise, attendance, overtime_hours, '
-          'head_count FROM labour_entries WHERE $column = ? '
-          'AND deleted_at IS NULL ORDER BY work_date DESC, id DESC LIMIT 100',
-          [id],
-        ))
+        for (final r in await select(db, days, {key: id}))
           LedgerLine(
             id: r.read<String>('id'),
             day: r.read<String>('work_date'),
@@ -248,12 +219,7 @@ class LabourRepository {
             overtimeHours: r.readNullable<int>('overtime_hours'),
             heads: r.read<int>('head_count'),
           ),
-        for (final r in await _rows(
-          'SELECT id, paid_on, kind, amount_paise FROM labour_payments '
-          'WHERE $column = ? AND deleted_at IS NULL '
-          'ORDER BY paid_on DESC, id DESC LIMIT 100',
-          [id],
-        ))
+        for (final r in await select(db, payments, {key: id}))
           LedgerLine(
             id: r.read<String>('id'),
             day: r.read<String>('paid_on'),
@@ -268,14 +234,10 @@ class LabourRepository {
   /// The named workers' attendance on the last day before [day] that had
   /// any, for "same as yesterday".
   Future<List<WorkerDay>> lastDay(String day) async => [
-    for (final r in await _rows(
-      'SELECT worker_id, attendance, overtime_hours, overtime_rate_paise, '
-      'rate_paise FROM labour_entries WHERE farm_id = ?1 '
-      'AND worker_id IS NOT NULL AND deleted_at IS NULL AND work_date = '
-      '(SELECT MAX(work_date) FROM labour_entries WHERE farm_id = ?1 '
-      'AND worker_id IS NOT NULL AND deleted_at IS NULL AND work_date < ?2)',
-      [farmId, day],
-    ))
+    for (final r in await select(db, qLastLabourDay, {
+      'farm': farmId,
+      'day': day,
+    }))
       WorkerDay(
         r.read<String>('worker_id'),
         Attendance.of(
@@ -290,11 +252,7 @@ class LabourRepository {
 
   /// The plot and task of the latest labour entry, for smart defaults.
   Future<(String?, String?)> lastPlotAndTask() async {
-    final r = await _rows(
-      'SELECT plot_id, task_code FROM labour_entries WHERE farm_id = ? '
-      'AND deleted_at IS NULL ORDER BY work_date DESC, id DESC LIMIT 1',
-      [farmId],
-    );
+    final r = await select(db, qLastLabour, {'farm': farmId});
     if (r.isEmpty) return (null, null);
     return (
       r.single.readNullable<String>('plot_id'),

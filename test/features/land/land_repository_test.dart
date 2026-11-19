@@ -11,7 +11,7 @@ import 'package:thottam/features/land/domain/land.dart';
 import 'package:thottam/features/onboarding/data/onboarding_repository.dart';
 import 'package:thottam/features/onboarding/domain/setup.dart';
 
-import '../../core/db/list_queries.dart';
+import 'package:thottam/core/db/queries.dart';
 
 const user = 'user-owner';
 
