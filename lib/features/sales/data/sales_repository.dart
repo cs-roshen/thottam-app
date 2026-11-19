@@ -277,7 +277,8 @@ class SalesRepository {
             'mode': s.mode,
           },
           occurredOn: s.day,
-          summary: {'amount_paise': received},
+          // the diary shows a payment made with the sale through the sale
+          summary: {'amount_paise': received, 'part_of': id},
         ),
     ]);
   }

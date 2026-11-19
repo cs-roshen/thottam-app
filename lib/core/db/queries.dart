@@ -33,6 +33,7 @@ const listQueries = [
   ...expenseQueries,
   ...harvestQueries,
   ...saleQueries,
+  ...historyQueries,
   ListQuery(
     'labour day page',
     'SELECT * FROM labour_entries WHERE farm_id = :farm AND deleted_at IS NULL '
@@ -543,6 +544,51 @@ const qLastSale = ListQuery(
 );
 
 const saleQueries = [qLotsInStock, qBuyers, qBuyerSales, qLastSale];
+
+// ---------- history (screen 15) ----------
+
+const qDiaryPage = ListQuery(
+  'farm diary page, by filter',
+  // a page after (day, time, id), in index order; the filters only drop
+  // rows as the index is walked. Rows saved as part of another record (a
+  // harvest's teams, the payment made with a sale) show through it.
+  'SELECT id, entity, entity_id, "action", summary, old_values, new_values, '
+      'occurred_on, created_at, created_by FROM event_log '
+      'WHERE farm_id = :farm '
+      'AND (occurred_on, created_at, id) < (:day, :created, :id) '
+      "AND instr(:entities, ',' || entity || ',') > 0 "
+      "AND instr(:actions, ',' || \"action\" || ',') > 0 "
+      "AND (:onplot = '' OR entity_id = :onplot "
+      r"OR json_extract(summary, '$.plot_id') = :onplot) "
+      r"AND json_extract(summary, '$.part_of') IS NULL "
+      'ORDER BY occurred_on DESC, created_at DESC, id DESC LIMIT :limit',
+  ordered: true,
+);
+
+const qDiaryRange = ListQuery(
+  'how many diary entries in a range of days',
+  'SELECT COUNT(*) AS n FROM event_log WHERE farm_id = :farm '
+      'AND occurred_on BETWEEN :from AND :to '
+      "AND instr(:entities, ',' || entity || ',') > 0 "
+      r"AND json_extract(summary, '$.part_of') IS NULL",
+);
+
+const qRecordEvents = ListQuery(
+  "one record's history, newest first",
+  'SELECT id, entity, entity_id, "action", summary, old_values, new_values, '
+      'occurred_on, created_at, created_by FROM event_log '
+      'WHERE entity = :entity AND entity_id = :row '
+      'ORDER BY created_at DESC LIMIT 100',
+  ordered: true,
+);
+
+const qChangedSince = ListQuery(
+  'whether a record changed after one of its history rows',
+  'SELECT COUNT(*) AS n FROM event_log WHERE entity = :entity '
+      'AND entity_id = :row AND created_at > :created',
+);
+
+const historyQueries = [qDiaryPage, qDiaryRange, qRecordEvents, qChangedSince];
 
 // ---------- running them ----------
 

@@ -1306,7 +1306,7 @@
   "@cycleSeasonClosed": {
     "description": "Tag on a closed crop cycle, and the toast after closing one."
   },
-  "historyEvent": "{entity, select, plots{Plot} crop_cycles{Crop} farms{Farm} expenses{Expense} labour_entries{Labour} harvests{Harvest} sales{Sale} notes{Note} tasks{Task} other{Record}} {action, select, create{added} update{changed} delete{deleted} restore{brought back} other{changed}}",
+  "historyEvent": "{entity, select, plots{Plot} crop_cycles{Crop} farms{Farm} expenses{Expense} expense_payments{Expense payment} labour_entries{Labour} labour_payments{Wage payment} workers{Worker} labour_groups{Group} harvests{Harvest} lot_costs{Lot cost} sales{Sale} sale_payments{Money received} parties{Buyer or shop} notes{Note} tasks{Task} template_overrides{My lists} farm_members{Member} other{Record}} {action, select, create{added} update{changed} delete{deleted} restore{brought back} other{changed}}",
   "@historyEvent": {
     "description": "One history row: what kind of record and what happened to it.",
     "placeholders": {
@@ -1826,5 +1826,63 @@
         "type": "String"
       }
     }
+  },
+  "historyField": "{field, select, amount_paise{Amount} net_paise{Net} cost_paise{Cost} rate_paise{Rate} default_rate_paise{Wage} quantity{Quantity} area{Area} area_unit{Unit} area_share{Share of the plot} plant_count{Plants} head_count{People} attendance{Attendance} name{Name} label{Name} category_code{Category} tenure{Land} mode{Paid by} status{Status} variety{Variety} season{Season} body{Note} title{Task} deleted_at{Deleted} other{Detail}}",
+  "@historyField": {
+    "description": "Name of a field in an edit's old → new line.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "historyEmpty": "Nothing recorded yet. Everything you record shows here, day by day.",
+  "@historyEmpty": {
+    "description": "Empty farm diary."
+  },
+  "historyByYou": "you",
+  "@historyByYou": {
+    "description": "Who made a change: the signed-in person."
+  },
+  "historyByMember": "another member",
+  "@historyByMember": {
+    "description": "Who made a change: someone else on the farm (names come with members, C10)."
+  },
+  "historyLastYearCount": "{count, plural, =0{Nothing recorded this week last year} =1{1 entry this week last year} other{{count} entries this week last year}}",
+  "@historyLastYearCount": {
+    "description": "The \"this week last year\" card.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "historyRestore": "Put it back as it was",
+  "@historyRestore": {
+    "description": "Button to restore a record to before this change."
+  },
+  "historyRestoreWarnTitle": "It changed again after this",
+  "@historyRestoreWarnTitle": {
+    "description": "Title of the warning before restoring an older change."
+  },
+  "historyRestoreWarnBody": "This record was changed again later. Putting it back sets these details to what they were before this change. Everything stays in the history.",
+  "@historyRestoreWarnBody": {
+    "description": "Body of the warning before restoring an older change."
+  },
+  "historyRestored": "Put back",
+  "@historyRestored": {
+    "description": "Toast after restoring a record."
+  },
+  "historyTimeline": "This record's history",
+  "@historyTimeline": {
+    "description": "Button and title for one record's timeline."
+  },
+  "historyRecordTitle": "History",
+  "@historyRecordTitle": {
+    "description": "Title of one record's timeline."
+  },
+  "historyAllLoaded": "That is everything",
+  "@historyAllLoaded": {
+    "description": "End of the history list."
   }
 }

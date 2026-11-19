@@ -97,7 +97,7 @@ class HarvestRepository {
     Map<String, Object?> summary,
   ) => [
     for (final t in h.teams) ...[
-      ..._newGroup(t, summary),
+      ..._newGroup(t, {...summary, 'part_of': harvestId}),
       CreateRow(
         'labour_entries',
         {
@@ -117,7 +117,12 @@ class HarvestRepository {
           'task_code': 'harvest',
         },
         occurredOn: h.day,
-        summary: {...summary, 'amount_paise': t.wagePaise},
+        // the diary shows a harvest's teams through the harvest
+        summary: {
+          ...summary,
+          'amount_paise': t.wagePaise,
+          'part_of': harvestId,
+        },
       ),
     ],
   ];

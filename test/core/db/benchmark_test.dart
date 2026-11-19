@@ -66,15 +66,22 @@ void main() {
       'plot': plot,
       'group': seed['labour_groups']!.first['id']! as String,
       'limit': 5,
+      'entities': ',expenses,labour_entries,harvests,sales,plots,',
+      'actions': ',create,update,delete,restore,',
+      'onplot': '',
+      'created': 9999999999999,
     };
     final report = <String>[];
     for (final q in listQueries) {
       final v = {
         ...values,
         if (q.name == 'crop cycles on a plot') 'row': plot,
-        if (q.name == 'record timeline' || q == qExpenseParts)
+        if (q.name == 'record timeline' ||
+            q == qExpenseParts ||
+            q == qRecordEvents)
           'row': seed['expenses']!.first['id']! as String,
         if (q == qLatestPrice) 'row': seed['crops']!.first['id']! as String,
+        if (q == qDiaryPage) 'limit': 50,
       };
       final (sql, args) = bindNamed(q.sql, v);
       final times = <int>[];

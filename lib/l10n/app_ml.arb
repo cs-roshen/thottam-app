@@ -1306,7 +1306,7 @@
   "@cycleSeasonClosed": {
     "description": "Tag on a closed crop cycle, and the toast after closing one."
   },
-  "historyEvent": "{entity, select, plots{പ്ലോട്ട്} crop_cycles{വിള} farms{കൃഷിയിടം} expenses{ചെലവ്} labour_entries{പണി} harvests{വിളവെടുപ്പ്} sales{വിൽപ്പന} notes{കുറിപ്പ്} tasks{ജോലി} other{രേഖ}} {action, select, create{ചേർത്തു} update{മാറ്റി} delete{നീക്കി} restore{തിരികെ വച്ചു} other{മാറ്റി}}",
+  "historyEvent": "{entity, select, plots{പ്ലോട്ട്} crop_cycles{വിള} farms{കൃഷിയിടം} expenses{ചെലവ്} expense_payments{ചെലവിന്റെ പണം} labour_entries{പണി} labour_payments{കൂലി കൊടുത്തത്} workers{പണിക്കാരൻ} labour_groups{ഗ്രൂപ്പ്} harvests{വിളവെടുപ്പ്} lot_costs{ലോട്ടിന്റെ ചെലവ്} sales{വിൽപ്പന} sale_payments{കിട്ടിയ പണം} parties{വാങ്ങുന്നയാൾ / കട} notes{കുറിപ്പ്} tasks{ജോലി} template_overrides{എന്റെ പട്ടിക} farm_members{അംഗം} other{രേഖ}} {action, select, create{ചേർത്തു} update{മാറ്റി} delete{നീക്കി} restore{തിരികെ വച്ചു} other{മാറ്റി}}",
   "@historyEvent": {
     "description": "One history row: what kind of record and what happened to it.",
     "placeholders": {
@@ -1826,5 +1826,63 @@
         "type": "String"
       }
     }
+  },
+  "historyField": "{field, select, amount_paise{തുക} net_paise{കിട്ടുന്നത്} cost_paise{ചെലവ്} rate_paise{നിരക്ക്} default_rate_paise{കൂലി} quantity{അളവ്} area{വിസ്തീർണ്ണം} area_unit{അളവ്} area_share{പ്ലോട്ടിന്റെ പങ്ക്} plant_count{ചെടികൾ} head_count{ആളുകൾ} attendance{ഹാജർ} name{പേര്} label{പേര്} category_code{ഇനം} tenure{ഭൂമി} mode{പണം കൊടുത്ത വിധം} status{നില} variety{ഇനം} season{സീസൺ} body{കുറിപ്പ്} title{ജോലി} deleted_at{നീക്കിയത്} other{വിവരം}}",
+  "@historyField": {
+    "description": "Name of a field in an edit's old → new line.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "historyEmpty": "ഇതുവരെ ഒന്നും രേഖപ്പെടുത്തിയിട്ടില്ല. ചെയ്യുന്നതെല്ലാം ഇവിടെ ദിവസം തിരിച്ച് കാണാം.",
+  "@historyEmpty": {
+    "description": "Empty farm diary."
+  },
+  "historyByYou": "നിങ്ങൾ",
+  "@historyByYou": {
+    "description": "Who made a change: the signed-in person."
+  },
+  "historyByMember": "മറ്റൊരു അംഗം",
+  "@historyByMember": {
+    "description": "Who made a change: someone else on the farm (names come with members, C10)."
+  },
+  "historyLastYearCount": "{count, plural, =0{കഴിഞ്ഞ വർഷം ഈ ആഴ്ച ഒന്നും രേഖപ്പെടുത്തിയില്ല} =1{കഴിഞ്ഞ വർഷം ഈ ആഴ്ച 1 രേഖ} other{കഴിഞ്ഞ വർഷം ഈ ആഴ്ച {count} രേഖകൾ}}",
+  "@historyLastYearCount": {
+    "description": "The \"this week last year\" card.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "historyRestore": "പഴയതുപോലെ ആക്കുക",
+  "@historyRestore": {
+    "description": "Button to restore a record to before this change."
+  },
+  "historyRestoreWarnTitle": "ഇതിനു ശേഷവും മാറ്റങ്ങളുണ്ട്",
+  "@historyRestoreWarnTitle": {
+    "description": "Title of the warning before restoring an older change."
+  },
+  "historyRestoreWarnBody": "ഈ രേഖ പിന്നീടും മാറ്റിയിട്ടുണ്ട്. പഴയതുപോലെ ആക്കിയാൽ ഈ മാറ്റത്തിലെ വിവരങ്ങൾ മുമ്പത്തേതാകും. എല്ലാം ചരിത്രത്തിൽ നിലനിൽക്കും.",
+  "@historyRestoreWarnBody": {
+    "description": "Body of the warning before restoring an older change."
+  },
+  "historyRestored": "പഴയതുപോലെ ആക്കി",
+  "@historyRestored": {
+    "description": "Toast after restoring a record."
+  },
+  "historyTimeline": "ഈ രേഖയുടെ ചരിത്രം",
+  "@historyTimeline": {
+    "description": "Button and title for one record's timeline."
+  },
+  "historyRecordTitle": "ചരിത്രം",
+  "@historyRecordTitle": {
+    "description": "Title of one record's timeline."
+  },
+  "historyAllLoaded": "എല്ലാം കാണിച്ചു",
+  "@historyAllLoaded": {
+    "description": "End of the history list."
   }
 }

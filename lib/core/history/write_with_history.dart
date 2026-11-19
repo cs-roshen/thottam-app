@@ -100,8 +100,8 @@ class History {
   /// values, a deleted row back in place, a new row deleted (the undo of a
   /// save). The restore is itself a logged write. Returns its history id, or
   /// null when the row is already that way.
-  // shortcut: restoring an old event does not warn when the row changed since;
-  // the History screen (C7) asks before calling this on anything but the latest.
+  // Restoring an event the row has changed since is allowed: the History
+  // screen asks first (HistoryRepository.changedSince).
   Future<String?> restore(String eventId) async =>
       (await undo([eventId])).firstOrNull;
 
