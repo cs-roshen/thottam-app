@@ -746,10 +746,6 @@
   "@moneyByCrop": {
     "description": "By crop section."
   },
-  "moneySeasonAllPlots": "ഈ സീസൺ · എല്ലാ പ്ലോട്ടും",
-  "@moneySeasonAllPlots": {
-    "description": "Scope line: this season, all plots."
-  },
   "moneyIncludeFamilyLabour": "കുടുംബ കൂലി ഉൾപ്പെടുത്തുക",
   "@moneyIncludeFamilyLabour": {
     "description": "Switch to include family labour."
@@ -766,10 +762,6 @@
   "moneyShareReport": "റിപ്പോർട്ട് പങ്കിടുക",
   "@moneyShareReport": {
     "description": "Share report button."
-  },
-  "moneyReportReady": "റിപ്പോർട്ട് തയ്യാർ",
-  "@moneyReportReady": {
-    "description": "Report ready message."
   },
   "myListsTitle": "എന്റെ ലിസ്റ്റുകൾ",
   "@myListsTitle": {
@@ -1884,5 +1876,81 @@
   "historyAllLoaded": "എല്ലാം കാണിച്ചു",
   "@historyAllLoaded": {
     "description": "End of the history list."
+  },
+  "moneyThisYear": "ഈ വർഷം",
+  "@moneyThisYear": {
+    "description": "Period choice: this financial year, April to March."
+  },
+  "moneyLastYear": "കഴിഞ്ഞ വർഷം",
+  "@moneyLastYear": {
+    "description": "Period choice: the financial year before this one."
+  },
+  "moneyYearRange": "ഏപ്രിൽ {start} – മാർച്ച് {end}",
+  "@moneyYearRange": {
+    "description": "The financial year shown, e.g. April 2026 – March 2027.",
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyAllPlots": "എല്ലാ പ്ലോട്ടും",
+  "@moneyAllPlots": {
+    "description": "Plot choice: every plot of the farm."
+  },
+  "moneyLoss": "നഷ്ടം",
+  "@moneyLoss": {
+    "description": "Label when expense is more than income."
+  },
+  "moneyNoCrop": "വിളയിൽ പെടാത്തത്",
+  "@moneyNoCrop": {
+    "description": "Row for money entered on a plot or the farm but on no crop."
+  },
+  "moneyEmpty": "ഈ കാലയളവിൽ വിൽപ്പനയോ ചെലവോ ഇതുവരെ ഇല്ല.",
+  "@moneyEmpty": {
+    "description": "Profit and loss with no entries in the period."
+  },
+  "moneyReportCopied": "റിപ്പോർട്ട് പകർത്തി. ഒരു സന്ദേശത്തിൽ ഒട്ടിക്കാം.",
+  "@moneyReportCopied": {
+    "description": "Toast after the report is copied to share."
+  },
+  "moneyFamilyIncluded": "കുടുംബ കൂലി ഉൾപ്പെടുത്തി: {amount}",
+  "@moneyFamilyIncluded": {
+    "description": "Report line when family labour is in the expense (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyFamilyLeftOut": "കുടുംബ കൂലി ഉൾപ്പെടുത്തിയിട്ടില്ല: {amount}",
+  "@moneyFamilyLeftOut": {
+    "description": "Report line when family labour is not in the expense (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyReportCrop": "{crop}: വരവ് {income}, ചെലവ് {expense}, ലാഭം {profit}",
+  "@moneyReportCrop": {
+    "description": "One crop's line in the shared report (amounts formatted in code; a loss shows as a minus amount).",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "income": {
+        "type": "String"
+      },
+      "expense": {
+        "type": "String"
+      },
+      "profit": {
+        "type": "String"
+      }
+    }
   }
 }

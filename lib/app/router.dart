@@ -9,6 +9,7 @@ import '../features/harvest/ui/harvest_screen.dart';
 import '../features/harvest/ui/lot_screen.dart';
 import '../features/history/ui/history_screen.dart';
 import '../features/labour/ui/labour_screen.dart';
+import '../features/money/ui/money_screen.dart';
 import '../features/sales/ui/buyers_screen.dart';
 import '../features/sales/ui/sell_screen.dart';
 import '../features/labour/ui/team_screen.dart';
@@ -172,10 +173,10 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          _branch(
-            '/money',
-            (l) => l.moneyTitle,
-            Icons.account_balance_wallet_outlined,
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/money', builder: (_, _) => const MoneyScreen()),
+            ],
           ),
           _branch(
             '/more',
