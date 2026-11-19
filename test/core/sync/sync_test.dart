@@ -906,9 +906,7 @@ void main() {
     // money, its history and the other members leave the phone
     expect(await b.row('expenses', 'e1'), isNull);
     expect(
-      await b.count(
-        "SELECT COUNT(*) FROM event_log WHERE entity = 'expenses'",
-      ),
+      await b.count("SELECT COUNT(*) FROM event_log WHERE entity = 'expenses'"),
       0,
     );
     expect(await b.row('farm_members', 'm-owner'), isNull);
