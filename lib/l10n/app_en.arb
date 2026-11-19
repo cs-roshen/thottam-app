@@ -1023,5 +1023,303 @@
   "setupTenure": "Land",
   "@setupTenure": {
     "description": "Label for the owned or leased choice in set-up."
+  },
+  "actionEdit": "Edit",
+  "@actionEdit": {
+    "description": "Edit action in menus."
+  },
+  "actionDelete": "Delete",
+  "@actionDelete": {
+    "description": "Delete action in menus and confirm dialogs."
+  },
+  "actionCancel": "Cancel",
+  "@actionCancel": {
+    "description": "Cancel button in dialogs."
+  },
+  "actionMore": "More actions",
+  "@actionMore": {
+    "description": "Screen reader label for a menu of more actions."
+  },
+  "tenureShared": "Shared",
+  "@tenureShared": {
+    "description": "Land tenure: shared (farmed in partnership)."
+  },
+  "nameWithDetail": "{name} · {detail}",
+  "@nameWithDetail": {
+    "description": "A name followed by one detail, such as a crop and its season.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "ratePerUnit": "{rate} / {unit}",
+  "@ratePerUnit": {
+    "description": "A price per unit, such as ₹705 / kg. The unit is always in English.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityWithUnit": "{quantity} {unit}",
+  "@quantityWithUnit": {
+    "description": "A quantity with its unit, such as 2.5 acre. The unit is always in English.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "landPlotCount": "{plots, plural, =1{1 plot} other{{plots} plots}}",
+  "@landPlotCount": {
+    "description": "Number of plots, when no plot has an area.",
+    "placeholders": {
+      "plots": {
+        "type": "int"
+      }
+    }
+  },
+  "landEmptyTitle": "No plots yet",
+  "@landEmptyTitle": {
+    "description": "Empty state title on My land."
+  },
+  "landEmptyHint": "Add each piece of land you farm, with its crops.",
+  "@landEmptyHint": {
+    "description": "Empty state text on My land."
+  },
+  "landNextTask": "Next: {task}",
+  "@landNextTask": {
+    "description": "The next open task on a plot, with no due day.",
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "landNextTaskOn": "Next: {task} · {day}",
+  "@landNextTaskOn": {
+    "description": "The next open task on a plot and its due day.",
+    "placeholders": {
+      "task": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "landReadOnly": "Only the owner or a manager can change plots and crops.",
+  "@landReadOnly": {
+    "description": "Shown on land screens to a role that cannot change them."
+  },
+  "plotFormTitleNew": "Add a plot",
+  "@plotFormTitleNew": {
+    "description": "Title of the add plot screen."
+  },
+  "plotFormTitleEdit": "Edit plot",
+  "@plotFormTitleEdit": {
+    "description": "Title of the edit plot screen."
+  },
+  "plotName": "Plot name",
+  "@plotName": {
+    "description": "Plot name field."
+  },
+  "plotNameRequired": "Enter a name for the plot",
+  "@plotNameRequired": {
+    "description": "Error when the plot name is empty."
+  },
+  "plotDelete": "Delete plot",
+  "@plotDelete": {
+    "description": "Menu action to delete a plot."
+  },
+  "plotDeleteTitle": "Delete {plot}?",
+  "@plotDeleteTitle": {
+    "description": "Title of the dialog that asks before deleting a plot.",
+    "placeholders": {
+      "plot": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleDeleteTitle": "Remove {crop} from this plot?",
+  "@cycleDeleteTitle": {
+    "description": "Title of the dialog that asks before deleting a crop cycle.",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeepsEntries": "{count, plural, =0{Nothing has been recorded on it yet.} =1{1 entry is recorded on it. It stays in history and in profit and loss.} other{{count} entries are recorded on it. They stay in history and in profit and loss.}}",
+  "@deleteKeepsEntries": {
+    "description": "Body of the dialog before deleting a plot or crop cycle: how many entries sit under it; they are kept.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plotDeleted": "Plot deleted",
+  "@plotDeleted": {
+    "description": "Toast after deleting a plot, with undo."
+  },
+  "cycleDeleted": "Crop removed",
+  "@cycleDeleted": {
+    "description": "Toast after deleting a crop cycle, with undo."
+  },
+  "plotAddCrop": "Add a crop",
+  "@plotAddCrop": {
+    "description": "Button to add a crop cycle to a plot."
+  },
+  "plotNoCrops": "No crops on this plot yet.",
+  "@plotNoCrops": {
+    "description": "Shown on the crops tab of a plot with none."
+  },
+  "plotNoCosts": "No costs this season yet.",
+  "@plotNoCosts": {
+    "description": "Shown on the costs tab of a plot with none."
+  },
+  "plotNoHistory": "Nothing recorded yet.",
+  "@plotNoHistory": {
+    "description": "Shown on the history tab of a plot with none."
+  },
+  "plotPerCrop": "By crop below",
+  "@plotPerCrop": {
+    "description": "Yield stat on a plot whose crops are measured in different units."
+  },
+  "plotPastSeasons": "Past seasons",
+  "@plotPastSeasons": {
+    "description": "Heading above closed crop cycles on a plot."
+  },
+  "cycleFormTitleNew": "Add a crop",
+  "@cycleFormTitleNew": {
+    "description": "Title of the add crop cycle screen."
+  },
+  "cycleFormTitleEdit": "Edit crop",
+  "@cycleFormTitleEdit": {
+    "description": "Title of the edit crop cycle screen."
+  },
+  "cycleCrop": "Crop",
+  "@cycleCrop": {
+    "description": "Label above the crop choices."
+  },
+  "cycleCropRequired": "Choose a crop",
+  "@cycleCropRequired": {
+    "description": "Error when no crop is chosen."
+  },
+  "cycleVariety": "Variety",
+  "@cycleVariety": {
+    "description": "Crop variety field."
+  },
+  "cyclePlantCount": "Number of plants",
+  "@cyclePlantCount": {
+    "description": "Plant count field."
+  },
+  "cyclePlantCountInvalid": "Enter a whole number",
+  "@cyclePlantCountInvalid": {
+    "description": "Error when the plant count is not a whole number."
+  },
+  "cycleAreaShare": "Share of the plot (%)",
+  "@cycleAreaShare": {
+    "description": "Area share field, a percent of the plot."
+  },
+  "cycleAreaShareInvalid": "Enter a percent from 0 to 100",
+  "@cycleAreaShareInvalid": {
+    "description": "Error when the area share is not a percent."
+  },
+  "cycleSeason": "Season",
+  "@cycleSeason": {
+    "description": "Season field for seasonal crops, such as Mundakan."
+  },
+  "cyclePlantingYear": "Year planted",
+  "@cyclePlantingYear": {
+    "description": "Planting year field for perennial crops."
+  },
+  "cyclePlantingYearInvalid": "Enter a year, like 2015",
+  "@cyclePlantingYearInvalid": {
+    "description": "Error when the planting year is not a year."
+  },
+  "cyclePlants": "{count, plural, =1{1 plant} other{{count} plants}}",
+  "@cyclePlants": {
+    "description": "Plant count of a crop cycle.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cycleShare": "{percent}% of the plot",
+  "@cycleShare": {
+    "description": "Area share of a crop cycle.",
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cyclePlanted": "Planted {year}",
+  "@cyclePlanted": {
+    "description": "Planting year of a perennial crop.",
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleSpent": "Spent {amount}",
+  "@cycleSpent": {
+    "description": "Cost of a crop cycle this season.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleHarvested": "Harvested {quantity}",
+  "@cycleHarvested": {
+    "description": "Quantity harvested from a crop cycle.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleCloseSeason": "Close season",
+  "@cycleCloseSeason": {
+    "description": "Menu action to close a crop cycle's season; its entries become read-only."
+  },
+  "cycleReopen": "Reopen season",
+  "@cycleReopen": {
+    "description": "Menu action to reopen a closed crop cycle."
+  },
+  "cycleSeasonClosed": "Season closed",
+  "@cycleSeasonClosed": {
+    "description": "Tag on a closed crop cycle, and the toast after closing one."
+  },
+  "historyEvent": "{entity, select, plots{Plot} crop_cycles{Crop} farms{Farm} expenses{Expense} labour_entries{Labour} harvests{Harvest} sales{Sale} notes{Note} tasks{Task} other{Record}} {action, select, create{added} update{changed} delete{deleted} restore{brought back} other{changed}}",
+  "@historyEvent": {
+    "description": "One history row: what kind of record and what happened to it.",
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      },
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "historyComingSoon": "The full history comes in the next round",
+  "@historyComingSoon": {
+    "description": "Placeholder until the History screen exists."
   }
 }

@@ -1023,5 +1023,303 @@
   "setupTenure": "ഭൂമി",
   "@setupTenure": {
     "description": "Label for the owned or leased choice in set-up."
+  },
+  "actionEdit": "മാറ്റുക",
+  "@actionEdit": {
+    "description": "Edit action in menus."
+  },
+  "actionDelete": "നീക്കം ചെയ്യുക",
+  "@actionDelete": {
+    "description": "Delete action in menus and confirm dialogs."
+  },
+  "actionCancel": "വേണ്ട",
+  "@actionCancel": {
+    "description": "Cancel button in dialogs."
+  },
+  "actionMore": "കൂടുതൽ",
+  "@actionMore": {
+    "description": "Screen reader label for a menu of more actions."
+  },
+  "tenureShared": "പങ്ക്",
+  "@tenureShared": {
+    "description": "Land tenure: shared (farmed in partnership)."
+  },
+  "nameWithDetail": "{name} · {detail}",
+  "@nameWithDetail": {
+    "description": "A name followed by one detail, such as a crop and its season.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "ratePerUnit": "{rate} / {unit}",
+  "@ratePerUnit": {
+    "description": "A price per unit, such as ₹705 / kg. The unit is always in English.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityWithUnit": "{quantity} {unit}",
+  "@quantityWithUnit": {
+    "description": "A quantity with its unit, such as 2.5 acre. The unit is always in English.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "landPlotCount": "{plots, plural, =1{1 പ്ലോട്ട്} other{{plots} പ്ലോട്ടുകൾ}}",
+  "@landPlotCount": {
+    "description": "Number of plots, when no plot has an area.",
+    "placeholders": {
+      "plots": {
+        "type": "int"
+      }
+    }
+  },
+  "landEmptyTitle": "പ്ലോട്ടുകൾ ഇല്ല",
+  "@landEmptyTitle": {
+    "description": "Empty state title on My land."
+  },
+  "landEmptyHint": "നിങ്ങൾ കൃഷി ചെയ്യുന്ന ഓരോ സ്ഥലവും അതിലെ വിളകളും ചേർക്കുക.",
+  "@landEmptyHint": {
+    "description": "Empty state text on My land."
+  },
+  "landNextTask": "അടുത്തത്: {task}",
+  "@landNextTask": {
+    "description": "The next open task on a plot, with no due day.",
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "landNextTaskOn": "അടുത്തത്: {task} · {day}",
+  "@landNextTaskOn": {
+    "description": "The next open task on a plot and its due day.",
+    "placeholders": {
+      "task": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "landReadOnly": "പ്ലോട്ടുകളും വിളകളും ഉടമയ്ക്കോ മാനേജർക്കോ മാത്രമേ മാറ്റാനാകൂ.",
+  "@landReadOnly": {
+    "description": "Shown on land screens to a role that cannot change them."
+  },
+  "plotFormTitleNew": "പ്ലോട്ട് ചേർക്കുക",
+  "@plotFormTitleNew": {
+    "description": "Title of the add plot screen."
+  },
+  "plotFormTitleEdit": "പ്ലോട്ട് മാറ്റുക",
+  "@plotFormTitleEdit": {
+    "description": "Title of the edit plot screen."
+  },
+  "plotName": "പ്ലോട്ടിന്റെ പേര്",
+  "@plotName": {
+    "description": "Plot name field."
+  },
+  "plotNameRequired": "പ്ലോട്ടിന് ഒരു പേര് നൽകുക",
+  "@plotNameRequired": {
+    "description": "Error when the plot name is empty."
+  },
+  "plotDelete": "പ്ലോട്ട് നീക്കം ചെയ്യുക",
+  "@plotDelete": {
+    "description": "Menu action to delete a plot."
+  },
+  "plotDeleteTitle": "{plot} നീക്കം ചെയ്യണോ?",
+  "@plotDeleteTitle": {
+    "description": "Title of the dialog that asks before deleting a plot.",
+    "placeholders": {
+      "plot": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleDeleteTitle": "{crop} ഈ പ്ലോട്ടിൽ നിന്ന് നീക്കണോ?",
+  "@cycleDeleteTitle": {
+    "description": "Title of the dialog that asks before deleting a crop cycle.",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeepsEntries": "{count, plural, =0{ഇതിൽ ഇതുവരെ ഒന്നും രേഖപ്പെടുത്തിയിട്ടില്ല.} =1{ഇതിൽ 1 രേഖയുണ്ട്. അത് ചരിത്രത്തിലും ലാഭനഷ്ട കണക്കിലും നിലനിൽക്കും.} other{ഇതിൽ {count} രേഖകളുണ്ട്. അവ ചരിത്രത്തിലും ലാഭനഷ്ട കണക്കിലും നിലനിൽക്കും.}}",
+  "@deleteKeepsEntries": {
+    "description": "Body of the dialog before deleting a plot or crop cycle: how many entries sit under it; they are kept.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plotDeleted": "പ്ലോട്ട് നീക്കം ചെയ്തു",
+  "@plotDeleted": {
+    "description": "Toast after deleting a plot, with undo."
+  },
+  "cycleDeleted": "വിള നീക്കി",
+  "@cycleDeleted": {
+    "description": "Toast after deleting a crop cycle, with undo."
+  },
+  "plotAddCrop": "വിള ചേർക്കുക",
+  "@plotAddCrop": {
+    "description": "Button to add a crop cycle to a plot."
+  },
+  "plotNoCrops": "ഈ പ്ലോട്ടിൽ വിളകളൊന്നും ചേർത്തിട്ടില്ല.",
+  "@plotNoCrops": {
+    "description": "Shown on the crops tab of a plot with none."
+  },
+  "plotNoCosts": "ഈ സീസണിൽ ചെലവൊന്നുമില്ല.",
+  "@plotNoCosts": {
+    "description": "Shown on the costs tab of a plot with none."
+  },
+  "plotNoHistory": "ഇതുവരെ ഒന്നും രേഖപ്പെടുത്തിയിട്ടില്ല.",
+  "@plotNoHistory": {
+    "description": "Shown on the history tab of a plot with none."
+  },
+  "plotPerCrop": "ഓരോ വിളയ്ക്കും താഴെ",
+  "@plotPerCrop": {
+    "description": "Yield stat on a plot whose crops are measured in different units."
+  },
+  "plotPastSeasons": "കഴിഞ്ഞ സീസണുകൾ",
+  "@plotPastSeasons": {
+    "description": "Heading above closed crop cycles on a plot."
+  },
+  "cycleFormTitleNew": "വിള ചേർക്കുക",
+  "@cycleFormTitleNew": {
+    "description": "Title of the add crop cycle screen."
+  },
+  "cycleFormTitleEdit": "വിള മാറ്റുക",
+  "@cycleFormTitleEdit": {
+    "description": "Title of the edit crop cycle screen."
+  },
+  "cycleCrop": "വിള",
+  "@cycleCrop": {
+    "description": "Label above the crop choices."
+  },
+  "cycleCropRequired": "ഒരു വിള തിരഞ്ഞെടുക്കുക",
+  "@cycleCropRequired": {
+    "description": "Error when no crop is chosen."
+  },
+  "cycleVariety": "ഇനം",
+  "@cycleVariety": {
+    "description": "Crop variety field."
+  },
+  "cyclePlantCount": "ചെടികളുടെ എണ്ണം",
+  "@cyclePlantCount": {
+    "description": "Plant count field."
+  },
+  "cyclePlantCountInvalid": "എണ്ണം അക്കത്തിൽ നൽകുക",
+  "@cyclePlantCountInvalid": {
+    "description": "Error when the plant count is not a whole number."
+  },
+  "cycleAreaShare": "പ്ലോട്ടിന്റെ എത്ര ശതമാനം",
+  "@cycleAreaShare": {
+    "description": "Area share field, a percent of the plot."
+  },
+  "cycleAreaShareInvalid": "0 മുതൽ 100 വരെ ഒരു ശതമാനം നൽകുക",
+  "@cycleAreaShareInvalid": {
+    "description": "Error when the area share is not a percent."
+  },
+  "cycleSeason": "സീസൺ",
+  "@cycleSeason": {
+    "description": "Season field for seasonal crops, such as Mundakan."
+  },
+  "cyclePlantingYear": "നട്ട വർഷം",
+  "@cyclePlantingYear": {
+    "description": "Planting year field for perennial crops."
+  },
+  "cyclePlantingYearInvalid": "വർഷം നൽകുക, ഉദാ. 2015",
+  "@cyclePlantingYearInvalid": {
+    "description": "Error when the planting year is not a year."
+  },
+  "cyclePlants": "{count} ചെടി",
+  "@cyclePlants": {
+    "description": "Plant count of a crop cycle.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cycleShare": "പ്ലോട്ടിന്റെ {percent}%",
+  "@cycleShare": {
+    "description": "Area share of a crop cycle.",
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cyclePlanted": "നട്ടത് {year}",
+  "@cyclePlanted": {
+    "description": "Planting year of a perennial crop.",
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleSpent": "ചെലവ് {amount}",
+  "@cycleSpent": {
+    "description": "Cost of a crop cycle this season.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleHarvested": "വിളവ് {quantity}",
+  "@cycleHarvested": {
+    "description": "Quantity harvested from a crop cycle.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleCloseSeason": "സീസൺ അവസാനിപ്പിക്കുക",
+  "@cycleCloseSeason": {
+    "description": "Menu action to close a crop cycle's season; its entries become read-only."
+  },
+  "cycleReopen": "സീസൺ വീണ്ടും തുറക്കുക",
+  "@cycleReopen": {
+    "description": "Menu action to reopen a closed crop cycle."
+  },
+  "cycleSeasonClosed": "സീസൺ അവസാനിച്ചു",
+  "@cycleSeasonClosed": {
+    "description": "Tag on a closed crop cycle, and the toast after closing one."
+  },
+  "historyEvent": "{entity, select, plots{പ്ലോട്ട്} crop_cycles{വിള} farms{കൃഷിയിടം} expenses{ചെലവ്} labour_entries{പണി} harvests{വിളവെടുപ്പ്} sales{വിൽപ്പന} notes{കുറിപ്പ്} tasks{ജോലി} other{രേഖ}} {action, select, create{ചേർത്തു} update{മാറ്റി} delete{നീക്കി} restore{തിരികെ വച്ചു} other{മാറ്റി}}",
+  "@historyEvent": {
+    "description": "One history row: what kind of record and what happened to it.",
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      },
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "historyComingSoon": "മുഴുവൻ ചരിത്രം അടുത്ത ഘട്ടത്തിൽ വരും",
+  "@historyComingSoon": {
+    "description": "Placeholder until the History screen exists."
   }
 }

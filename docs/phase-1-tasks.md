@@ -24,7 +24,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 ## C. Features (each: tests from `docs/screens.md` first, then UI)
 
 - [x] C1. Welcome, language and set-up.
-- [ ] C2. Land: plot list, add or edit plot, crop cycles (mixed crops), plot detail.
+- [x] C2. Land: plot list, add or edit plot, crop cycles (mixed crops), plot detail.
 - [ ] C3. Labour: workers, unnamed and named groups, attendance, group entry, payments and balances; split across crop cycles on mixed plots.
 - [ ] C4. Expenses with split allocation.
 - [ ] C5. Harvest with multiple teams and optional per-team quantity; lots with lot cost (edit, recalculate, reset).

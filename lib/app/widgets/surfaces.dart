@@ -200,6 +200,37 @@ class LastTimeBanner extends StatelessWidget {
   }
 }
 
+/// A small tinted tag: a crop on a plot, "mixed crop", "season closed".
+class Pill extends StatelessWidget {
+  const Pill({
+    super.key,
+    required this.label,
+    required this.background,
+    required this.foreground,
+  });
+
+  final String label;
+  final Color background;
+  final Color foreground;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(t.chipRadius),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodySmall!
+            .copyWith(color: foreground, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
 /// Marks data older than a day; text and icon, never colour alone.
 class StaleDataTag extends StatelessWidget {
   const StaleDataTag({super.key, required this.label});

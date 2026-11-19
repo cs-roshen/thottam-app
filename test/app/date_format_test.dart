@@ -26,4 +26,15 @@ void main() {
       'Monday, 16 November · Vrischikam 1',
     );
   });
+
+  test('days of work: today, yesterday, then a short date', () {
+    final en = lookupAppLocalizations(const Locale('en'));
+    final today = DateTime(2026, 11, 19, 15);
+    expect(formatDay('2026-11-19', en, today), 'Today');
+    expect(formatDay('2026-11-18', en, today), 'Yesterday');
+    expect(formatDay('2026-11-02', en, today), '2 Nov');
+    expect(formatDay('2025-12-30', en, today), '30 Dec 2025');
+    final ml = lookupAppLocalizations(const Locale('ml'));
+    expect(formatDay('2026-11-02', ml, today), isNot(matches(RegExp('[൦-൯]'))));
+  });
 }

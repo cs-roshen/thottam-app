@@ -14,6 +14,19 @@ void main() {
     expect(userFacing('\$sign₹\$grouped'), isFalse);
   });
 
+  test('route paths with parameters and query keys are not text', () {
+    for (final path in [
+      '/land/:plot',
+      'crop/new',
+      'crop/:cycle',
+      '/history?plot=',
+      '/land//edit', // '/land/${id}/edit' once the id is taken out
+    ]) {
+      expect(userFacing(path), isFalse, reason: path);
+    }
+    expect(userFacing('Plot name'), isTrue);
+  });
+
   test('flags text, colours and fonts in a screen file', () {
     final problems = checkFile(
       'lib/features/expenses/ui/expense_screen.dart',
