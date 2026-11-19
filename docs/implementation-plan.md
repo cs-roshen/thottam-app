@@ -555,7 +555,9 @@ open correctness bugs; native-speaker review signed off.
 
 ## 11. Phases 7 to 13: later modules
 
-These start after the closed beta. The order below is by farmer value and by what each module
+These were to start after the closed beta. The owner decided on 2026-11-20 to start phases 7,
+8, 9, 11, 12 and 13 now, beside phase 6, and to leave phase 10 for later; the backlog is
+`docs/later-phases-tasks.md`. The order below is by farmer value and by what each module
 depends on; re-order after beta feedback, but keep the dependencies. Each module is its own
 phase with its own exit check and owner checkpoint.
 
@@ -595,17 +597,21 @@ phase with its own exit check and owner checkpoint.
 **Goal:** the farmer knows what fertiliser, pesticide and seed is on hand, what was applied
 where, what it cost each crop, and when it is safe to harvest after a spray.
 
-**Schema additions**
+**Schema additions** (as built in migration 0007, task E1)
 
 - `input_items` (farm's own list, linked to a template item where one exists; unit, pack size,
-  reorder level, waiting period in days).
-- `input_purchases` (item, quantity, unit, price, vendor, batch, expiry date, link to the
-  expense row it creates).
-- `input_applications` (item, quantity, method, plot, crop cycle, worker or group, date,
-  computed cost, link to a disease record when it is a treatment).
-- `stock_movements` (one row per purchase, application, adjustment or loss; the stock level is
+  reorder level, waiting period in days with its source).
+- A purchase is its expense row plus a `stock_movements` row of kind `purchase` (quantity,
+  batch, expiry date, link to the expense), so the price is entered once, on the expense, and
+  a supervisor can see stock without seeing money. There is no separate purchases table.
+- `input_applications` (item, method, plot, crop cycle, worker or group, date, waiting days);
+  its quantity is its `application` movement. The cost is worked out from the item's
+  purchases when shown, never stored; `input_application_costs` keeps a cost edited by hand
+  (money). The link to a disease record comes with phase 9.
+- `stock_movements` (one row per purchase, application or adjustment; the stock level is
   the sum of movements, never a stored number that can drift).
-- `soil_tests` (plot, date, values, lab, photo of the report).
+- `soil_tests` (plot, date, results, lab, photo of the report).
+- `harvests.waiting_override_reason` (why a harvest was saved inside a waiting period).
 
 **Rules and tests**
 
