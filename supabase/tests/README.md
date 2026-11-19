@@ -1,7 +1,7 @@
 # Server tests
 
 SQL checks for the server schema: role rules, history, deletes and query plans
-(B1), and the sync function (B7). They need a real Supabase project, so they are
+(B1), the sync function (B7), and the admin console (C12). They need a real Supabase project, so they are
 not part of CI.
 
 ```
