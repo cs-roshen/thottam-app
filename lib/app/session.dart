@@ -2,13 +2,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/access/access.dart';
 import '../core/auth/account.dart';
 import '../core/db/database.dart';
+import '../core/db/member_store.dart';
+import '../core/db/override_store.dart';
 import '../core/history/write_with_history.dart';
+import '../core/overrides/overrides.dart';
 import '../core/prefs/device_store.dart';
 import '../core/sync/bundled_templates.dart';
 import '../core/sync/sync_engine.dart';
 import '../core/sync/sync_server.dart';
+import '../core/units/units.dart';
 import 'settings.dart';
 
 /// Who is signed in, whether their first sync is done, and which farm they
@@ -138,9 +143,15 @@ final templatesReadyProvider = FutureProvider<void>((ref) async {
   );
 });
 
+/// The one clock: tests replace it so "today" stays put.
+final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
 final historyProvider = Provider<History>(
-  (ref) =>
-      History(ref.watch(databaseProvider), userId: ref.watch(userIdProvider)),
+  (ref) => History(
+    ref.watch(databaseProvider),
+    userId: ref.watch(userIdProvider),
+    clock: ref.watch(clockProvider),
+  ),
 );
 
 /// The server, once there is a real sign-in to reach it with.
@@ -183,3 +194,31 @@ final gateProvider = Provider<Gate>(
   (ref) =>
       gateOf(ref.watch(sessionProvider), ref.watch(pendingInvitesProvider)),
 );
+
+/// The signed-in person's role and permissions on the open farm; none until
+/// their membership is on the phone.
+final accessProvider = StreamProvider<Access>(
+  (ref) => watchAccess(
+    ref.watch(databaseProvider),
+    ref.watch(farmIdProvider),
+    ref.watch(userIdProvider),
+  ),
+);
+
+/// The open farm's templates and overrides, resolved from memory.
+final overridesProvider = StreamProvider<Overrides>(
+  (ref) =>
+      watchOverrides(ref.watch(databaseProvider), ref.watch(farmIdProvider)),
+);
+
+/// Unit conversions from the templates.
+final unitsProvider = Provider<Units?>((ref) {
+  final overrides = ref.watch(overridesProvider).value;
+  if (overrides == null) return null;
+  return Units([
+    for (final u in overrides.list('unit', const Scope()))
+      Unit.fromTemplate(u.code, {
+        for (final MapEntry(:key, :value) in u.data.entries) key: value.value,
+      }),
+  ]);
+});

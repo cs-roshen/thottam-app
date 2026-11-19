@@ -85,7 +85,7 @@ class OnboardingRepository {
           'area_unit': input.areaUnit,
           'tenure': input.tenure,
         },
-        summary: {'plot': farmName},
+        summary: {'plot_id': plotId, 'plot': farmName},
       ),
       for (final id in input.cropIds)
         CreateRow(
@@ -98,6 +98,7 @@ class OnboardingRepository {
             'status': 'active',
           },
           summary: {
+            'plot_id': plotId,
             'plot': farmName,
             'crop_ml': crops[id]?.nameMl,
             'crop_en': crops[id]?.nameEn,

@@ -14,7 +14,9 @@ final _literal = RegExp(
 const _marker = '// gate: not user-facing';
 final _interpolation = RegExp(r'\$\{[^}]*\}|\$\w+');
 final _identifier = RegExp(r'^[a-z][a-zA-Z0-9_.]*$');
-final _path = RegExp(r'^/[a-z0-9_/]*$');
+// Route paths, with parameters and a query key: /land/:plot, crop/new,
+// /history?plot=, and /land//edit once an interpolated id is taken out
+final _path = RegExp(r'^/?[a-z0-9_:]*(/[a-z0-9_:]*)*(\?[a-z_]+=)?$');
 final _letter = RegExp(r'\p{L}', unicode: true);
 final _colour = RegExp(r'\bColor\(0x|\bColors\.(?!transparent\b)\w+');
 final _fontName = RegExp(

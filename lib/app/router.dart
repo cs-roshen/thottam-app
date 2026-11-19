@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/access/access.dart';
+import '../features/land/ui/cycle_form_screen.dart';
+import '../features/land/ui/land_screen.dart';
+import '../features/land/ui/plot_detail_screen.dart';
+import '../features/land/ui/plot_form_screen.dart';
 import '../features/onboarding/ui/invites_screen.dart';
 import '../features/onboarding/ui/setup_screen.dart';
 import '../features/onboarding/ui/sign_in_screen.dart';
@@ -12,9 +17,11 @@ import 'session.dart';
 import 'shell.dart';
 import 'widgets/widgets.dart';
 
-// shortcut: everyone sees Money until roles exist (B6, D3); then read the
-// signed-in member's role here.
-final canSeeMoneyProvider = Provider<bool>((ref) => true);
+/// Whether the signed-in person's role opens money screens; true until their
+/// membership has loaded, so the bar does not jump at start.
+final canSeeMoneyProvider = Provider<bool>(
+  (ref) => ref.watch(accessProvider).value?.canRead(AccessClass.money) ?? true,
+);
 
 /// Branch order in the shell; the bar hides Money when the role cannot open
 /// it, so tab positions are mapped through [AppShell].
@@ -58,11 +65,59 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/signin', builder: (_, _) => const SignInScreen()),
       GoRoute(path: '/invites', builder: (_, _) => const InvitesScreen()),
       GoRoute(path: '/setup', builder: (_, _) => const SetupScreen()),
+      // stand-ins until their tasks: History (C7), expense (C4), harvest (C5)
+      for (final (path, title, icon)
+          in <(String, String Function(AppLocalizations), IconData)>[
+            ('/history', (l) => l.historyTitle, Icons.history),
+            ('/add/expense', (l) => l.expenseTitle, Icons.payments_outlined),
+            ('/add/harvest', (l) => l.harvestTitle, Icons.agriculture_outlined),
+          ])
+        GoRoute(
+          path: path,
+          builder: (_, _) => PlaceholderScreen(title: title, icon: icon),
+        ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
           _branch('/home', (l) => l.navHome, Icons.home_outlined),
-          _branch('/land', (l) => l.landTitle, Icons.landscape_outlined),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/land',
+                builder: (_, _) => const LandScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'new',
+                    builder: (_, _) => const PlotFormScreen(),
+                  ),
+                  GoRoute(
+                    path: ':plot',
+                    builder: (_, s) =>
+                        PlotDetailScreen(plotId: s.pathParameters['plot']!),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        builder: (_, s) =>
+                            PlotFormScreen(plotId: s.pathParameters['plot']),
+                      ),
+                      GoRoute(
+                        path: 'crop/new',
+                        builder: (_, s) =>
+                            CycleFormScreen(plotId: s.pathParameters['plot']!),
+                      ),
+                      GoRoute(
+                        path: 'crop/:cycle',
+                        builder: (_, s) => CycleFormScreen(
+                          plotId: s.pathParameters['plot']!,
+                          cycleId: s.pathParameters['cycle'],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
           _branch(
             '/money',
             (l) => l.moneyTitle,
