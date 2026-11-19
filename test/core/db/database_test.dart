@@ -69,6 +69,44 @@ void main() {
     }
   });
 
+  test(
+    'an upgrade keeps the rows and a copy of the old file until a later open',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('thottam_up');
+      final path = '${dir.path}/thottam_farmer.sqlite';
+      final copy = File('$path$preUpgradeSuffix');
+      final v1 = await SchemaVerifier(GeneratedHelper()).schemaAt(1);
+      v1.rawDatabase
+        ..execute(
+          'INSERT INTO harvests (id, farm_id, crop_cycle_id, plot_id, '
+          "harvested_on, quantity, created_at, updated_at) VALUES ('h1', 'f', "
+          "'c', 'p', '2026-11-18', 120000, 0, 0)",
+        )
+        ..execute('VACUUM INTO ?', [path]);
+      v1.rawDatabase.close();
+
+      var db = openAppDatabase('farmer', directory: dir.path);
+      final row = await db
+          .customSelect(
+            'SELECT quantity, waiting_override_reason FROM harvests',
+          )
+          .getSingle();
+      expect(row.data, {'quantity': 120000, 'waiting_override_reason': null});
+      expect(
+        await db.customSelect('SELECT * FROM stock_movements').get(),
+        isEmpty,
+      );
+      await db.close();
+      expect(copy.existsSync(), isTrue, reason: 'kept through the first run');
+
+      db = openAppDatabase('farmer', directory: dir.path);
+      await db.customSelect('SELECT 1').get();
+      await db.close();
+      expect(copy.existsSync(), isFalse, reason: 'gone after a later open');
+      await dir.delete(recursive: true);
+    },
+  );
+
   test('the current version has an exported schema', () {
     final db = AppDatabase(NativeDatabase.memory());
     expect(GeneratedHelper.versions.last, db.schemaVersion);

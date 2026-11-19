@@ -81,12 +81,18 @@ void main() {
       }
     });
 
-    test('every template item is in 0002, and no more', () {
+    // Later migrations that add items, as tool/build_templates.py ADDITIONS.
+    final itemSql = [
+      wave1,
+      File('supabase/migrations/0007_inputs_stock.sql').readAsStringSync(),
+    ].map((s) => s.split('insert into public.template_items')[1]).join('\n');
+
+    test('every template item is in 0002 or a later addition, and no more', () {
       final crops = {for (final c in rows('crops')) c['id']: c['code']};
       final items = rows('template_items');
       for (final i in items) {
         expect(
-          wave1,
+          itemSql,
           contains(
             '(${q(crops[i['crop_id']])}, ${q(i['list_type'])}, '
             "${q(i['code'])}, ${q(i['name_ml'])}, ${q(i['name_en'])}, "
@@ -98,7 +104,7 @@ void main() {
       final tuples = RegExp(
         r"^\s*\((null|'\w+'), '\w+', '",
         multiLine: true,
-      ).allMatches(wave1.split('insert into public.template_items')[1]);
+      ).allMatches(itemSql);
       expect(items, hasLength(tuples.length));
     });
 

@@ -7,8 +7,9 @@ migrations create: ids are md5 of a code string cast to uuid, exactly as
 supabase/migrations/0002_wave1_templates.sql does, so the first sync updates
 these rows in place instead of adding copies.
 
-Later template migrations are applied by the RELEASES list below; add one
-entry for each new migration that changes templates, then run:
+Later template migrations are applied by the ADDITIONS (new items) and
+RELEASES (changes to items) lists below; add an entry for each new migration
+that changes templates, then run:
 
     python tool/build_templates.py
 
@@ -16,6 +17,7 @@ test/core/sync/bundled_templates_test.dart fails when the asset and the
 migrations disagree.
 """
 
+import glob
 import hashlib
 import json
 import os
@@ -24,6 +26,12 @@ import re
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 MIGRATION = os.path.join(ROOT, "supabase", "migrations", "0002_wave1_templates.sql")
 OUT = os.path.join(ROOT, "assets", "templates", "standard.json")
+
+# Later migrations that add template items, in the same VALUES form as 0002,
+# with the template release they belong to.
+ADDITIONS = [
+    ("0007", 3),  # 0007_inputs_stock.sql: input methods and soil parameters
+]
 
 # (migration, list type, crop code or None, item code, changes)
 RELEASES = [
@@ -95,23 +103,30 @@ def main():
         crops.append(crop)
         by_code[code] = crop["id"]
 
+    sources = [(items_sql, 1)]
+    for prefix, version in ADDITIONS:
+        (path,) = glob.glob(os.path.join(os.path.dirname(MIGRATION), f"{prefix}_*.sql"))
+        later = open(path, encoding="utf-8").read()
+        sources.append((later.split("insert into public.template_items", 1)[1], version))
+
     items = []
-    for row in tuples(items_sql):
-        crop, list_type, code, name_ml, name_en, sort_order, data = row
-        merged = json.loads(data)
-        merged["ml_review"] = True
-        items.append({
-            "id": md5_uuid(f"thottam:item:{crop or '*'}:{list_type}:{code}"),
-            "crop_id": by_code[crop] if crop else None,
-            "list_type": list_type,
-            "code": code,
-            "name_ml": name_ml,
-            "name_en": name_en,
-            "data": merged,
-            "sort_order": sort_order,
-            "is_active": True,
-            "template_version": 1,
-        })
+    for part, version in sources:
+        for row in tuples(part):
+            crop, list_type, code, name_ml, name_en, sort_order, data = row
+            merged = json.loads(data)
+            merged["ml_review"] = True
+            items.append({
+                "id": md5_uuid(f"thottam:item:{crop or '*'}:{list_type}:{code}"),
+                "crop_id": by_code[crop] if crop else None,
+                "list_type": list_type,
+                "code": code,
+                "name_ml": name_ml,
+                "name_en": name_en,
+                "data": merged,
+                "sort_order": sort_order,
+                "is_active": True,
+                "template_version": version,
+            })
 
     for _, list_type, crop, code, changes in RELEASES:
         crop_id = by_code[crop] if crop else None

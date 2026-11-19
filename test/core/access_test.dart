@@ -56,11 +56,17 @@ void main() {
   });
 
   test('every table has the access class the server gives it', () {
-    final sql = File('supabase/migrations/0001_init.sql').readAsStringSync();
-    final rows = RegExp(
-      r"\('(\w+)', '(\w+)', '\w+', \d+\)",
-    ).allMatches(sql.split('insert into public.sync_tables')[1].split(';')[0]);
-    final server = {for (final m in rows) m[1]!: m[2]!};
+    final server = {
+      for (final f in Directory('supabase/migrations').listSync())
+        if (f is File && f.path.endsWith('.sql'))
+          for (final block in RegExp(
+            r'insert into public\.sync_tables[^;]*;',
+          ).allMatches(f.readAsStringSync()))
+            for (final m in RegExp(
+              r"\('(\w+)', '(\w+)', '\w+', \d+\)",
+            ).allMatches(block[0]!))
+              m[1]!: m[2]!,
+    };
     expect(server, hasLength(tableAccess.length));
     for (final MapEntry(:key, :value) in tableAccess.entries) {
       expect(server[key], value.name, reason: key);

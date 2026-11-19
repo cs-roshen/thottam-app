@@ -36,6 +36,11 @@ const tableAccess = {
   'expense_payments': AccessClass.money,
   'sale_payments': AccessClass.money,
   'other_income': AccessClass.money,
+  'input_items': AccessClass.stock,
+  'input_applications': AccessClass.daily,
+  'stock_movements': AccessClass.stock,
+  'input_application_costs': AccessClass.money,
+  'soil_tests': AccessClass.daily,
 };
 
 /// 0 none, 1 read, 2 write. The owner writes everything; a per-person
