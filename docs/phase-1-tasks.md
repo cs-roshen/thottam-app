@@ -52,7 +52,7 @@ it there, with its test.
 
 - C1 and C10: show open invites with Join and Decline (`SyncServer.invites`, `acceptInvite`, `declineInvite`), at sign-in and under Settings → Farms; nobody joins a farm until they tap Join.
 - C1: set-up stores the template version the farm starts from in `farms.accepted_template_version`, so "update available" starts clear.
-- C2: deleting a plot or crop cycle while another phone has already uploaded a new row under it goes through silently; decide with the owner whether the delete should ask, and whether deleting a parent deletes its children.
+- C2: deleting a plot or crop cycle asks first and keeps its entries, in profit and loss and history under the deleted plot or crop cycle. That also covers a delete that crosses a new entry another phone already uploaded under it: nothing is lost, so it needs no conflict.
 - C4: repositories use shared query definitions, so the query-plan and benchmark gates test the queries the app runs; the benchmark seed fills the tables it leaves empty (labour payments and allocations, harvest teams, notes, tasks, other income) and the benchmark reports the slowest run as well as the median.
 - C5: a harvest save writes each row as separate statements (about 140 for 30 rows); measure against the 150 ms save budget and batch them if it is missed.
 - C7: restoring an older event warns when the row has changed since.
@@ -84,6 +84,7 @@ Decided (2026-11-19):
 - Invites: the invited person sees each open invite (farm name, role, who sent it) and taps Join or Decline. Nobody is added to a farm until they accept.
 - Units and numbers are always shown in English with Latin digits (50 kg, 2.5 acre, 3 quintal, ₹1,84,500), in every language setting; only crop and category names follow the language. Screens show a unit's English name (`name_en`); the Malayalam unit names in the templates are not used for display.
 - Standard units only: kg, g, quintal, tonne, litre, cent, acre, hectare, are, and the counts piece, nut, bunch and sheet. The traditional measure para is retired from the templates (migration 0005); no local unit chains are needed.
+- Deleting a plot or crop cycle asks first and keeps its entries; undo brings it back.
 
 Open:
 
