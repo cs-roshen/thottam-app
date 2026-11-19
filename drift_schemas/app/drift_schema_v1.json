@@ -953,9 +953,9 @@
             "name": "hidden",
             "getter_name": "hidden",
             "moor_type": "bool",
-            "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT FALSE",
-            "default_dart": "const CustomExpression('FALSE')",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
           },
@@ -6074,7 +6074,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"template_overrides\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"scope\" TEXT NOT NULL, \"scope_id\" TEXT, \"template_item_id\" TEXT, \"crop_id\" TEXT, \"list_type\" TEXT, \"code\" TEXT, \"name_ml\" TEXT, \"name_en\" TEXT, \"data\" TEXT NOT NULL DEFAULT '{}', \"hidden\" INTEGER NOT NULL DEFAULT FALSE, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"template_overrides\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"scope\" TEXT NOT NULL, \"scope_id\" TEXT, \"template_item_id\" TEXT, \"crop_id\" TEXT, \"list_type\" TEXT, \"code\" TEXT, \"name_ml\" TEXT, \"name_en\" TEXT, \"data\" TEXT NOT NULL DEFAULT '{}', \"hidden\" INTEGER, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
         }
       ]
     },
