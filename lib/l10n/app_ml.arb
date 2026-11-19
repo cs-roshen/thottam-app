@@ -306,13 +306,13 @@
   "@homeCardDues": {
     "description": "Home card title: dues."
   },
-  "homeSeasonProfit": "ഈ സീസൺ · ലാഭം",
+  "homeSeasonProfit": "ഈ വർഷം · ലാഭം",
   "@homeSeasonProfit": {
-    "description": "Label on the season profit card."
+    "description": "Home profit card title: this financial year (April to March)."
   },
   "homeDuesSummary": "കൊടുക്കാനുള്ള കൂലി {amount} · {count} പേർ",
   "@homeDuesSummary": {
-    "description": "Wages due line on Home: amount and number of workers.",
+    "description": "Wages owed to workers and groups (amount formatted in code).",
     "placeholders": {
       "amount": {
         "type": "String"
@@ -796,7 +796,7 @@
       }
     }
   },
-  "malayalamDate": "{month} {day}",
+  "malayalamDate": "{month} {day}",
   "@malayalamDate": {
     "description": "Malayalam calendar date: month name and day.",
     "placeholders": {
@@ -1952,5 +1952,38 @@
         "type": "String"
       }
     }
+  },
+  "homeLanguageBadge": "EN",
+  "@homeLanguageBadge": {
+    "description": "Badge on Home's language button: the language it switches to (EN from Malayalam, മ from English)."
+  },
+  "homeLanguageSwitch": "ഭാഷ മാറ്റുക",
+  "@homeLanguageSwitch": {
+    "description": "Label of Home's language button."
+  },
+  "homeNoTasks": "ഇന്ന് ചെയ്യാനുള്ള പണികളില്ല.",
+  "@homeNoTasks": {
+    "description": "Today's tasks card with no task due."
+  },
+  "homeTaskDue": "{day} ചെയ്യേണ്ടത്",
+  "@homeTaskDue": {
+    "description": "A task due before today: the day it was due (formatted in code).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "homeYearLoss": "ഈ വർഷം · നഷ്ടം",
+  "@homeYearLoss": {
+    "description": "Home profit card title when expense is more than income."
+  },
+  "noteText": "എന്ത് സംഭവിച്ചു?",
+  "@noteText": {
+    "description": "Label of the note's text field."
+  },
+  "noteTextRequired": "ആദ്യം കുറിപ്പ് എഴുതുക.",
+  "@noteTextRequired": {
+    "description": "Error when saving an empty note."
   }
 }

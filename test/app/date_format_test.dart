@@ -15,7 +15,7 @@ void main() {
     final text = formatHomeDate(DateTime(2026, 11, 16), l10n);
     expect(text, contains('16'));
     expect(text, contains('നവംബർ'));
-    expect(text, endsWith('വൃശ്ചികം 1'));
+    expect(text, endsWith('വൃശ്ചികം\u00a01'));
     expect(text, isNot(matches(RegExp('[൦-൯]'))));
   });
 
@@ -23,7 +23,7 @@ void main() {
     final l10n = lookupAppLocalizations(const Locale('en'));
     expect(
       formatHomeDate(DateTime(2026, 11, 16), l10n),
-      'Monday, 16 November · Vrischikam 1',
+      'Monday, 16 November · Vrischikam\u00a01',
     );
   });
 
