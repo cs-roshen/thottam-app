@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Thottam admin: crop templates</title>
+<style>
+  /* colours from docs/design-tokens.md */
+  :root {
+    --ground: #F4F6F1; --surface: #FFFFFF; --ink: #14201A; --muted: #56635B; --line: #DDE3DA;
+    --line-soft: #ECEFEA; --primary: #1B6B3A; --primary-dark: #0F3D22; --primary-tint: #E9F3EB;
+    --accent: #F2B01E; --notice: #FFF6DC; --notice-line: #EBCB73; --danger: #B4440A;
+    --chip: #C3CBC1; --info: #E4ECF7; --on-info: #14335E;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font: 15px/1.5 Inter, 'Noto Sans Malayalam', system-ui, sans-serif; }
+  header { background: var(--primary-dark); color: #fff; padding: 16px 24px; display: flex;
+    flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  header h1 { margin: 0; font-size: 20px; }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+  section { background: var(--surface); border-radius: 18px; padding: 18px 20px; }
+  h2 { margin: 0 0 8px; font-size: 18px; }
+  .muted { color: var(--muted); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { font: inherit; font-weight: 700; min-height: 44px; padding: 0 16px; border-radius: 12px;
+    border: 1.5px solid var(--primary); background: var(--primary-tint); color: var(--primary-dark); cursor: pointer; }
+  button.primary { background: var(--primary); color: #fff; }
+  button.chip { border-radius: 999px; border-color: var(--chip); background: var(--surface); color: var(--ink); font-weight: 600; }
+  button.chip[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  input[type=text], input[type=email], input[type=password] { font: inherit; height: 44px; padding: 0 10px;
+    border: 1.5px solid var(--chip); border-radius: 10px; min-width: 0; width: 100%; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); flex: 1 1 200px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 13px; color: var(--muted); padding: 10px 6px; border-bottom: 1px solid var(--line); }
+  td { padding: 8px 6px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    background: var(--line-soft); color: var(--ink); }
+  .tag.draft { background: var(--notice); color: #3D2A00; }
+  .tag.new { background: var(--info); color: var(--on-info); }
+  .tag.review { background: #FBE3D2; color: #7A2E05; }
+  .status { padding: 8px 14px; border-radius: 999px; background: #D5EBDA; color: var(--primary-dark); font-weight: 700; }
+  #message { min-height: 1.5em; font-weight: 600; }
+  #message.error { color: var(--danger); }
+  .scroll { overflow-x: auto; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Thottam · crop templates</h1>
+  <div class="row">
+    <span id="release" class="status" role="status" hidden></span>
+    <button id="signOut" hidden>Sign out</button>
+  </div>
+</header>
+<main>
+  <p id="message" role="alert" aria-live="assertive"></p>
+
+  <section id="signIn" aria-labelledby="signInTitle">
+    <h2 id="signInTitle">Sign in</h2>
+    <p class="muted">Admins only. Your account must be listed in <code>app_admins</code>
+      (see <code>supabase/admin/add_admin.sql</code>).</p>
+    <form id="signInForm" class="row">
+      <label>Email<input id="email" type="email" autocomplete="username" required></label>
+      <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+      <button class="primary" type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <div id="console" hidden>
+    <section aria-labelledby="pickTitle">
+      <h2 id="pickTitle">Crop and list</h2>
+      <div class="row" id="crops" role="group" aria-label="Crop"></div>
+      <div class="row" id="types" role="group" aria-label="List" style="margin-top: 10px"></div>
+    </section>
+
+    <section aria-labelledby="itemsTitle" style="margin-top: 18px">
+      <h2 id="itemsTitle">Items</h2>
+      <p class="muted">Changes wait as drafts and reach no farmer until you publish. A farmer's own
+        edits are never overwritten; they see "new items available".</p>
+      <div class="scroll">
+        <table>
+          <thead><tr>
+            <th scope="col">Malayalam name</th><th scope="col">English name</th>
+            <th scope="col">Source</th><th scope="col">Shown to farmers</th><th scope="col"><span class="muted">Actions</span></th>
+          </tr></thead>
+          <tbody id="items"></tbody>
+        </table>
+      </div>
+      <form id="addForm" class="row" style="margin-top: 14px">
+        <label>New item in Malayalam<input id="newMl" type="text" required></label>
+        <label>New item in English<input id="newEn" type="text" required></label>
+        <button type="submit">Add item</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="publishTitle" style="margin-top: 18px">
+      <h2 id="publishTitle">Publish</h2>
+      <form id="publishForm" class="row">
+        <label>Note for this release (optional)<input id="note" type="text"></label>
+        <button id="publish" class="primary" type="submit">Publish to all farmers</button>
+      </form>
+    </section>
+  </div>
+</main>
+<script src="config.js"></script>
+<script>
+'use strict';
+// config.js missing reads as not set up yet
+const cfg = window.THOTTAM_ADMIN || { url: 'YOUR-PROJECT-REF', publishableKey: '' };
+const LISTS = [['activity', 'Activities'], ['input', 'Inputs'], ['grade', 'Harvest grades']];
+const state = { token: sessionStorage.getItem('thottam.admin.token'), crops: [], crop: null, list: 'activity' };
+const $ = (id) => document.getElementById(id);
+
+function say(text, error = false) {
+  $('message').textContent = text;
+  $('message').className = error ? 'error' : '';
+}
+
+async function call(path, body, method = 'POST') {
+  const res = await fetch(cfg.url + path, {
+    method,
+    headers: {
+      apikey: cfg.publishableKey,
+      Authorization: 'Bearer ' + (state.token || cfg.publishableKey),
+      'Content-Type': 'application/json',
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+  if (res.status === 401) {
+    signOut();
+    throw new Error('Your sign-in ran out. Please sign in again.');
+  }
+  if (!res.ok) throw new Error((data && (data.message || data.error_description || data.msg)) || res.statusText);
+  return data;
+}
+const rpc = (name, args = {}) => call('/rest/v1/rpc/' + name, args);
+
+function signOut() {
+  state.token = null;
+  sessionStorage.removeItem('thottam.admin.token');
+  $('console').hidden = true; $('signOut').hidden = true; $('release').hidden = true;
+  $('signIn').hidden = false;
+}
+
+async function start() {
+  if (!(await rpc('is_app_admin'))) {
+    signOut();
+    say('This account is not an admin.', true);
+    return;
+  }
+  $('signIn').hidden = true; $('console').hidden = false; $('signOut').hidden = false;
+  state.crops = await call('/rest/v1/crops?owner_farm_id=is.null&deleted_at=is.null&select=id,name_ml,name_en&order=name_en', undefined, 'GET');
+  drawPickers();
+  await refresh();
+}
+
+function chip(label, pressed, onClick) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'chip'; b.textContent = label;
+  b.setAttribute('aria-pressed', String(pressed));
+  b.addEventListener('click', onClick);
+  return b;
+}
+
+function drawPickers() {
+  const crops = $('crops'); crops.replaceChildren();
+  crops.append(chip('Every crop', state.crop === null, () => { state.crop = null; drawPickers(); refresh(); }));
+  for (const c of state.crops) {
+    crops.append(chip(c.name_en + ' · ' + c.name_ml, state.crop === c.id,
+      () => { state.crop = c.id; drawPickers(); refresh(); }));
+  }
+  const types = $('types'); types.replaceChildren();
+  for (const [code, label] of LISTS) {
+    types.append(chip(label, state.list === code, () => { state.list = code; drawPickers(); refresh(); }));
+  }
+}
+
+async function refresh() {
+  const [status] = await rpc('admin_status');
+  $('release').hidden = false;
+  $('release').textContent = 'Phones have release ' + status.version +
+    (status.drafts ? ' · ' + status.drafts + ' change' + (status.drafts === 1 ? '' : 's') + ' waiting' : '');
+  $('publish').disabled = status.drafts === 0;
+  const items = await rpc('admin_items', { p_list_type: state.list, p_crop_id: state.crop });
+  const body = $('items'); body.replaceChildren();
+  for (const item of items) body.append(row(item));
+}
+
+function row(item) {
+  const tr = document.createElement('tr');
+  const input = (value, label) => {
+    const i = document.createElement('input');
+    i.type = 'text'; i.value = value; i.setAttribute('aria-label', label + ' of ' + item.code);
+    return i;
+  };
+  const ml = input(item.name_ml, 'Malayalam name');
+  const en = input(item.name_en, 'English name');
+  const tag = document.createElement('span');
+  const review = item.data && item.data.ml_review;
+  tag.className = 'tag' + (item.item_id === null ? ' new' : item.draft_id ? ' draft' : review ? ' review' : '');
+  tag.textContent = item.item_id === null ? 'New, not published'
+    : item.draft_id ? 'Changed, not published'
+    : review ? 'Standard · needs review' : 'Standard';
+  const shown = document.createElement('input');
+  shown.type = 'checkbox'; shown.setAttribute('role', 'switch'); shown.checked = item.is_active;
+  shown.setAttribute('aria-label', 'Shown to farmers: ' + item.code);
+  const save = document.createElement('button');
+  save.type = 'button'; save.textContent = 'Save';
+  save.addEventListener('click', () => saveItem(item, ml.value, en.value, shown.checked));
+  shown.addEventListener('change', () => saveItem(item, ml.value, en.value, shown.checked));
+  const actions = document.createElement('div'); actions.className = 'row'; actions.append(save);
+  if (item.draft_id) {
+    const discard = document.createElement('button');
+    discard.type = 'button'; discard.textContent = 'Discard change';
+    discard.addEventListener('click', () => act(() => rpc('admin_discard_draft', { p_draft_id: item.draft_id }), 'Change discarded.'));
+    actions.append(discard);
+  }
+  for (const cell of [ml, en, tag, shown, actions]) {
+    const td = document.createElement('td'); td.append(cell); tr.append(td);
+  }
+  return tr;
+}
+
+async function act(work, done) {
+  try { await work(); if (done) say(done); await refresh(); } catch (e) { say(e.message, true); }
+}
+
+function saveItem(item, ml, en, active) {
+  if (!ml.trim() || !en.trim()) { say('Both names are needed.', true); return; }
+  return act(() => rpc('admin_save_item', {
+    p_item_id: item.item_id, p_crop_id: state.crop, p_list_type: state.list, p_code: item.code,
+    p_name_ml: ml, p_name_en: en, p_data: item.data, p_sort_order: item.sort_order, p_is_active: active,
+  }), 'Saved as a draft.');
+}
+
+// a stable code from the English name: "Checking vines" → checking_vines
+const codeOf = (en) => en.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '_')
+  .replace(/^_+|_+$/g, '').replace(/^(\d)/, 'item_$1').slice(0, 48) || 'item';
+
+$('addForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const ml = $('newMl').value.trim(), en = $('newEn').value.trim();
+  if (!ml || !en) { say('Both names are needed.', true); return; }
+  act(async () => {
+    await rpc('admin_save_item', {
+      p_item_id: null, p_crop_id: state.crop, p_list_type: state.list, p_code: codeOf(en),
+      p_name_ml: ml, p_name_en: en, p_data: {}, p_sort_order: 1000, p_is_active: true,
+    });
+    $('newMl').value = ''; $('newEn').value = '';
+  }, 'Added as a draft.');
+});
+
+$('publishForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!confirm('Publish every waiting change to all farmers?')) return;
+  act(async () => {
+    const version = await rpc('admin_publish', { p_note: $('note').value });
+    $('note').value = '';
+    say('Published release ' + version + '.');
+  }, null);
+});
+
+$('signInForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const data = await call('/auth/v1/token?grant_type=password',
+      { email: $('email').value.trim(), password: $('password').value });
+    state.token = data.access_token;
+    sessionStorage.setItem('thottam.admin.token', state.token);
+    $('password').value = '';
+    say('');
+    await start();
+  } catch (err) { say(err.message, true); }
+});
+
+$('signOut').addEventListener('click', () => { signOut(); say('Signed out.'); });
+
+if (cfg.url.includes('YOUR-PROJECT-REF')) {
+  say('Fill in admin/config.js with the project address and publishable key first.', true);
+} else if (state.token) {
+  start().catch((e) => say(e.message, true));
+}
+</script>
+</body>
+</html>
