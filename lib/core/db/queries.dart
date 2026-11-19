@@ -19,7 +19,7 @@ class ListQuery {
   final String name;
 
   /// Named parameters (:farm, :plot, :cycle, :worker, :group, :entity,
-  /// :row, :from, :to, :day, :id, :limit), bound by [bindNamed].
+  /// :row, :from, :to, :day, :id, :limit, :user), bound by [bindNamed].
   final String sql;
 
   /// A page in index order: must not sort in a temporary b-tree.
@@ -36,6 +36,7 @@ const listQueries = [
   ...historyQueries,
   ...moneyQueries,
   ...homeQueries,
+  ...priceQueries,
   ListQuery(
     'labour day page',
     'SELECT * FROM labour_entries WHERE farm_id = :farm AND deleted_at IS NULL '
@@ -651,6 +652,27 @@ const qTodayTasks = ListQuery(
 );
 
 const homeQueries = [qTodayTasks];
+
+// ---------- prices (screen 14) ----------
+
+const qCropPrices = ListQuery(
+  "a crop's recent prices",
+  // official prices and this farm's own shop rates, newest first; enough
+  // for the latest, its change, every market and 30 days of the line
+  'SELECT price_paise, unit, market, source, published_at, farm_id '
+      'FROM market_prices WHERE crop_id = :row AND deleted_at IS NULL '
+      'AND (farm_id IS NULL OR farm_id = :farm) '
+      'ORDER BY published_at DESC LIMIT 200',
+);
+
+const qPriceAlert = ListQuery(
+  "a person's price alert on a crop",
+  'SELECT id, threshold_paise, is_active FROM price_alerts '
+      'WHERE crop_id = :row AND farm_id = :farm AND user_id = :user '
+      'AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 1',
+);
+
+const priceQueries = [qCropPrices, qPriceAlert];
 
 // ---------- running them ----------
 
