@@ -302,7 +302,7 @@ Fixes to make:
 | Deletes | Split every `for all` policy into select, insert and update. No client delete policy on any table; deleting means setting `deleted_at`. |
 | Farm creation | One security-definer function `create_farm(...)` that inserts the farm and the owner's `farm_members` row in one transaction and returns the farm. Clients do not insert into `farms` directly. |
 | Profiles | Create the `profiles` row automatically when an auth user is created. |
-| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). A security-definer function turns a matching invite into a `farm_members` row when that account next signs in or syncs. `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
+| Members | Add `farm_invites` (Google email, role, permissions, with the common columns). The invited account sees its open invites (`my_invites`) and chooses: `accept_invite` turns one into a `farm_members` row and `decline_invite` closes it. Nobody is added to a farm until they accept (owner decision, 2026-11-19). `is_farm_member` and `farm_role` ignore rows with `deleted_at` set, and a withdrawn invite is never accepted; test that a removed member can no longer read or write. One account can belong to several farms. |
 | Template uniqueness | Stop duplicate items where `crop_id` is null (unique index that treats nulls as equal, or two partial unique indexes). |
 | Crop codes | Unique per owner: standard crops unique by `code`, a farmer's own crops unique by `(owner_farm_id, code)`. |
 | Sales | A sale can draw from several lots: add `sale_lots (sale_id, lot_id, quantity)` and drop `sales.lot_id`. Add `sale_payments` for part payments. Both new tables carry the common columns. Keep `sales.received_paise` only if it is derived. |
@@ -421,7 +421,7 @@ entry. Build **C4 Expenses first** as the reference feature, then the others to 
 
 - Three steps, each skippable except name and farm name. Finishing creates the farm, one plot
   and the crop cycles from templates in a single local transaction.
-- An account that already has a farm (its own, or by invite) skips set-up: sign-in runs the
+- An account that already has a farm (its own, or one it joined from an invite) skips set-up: sign-in runs the
   first sync (section 13) and opens Home.
 - Works fully offline after the sign-in step; templates needed for set-up ship inside the app as a
   bundled seed so the first run does not depend on a download.

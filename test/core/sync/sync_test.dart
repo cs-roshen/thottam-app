@@ -90,7 +90,7 @@ void main() {
       }),
     ]);
     await a.sync();
-    // the manager's invite, accepted on the server
+    // the manager accepted an invite on the server
     server.put('farm_members', {
       'id': 'm-manager',
       'farm_id': farm,

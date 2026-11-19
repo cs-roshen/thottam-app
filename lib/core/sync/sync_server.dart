@@ -102,6 +102,34 @@ class PushResult {
   final List<ServerConflict> conflicts;
 }
 
+/// An open invite to a farm. Nobody is added to a farm until they accept
+/// (owner decision, 2026-11-19).
+class Invite {
+  const Invite({
+    required this.id,
+    required this.farmId,
+    required this.farmName,
+    required this.role,
+    this.invitedBy,
+  });
+
+  factory Invite.fromJson(Map<String, Object?> json) => Invite(
+    id: json['id']! as String,
+    farmId: json['farm_id']! as String,
+    farmName: json['farm_name']! as String,
+    role: json['role']! as String,
+    invitedBy: json['invited_by'] as String?,
+  );
+
+  final String id;
+  final String farmId;
+  final String farmName;
+  final String role;
+
+  /// The inviter's name, when they have one.
+  final String? invitedBy;
+}
+
 /// The server could not be reached or failed for a reason worth retrying.
 class SyncUnavailable implements Exception {
   const SyncUnavailable([this.cause]);
@@ -134,6 +162,14 @@ abstract interface class SyncServer {
     String? userId,
   });
 
-  /// Turns the signed-in account's open invites into memberships.
-  Future<void> acceptInvites();
+  /// The signed-in account's open invites, oldest first.
+  Future<List<Invite>> invites();
+
+  /// Joins the farm of [inviteId] and returns the farm id, or null when the
+  /// invite is not this account's or no longer open. The next sync pulls
+  /// the farm.
+  Future<String?> acceptInvite(String inviteId);
+
+  /// Declines [inviteId] and returns its farm id, or null as above.
+  Future<String?> declineInvite(String inviteId);
 }

@@ -351,6 +351,23 @@ class _Session implements SyncServer {
     );
   }
 
+  // shortcut: the fake has no invites; their rules are tested on the server
+  // (supabase/tests/b1_roles.sql). Model them here when a screen needs it.
   @override
-  Future<void> acceptInvites() async => _check();
+  Future<List<Invite>> invites() async {
+    _check();
+    return const [];
+  }
+
+  @override
+  Future<String?> acceptInvite(String inviteId) async {
+    _check();
+    return null;
+  }
+
+  @override
+  Future<String?> declineInvite(String inviteId) async {
+    _check();
+    return null;
+  }
 }

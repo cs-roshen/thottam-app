@@ -50,6 +50,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 From the independent reviews of B1 to B7 (2026-11-19). Each belongs to the task named; do
 it there, with its test.
 
+- C1 and C10: show open invites with Join and Decline (`SyncServer.invites`, `acceptInvite`, `declineInvite`), at sign-in and under Settings → Farms; nobody joins a farm until they tap Join.
 - C1: set-up stores the template version the farm starts from in `farms.accepted_template_version`, so "update available" starts clear.
 - C2: deleting a plot or crop cycle while another phone has already uploaded a new row under it goes through silently; decide with the owner whether the delete should ask, and whether deleting a parent deletes its children.
 - C4: repositories use shared query definitions, so the query-plan and benchmark gates test the queries the app runs; the benchmark seed fills the tables it leaves empty (labour payments and allocations, harvest teams, notes, tasks, other income) and the benchmark reports the slowest run as well as the median.
@@ -77,6 +78,10 @@ Decided (2026-11-18):
 - History on the phone: every season stays on the phone; nothing is cut off or fetched on demand.
 - B1 and B7 server tests run against the owner's Supabase cloud project, `Thottam-App`, in a transaction that always ends in an error so nothing is kept (`tool/server_tests.py`), instead of a local Supabase instance.
 - B6 waits for the Google Cloud project and OAuth client ids; B7 is built against a fake server and the server tests until then.
+
+Decided (2026-11-19):
+
+- Invites: the invited person sees each open invite (farm name, role, who sent it) and taps Join or Decline. Nobody is added to a farm until they accept.
 
 Open:
 

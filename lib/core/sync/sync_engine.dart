@@ -40,10 +40,10 @@ class SyncEngine {
   static const myMemberships = '@me';
   static final _order = {for (final (i, (t, _)) in syncedTables.indexed) t: i};
 
-  /// One full round: invites, upload, pull. Throws [SyncUnavailable] when
-  /// the server cannot be reached; whatever was done before stays done.
+  /// One full round: upload, then pull. Throws [SyncUnavailable] when the
+  /// server cannot be reached; whatever was done before stays done. Invites
+  /// are never accepted here: the person chooses (`SyncServer.acceptInvite`).
   Future<void> sync() async {
-    await server.acceptInvites();
     await upload();
     await pull();
     await db.customStatement(

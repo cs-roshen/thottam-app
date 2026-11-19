@@ -9,7 +9,7 @@ Every data screen must handle: empty state, offline (no spinner, just works), re
 ## Phase 1
 
 ### 1. Welcome and language
-Choose Malayalam, English or mixed; large-text switch. Continue → Google sign-in → set-up. If the account already belongs to a farm (its own, or by invite), sign-in pulls it (first sync) and opens Home instead of set-up; with several farms it opens the last one used. Mixed: Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin.
+Choose Malayalam, English or mixed; large-text switch. Continue → Google sign-in → set-up. If the account already belongs to a farm (its own, or one it joined), sign-in pulls it (first sync) and opens Home instead of set-up; with several farms it opens the last one used. If the account has open invites, sign-in first shows each one (farm name, role, who sent it) with Join and Decline: nobody is added to a farm until they tap Join. Joining pulls that farm and opens Home; declining every invite goes on to set-up. Mixed: Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin.
 - Check: choice persists and applies immediately across the app.
 - Check: after the first sign-in the app opens and works in flight mode; signing in as another user on the same phone shows none of the first user's data.
 - Check: offline at first launch, the sign-in step says once that a connection is needed and continues by itself when one returns. This is the only step that waits for the network (with the first sync of a farm the account already has).
@@ -70,7 +70,7 @@ Crop chips; activity list with on/off switches; "new items available" banner for
 
 ### 6. More, and 7. Settings
 More: tiles for every enabled page, then Settings. Settings: language, large text, pages on/off (drives More and quick add), home cards on/off, reset to default, farms, members, account, sync status.
-- Farms: the farms this account belongs to, with its role on each; switch farm; add a farm (set-up steps 2 and 3). An invite to another farm adds it here at the next sign-in or sync.
+- Farms: the farms this account belongs to, with its role on each; switch farm; add a farm (set-up steps 2 and 3). An open invite to another farm shows here with Join and Decline (checked at each sign-in and sync); the farm is added only after Join.
 - Members (owner only): add a person by their Google email, choose a role, change per-person permissions, remove a person. The person sees the farm after their next sign-in or sync; a removed person loses access at once on the server.
 - Sync status: last synced time and items waiting to sync. Never a blocking dialog.
 - Account: the signed-in Google account, and sign out. Signing out with items waiting to sync warns first; those items stay on the phone, tied to that user, until they sync.

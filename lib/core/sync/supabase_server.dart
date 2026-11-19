@@ -63,8 +63,29 @@ class SupabaseSyncServer implements SyncServer {
   });
 
   @override
-  Future<void> acceptInvites() =>
-      _call(() => client.rpc<Object?>('accept_invites'));
+  Future<List<Invite>> invites() => _call(() async {
+    final rows = await client.rpc<Object?>('my_invites');
+    return [
+      for (final r in rows! as List)
+        Invite.fromJson((r! as Map).cast<String, Object?>()),
+    ];
+  });
+
+  @override
+  Future<String?> acceptInvite(String inviteId) => _call(
+    () async => await client.rpc<Object?>(
+      'accept_invite',
+      params: {'p_invite': inviteId},
+    ) as String?,
+  );
+
+  @override
+  Future<String?> declineInvite(String inviteId) => _call(
+    () async => await client.rpc<Object?>(
+      'decline_invite',
+      params: {'p_invite': inviteId},
+    ) as String?,
+  );
 
   /// Network trouble, a server error or an expired sign-in are worth
   /// retrying later; anything else the server will refuse every time, and
