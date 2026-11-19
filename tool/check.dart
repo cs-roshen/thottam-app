@@ -41,7 +41,7 @@ List<String> checkFile(String path, String source) {
   final problems = <String>[];
   final p = path.replaceAll(r'\', '/');
   final inTheme = p.startsWith('lib/app/theme/');
-  final generated = p.startsWith('lib/l10n/');
+  final generated = p.startsWith('lib/l10n/') || p.endsWith('.g.dart');
   final devSeed = p.startsWith('lib/core/dev/');
   final lines = source.split('\n');
   for (var n = 0; n < lines.length; n++) {
