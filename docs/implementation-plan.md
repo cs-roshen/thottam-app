@@ -194,7 +194,7 @@ flag, and who writes `lots`), fixed the same day.
 | Does sale profit per kg subtract deductions? | Yes: net amount per kg minus lot cost per kg. The spec example becomes 35,080 / 50 − 238 = ₹463.60. Show the deductions line so the farmer sees why. | `product-spec.md` |
 | Where do leftover paise go in a split? | Largest-remainder method: give each crop its rounded-down share, then hand out the remaining paise one at a time to the largest fractional parts; ties go to the crop cycle listed first. | `product-spec.md`, `screens.md` |
 | How are per-kg and per-person figures rounded? | Keep full precision in calculation; round only for display, to one decimal for quantities and to whole paise for money. | `product-spec.md` |
-| What does "mixed" language show? | Malayalam interface, with crop, category and unit names shown in Malayalam followed by English. Digits are always Latin. | `product-spec.md`, `screens.md` |
+| What does "mixed" language show? | Malayalam interface, with crop and category names shown in Malayalam followed by English. Units and numbers are always in English with Latin digits, in every language (owner decision, 2026-11-19). | `product-spec.md`, `screens.md` |
 | Who owns the record `version`? | The device increments `version` on every local write. The server changes it only when it settles a conflict between two devices. The server keeps its own `server_seq` for pulling changes (section 13). | `CLAUDE.md` |
 | Which tables carry the common columns? | Every farm-owned, synced table, including a farmer's own crops and locally entered prices. Standard master data with no owning farm (`crops`, `template_items`, official `market_prices`) and `event_log` are exempt, and say so. | `CLAUDE.md` |
 

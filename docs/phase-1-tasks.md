@@ -82,6 +82,7 @@ Decided (2026-11-18):
 Decided (2026-11-19):
 
 - Invites: the invited person sees each open invite (farm name, role, who sent it) and taps Join or Decline. Nobody is added to a farm until they accept.
+- Units and numbers are always shown in English with Latin digits (50 kg, 2.5 acre, 3 para, ₹1,84,500), in every language setting; only crop and category names follow the language. Screens show a unit's English name (`name_en`); the Malayalam unit names in the templates are not used for display.
 
 Open:
 
