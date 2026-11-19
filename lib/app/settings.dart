@@ -21,10 +21,30 @@ class AppSettings {
   const AppSettings({
     this.language = LanguageChoice.malayalam,
     this.largeText = false,
+    this.hiddenCards = const {},
+    this.hiddenPages = const {},
   });
 
   final LanguageChoice language;
   final bool largeText;
+
+  /// Home cards switched off (screen 2): 'profit', 'price', 'tasks', 'dues'.
+  final Set<String> hiddenCards;
+
+  /// Pages switched off (screen 7); they leave More and quick add.
+  final Set<String> hiddenPages;
+
+  AppSettings copyWith({
+    LanguageChoice? language,
+    bool? largeText,
+    Set<String>? hiddenCards,
+    Set<String>? hiddenPages,
+  }) => AppSettings(
+    language: language ?? this.language,
+    largeText: largeText ?? this.largeText,
+    hiddenCards: hiddenCards ?? this.hiddenCards,
+    hiddenPages: hiddenPages ?? this.hiddenPages,
+  );
 }
 
 /// The phone's preferences file; `main` opens the real one before the first
@@ -36,6 +56,8 @@ final deviceStoreProvider = Provider<DeviceStore>((ref) => MemoryDeviceStore());
 class SettingsNotifier extends Notifier<AppSettings> {
   static const _language = 'settings.language';
   static const _largeText = 'settings.large_text';
+  static const _hiddenCards = 'settings.home_hidden';
+  static const _hiddenPages = 'settings.pages_hidden';
 
   DeviceStore get _store => ref.read(deviceStoreProvider);
 
@@ -47,17 +69,40 @@ class SettingsNotifier extends Notifier<AppSettings> {
           LanguageChoice.values.asNameMap()[store.get(_language)] ??
           LanguageChoice.malayalam,
       largeText: store.get(_largeText) == true,
+      hiddenCards: {...?(store.get(_hiddenCards) as List?)?.cast<String>()},
+      hiddenPages: {...?(store.get(_hiddenPages) as List?)?.cast<String>()},
     );
   }
 
   void setLanguage(LanguageChoice language) {
-    state = AppSettings(language: language, largeText: state.largeText);
+    state = state.copyWith(language: language);
     _store.set(_language, language.name);
   }
 
   void setLargeText(bool largeText) {
-    state = AppSettings(language: state.language, largeText: largeText);
+    state = state.copyWith(largeText: largeText);
     _store.set(_largeText, largeText);
+  }
+
+  void setCardShown(String card, bool shown) {
+    final hidden = {...state.hiddenCards};
+    shown ? hidden.remove(card) : hidden.add(card);
+    state = state.copyWith(hiddenCards: hidden);
+    _store.set(_hiddenCards, hidden.toList()..sort());
+  }
+
+  void setPageShown(String page, bool shown) {
+    final hidden = {...state.hiddenPages};
+    shown ? hidden.remove(page) : hidden.add(page);
+    state = state.copyWith(hiddenPages: hidden);
+    _store.set(_hiddenPages, hidden.toList()..sort());
+  }
+
+  /// Every page and Home card on again; language and text size stay.
+  void resetVisibility() {
+    state = state.copyWith(hiddenCards: const {}, hiddenPages: const {});
+    _store.set(_hiddenCards, null);
+    _store.set(_hiddenPages, null);
   }
 }
 

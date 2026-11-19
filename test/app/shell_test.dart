@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:thottam/app/app.dart';
 import 'package:thottam/app/router.dart';
 import 'package:thottam/app/widgets/widgets.dart';
+import 'package:thottam/features/home/ui/home_screen.dart';
 
 import '../helpers/session.dart';
 
@@ -21,10 +22,14 @@ Future<void> pumpApp(WidgetTester tester, {bool canSeeMoney = true}) async {
   await tester.pumpAndSettle();
 }
 
-String? title(WidgetTester tester) => tester
-    .widgetList<AppBar>(find.byType(AppBar))
-    .map((b) => (b.title as Text?)?.data)
-    .lastOrNull;
+/// The screen on top: its app bar's title, or Home's tab name for Home,
+/// which has a greeting instead of an app bar.
+String? title(WidgetTester tester) =>
+    tester
+        .widgetList<AppBar>(find.byType(AppBar))
+        .map((b) => (b.title as Text?)?.data)
+        .lastOrNull ??
+    (find.byType(HomeScreen).evaluate().isEmpty ? null : 'ഹോം');
 
 Finder galleryScroll() => find
     .ancestor(of: find.byType(WidgetGallery), matching: find.byType(Scrollable))

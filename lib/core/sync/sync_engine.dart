@@ -425,30 +425,7 @@ class SyncEngine {
 
   /// For the small sync line in Settings: last synced time, items waiting,
   /// items the server refused, and changes waiting for the farmer's choice.
-  Stream<SyncStatus> watchStatus() => db
-      .customSelect(
-        'SELECT '
-        "(SELECT COUNT(*) FROM outbox WHERE status IN ('pending', 'sending') "
-        "AND entity <> 'event_log') AS waiting, "
-        "(SELECT COUNT(*) FROM outbox WHERE status = 'rejected' "
-        "AND entity <> 'event_log') AS rejected, "
-        '(SELECT COUNT(*) FROM conflicts WHERE resolved_at IS NULL) AS open, '
-        "(SELECT value FROM app_settings WHERE \"key\" = 'sync.last_synced_at') "
-        'AS last',
-        readsFrom: {db.outbox, db.conflicts, db.appSettings},
-      )
-      .watchSingle()
-      .map(
-        (r) => SyncStatus(
-          waiting: r.read<int>('waiting'),
-          rejected: r.read<int>('rejected'),
-          conflicts: r.read<int>('open'),
-          lastSyncedAt: switch (r.readNullable<String>('last')) {
-            final v? => DateTime.fromMillisecondsSinceEpoch(int.parse(v)),
-            null => null,
-          },
-        ),
-      );
+  Stream<SyncStatus> watchStatus() => watchSyncStatus(db);
 
   // ---------- helpers ----------
 
@@ -503,3 +480,30 @@ Duration retryDelay(int attempt, Random random) {
   final base = min(2000 * pow(2, min(attempt, 20)).toInt(), 600000);
   return Duration(milliseconds: (base * (0.5 + random.nextDouble())).round());
 }
+
+/// What is waiting, refused or in conflict, and when the phone last synced;
+/// read from the database alone, so it works before a server exists.
+Stream<SyncStatus> watchSyncStatus(AppDatabase db) => db
+    .customSelect(
+      'SELECT '
+      "(SELECT COUNT(*) FROM outbox WHERE status IN ('pending', 'sending') "
+      "AND entity <> 'event_log') AS waiting, "
+      "(SELECT COUNT(*) FROM outbox WHERE status = 'rejected' "
+      "AND entity <> 'event_log') AS rejected, "
+      '(SELECT COUNT(*) FROM conflicts WHERE resolved_at IS NULL) AS open, '
+      "(SELECT value FROM app_settings WHERE \"key\" = 'sync.last_synced_at') "
+      'AS last',
+      readsFrom: {db.outbox, db.conflicts, db.appSettings},
+    )
+    .watchSingle()
+    .map(
+      (r) => SyncStatus(
+        waiting: r.read<int>('waiting'),
+        rejected: r.read<int>('rejected'),
+        conflicts: r.read<int>('open'),
+        lastSyncedAt: switch (r.readNullable<String>('last')) {
+          final v? => DateTime.fromMillisecondsSinceEpoch(int.parse(v)),
+          null => null,
+        },
+      ),
+    );

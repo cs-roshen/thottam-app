@@ -306,13 +306,13 @@
   "@homeCardDues": {
     "description": "Home card title: dues."
   },
-  "homeSeasonProfit": "This season · Profit",
+  "homeSeasonProfit": "This year · Profit",
   "@homeSeasonProfit": {
-    "description": "Label on the season profit card."
+    "description": "Home profit card title: this financial year (April to March)."
   },
-  "homeDuesSummary": "Wages due {amount} · {count, plural, =1{1 worker} other{{count} workers}}",
+  "homeDuesSummary": "Wages due {amount} · {count, plural, =1{1 to pay} other{{count} to pay}}",
   "@homeDuesSummary": {
-    "description": "Wages due line on Home: amount and number of workers.",
+    "description": "Wages owed to workers and groups (amount formatted in code).",
     "placeholders": {
       "amount": {
         "type": "String"
@@ -746,10 +746,6 @@
   "@moneyByCrop": {
     "description": "By crop section."
   },
-  "moneySeasonAllPlots": "This season · All plots",
-  "@moneySeasonAllPlots": {
-    "description": "Scope line: this season, all plots."
-  },
   "moneyIncludeFamilyLabour": "Include family labour",
   "@moneyIncludeFamilyLabour": {
     "description": "Switch to include family labour."
@@ -766,10 +762,6 @@
   "moneyShareReport": "Share report",
   "@moneyShareReport": {
     "description": "Share report button."
-  },
-  "moneyReportReady": "Report ready",
-  "@moneyReportReady": {
-    "description": "Report ready message."
   },
   "myListsTitle": "My lists",
   "@myListsTitle": {
@@ -804,7 +796,7 @@
       }
     }
   },
-  "malayalamDate": "{month} {day}",
+  "malayalamDate": "{month} {day}",
   "@malayalamDate": {
     "description": "Malayalam calendar date: month name and day.",
     "placeholders": {
@@ -1884,5 +1876,410 @@
   "historyAllLoaded": "That is everything",
   "@historyAllLoaded": {
     "description": "End of the history list."
+  },
+  "moneyThisYear": "This year",
+  "@moneyThisYear": {
+    "description": "Period choice: this financial year, April to March."
+  },
+  "moneyLastYear": "Last year",
+  "@moneyLastYear": {
+    "description": "Period choice: the financial year before this one."
+  },
+  "moneyYearRange": "April {start} – March {end}",
+  "@moneyYearRange": {
+    "description": "The financial year shown, e.g. April 2026 – March 2027.",
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyAllPlots": "All plots",
+  "@moneyAllPlots": {
+    "description": "Plot choice: every plot of the farm."
+  },
+  "moneyLoss": "Loss",
+  "@moneyLoss": {
+    "description": "Label when expense is more than income."
+  },
+  "moneyNoCrop": "Not on a crop",
+  "@moneyNoCrop": {
+    "description": "Row for money entered on a plot or the farm but on no crop."
+  },
+  "moneyEmpty": "Nothing sold or spent in this period yet.",
+  "@moneyEmpty": {
+    "description": "Profit and loss with no entries in the period."
+  },
+  "moneyReportCopied": "Report copied. Paste it into a message.",
+  "@moneyReportCopied": {
+    "description": "Toast after the report is copied to share."
+  },
+  "moneyFamilyIncluded": "Family labour included: {amount}",
+  "@moneyFamilyIncluded": {
+    "description": "Report line when family labour is in the expense (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyFamilyLeftOut": "Family labour left out: {amount}",
+  "@moneyFamilyLeftOut": {
+    "description": "Report line when family labour is not in the expense (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyReportCrop": "{crop}: income {income}, expense {expense}, profit {profit}",
+  "@moneyReportCrop": {
+    "description": "One crop's line in the shared report (amounts formatted in code; a loss shows as a minus amount).",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "income": {
+        "type": "String"
+      },
+      "expense": {
+        "type": "String"
+      },
+      "profit": {
+        "type": "String"
+      }
+    }
+  },
+  "homeLanguageBadge": "മ",
+  "@homeLanguageBadge": {
+    "description": "Badge on Home's language button: the language it switches to (EN from Malayalam, മ from English)."
+  },
+  "homeLanguageSwitch": "Switch language",
+  "@homeLanguageSwitch": {
+    "description": "Label of Home's language button."
+  },
+  "homeNoTasks": "Nothing due today.",
+  "@homeNoTasks": {
+    "description": "Today's tasks card with no task due."
+  },
+  "homeTaskDue": "Due {day}",
+  "@homeTaskDue": {
+    "description": "A task due before today: the day it was due (formatted in code).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "homeYearLoss": "This year · Loss",
+  "@homeYearLoss": {
+    "description": "Home profit card title when expense is more than income."
+  },
+  "noteText": "What happened?",
+  "@noteText": {
+    "description": "Label of the note's text field."
+  },
+  "noteTextRequired": "Write the note first.",
+  "@noteTextRequired": {
+    "description": "Error when saving an empty note."
+  },
+  "pageLabour": "Labour",
+  "@pageLabour": {
+    "description": "Page name: labour (workers, groups, attendance)."
+  },
+  "pageSelling": "Selling",
+  "@pageSelling": {
+    "description": "Page name: selling and buyers."
+  },
+  "settingsFarms": "Farms",
+  "@settingsFarms": {
+    "description": "Settings row and screen title: the farms of this account."
+  },
+  "settingsFarmsHint": "Switch farm or add one",
+  "@settingsFarmsHint": {
+    "description": "Hint under the Farms row."
+  },
+  "settingsMembers": "Members",
+  "@settingsMembers": {
+    "description": "Settings row and screen title: who can use this farm (owner only)."
+  },
+  "settingsMembersHint": "Who can see and write this farm",
+  "@settingsMembersHint": {
+    "description": "Hint under the Members row."
+  },
+  "settingsSync": "Sync status",
+  "@settingsSync": {
+    "description": "Settings section: sync status."
+  },
+  "settingsAccount": "Account",
+  "@settingsAccount": {
+    "description": "Settings section: the signed-in account."
+  },
+  "settingsSignOut": "Sign out",
+  "@settingsSignOut": {
+    "description": "Button: sign out of this phone."
+  },
+  "signOutWaitingTitle": "Changes still waiting to sync",
+  "@signOutWaitingTitle": {
+    "description": "Title of the warning before signing out with changes not yet uploaded."
+  },
+  "signOutWaitingBody": "{count, plural, =1{1 change has} other{{count} changes have}} not reached the server yet. Nothing is lost: {count, plural, =1{it stays} other{they stay}} on this phone and sync when you sign in again.",
+  "@signOutWaitingBody": {
+    "description": "Body of the warning before signing out with changes not yet uploaded.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "roleName": "{role, select, owner{Owner} manager{Manager} supervisor{Supervisor} accountant{Accountant} viewer{Viewer} other{Member}}",
+  "@roleName": {
+    "description": "A role's name.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "farmsOpenNow": "Open now",
+  "@farmsOpenNow": {
+    "description": "Tag on the farm that is open."
+  },
+  "farmsAdd": "Add a farm",
+  "@farmsAdd": {
+    "description": "Button: add another farm (set-up steps 2 and 3)."
+  },
+  "farmsInvites": "Invitations",
+  "@farmsInvites": {
+    "description": "Section with open invitations to other farms."
+  },
+  "farmsOpened": "{farm} is open",
+  "@farmsOpened": {
+    "description": "Toast after switching farm.",
+    "placeholders": {
+      "farm": {
+        "type": "String"
+      }
+    }
+  },
+  "membersAdd": "Add a person",
+  "@membersAdd": {
+    "description": "Button: invite a person to this farm."
+  },
+  "membersEmail": "Google email",
+  "@membersEmail": {
+    "description": "Field: the Google email of the person to invite."
+  },
+  "membersEmailInvalid": "Enter an email address",
+  "@membersEmailInvalid": {
+    "description": "Error: the email is missing or not an email."
+  },
+  "membersRole": "Role",
+  "@membersRole": {
+    "description": "Field label: the person's role."
+  },
+  "membersInvited": "Invited · {role}",
+  "@membersInvited": {
+    "description": "An invitation not yet accepted, with its role (role name formatted in code).",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "membersJoinHint": "They join when they tap Join",
+  "@membersJoinHint": {
+    "description": "Hint under the invite form: nobody joins until they accept."
+  },
+  "membersRemove": "Remove from farm",
+  "@membersRemove": {
+    "description": "Button: remove a member."
+  },
+  "membersRemoveConfirm": "{name} will no longer see or write this farm.",
+  "@membersRemoveConfirm": {
+    "description": "Confirm before removing a member.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "membersCancelInvite": "Cancel invitation",
+  "@membersCancelInvite": {
+    "description": "Button: withdraw an invitation."
+  },
+  "membersYou": "{name} (you)",
+  "@membersYou": {
+    "description": "The signed-in person in the members list.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "membersUnknown": "Member",
+  "@membersUnknown": {
+    "description": "A member whose name is not on this phone yet."
+  },
+  "membersPermissions": "What they can do",
+  "@membersPermissions": {
+    "description": "Section: per-person permissions."
+  },
+  "membersPermissionsHint": "Starts from the role; change any of them",
+  "@membersPermissionsHint": {
+    "description": "Hint above per-person permissions."
+  },
+  "permissionLevel": "{level, select, none{Can't see} read{See} write{See and write} other{See}}",
+  "@permissionLevel": {
+    "description": "A permission level.",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "accessClassName": "{area, select, setup{Farm set-up} team{Workers and groups} daily{Daily work} stock{Stock} money{Money} prices{Prices} members{Members} other{Other}}",
+  "@accessClassName": {
+    "description": "An area a permission covers.",
+    "placeholders": {
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "myListsCrop": "Every crop",
+  "@myListsCrop": {
+    "description": "Crop chip in My lists: items used for every crop."
+  },
+  "myListsAcceptUpdate": "Got it",
+  "@myListsAcceptUpdate": {
+    "description": "Button on the new-items banner: mark the update as seen."
+  },
+  "myListsOwn": "Your own",
+  "@myListsOwn": {
+    "description": "Tag on an item the farmer added."
+  },
+  "myListsChanged": "Changed · usually on",
+  "@myListsChanged": {
+    "description": "Tag on an item the farmer switched off; reset turns it back on."
+  },
+  "myListsNameMl": "Name in Malayalam",
+  "@myListsNameMl": {
+    "description": "Field: an own item's Malayalam name."
+  },
+  "myListsNameEn": "Name in English",
+  "@myListsNameEn": {
+    "description": "Field: an own item's English name."
+  },
+  "myListsNameRequired": "Give it a name",
+  "@myListsNameRequired": {
+    "description": "Error: an own item needs a name in one language at least."
+  },
+  "myListsReadOnly": "Only the owner or a manager can change the lists.",
+  "@myListsReadOnly": {
+    "description": "Shown on My lists to roles that cannot write set-up."
+  },
+  "myListsResetHint": "Items you switched off come back on. Your own items stay.",
+  "@myListsResetHint": {
+    "description": "What resetting My lists does."
+  },
+  "pricesEmpty": "No prices yet. Add today's rate from your shop or market.",
+  "@pricesEmpty": {
+    "description": "A crop with no price yet."
+  },
+  "pricesAdd": "Add a price",
+  "@pricesAdd": {
+    "description": "Button: enter a rate from a shop or market."
+  },
+  "pricesMarket": "Market or shop",
+  "@pricesMarket": {
+    "description": "Field: where the rate is from."
+  },
+  "pricesMarketRequired": "Name the market or shop",
+  "@pricesMarketRequired": {
+    "description": "Error: the market or shop is missing."
+  },
+  "pricesPriceRequired": "Enter the price",
+  "@pricesPriceRequired": {
+    "description": "Error: the price is missing."
+  },
+  "pricesPerUnit": "Price per {unit}",
+  "@pricesPerUnit": {
+    "description": "Label of the price field (unit formatted in code).",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesYourEntry": "Your entry · {market} · {time}",
+  "@pricesYourEntry": {
+    "description": "Source line of a rate entered on this farm (time formatted in code).",
+    "placeholders": {
+      "market": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesMarkets": "Markets",
+  "@pricesMarkets": {
+    "description": "Section: the latest price at each market."
+  },
+  "pricesRange": "Low {low} · High {high}",
+  "@pricesRange": {
+    "description": "Lowest and highest price on the chart (amounts formatted in code).",
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesAlertAbove": "Notify when above {amount}",
+  "@pricesAlertAbove": {
+    "description": "The alert's threshold (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesAlertOff": "Off",
+  "@pricesAlertOff": {
+    "description": "The alert is off."
+  },
+  "pricesAlertHit": "Above your alert of {amount}",
+  "@pricesAlertHit": {
+    "description": "Shown when the latest price is above the farmer's alert (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesAlertAmount": "When the price is above",
+  "@pricesAlertAmount": {
+    "description": "Title of the dialog asking for the alert's threshold."
+  },
+  "pricesReadOnly": "Only the owner, a manager or the accountant can add prices and alerts.",
+  "@pricesReadOnly": {
+    "description": "Shown on Prices to roles that cannot write prices."
+  },
+  "pricesChange": "Change {amount}",
+  "@pricesChange": {
+    "description": "Spoken label of the change pill (amount with its sign, formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }

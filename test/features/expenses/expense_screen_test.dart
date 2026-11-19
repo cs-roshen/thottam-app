@@ -87,7 +87,7 @@ void main() {
     await tapCounted(
       find.descendant(of: key('shell.nav'), matching: find.byIcon(Icons.add)),
     );
-    await tapCounted(find.text('Expense'));
+    await tapCounted(find.byKey(const Key('quickAdd./add/expense')));
     // the amount field opens focused, with the number keypad
     await type(tester, 'expense.amount', '3600');
     expect(find.text('₹2,160'), findsOneWidget);

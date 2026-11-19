@@ -4,7 +4,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../l10n/app_localizations.dart';
 import '../features/harvest/data/harvest_providers.dart';
+import '../core/access/access.dart';
 import 'router.dart';
+import 'session.dart';
+import 'settings.dart';
 import 'theme/tokens.dart';
 import 'widgets/widgets.dart';
 
@@ -64,15 +67,18 @@ class AppShell extends ConsumerWidget {
   }
 }
 
-/// Quick add sheet; tiles open their entry screens as each task lands (C9
-/// finishes it).
-class QuickAddSheet extends StatelessWidget {
+/// Quick add sheet (screen 3). Tiles follow the pages switched on in
+/// Settings and what the role may write.
+class QuickAddSheet extends ConsumerWidget {
   const QuickAddSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
+    final hidden = ref.watch(settingsProvider.select((s) => s.hiddenPages));
+    final access = ref.watch(accessProvider).value;
+    bool can(AccessClass c) => access?.canWrite(c) ?? true;
     Widget tile(
       IconData icon,
       String label,
@@ -124,40 +130,46 @@ class QuickAddSheet extends StatelessWidget {
           spacing: t.cardGap,
           runSpacing: t.cardGap,
           children: [
-            tile(
-              Icons.payments_outlined,
-              l10n.quickAddExpense,
-              t.expenseTint,
-              t.onExpenseTint,
-              '/add/expense',
-            ),
-            tile(
-              Icons.groups_outlined,
-              l10n.labourTitle,
-              t.infoTint,
-              t.onInfoTint,
-              '/add/labour',
-            ),
-            tile(
-              Icons.agriculture_outlined,
-              l10n.quickAddHarvest,
-              t.primaryTint,
-              t.primaryDark,
-              '/add/harvest',
-            ),
-            tile(
-              Icons.sell_outlined,
-              l10n.quickAddSale,
-              t.accentTint,
-              t.onAccentTint,
-              '/add/sale',
-            ),
-            tile(
-              Icons.edit_note_outlined,
-              l10n.quickAddNote,
-              t.primaryTint,
-              t.primaryDark,
-            ),
+            if (can(AccessClass.money))
+              tile(
+                Icons.payments_outlined,
+                l10n.quickAddExpense,
+                t.expenseTint,
+                t.onExpenseTint,
+                '/add/expense',
+              ),
+            if (can(AccessClass.daily) && !hidden.contains('labour'))
+              tile(
+                Icons.groups_outlined,
+                l10n.labourTitle,
+                t.infoTint,
+                t.onInfoTint,
+                '/add/labour',
+              ),
+            if (can(AccessClass.daily) && !hidden.contains('harvest'))
+              tile(
+                Icons.agriculture_outlined,
+                l10n.quickAddHarvest,
+                t.primaryTint,
+                t.primaryDark,
+                '/add/harvest',
+              ),
+            if (can(AccessClass.money) && !hidden.contains('sell'))
+              tile(
+                Icons.sell_outlined,
+                l10n.quickAddSale,
+                t.accentTint,
+                t.onAccentTint,
+                '/add/sale',
+              ),
+            if (can(AccessClass.daily))
+              tile(
+                Icons.edit_note_outlined,
+                l10n.quickAddNote,
+                t.primaryTint,
+                t.primaryDark,
+                '/add/note',
+              ),
           ],
         ),
       ],

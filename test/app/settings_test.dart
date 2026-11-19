@@ -25,13 +25,13 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(AppBar, 'ഹോം'), findsOneWidget);
+    expect(find.text('നമസ്കാരം, Ravi'), findsOneWidget);
 
     container
         .read(settingsProvider.notifier)
         .setLanguage(LanguageChoice.english);
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(AppBar, 'Home'), findsOneWidget);
+    expect(find.text('Hello, Ravi'), findsOneWidget);
   });
 
   testWidgets('large text scales by 1.12 on top of the system size', (
