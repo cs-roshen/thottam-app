@@ -154,9 +154,8 @@ class SyncEngine {
     final now = _clock().millisecondsSinceEpoch;
     final touched = <String>{'outbox', 'conflicts'};
     await db.transaction(() async {
-      final settled = <RowRef>{};
+      final taken = [...result.accepted];
       for (final r in result.rejected) {
-        settled.add(r.ref);
         await db.customStatement(
           "UPDATE outbox SET status = 'rejected', last_error = ?, "
           'updated_at = ? WHERE batch_id = ? AND entity = ? AND row_id = ?',
@@ -173,7 +172,13 @@ class SyncEngine {
         }
       }
       for (final c in result.conflicts) {
-        settled.add(c.ref);
+        // A row that was itself deleted before it reached the server (a
+        // split saved and undone offline) has nothing to choose about under
+        // its deleted parent; the server has stored it.
+        if (c.kind == 'orphan' && mine[c.ref]?['deleted_at'] != null) {
+          taken.add(c.ref);
+          continue;
+        }
         final table = _table(c.ref.entity);
         await db.customStatement(
           'INSERT INTO conflicts (id, farm_id, entity, row_id, kind, fields, '
@@ -211,6 +216,19 @@ class SyncEngine {
           await _upsert(c.ref.entity, toLocalRow(table, c.theirs!));
           touched.add(c.ref.entity);
         }
+      }
+      // A newer change to a row this batch carried was queued against the
+      // version known before it (0 for a row made offline whose first try
+      // failed). The server now holds the version sent: build on that, or
+      // the change would look like another phone's.
+      for (final ref in taken) {
+        final sent = mine[ref]?['version'];
+        if (sent == null) continue;
+        await db.customStatement(
+          'UPDATE outbox SET base_version = ? WHERE entity = ? AND row_id = ? '
+          "AND status = 'pending'",
+          [sent, ref.entity, ref.id],
+        );
       }
       // Everything else in the batch was taken as sent.
       await db.customStatement(
