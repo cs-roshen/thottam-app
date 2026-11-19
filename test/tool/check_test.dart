@@ -24,6 +24,20 @@ void main() {
     }
   });
 
+  test('SQL in the data layer and generated code pass the string check', () {
+    const sql =
+        "db.customStatement('UPDATE plots SET name = ? WHERE id = ?');\n";
+    expect(checkFile('lib/core/history/write_with_history.dart', sql), isEmpty);
+    expect(
+      checkFile('lib/core/db/database.g.dart', "Text('NOT NULL');\n"),
+      isEmpty,
+    );
+    expect(
+      checkFile('lib/features/plots/ui/plot_screen.dart', sql),
+      isNotEmpty,
+    );
+  });
+
   test('allows colours and fonts in the theme', () {
     expect(
       checkFile(
@@ -65,6 +79,41 @@ void main() {
         'await db.into(db.expenses).insert(row);\n',
       ),
       hasLength(1),
+    );
+  });
+
+  test('every kind of Drift write is caught, in data/ and elsewhere', () {
+    for (final (path, line) in const [
+      (
+        'lib/features/land/data/plot_repository.dart',
+        "db.customUpdate('UPDATE plots');",
+      ),
+      ('lib/features/land/data/plot_repository.dart', 'db.batch((b) {});'),
+      ('lib/core/overrides/overrides.dart', 'db.into(db.plots).insert(row);'),
+      (
+        'lib/features/land/ui/plot_screen.dart',
+        "db.customStatement('DELETE');",
+      ),
+    ]) {
+      expect(
+        checkFile(path, '$line\n').where((p) => p.contains('write outside')),
+        hasLength(1),
+        reason: path,
+      );
+    }
+    expect(
+      checkFile(
+        'lib/core/dev/load_seed.dart',
+        "b.customStatement('INSERT');\n",
+      ),
+      isEmpty,
+    );
+    expect(
+      checkFile(
+        'lib/core/money/money_format.dart',
+        'groups.insert(0, head);\n',
+      ),
+      isEmpty,
     );
   });
 

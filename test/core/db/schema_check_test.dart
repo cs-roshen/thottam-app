@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:thottam/core/db/synced_tables.dart';
 
 /// The schema check gate (implementation plan section 16): the server
 /// migrations and the phone's schema agree on every synced table's columns,
@@ -53,6 +54,21 @@ void main() {
       phone.keys.toSet().difference(phoneOnlyTables),
       server.keys.toSet().difference(serverOnlyTables),
     );
+  });
+
+  test('the phone lists the synced tables in the server order', () {
+    final sql = File('supabase/migrations/0001_init.sql').readAsStringSync();
+    final block = sql.substring(
+      sql.indexOf('insert into public.sync_tables'),
+      sql.indexOf(';', sql.indexOf('insert into public.sync_tables')),
+    );
+    final rows = [
+      for (final m in RegExp(
+        r"\('(\w+)', (?:'\w+'|null), (?:'(\w+)'|null), (\d+)\)",
+      ).allMatches(block))
+        (m.group(1)!, m.group(2), int.parse(m.group(3)!)),
+    ]..sort((a, b) => a.$3.compareTo(b.$3));
+    expect([for (final r in rows) (r.$1, r.$2)], syncedTables);
   });
 
   for (final table in server.keys.where((t) => !serverOnlyTables.contains(t))) {

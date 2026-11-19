@@ -20,7 +20,15 @@ final _colour = RegExp(r'\bColor\(0x|\bColors\.(?!transparent\b)\w+');
 final _fontName = RegExp(
   r"""['"](AnekMalayalam|Inter|NotoSansMalayalam)['"]""",
 );
-final _driftWrite = RegExp(r'\.(into|update|delete)\(|customStatement\(');
+final _driftWrite = RegExp(
+  r'\.(into|update|delete|insert|insertAll|insertOnConflictUpdate|'
+  r'insertReturning|replace|deleteWhere|batch)\(|custom(Statement|Insert|Update)\(',
+);
+// Calls only Drift has, so they are looked for in every file, not only data/.
+final _driftOnlyWrite = RegExp(
+  r'\.(into|batch|deleteWhere|insertOnConflictUpdate|insertReturning)\(|'
+  r'custom(Statement|Insert|Update)\(',
+);
 
 /// Strips comments, keeping line numbers.
 String _code(String line) {
@@ -43,6 +51,12 @@ List<String> checkFile(String path, String source) {
   final inTheme = p.startsWith('lib/app/theme/');
   final generated = p.startsWith('lib/l10n/') || p.endsWith('.g.dart');
   final devSeed = p.startsWith('lib/core/dev/');
+  // SQL and developer errors only; these layers never show text to a farmer.
+  final dataLayer = const [
+    'lib/core/db/',
+    'lib/core/history/',
+    'lib/core/sync/',
+  ].any(p.startsWith);
   final lines = source.split('\n');
   for (var n = 0; n < lines.length; n++) {
     final raw = lines[n];
@@ -56,6 +70,7 @@ List<String> checkFile(String path, String source) {
 
     if (!generated &&
         !devSeed &&
+        !dataLayer &&
         !inTheme &&
         !isDirective &&
         !raw.trimRight().endsWith(_marker) &&
@@ -97,8 +112,14 @@ List<String> checkFile(String path, String source) {
       }
     }
     final mayWrite =
-        p.startsWith('lib/core/history/') || p.startsWith('lib/core/sync/');
-    if (!mayWrite && _driftWrite.hasMatch(line) && p.contains('/data/')) {
+        const [
+          'lib/core/history/',
+          'lib/core/sync/',
+          'lib/core/dev/',
+        ].any(p.startsWith) ||
+        generated;
+    final write = p.contains('/data/') ? _driftWrite : _driftOnlyWrite;
+    if (!mayWrite && write.hasMatch(line)) {
       problems.add('$where: write outside writeWithHistory');
     }
   }

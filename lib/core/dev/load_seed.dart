@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import '../db/database.dart';
+import '../db/sql_value.dart';
 import 'benchmark_seed.dart';
 
 /// Inserts [seed] into [db] in one batch, for benchmarks and tests only.
@@ -17,12 +16,3 @@ Future<void> loadSeed(AppDatabase db, SeedTables seed) => db.batch((b) {
     }
   }
 });
-
-/// The phone's storage form of a value: milliseconds for times, JSON text for
-/// maps and lists, 0 or 1 for booleans.
-Object? toSqlValue(Object? v) => switch (v) {
-  DateTime d => d.millisecondsSinceEpoch,
-  Map() || List() => jsonEncode(v),
-  bool b => b ? 1 : 0,
-  _ => v,
-};
