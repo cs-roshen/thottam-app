@@ -22,6 +22,13 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final canSeeMoney = ref.watch(canSeeMoneyProvider);
+    // the add sheet always offers a bill to a money writer and a note to a
+    // daily-work writer; a role that writes neither gets no add button
+    final access = ref.watch(accessProvider).value;
+    final canAdd = [
+      AccessClass.money,
+      AccessClass.daily,
+    ].any((c) => access?.canWrite(c) ?? true);
     // a money phone works out lot costs left by a supervisor's harvests
     ref.watch(lotCostSettlerProvider);
     final branches = [
@@ -56,10 +63,12 @@ class AppShell extends ConsumerWidget {
             // Tapping the open tab again returns to its first screen.
             initialLocation: branches[i].index == shell.currentIndex,
           ),
-          onAdd: () => showThottamSheet<void>(
-            context,
-            builder: (context) => const QuickAddSheet(),
-          ),
+          onAdd: canAdd
+              ? () => showThottamSheet<void>(
+                  context,
+                  builder: (context) => const QuickAddSheet(),
+                )
+              : null,
           addLabel: l10n.actionAdd,
         ),
       ),

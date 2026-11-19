@@ -11,7 +11,8 @@ class NavTab {
 }
 
 /// Bottom bar: tabs either side of a raised centre add button. Works with
-/// three tabs (no Money) or four.
+/// three tabs (no Money) or four; with no [onAdd] (a role that writes nothing)
+/// there is no add button.
 class ThottamBottomNav extends StatelessWidget {
   const ThottamBottomNav({
     super.key,
@@ -25,7 +26,7 @@ class ThottamBottomNav extends StatelessWidget {
   final List<NavTab> tabs;
   final int current;
   final ValueChanged<int> onTab;
-  final VoidCallback onAdd;
+  final VoidCallback? onAdd;
   final String addLabel;
 
   @override
@@ -56,7 +57,8 @@ class ThottamBottomNav extends StatelessWidget {
                   child: Row(
                     children: [
                       for (var i = 0; i < half; i++) tab(i),
-                      SizedBox(width: t.addButtonSize + t.cardGap),
+                      if (onAdd != null)
+                        SizedBox(width: t.addButtonSize + t.cardGap),
                       for (var i = half; i < tabs.length; i++) tab(i),
                     ],
                   ),
@@ -64,10 +66,11 @@ class ThottamBottomNav extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            top: 0,
-            child: _AddButton(label: addLabel, onTap: onAdd),
-          ),
+          if (onAdd case final add?)
+            Positioned(
+              top: 0,
+              child: _AddButton(label: addLabel, onTap: add),
+            ),
         ],
       ),
     );
