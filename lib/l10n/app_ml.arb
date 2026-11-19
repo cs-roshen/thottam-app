@@ -2281,5 +2281,552 @@
         "type": "String"
       }
     }
+  },
+  "pageInputs": "വളം / മരുന്ന്",
+  "@pageInputs": {
+    "description": "Inputs page (phase 7): More tile, Settings page switch, screen 19 title."
+  },
+  "inputsSubtitle": "സ്റ്റോക്കും ഉപയോഗവും",
+  "@inputsSubtitle": {
+    "description": "Subtitle of the Inputs screen."
+  },
+  "quickAddInput": "വളം / മരുന്ന് ഉപയോഗം",
+  "@quickAddInput": {
+    "description": "Quick add tile: log an input used (screen 19b)."
+  },
+  "inputsStock": "സ്റ്റോക്ക്",
+  "@inputsStock": {
+    "description": "Heading of the stock list on Inputs."
+  },
+  "inputsEmpty": "വാങ്ങുന്ന വളവും മരുന്നും വിത്തും ചേർത്താൽ സ്റ്റോക്കിൽ എത്രയുണ്ടെന്നും ഓരോ വിളയ്ക്കും എത്ര ഉപയോഗിച്ചെന്നും കാണാം.",
+  "@inputsEmpty": {
+    "description": "Empty state of the Inputs screen."
+  },
+  "inputsAddPurchase": "വാങ്ങിയത് ചേർക്കുക",
+  "@inputsAddPurchase": {
+    "description": "Empty-state action on Inputs: add the first purchase."
+  },
+  "inputsAddItem": "ഇനം ചേർക്കുക",
+  "@inputsAddItem": {
+    "description": "Action on Inputs for a role that cannot write money: add an item."
+  },
+  "inputsUsed": "ഉപയോഗിച്ചു",
+  "@inputsUsed": {
+    "description": "Button on a stock row: log this item used."
+  },
+  "inputsBought": "വാങ്ങി",
+  "@inputsBought": {
+    "description": "Button on a stock row: add a purchase of this item."
+  },
+  "inputsTagLow": "കുറവ്",
+  "@inputsTagLow": {
+    "description": "Tag on a stock row: at or below the reorder level."
+  },
+  "inputsTagExpiresSoon": "കാലാവധി തീരാറായി",
+  "@inputsTagExpiresSoon": {
+    "description": "Tag on a stock row: stock on hand expires within the warning window."
+  },
+  "inputsTagExpired": "കാലാവധി കഴിഞ്ഞു",
+  "@inputsTagExpired": {
+    "description": "Tag on a stock row: stock on hand is past its expiry date."
+  },
+  "inputsTagCheckStock": "സ്റ്റോക്ക് നോക്കുക",
+  "@inputsTagCheckStock": {
+    "description": "Tag on a stock row: stock went below zero; count it."
+  },
+  "inputsOnHand": "സ്റ്റോക്കിൽ {quantity}",
+  "@inputsOnHand": {
+    "description": "Stock on hand of an item (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "inputsStockValue": "കൈവശമുള്ള സ്റ്റോക്കിന്റെ വില {amount}; ഇതുവരെ വിളച്ചെലവിൽ ചേർത്തിട്ടില്ല",
+  "@inputsStockValue": {
+    "description": "Value of unused stock on Inputs, money roles only (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "inputsSafeDaysLeft": "{days, plural, =1{വിളവെടുക്കാൻ 1 ദിവസം കൂടി} other{വിളവെടുക്കാൻ {days} ദിവസം കൂടി}}",
+  "@inputsSafeDaysLeft": {
+    "description": "Safe-to-harvest card: days left in the waiting period.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inputsSafeContext": "{crop} · {plot} · {item} {days, plural, =0{ഇന്ന് ഉപയോഗിച്ചു} =1{ഇന്നലെ ഉപയോഗിച്ചു} other{ഉപയോഗിച്ചിട്ട് {days} ദിവസം}}",
+  "@inputsSafeContext": {
+    "description": "Safe-to-harvest card: crop, plot, the item and how long ago it was applied.",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "plot": {
+        "type": "String"
+      },
+      "item": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inputsSafeFrom": "{date} മുതൽ വിളവെടുക്കാം",
+  "@inputsSafeFrom": {
+    "description": "Safe-to-harvest date (date formatted in code).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "soilTestTitle": "മണ്ണ് പരിശോധന",
+  "@soilTestTitle": {
+    "description": "Soil test: row title on Inputs and screen 19d title."
+  },
+  "soilTestLatest": "മണ്ണ് പരിശോധന · {values} · {age}",
+  "@soilTestLatest": {
+    "description": "Latest soil test row: main values and age (both formatted in code).",
+    "placeholders": {
+      "values": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "soilTestAge": "{months, plural, =0{ഈ മാസം} other{{months} മാസം മുമ്പ്}}",
+  "@soilTestAge": {
+    "description": "How long ago a soil test was done, in months.",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "soilTestNone": "മണ്ണ് പരിശോധന ഇതുവരെയില്ല",
+  "@soilTestNone": {
+    "description": "Shown when the farm has no soil test."
+  },
+  "soilTestAdd": "പുതിയത്",
+  "@soilTestAdd": {
+    "description": "Button: add a soil test."
+  },
+  "soilTestLab": "ലാബ്",
+  "@soilTestLab": {
+    "description": "Soil test field: the lab that tested the sample."
+  },
+  "soilTestResults": "ഫലങ്ങൾ",
+  "@soilTestResults": {
+    "description": "Soil test: heading of the parameter values."
+  },
+  "soilTestPhoto": "റിപ്പോർട്ടിന്റെ ഫോട്ടോ",
+  "@soilTestPhoto": {
+    "description": "Soil test: photo of the lab report."
+  },
+  "soilTestSaved": "മണ്ണ് പരിശോധന സേവ് ചെയ്തു",
+  "@soilTestSaved": {
+    "description": "Toast after saving a soil test."
+  },
+  "purchaseTitle": "വാങ്ങിയത് ചേർക്കുക",
+  "@purchaseTitle": {
+    "description": "Title of the add purchase screen (19a)."
+  },
+  "inputItem": "ഇനം",
+  "@inputItem": {
+    "description": "Field: the input item."
+  },
+  "inputItemSearch": "ഇനം തിരയുക",
+  "@inputItemSearch": {
+    "description": "Hint of the item search."
+  },
+  "inputNewItem": "പുതിയ ഇനം",
+  "@inputNewItem": {
+    "description": "Action: add a new input item."
+  },
+  "inputItemName": "പേര്",
+  "@inputItemName": {
+    "description": "Item field: name."
+  },
+  "inputItemCategory": "തരം",
+  "@inputItemCategory": {
+    "description": "Item field: the expense category its purchases go to."
+  },
+  "inputItemUnit": "യൂണിറ്റ്",
+  "@inputItemUnit": {
+    "description": "Item field: unit."
+  },
+  "inputItemPackSize": "ഒരു പാക്കിൽ എത്ര",
+  "@inputItemPackSize": {
+    "description": "Item field: quantity in one pack, such as a 50 kg bag."
+  },
+  "inputQuantity": "അളവ്",
+  "@inputQuantity": {
+    "description": "Field: quantity of an input."
+  },
+  "inputPacks": "{count} × {size}",
+  "@inputPacks": {
+    "description": "Pack chip: number of packs times pack size with unit (formatted in code).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseAmount": "ആകെ തുക",
+  "@purchaseAmount": {
+    "description": "Purchase field: total amount paid."
+  },
+  "purchaseRate": "{unit}-ന് {amount}",
+  "@purchaseRate": {
+    "description": "Price per unit worked out from amount and quantity (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseVendor": "കട / വിൽപ്പനക്കാരൻ",
+  "@purchaseVendor": {
+    "description": "Purchase field: vendor (optional)."
+  },
+  "purchaseMore": "കൂടുതൽ വിവരങ്ങൾ",
+  "@purchaseMore": {
+    "description": "Purchase: shows batch and expiry fields."
+  },
+  "purchaseBatch": "ബാച്ച് നമ്പർ",
+  "@purchaseBatch": {
+    "description": "Purchase field: batch number from the pack."
+  },
+  "purchaseExpiry": "കാലാവധി തീരുന്ന തീയതി",
+  "@purchaseExpiry": {
+    "description": "Purchase field: expiry date from the pack."
+  },
+  "purchaseAsExpense": "ഒരു തവണ മാത്രം, {category} ചെലവായി സേവ് ചെയ്യും",
+  "@purchaseAsExpense": {
+    "description": "Hint on the purchase screen: the purchase is also its expense (category name).",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseSaved": "വാങ്ങിയത് സേവ് ചെയ്തു",
+  "@purchaseSaved": {
+    "description": "Toast after saving a purchase."
+  },
+  "applyTitle": "വളം / മരുന്ന് ഉപയോഗം ചേർക്കുക",
+  "@applyTitle": {
+    "description": "Title of the log input used screen (19b)."
+  },
+  "applyInStock": "സ്റ്റോക്കിൽ: {quantity}",
+  "@applyInStock": {
+    "description": "Stock on hand beside the quantity field (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "applyMethod": "എങ്ങനെ",
+  "@applyMethod": {
+    "description": "Field: application method chips."
+  },
+  "applyWho": "ആര് ചെയ്തു",
+  "@applyWho": {
+    "description": "Field: worker or group who applied (optional)."
+  },
+  "inputWaiting": "വിളവെടുപ്പിന് മുമ്പുള്ള കാത്തിരിപ്പ് കാലം",
+  "@inputWaiting": {
+    "description": "Field: days to wait after applying before harvest."
+  },
+  "inputWaitingDays": "{days} ദിവസം",
+  "@inputWaitingDays": {
+    "description": "A waiting period in days.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inputWaitingFrom": "ഉറവിടം: {source}",
+  "@inputWaitingFrom": {
+    "description": "Where a waiting period comes from (label or authority).",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "inputWaitingSource": "ഉറവിടം: ഉൽപ്പന്ന ലേബൽ അല്ലെങ്കിൽ കൃഷി വകുപ്പ്",
+  "@inputWaitingSource": {
+    "description": "Item field: source of the waiting period."
+  },
+  "inputWaitingSourceNeeded": "ഈ കാത്തിരിപ്പ് കാലം എവിടെ നിന്നാണെന്ന് ചേർക്കുക",
+  "@inputWaitingSourceNeeded": {
+    "description": "Error: a waiting period needs its source."
+  },
+  "inputWaitingNote": "ഉൽപ്പന്നത്തിന്റെ ലേബലിൽ നിന്ന് എടുക്കുക. തോട്ടം കാത്തിരിപ്പ് കാലം നിർദ്ദേശിക്കുന്നില്ല.",
+  "@inputWaitingNote": {
+    "description": "Note under the waiting period field."
+  },
+  "applyCost": "{amount}: {quantity} × ശരാശരി {rate}",
+  "@applyCost": {
+    "description": "Cost of an application at average cost, money roles only (all formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "applyCostEdited": "കൈകൊണ്ട് മാറ്റിയത്",
+  "@applyCostEdited": {
+    "description": "Mark on a cost edited by hand."
+  },
+  "applyCostReset": "കണക്കാക്കിയ {amount} ആക്കുക",
+  "@applyCostReset": {
+    "description": "Reset an edited cost to the worked-out one (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "applyCostUnknown": "ചെലവ് അറിയില്ല: വാങ്ങിയത് ചേർത്തിട്ടില്ല",
+  "@applyCostUnknown": {
+    "description": "Shown when the item has no purchase to work out a cost from."
+  },
+  "applySavedSafe": "സേവ് ചെയ്തു. {date} മുതൽ വിളവെടുക്കാം",
+  "@applySavedSafe": {
+    "description": "Toast after logging an input with a waiting period (date formatted in code).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "applyOverStock": "സ്റ്റോക്കിൽ {quantity} മാത്രം",
+  "@applyOverStock": {
+    "description": "Using more than is in stock (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "applyAddFound": "{quantity} കണ്ടെത്തിയ സ്റ്റോക്കായി ചേർത്ത് സേവ് ചെയ്യുക",
+  "@applyAddFound": {
+    "description": "Action: add the missing quantity as found stock, then save.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "applyChangeQuantity": "അളവ് മാറ്റുക",
+  "@applyChangeQuantity": {
+    "description": "Action: go back and change the quantity."
+  },
+  "applyReadOnly": "ഉടമ, മാനേജർ, സൂപ്പർവൈസർ എന്നിവർക്ക് മാത്രമേ വളം / മരുന്ന് ഉപയോഗം ചേർക്കാനാവൂ.",
+  "@applyReadOnly": {
+    "description": "Shown to roles that cannot write daily work."
+  },
+  "stockReasonFound": "ഉപയോഗിക്കുമ്പോൾ കണ്ടെത്തി",
+  "@stockReasonFound": {
+    "description": "Reason saved on found stock added while logging a use."
+  },
+  "itemAverageCost": "{unit}-ന് ശരാശരി {rate}",
+  "@itemAverageCost": {
+    "description": "Item detail: average cost per unit, money roles only (rate formatted in code).",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "itemStockValue": "വില {amount}",
+  "@itemStockValue": {
+    "description": "Item detail: value of stock on hand, money roles only (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "itemReorderLevel": "ഇത്രയോ അതിൽ കുറവോ ആയാൽ ഓർമ്മിപ്പിക്കുക",
+  "@itemReorderLevel": {
+    "description": "Item field: reorder level for the Low tag."
+  },
+  "movementBought": "{quantity} വാങ്ങി",
+  "@movementBought": {
+    "description": "Item history row: a purchase (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "movementUsed": "{quantity} ഉപയോഗിച്ചു · {crop}",
+  "@movementUsed": {
+    "description": "Item history row: an application with its crop.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "crop": {
+        "type": "String"
+      }
+    }
+  },
+  "movementAdjusted": "{quantity} ശരിയാക്കി · {reason}",
+  "@movementAdjusted": {
+    "description": "Item history row: an adjustment with its reason (quantity with sign).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustTitle": "സ്റ്റോക്ക് ശരിയാക്കുക",
+  "@adjustTitle": {
+    "description": "Action and title: adjust the stock of an item to a count."
+  },
+  "adjustCounted": "എണ്ണിനോക്കിയ സ്റ്റോക്ക്",
+  "@adjustCounted": {
+    "description": "Adjust field: the stock counted now."
+  },
+  "adjustReason": "കാരണം",
+  "@adjustReason": {
+    "description": "Adjust field: why the stock differs."
+  },
+  "adjustDifference": "{quantity} മാറ്റമായി സേവ് ചെയ്യും",
+  "@adjustDifference": {
+    "description": "Adjust: the difference that will be saved (quantity with sign and unit).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestWaitingBanner": "{date} വരെ വിളവെടുക്കുന്നത് സുരക്ഷിതമല്ല: {item} {applied}-ന് ഉപയോഗിച്ചു, {period}, ഉറവിടം: {source}",
+  "@harvestWaitingBanner": {
+    "description": "Harvest banner inside a waiting period (dates and period formatted in code).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "item": {
+        "type": "String"
+      },
+      "applied": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestWaitingReason": "ഇപ്പോൾ വിളവെടുക്കുന്നത് എന്തുകൊണ്ട്?",
+  "@harvestWaitingReason": {
+    "description": "Field: reason for harvesting inside a waiting period."
+  },
+  "harvestWaitingReasonNeeded": "കാത്തിരിപ്പ് കാലത്തിനുള്ളിൽ സേവ് ചെയ്യാൻ കാരണം എഴുതുക",
+  "@harvestWaitingReasonNeeded": {
+    "description": "Error when the reason is empty."
+  },
+  "harvestWaitingSave": "കാരണത്തോടെ സേവ് ചെയ്യുക",
+  "@harvestWaitingSave": {
+    "description": "Button: save a harvest inside a waiting period."
+  },
+  "historyWaitingReason": "കാത്തിരിപ്പ് കാലത്തിനുള്ളിൽ വിളവെടുത്തു: {reason}",
+  "@historyWaitingReason": {
+    "description": "History line on a harvest saved inside a waiting period.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "plotLogInput": "വളം / മരുന്ന്",
+  "@plotLogInput": {
+    "description": "Plot detail button: log an input used on this plot."
+  },
+  "moneyInputsInStock": "സ്റ്റോക്കിലുള്ള വളം / മരുന്ന് {amount}",
+  "@moneyInputsInStock": {
+    "description": "Money screen line: value of unused inputs (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyInputsInStockNote": "ഉപയോഗിക്കുമ്പോൾ വിളച്ചെലവിൽ ചേരും",
+  "@moneyInputsInStockNote": {
+    "description": "Note under the inputs in stock line."
+  },
+  "moneyInputLosses": "നഷ്ടപ്പെട്ടതോ ശരിയാക്കിയതോ ആയ വളം / മരുന്ന്",
+  "@moneyInputLosses": {
+    "description": "Money screen: cost of adjustments out, on no crop."
+  },
+  "historyFilterInputs": "വളം / മരുന്ന്",
+  "@historyFilterInputs": {
+    "description": "History filter chip: inputs."
+  },
+  "historyPurchase": "{item} വാങ്ങി",
+  "@historyPurchase": {
+    "description": "History title: a purchase.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "historyApplication": "{item} ഉപയോഗിച്ചു",
+  "@historyApplication": {
+    "description": "History title: an application.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "historyAdjustment": "{item} സ്റ്റോക്ക് ശരിയാക്കി",
+  "@historyAdjustment": {
+    "description": "History title: an adjustment.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
   }
 }
