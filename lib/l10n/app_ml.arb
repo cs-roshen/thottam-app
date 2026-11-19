@@ -1514,5 +1514,49 @@
         "type": "String"
       }
     }
+  },
+  "expenseAmountRequired": "തുക നൽകുക",
+  "@expenseAmountRequired": {
+    "description": "Error when saving an expense with no amount."
+  },
+  "expenseCategoryRequired": "എന്തിനാണ് ചെലവെന്ന് തിരഞ്ഞെടുക്കുക",
+  "@expenseCategoryRequired": {
+    "description": "Error when saving an expense with no category."
+  },
+  "expenseVendor": "കടയോ ആളോ (വേണമെങ്കിൽ)",
+  "@expenseVendor": {
+    "description": "Vendor field shown for an expense bought on credit."
+  },
+  "expenseCreditHint": "കടമായി വാങ്ങിയത്: കൊടുത്തു തീരുന്നതുവരെ കൊടുക്കാനുള്ളതായി കാണിക്കും",
+  "@expenseCreditHint": {
+    "description": "Hint under the payment choices when credit is chosen."
+  },
+  "expenseNoCrops": "ഈ പ്ലോട്ടിൽ വിളകളില്ല; ചെലവ് പ്ലോട്ടിന്റെ പേരിൽ നിൽക്കും.",
+  "@expenseNoCrops": {
+    "description": "Shown when the chosen plot has no crops to split the expense across."
+  },
+  "expenseReadOnly": "ചെലവ് രേഖപ്പെടുത്താൻ ഉടമയ്ക്കോ മാനേജർക്കോ അക്കൗണ്ടന്റിനോ മാത്രമേ കഴിയൂ.",
+  "@expenseReadOnly": {
+    "description": "Shown on the expense screen to a role that cannot record money."
+  },
+  "splitModeShare": "സാധാരണ വിഹിതം",
+  "@splitModeShare": {
+    "description": "Split choice: by each crop's default cost share."
+  },
+  "splitModeArea": "സ്ഥലം അനുസരിച്ച്",
+  "@splitModeArea": {
+    "description": "Split choice: by each crop's share of the plot's area."
+  },
+  "splitModePlants": "ചെടികളുടെ എണ്ണം അനുസരിച്ച്",
+  "@splitModePlants": {
+    "description": "Split choice: by each crop's number of plants."
+  },
+  "splitModeEqual": "തുല്യമായി",
+  "@splitModeEqual": {
+    "description": "Split choice: equal parts."
+  },
+  "expenseDate": "തീയതി",
+  "@expenseDate": {
+    "description": "Label for the day of an expense."
   }
 }

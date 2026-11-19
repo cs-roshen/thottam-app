@@ -76,28 +76,39 @@ class QuickAddSheet extends StatelessWidget {
       Color bg,
       Color fg, [
       String? path,
-    ]) => SizedBox(
-      width: 96,
-      child: Column(
-        children: [
-          TintIconTile(
-            icon: icon,
-            background: bg,
-            foreground: fg,
-            size: t.tintTileLarge,
-            label: label,
-            onTap: () {
-              Navigator.of(context).pop();
-              if (path != null) GoRouter.of(context).push(path);
-            },
+    ]) => Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      // the icon and its word are one target: farmers tap either
+      child: InkWell(
+        key: Key('quickAdd.${path ?? label}'),
+        borderRadius: BorderRadius.circular(t.tileRadius),
+        onTap: () {
+          // the sheet's context goes when it closes: take the router first
+          final router = GoRouter.of(context);
+          Navigator.of(context).pop();
+          if (path != null) router.push(path);
+        },
+        child: SizedBox(
+          width: 96,
+          child: Column(
+            children: [
+              TintIconTile(
+                icon: icon,
+                background: bg,
+                foreground: fg,
+                size: t.tintTileLarge,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+        ),
       ),
     );
     return Column(
@@ -115,6 +126,7 @@ class QuickAddSheet extends StatelessWidget {
               l10n.quickAddExpense,
               t.expenseTint,
               t.onExpenseTint,
+              '/add/expense',
             ),
             tile(
               Icons.groups_outlined,

@@ -7,6 +7,7 @@ import '../../../app/theme/tokens.dart';
 import '../../../app/widgets/widgets.dart';
 import '../../../core/money/money_format.dart';
 import '../../../core/money/money_parse.dart';
+import '../../../core/split/split.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/land_providers.dart';
 import '../domain/land.dart';
@@ -54,6 +55,8 @@ class CropSplit extends ConsumerWidget {
     required this.onPart,
     this.single,
     this.onSingle,
+    this.mode,
+    this.onMode,
   });
 
   final List<CycleView> cycles;
@@ -65,6 +68,11 @@ class CropSplit extends ConsumerWidget {
   /// When the amount goes to one crop: its id, and how to pick another.
   final String? single;
   final ValueChanged<String>? onSingle;
+
+  /// How the default parts are worked out, and how to change it; shown
+  /// while editing when given.
+  final SplitMode? mode;
+  final ValueChanged<SplitMode>? onMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -103,6 +111,24 @@ class CropSplit extends ConsumerWidget {
               ),
             ],
           ),
+          if (editing && onMode != null)
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final (m, label) in [
+                  (SplitMode.templateShare, l10n.splitModeShare),
+                  (SplitMode.area, l10n.splitModeArea),
+                  (SplitMode.plants, l10n.splitModePlants),
+                  (SplitMode.equal, l10n.splitModeEqual),
+                ])
+                  ChoiceChipX(
+                    key: Key('split.mode.${m.name}'),
+                    label: label,
+                    selected: mode == m,
+                    onSelected: (_) => onMode!(m),
+                  ),
+              ],
+            ),
           for (var i = 0; i < cycles.length && i < parts.length; i++)
             ConstrainedBox(
               constraints: BoxConstraints(minHeight: t.minTouch),
