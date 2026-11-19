@@ -27,7 +27,7 @@ Work in order. Each task ends with `flutter analyze` and `flutter test` passing.
 - [x] C2. Land: plot list, add or edit plot, crop cycles (mixed crops), plot detail.
 - [x] C3. Labour: workers, unnamed and named groups, attendance, group entry, payments and balances; split across crop cycles on mixed plots.
 - [x] C4. Expenses with split allocation.
-- [ ] C5. Harvest with multiple teams and optional per-team quantity; lots with lot cost (edit, recalculate, reset).
+- [x] C5. Harvest with multiple teams and optional per-team quantity; lots with lot cost (edit, recalculate, reset).
 - [ ] C6. Selling from stock; buyers; receivables.
 - [ ] C7. History: timelines per entity, farm diary, filters, change log and restore.
 - [ ] C8. Profit and loss with family-labour switch; report export.

@@ -21,7 +21,10 @@ void main() {
                 .get())
           row.read<String>('detail'),
       ];
-      final scans = plan.where((d) => RegExp(r'^SCAN \w+').hasMatch(d));
+      // a SELECT of sums with no table of its own reads one constant row
+      final scans = plan.where(
+        (d) => RegExp(r'^SCAN \w+').hasMatch(d) && d != 'SCAN CONSTANT ROW',
+      );
       expect(scans, isEmpty, reason: plan.join('\n'));
       // an automatic index is built by scanning the table on every run
       expect(

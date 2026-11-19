@@ -31,6 +31,7 @@ const listQueries = [
   ...landQueries,
   ...labourQueries,
   ...expenseQueries,
+  ...harvestQueries,
   ListQuery(
     'labour day page',
     'SELECT * FROM labour_entries WHERE farm_id = :farm AND deleted_at IS NULL '
@@ -417,6 +418,78 @@ const qExpenseParts = ListQuery(
 );
 
 const expenseQueries = [qCategoryUse, qLastExpense, qPayables, qExpenseParts];
+
+// ---------- harvest and lots (screen 12) ----------
+
+const qPreviousHarvest = ListQuery(
+  "the crop cycle's harvest before this one",
+  'SELECT harvested_on FROM harvests WHERE crop_cycle_id = :cycle '
+      'AND deleted_at IS NULL AND (harvested_on, id) < (:day, :id) '
+      // only the day is used, so a same-day tie may go either way
+      'ORDER BY harvested_on DESC LIMIT 1',
+  ordered: true,
+);
+
+const qCostsSince = ListQuery(
+  'costs posted to a crop cycle between two harvests',
+  // rule 9: after the previous harvest's day, up to and including this
+  // one's; harvest teams are counted with their own harvest, family out
+  'SELECT '
+      '(SELECT COALESCE(SUM(a.amount_paise), 0) FROM expense_allocations a '
+      'JOIN expenses e ON e.id = a.expense_id '
+      'WHERE a.crop_cycle_id = :cycle AND a.deleted_at IS NULL '
+      'AND e.spent_on > :from AND e.spent_on <= :day) + '
+      '(SELECT COALESCE(SUM(l.amount_paise), 0) FROM labour_entries l '
+      'WHERE l.crop_cycle_id = :cycle AND l.deleted_at IS NULL '
+      'AND l.work_date > :from AND l.work_date <= :day '
+      'AND l.harvest_id IS NULL '
+      "AND COALESCE(l.worker_id, '') NOT IN $_family) + "
+      '(SELECT COALESCE(SUM(a.amount_paise), 0) FROM labour_allocations a '
+      'JOIN labour_entries l ON l.id = a.labour_entry_id '
+      'WHERE a.crop_cycle_id = :cycle AND a.deleted_at IS NULL '
+      'AND l.work_date > :from AND l.work_date <= :day '
+      'AND l.harvest_id IS NULL '
+      "AND COALESCE(l.worker_id, '') NOT IN $_family) AS costs",
+);
+
+const qHarvestTeams = ListQuery(
+  "a harvest's teams",
+  'SELECT l.*, w.name AS worker_name, w.is_family, g.label AS group_label '
+      'FROM labour_entries l LEFT JOIN workers w ON w.id = l.worker_id '
+      'LEFT JOIN labour_groups g ON g.id = l.group_id '
+      'WHERE l.harvest_id = :row AND l.deleted_at IS NULL '
+      'ORDER BY l.created_at, l.id',
+);
+
+const qLastHarvest = ListQuery(
+  'the last harvest of a crop cycle, for the "last time" banner',
+  'SELECT h.id, h.harvested_on, h.quantity, h.unit, '
+      '(SELECT COALESCE(SUM(head_count), 0) FROM labour_entries l '
+      'WHERE l.harvest_id = h.id AND l.deleted_at IS NULL) AS people '
+      'FROM harvests h WHERE h.crop_cycle_id = :cycle AND h.deleted_at IS NULL '
+      'ORDER BY h.harvested_on DESC LIMIT 1',
+  ordered: true,
+);
+
+const qPendingLotCosts = ListQuery(
+  'lots whose cost is not yet worked out for their teams',
+  // a lot saved, or its teams edited, by someone who cannot write money
+  'SELECT l.id, l.harvest_id, l.teams_stamp, c.cost_overridden, '
+      'c.cost_paise, c.id AS cost_id FROM crop_cycles y '
+      'JOIN lots l ON l.crop_cycle_id = y.id AND l.deleted_at IS NULL '
+      'LEFT JOIN lot_costs c ON c.id = l.id '
+      "WHERE y.farm_id = :farm AND y.status IN ('active', 'planned') "
+      'AND y.deleted_at IS NULL AND l.harvest_id IS NOT NULL '
+      'AND (c.id IS NULL OR c.teams_stamp IS NOT l.teams_stamp)',
+);
+
+const harvestQueries = [
+  qPreviousHarvest,
+  qCostsSince,
+  qHarvestTeams,
+  qLastHarvest,
+  qPendingLotCosts,
+];
 
 // ---------- running them ----------
 

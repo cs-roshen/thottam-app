@@ -132,6 +132,25 @@ void main() {
     expect(undone, isTrue);
   });
 
+  testWidgets('the undo toast goes by itself after about two seconds', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      host(
+        (c, l) => TextButton(
+          onPressed: () => showUndoToast(c, l.toastSaved, () {}),
+          child: Text(l.actionSave),
+        ),
+      ),
+    );
+    await tester.tap(find.byType(TextButton));
+    await tester.pumpAndSettle();
+    expect(find.text('സേവ് ചെയ്തു'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+    expect(find.text('സേവ് ചെയ്തു'), findsNothing);
+  });
+
   testWidgets('bottom sheet opens with its content', (tester) async {
     await tester.pumpWidget(
       host(
