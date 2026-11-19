@@ -1688,5 +1688,143 @@
   "saleComingSoon": "വിൽപ്പന അടുത്ത ഘട്ടത്തിൽ",
   "@saleComingSoon": {
     "description": "Placeholder until the selling screen exists."
+  },
+  "saleFrom": "ഏതിൽ നിന്ന് വിൽക്കുന്നു",
+  "@saleFrom": {
+    "description": "Label above the lots to sell from."
+  },
+  "saleLotChip": "{day} · {quantity}",
+  "@saleLotChip": {
+    "description": "A lot to sell from: its harvest day and stock left.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "saleNoStock": "വിൽക്കാൻ സ്റ്റോക്കില്ല. വിളവെടുപ്പ് രേഖപ്പെടുത്തുമ്പോൾ സ്റ്റോക്ക് ചേരും.",
+  "@saleNoStock": {
+    "description": "Empty state of the sell screen."
+  },
+  "saleTooMuch": "സ്റ്റോക്കിൽ {quantity} മാത്രം",
+  "@saleTooMuch": {
+    "description": "Error when selling more than the chosen lots hold.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "saleNoQuantity": "എത്ര വിൽക്കുന്നു എന്ന് നൽകുക",
+  "@saleNoQuantity": {
+    "description": "Error when the sale quantity is empty."
+  },
+  "saleNoRate": "നിരക്ക് നൽകുക",
+  "@saleNoRate": {
+    "description": "Error when the sale rate is empty."
+  },
+  "saleNoUnitWay": "ഈ അളവിലേക്ക് മാറ്റാനാവില്ല",
+  "@saleNoUnitWay": {
+    "description": "Error when the sale unit cannot be converted from the lot's unit."
+  },
+  "saleNewBuyer": "പുതിയ ആൾ",
+  "@saleNewBuyer": {
+    "description": "Choice to name a buyer for the first time."
+  },
+  "saleBuyerName": "വാങ്ങുന്നയാളുടെ പേര് (വേണമെങ്കിൽ)",
+  "@saleBuyerName": {
+    "description": "Field for a new buyer's name."
+  },
+  "saleType": "{type, select, trader{വ്യാപാരി} society{സൊസൈറ്റി} direct{നേരിട്ട്} other{മറ്റുള്ളവ}}",
+  "@saleType": {
+    "description": "Kind of buyer.",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "saleDeductions": "കിഴിവുകൾ",
+  "@saleDeductions": {
+    "description": "Heading of a sale's deductions."
+  },
+  "saleAddDeduction": "കിഴിവ് ചേർക്കുക",
+  "@saleAddDeduction": {
+    "description": "Button to add a deduction line to a sale."
+  },
+  "saleDeductionLabel": "എന്തിന് (കമ്മീഷൻ, തൂക്കം…)",
+  "@saleDeductionLabel": {
+    "description": "Label field of a sale deduction."
+  },
+  "salePaid": "കിട്ടി",
+  "@salePaid": {
+    "description": "Payment status: paid in full."
+  },
+  "salePartPaid": "ഭാഗികം",
+  "@salePartPaid": {
+    "description": "Payment status: part of it received."
+  },
+  "saleDue": "കിട്ടാനുണ്ട്",
+  "@saleDue": {
+    "description": "Payment status: nothing received yet."
+  },
+  "saleReceivedNow": "ഇപ്പോൾ കിട്ടിയത്",
+  "@saleReceivedNow": {
+    "description": "Amount received now on a part-paid sale."
+  },
+  "salePerUnitNet": "{unit}-ന് {amount} കിട്ടും",
+  "@salePerUnitNet": {
+    "description": "Net per sale unit, shown under the net. The unit is always in English.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleCostLine": "{cost} {unit}-ന് (നിങ്ങളുടെ ചെലവ്)",
+  "@saleCostLine": {
+    "description": "The lot cost per sale unit under the profit.",
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "saleReadOnly": "വിൽപ്പന രേഖപ്പെടുത്താൻ ഉടമയ്ക്കോ മാനേജർക്കോ അക്കൗണ്ടന്റിനോ മാത്രമേ കഴിയൂ.",
+  "@saleReadOnly": {
+    "description": "Shown on the sell screen to a role that cannot record money."
+  },
+  "buyersTitle": "വാങ്ങുന്നവർ",
+  "@buyersTitle": {
+    "description": "Title of the buyer book."
+  },
+  "buyersNone": "വാങ്ങുന്നവർ ഇല്ല. വിൽക്കുമ്പോൾ ചേർക്കാം.",
+  "@buyersNone": {
+    "description": "Empty buyer book."
+  },
+  "buyerReceive": "കിട്ടിയത് രേഖപ്പെടുത്തുക",
+  "@buyerReceive": {
+    "description": "Button to record money received on a sale."
+  },
+  "buyerSaleLine": "{quantity} · {amount}",
+  "@buyerSaleLine": {
+    "description": "A sale in a buyer's book: quantity and net.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }

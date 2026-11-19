@@ -32,6 +32,7 @@ const listQueries = [
   ...labourQueries,
   ...expenseQueries,
   ...harvestQueries,
+  ...saleQueries,
   ListQuery(
     'labour day page',
     'SELECT * FROM labour_entries WHERE farm_id = :farm AND deleted_at IS NULL '
@@ -254,7 +255,7 @@ const qPlotCosts = ListQuery(
 
 const qLatestPrice = ListQuery(
   'latest price of a crop',
-  'SELECT price_paise, unit, published_at FROM market_prices '
+  'SELECT price_paise, unit, published_at, source FROM market_prices '
       'WHERE crop_id = :row AND deleted_at IS NULL '
       'AND (farm_id IS NULL OR farm_id = :farm) '
       'ORDER BY published_at DESC LIMIT 1',
@@ -490,6 +491,58 @@ const harvestQueries = [
   qLastHarvest,
   qPendingLotCosts,
 ];
+
+// ---------- selling (screen 13) ----------
+
+const qLotsInStock = ListQuery(
+  'lots with stock to sell, oldest first, with their cost',
+  // stock is derived, so no index holds "has stock left"; reading only the
+  // lots of growing crops keeps this from growing with every season
+  'SELECT l.id, l.quantity, l.unit, l.crop_cycle_id, k.id AS crop_id, '
+      'k.name_ml, k.name_en, h.harvested_on, c.cost_paise, '
+      '(c.id IS NULL OR l.teams_stamp IS NOT c.teams_stamp) AS cost_pending, '
+      'l.quantity - COALESCE((SELECT SUM(s.quantity) FROM sale_lots s '
+      'WHERE s.lot_id = l.id AND s.deleted_at IS NULL), 0) AS stock '
+      'FROM crop_cycles y JOIN lots l ON l.crop_cycle_id = y.id '
+      'AND l.deleted_at IS NULL '
+      'JOIN crops k ON k.id = y.crop_id '
+      'LEFT JOIN harvests h ON h.id = l.harvest_id '
+      'LEFT JOIN lot_costs c ON c.id = l.id AND c.deleted_at IS NULL '
+      "WHERE y.farm_id = :farm AND y.status IN ('active', 'planned') "
+      'AND y.deleted_at IS NULL AND stock > 0 ORDER BY l.created_at, l.id',
+);
+
+const qBuyers = ListQuery(
+  'buyers with what each still owes',
+  'SELECT p.id, p.name, p.phone, '
+      '(SELECT COALESCE(SUM(s.net_paise), 0) FROM sales s '
+      'WHERE s.buyer_party_id = p.id AND s.deleted_at IS NULL) - '
+      '(SELECT COALESCE(SUM(sp.amount_paise), 0) FROM sales s '
+      'JOIN sale_payments sp ON sp.sale_id = s.id AND sp.deleted_at IS NULL '
+      'WHERE s.buyer_party_id = p.id AND s.deleted_at IS NULL) AS due '
+      "FROM parties p WHERE p.farm_id = :farm AND p.kind = 'buyer' "
+      'AND p.deleted_at IS NULL ORDER BY p.kind, p.name',
+  ordered: true,
+);
+
+const qBuyerSales = ListQuery(
+  "a buyer's sales with what is still owed on each, newest first",
+  'SELECT s.id, s.sold_on, s.quantity, s.unit, s.net_paise, s.net_paise - '
+      '(SELECT COALESCE(SUM(sp.amount_paise), 0) FROM sale_payments sp '
+      'WHERE sp.sale_id = s.id AND sp.deleted_at IS NULL) AS due '
+      'FROM sales s WHERE s.buyer_party_id = :row AND s.deleted_at IS NULL '
+      'ORDER BY s.sold_on DESC LIMIT 100',
+  ordered: true,
+);
+
+const qLastSale = ListQuery(
+  'the latest sale, for its buyer type and payment mode',
+  'SELECT sale_type, mode FROM sales WHERE farm_id = :farm '
+      'AND deleted_at IS NULL ORDER BY sold_on DESC, id DESC LIMIT 1',
+  ordered: true,
+);
+
+const saleQueries = [qLotsInStock, qBuyers, qBuyerSales, qLastSale];
 
 // ---------- running them ----------
 
