@@ -2185,5 +2185,101 @@
   "myListsResetHint": "ഓഫ് ചെയ്തവ വീണ്ടും ഓൺ ആകും. നിങ്ങളുടെ സ്വന്തം ഇനങ്ങൾ മാറില്ല.",
   "@myListsResetHint": {
     "description": "What resetting My lists does."
+  },
+  "pricesEmpty": "ഇതുവരെ വിലകളില്ല. കടയിലെയോ മാർക്കറ്റിലെയോ ഇന്നത്തെ നിരക്ക് ചേർക്കാം.",
+  "@pricesEmpty": {
+    "description": "A crop with no price yet."
+  },
+  "pricesAdd": "വില ചേർക്കുക",
+  "@pricesAdd": {
+    "description": "Button: enter a rate from a shop or market."
+  },
+  "pricesMarket": "മാർക്കറ്റ് / കട",
+  "@pricesMarket": {
+    "description": "Field: where the rate is from."
+  },
+  "pricesMarketRequired": "മാർക്കറ്റിന്റെയോ കടയുടെയോ പേര് നൽകുക",
+  "@pricesMarketRequired": {
+    "description": "Error: the market or shop is missing."
+  },
+  "pricesPriceRequired": "വില നൽകുക",
+  "@pricesPriceRequired": {
+    "description": "Error: the price is missing."
+  },
+  "pricesPerUnit": "{unit} വില",
+  "@pricesPerUnit": {
+    "description": "Label of the price field (unit formatted in code).",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesYourEntry": "നിങ്ങൾ ചേർത്തത് · {market} · {time}",
+  "@pricesYourEntry": {
+    "description": "Source line of a rate entered on this farm (time formatted in code).",
+    "placeholders": {
+      "market": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesMarkets": "മാർക്കറ്റുകൾ",
+  "@pricesMarkets": {
+    "description": "Section: the latest price at each market."
+  },
+  "pricesRange": "കുറഞ്ഞത് {low} · കൂടിയത് {high}",
+  "@pricesRange": {
+    "description": "Lowest and highest price on the chart (amounts formatted in code).",
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesAlertAbove": "{amount} കടന്നാൽ അറിയിക്കും",
+  "@pricesAlertAbove": {
+    "description": "The alert's threshold (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesAlertOff": "ഓഫ്",
+  "@pricesAlertOff": {
+    "description": "The alert is off."
+  },
+  "pricesAlertHit": "നിങ്ങളുടെ അറിയിപ്പ് വില {amount} കടന്നു",
+  "@pricesAlertHit": {
+    "description": "Shown when the latest price is above the farmer's alert (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pricesAlertAmount": "ഈ വില കടന്നാൽ",
+  "@pricesAlertAmount": {
+    "description": "Title of the dialog asking for the alert's threshold."
+  },
+  "pricesReadOnly": "ഉടമയ്ക്കോ മാനേജർക്കോ അക്കൗണ്ടന്റിനോ മാത്രമേ വിലയും അറിയിപ്പും ചേർക്കാനാകൂ.",
+  "@pricesReadOnly": {
+    "description": "Shown on Prices to roles that cannot write prices."
+  },
+  "pricesChange": "മാറ്റം {amount}",
+  "@pricesChange": {
+    "description": "Spoken label of the change pill (amount with its sign, formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }

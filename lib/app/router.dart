@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_ui/material_ui.dart';
 
 import '../core/access/access.dart';
 import '../features/expenses/ui/expense_screen.dart';
@@ -20,6 +19,7 @@ import '../features/land/ui/land_screen.dart';
 import '../features/land/ui/plot_detail_screen.dart';
 import '../features/land/ui/plot_form_screen.dart';
 import '../features/onboarding/ui/invites_screen.dart';
+import '../features/prices/ui/prices_screen.dart';
 import '../features/settings/ui/farms_screen.dart';
 import '../features/settings/ui/members_screen.dart';
 import '../features/settings/ui/more_screen.dart';
@@ -28,7 +28,6 @@ import '../features/settings/ui/settings_screen.dart';
 import '../features/onboarding/ui/setup_screen.dart';
 import '../features/onboarding/ui/sign_in_screen.dart';
 import '../features/onboarding/ui/welcome_screen.dart';
-import '../l10n/app_localizations.dart';
 import 'session.dart';
 import 'shell.dart';
 import 'widgets/widgets.dart';
@@ -133,15 +132,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/labour/group/:id',
         builder: (_, s) => LedgerScreen(groupId: s.pathParameters['id']),
       ),
-      // stand-ins until their tasks: prices (C11)
-      for (final (path, title, icon)
-          in <(String, String Function(AppLocalizations), IconData)>[
-            ('/prices', (l) => l.pricesTitle, Icons.show_chart),
-          ])
-        GoRoute(
-          path: path,
-          builder: (_, _) => PlaceholderScreen(title: title, icon: icon),
-        ),
+      GoRoute(path: '/prices', builder: (_, _) => const PricesScreen()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
@@ -242,36 +233,3 @@ final routerProvider = Provider<GoRouter>((ref) {
   });
   return router;
 });
-
-/// Stands in for each tab's real screen until its feature task.
-class PlaceholderScreen extends StatelessWidget {
-  const PlaceholderScreen({
-    super.key,
-    required this.title,
-    required this.icon,
-    this.extra,
-  });
-
-  final String Function(AppLocalizations) title;
-  final IconData icon;
-  final List<Widget> Function(BuildContext, AppLocalizations)? extra;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(title(l10n))),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          EmptyState(
-            icon: icon,
-            title: title(l10n),
-            message: l10n.morePageComingSoon,
-          ),
-          ...?extra?.call(context, l10n),
-        ],
-      ),
-    );
-  }
-}
