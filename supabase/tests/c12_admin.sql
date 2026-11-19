@@ -48,7 +48,8 @@ select id, name_en, template_version, server_seq, is_active from public.template
 create temp table vars (k text primary key, v text);
 insert into vars values
   ('pepper', (select id::text from public.crops where code = 'pepper' and owner_farm_id is null)),
-  ('mulching', (select id::text from public.template_items where code = 'mulching' and list_type = 'activity')),
+  ('mulching', (select id::text from public.template_items where code = 'mulching' and list_type = 'activity'
+    and crop_id = (select id from public.crops where code = 'pepper' and owner_farm_id is null))),
   ('release', (select greatest(coalesce(max(version), 0), (select max(template_version) from public.template_items))::text
     from public.template_releases));
 
@@ -81,7 +82,8 @@ select pg_temp.check('an admin renames an item as a draft',
 select pg_temp.check('an admin retires an item as a draft',
   pg_temp.run_as(pg_temp.u('admin'), format(
     'select public.admin_save_item(%L, null, null, null, %L, %L, null, null, false)',
-    (select id from public.template_items where code = 'shade_regulation' and list_type = 'activity'),
+    (select id from public.template_items where code = 'shade_regulation' and list_type = 'activity'
+      and crop_id = (select v::uuid from vars where k = 'pepper')),
     'തണൽ ക്രമീകരണം', 'Shade regulation')) = 'ok:1');
 select pg_temp.check('an admin adds a new item for pepper',
   pg_temp.run_as(pg_temp.u('admin'), format(
@@ -121,7 +123,8 @@ select pg_temp.check('the renamed item carries the new release, a new server_seq
       and i.server_seq > b.server_seq and not (i.data ? 'ml_review')));
 select pg_temp.check('the retired item is switched off, not deleted',
   exists (select 1 from public.template_items where code = 'shade_regulation'
-    and list_type = 'activity' and not is_active));
+    and list_type = 'activity' and crop_id = (select v::uuid from vars where k = 'pepper')
+    and not is_active));
 select pg_temp.check('the new item has the seed''s kind of id',
   exists (select 1 from public.template_items
     where id = md5('thottam:item:pepper:activity:vine_tying_check')::uuid

@@ -602,9 +602,10 @@ select pg_temp.check('signed-in users call only the functions granted to them',
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
      and has_function_privilege('authenticated', p.oid, 'execute'))
-  = array['accept_invite', 'access_level', 'create_farm', 'decline_invite', 'farm_exists',
-          'is_money_or_quantity', 'my_co_members', 'my_entities', 'my_farms', 'my_invites',
-          'my_owned_farms', 'sync_columns', 'sync_insert', 'sync_push', 'sync_write'],
+  = array['accept_invite', 'access_level', 'admin_discard_draft', 'admin_items', 'admin_publish',
+          'admin_save_item', 'admin_status', 'create_farm', 'decline_invite', 'farm_exists',
+          'is_app_admin', 'is_money_or_quantity', 'my_co_members', 'my_entities', 'my_farms',
+          'my_invites', 'my_owned_farms', 'sync_columns', 'sync_insert', 'sync_push', 'sync_write'],
   (select string_agg(p.proname, ', ' order by p.proname) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
