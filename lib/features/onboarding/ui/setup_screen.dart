@@ -162,10 +162,13 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   children: [
                     if (_step > 0) ...[
                       Expanded(
-                        child: OutlineButton(
-                          key: const Key('setup.back'),
-                          label: l10n.actionBack,
-                          onPressed: () => setState(() => _step--),
+                        child: SizedBox(
+                          height: t.primaryButtonHeight,
+                          child: OutlineButton(
+                            key: const Key('setup.back'),
+                            label: l10n.actionBack,
+                            onPressed: () => setState(() => _step--),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),

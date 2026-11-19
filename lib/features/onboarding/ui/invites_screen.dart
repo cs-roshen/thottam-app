@@ -75,12 +75,15 @@ class _InvitesScreenState extends ConsumerState<InvitesScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: OutlineButton(
-                            key: Key('invite.${invite.id}.decline'),
-                            label: l10n.inviteDecline,
-                            onPressed: _busy == null
-                                ? () => _answer(invite, join: false)
-                                : null,
+                          child: SizedBox(
+                            height: t.primaryButtonHeight,
+                            child: OutlineButton(
+                              key: Key('invite.${invite.id}.decline'),
+                              label: l10n.inviteDecline,
+                              onPressed: _busy == null
+                                  ? () => _answer(invite, join: false)
+                                  : null,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),

@@ -16,6 +16,7 @@ class ThottamApp extends ConsumerWidget {
     const tokens = ThottamTokens.standard;
     return MaterialApp.router(
       routerConfig: ref.watch(routerProvider),
+      debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
       theme: buildTheme(tokens),
       locale: settings.language.locale,
