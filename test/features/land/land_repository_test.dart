@@ -192,22 +192,13 @@ void main() {
       'unchanged; undo restores the plot and its crops', () async {
     final (plot, coconut, _) = await mixedPlot();
     Future<List<Object?>> profitAndLoss() async => [
-      for (final name in [
-        'profit and loss for a season, expenses by crop cycle',
-        'profit and loss for a season, labour by crop cycle',
-      ])
-        for (final r
-            in await db
-                .customSelect(
-                  listQueries
-                      .firstWhere((q) => q.name == name)
-                      .sql
-                      .replaceAll(':farm', "'$farm'")
-                      .replaceAll(':from', "'2026-01-01'")
-                      .replaceAll(':to', "'2026-12-31'"),
-                )
-                .get())
-          r.data.values.toList(),
+      for (final r in await select(db, qProfitAndLoss, {
+        'farm': farm,
+        'from': '2026-01-01',
+        'to': '2026-12-31',
+        'plot': '',
+      }))
+        r.data.values.toList(),
     ];
     final before = await profitAndLoss();
     final entries = await scalar(

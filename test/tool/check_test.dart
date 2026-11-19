@@ -9,6 +9,8 @@ void main() {
     expect(userFacing('Hello, \$name'), isTrue);
     expect(userFacing('cash'), isFalse);
     expect(userFacing('more.gallery'), isFalse);
+    expect(userFacing(r'\n'), isFalse);
+    expect(userFacing(r'Line one\nline two'), isTrue);
     expect(userFacing('/more/gallery'), isFalse);
     expect(userFacing('₹ '), isFalse);
     expect(userFacing('\$sign₹\$grouped'), isFalse);

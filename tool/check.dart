@@ -42,7 +42,10 @@ String _code(String line) {
 
 /// True when a literal reads like text a farmer would see.
 bool userFacing(String literal) {
-  final text = literal.replaceAll(_interpolation, '');
+  // escapes such as \n are not words
+  final text = literal
+      .replaceAll(_interpolation, '')
+      .replaceAll(RegExp(r'\\[nrt]'), '');
   if (!_letter.hasMatch(text)) return false;
   return !_identifier.hasMatch(text) && !_path.hasMatch(text);
 }

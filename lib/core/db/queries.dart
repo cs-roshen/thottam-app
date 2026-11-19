@@ -34,6 +34,7 @@ const listQueries = [
   ...harvestQueries,
   ...saleQueries,
   ...historyQueries,
+  ...moneyQueries,
   ListQuery(
     'labour day page',
     'SELECT * FROM labour_entries WHERE farm_id = :farm AND deleted_at IS NULL '
@@ -86,44 +87,6 @@ const listQueries = [
     'crop cycle labour total for a period',
     'SELECT SUM(amount_paise) FROM labour_entries WHERE crop_cycle_id = :cycle '
         'AND deleted_at IS NULL AND work_date BETWEEN :from AND :to',
-  ),
-  ListQuery(
-    'profit and loss for a season, expenses by crop cycle',
-    'SELECT a.crop_cycle_id, SUM(a.amount_paise) FROM expenses e '
-        'JOIN expense_allocations a ON a.expense_id = e.id AND a.deleted_at IS NULL '
-        'WHERE e.farm_id = :farm AND e.deleted_at IS NULL AND e.spent_on BETWEEN :from AND :to '
-        'GROUP BY a.crop_cycle_id',
-    budgetMs: 150,
-  ),
-  ListQuery(
-    'profit and loss for a season, labour by crop cycle',
-    // an entry split across a mixed plot has no crop cycle of its own: its
-    // labour_allocations carry the parts
-    'SELECT cycle, SUM(paise) FROM ('
-        'SELECT crop_cycle_id AS cycle, amount_paise AS paise FROM labour_entries '
-        'WHERE farm_id = :farm AND deleted_at IS NULL AND crop_cycle_id IS NOT NULL '
-        'AND work_date BETWEEN :from AND :to '
-        'UNION ALL SELECT a.crop_cycle_id, a.amount_paise FROM labour_entries l '
-        'JOIN labour_allocations a ON a.labour_entry_id = l.id AND a.deleted_at IS NULL '
-        'WHERE l.farm_id = :farm AND l.deleted_at IS NULL AND l.crop_cycle_id IS NULL '
-        'AND l.work_date BETWEEN :from AND :to) GROUP BY cycle',
-    budgetMs: 150,
-  ),
-  ListQuery(
-    'profit and loss for a season, sales',
-    // income reaches a crop through the lots each sale drew from
-    'SELECT l.crop_cycle_id, SUM(s.net_paise * sl.quantity / s.quantity) FROM sales s '
-        'JOIN sale_lots sl ON sl.sale_id = s.id AND sl.deleted_at IS NULL '
-        'JOIN lots l ON l.id = sl.lot_id '
-        'WHERE s.farm_id = :farm AND s.deleted_at IS NULL AND s.sold_on BETWEEN :from AND :to '
-        'GROUP BY l.crop_cycle_id',
-    budgetMs: 150,
-  ),
-  ListQuery(
-    'profit and loss for a season, other income',
-    'SELECT crop_cycle_id, SUM(amount_paise) FROM other_income WHERE farm_id = :farm '
-        'AND deleted_at IS NULL AND received_on BETWEEN :from AND :to GROUP BY crop_cycle_id',
-    budgetMs: 150,
   ),
   ListQuery(
     'worker balance: wages',
@@ -589,6 +552,84 @@ const qChangedSince = ListQuery(
 );
 
 const historyQueries = [qDiaryPage, qDiaryRange, qRecordEvents, qChangedSince];
+
+// ---------- money (screen 5) ----------
+
+const qProfitAndLoss = ListQuery(
+  'profit and loss of each crop cycle for a period',
+  // Each money row lands on a crop cycle, or on none (cycle null) with the
+  // plot it was entered on. :plot '' means every plot. Deleted plots and
+  // crop cycles keep their money (C2), so cycles are not filtered on
+  // deleted_at. Family labour comes back on its own, for the switch.
+  'SELECT cycle, c.crop_id AS crop, r.name_ml, r.name_en, '
+      'SUM(income) AS income, SUM(expense) AS expense, '
+      'SUM(paid) AS paid, SUM(family) AS family FROM ('
+      // a sale's net amount, split across the lots it drew from by quantity,
+      // the paise left over going one each to the largest remainders, so
+      // the parts add up to the sale; a sale from no lot is on no crop
+      'SELECT cycle, NULL AS plot, base + (rk <= spare) AS income, '
+      '0 AS expense, 0 AS paid, 0 AS family FROM ('
+      'SELECT cycle, base, ROW_NUMBER() OVER '
+      '(PARTITION BY sale ORDER BY rem DESC, part) AS rk, '
+      'net - SUM(base) OVER (PARTITION BY sale) AS spare FROM ('
+      'SELECT s.id AS sale, sl.id AS part, l.crop_cycle_id AS cycle, '
+      's.net_paise AS net, s.net_paise * COALESCE(sl.quantity, 1) / '
+      'SUM(COALESCE(sl.quantity, 1)) OVER (PARTITION BY s.id) AS base, '
+      's.net_paise * COALESCE(sl.quantity, 1) % '
+      'SUM(COALESCE(sl.quantity, 1)) OVER (PARTITION BY s.id) AS rem '
+      'FROM sales s LEFT JOIN sale_lots sl ON sl.sale_id = s.id '
+      'AND sl.deleted_at IS NULL LEFT JOIN lots l ON l.id = sl.lot_id '
+      'WHERE s.farm_id = :farm AND s.deleted_at IS NULL '
+      'AND s.sold_on BETWEEN :from AND :to)) '
+      'UNION ALL '
+      'SELECT crop_cycle_id, NULL, amount_paise, 0, 0, 0 FROM other_income '
+      'WHERE farm_id = :farm AND deleted_at IS NULL '
+      'AND received_on BETWEEN :from AND :to '
+      'UNION ALL '
+      // an expense's parts on crop cycles, and what is on none
+      'SELECT a.crop_cycle_id, NULL, 0, a.amount_paise, 0, 0 FROM expenses e '
+      'JOIN expense_allocations a ON a.expense_id = e.id '
+      'AND a.deleted_at IS NULL '
+      'WHERE e.farm_id = :farm AND e.deleted_at IS NULL '
+      'AND e.spent_on BETWEEN :from AND :to '
+      'UNION ALL '
+      'SELECT NULL, e.plot_id, 0, e.amount_paise - '
+      '(SELECT COALESCE(SUM(a.amount_paise), 0) FROM expense_allocations a '
+      'WHERE a.expense_id = e.id AND a.deleted_at IS NULL), 0, 0 '
+      'FROM expenses e WHERE e.farm_id = :farm AND e.deleted_at IS NULL '
+      'AND e.spent_on BETWEEN :from AND :to '
+      'UNION ALL '
+      // labour on one crop cycle carries it on the entry; labour split
+      // across a mixed plot has none and its allocations carry the parts
+      'SELECT a.crop_cycle_id, NULL, 0, 0, '
+      "CASE WHEN COALESCE(l.worker_id, '') IN $_family THEN 0 "
+      'ELSE a.amount_paise END, '
+      "CASE WHEN COALESCE(l.worker_id, '') IN $_family THEN a.amount_paise "
+      'ELSE 0 END FROM labour_entries l '
+      'JOIN labour_allocations a ON a.labour_entry_id = l.id '
+      'AND a.deleted_at IS NULL '
+      'WHERE l.farm_id = :farm AND l.deleted_at IS NULL '
+      'AND l.crop_cycle_id IS NULL AND l.work_date BETWEEN :from AND :to '
+      'UNION ALL '
+      'SELECT cycle, plot, 0, 0, '
+      "CASE WHEN fam THEN 0 ELSE paise END, CASE WHEN fam THEN paise ELSE 0 END "
+      'FROM (SELECT l.crop_cycle_id AS cycle, l.plot_id AS plot, '
+      "COALESCE(l.worker_id, '') IN $_family AS fam, "
+      'l.amount_paise - CASE WHEN l.crop_cycle_id IS NULL THEN '
+      '(SELECT COALESCE(SUM(a.amount_paise), 0) FROM labour_allocations a '
+      'WHERE a.labour_entry_id = l.id AND a.deleted_at IS NULL) '
+      'ELSE 0 END AS paise FROM labour_entries l '
+      'WHERE l.farm_id = :farm AND l.deleted_at IS NULL '
+      'AND l.work_date BETWEEN :from AND :to)'
+      ') LEFT JOIN crop_cycles c ON c.id = cycle '
+      'LEFT JOIN crops r ON r.id = c.crop_id '
+      "WHERE :plot = '' OR COALESCE(c.plot_id, plot) = :plot "
+      'GROUP BY cycle HAVING SUM(income) <> 0 OR SUM(expense) <> 0 '
+      'OR SUM(paid) <> 0 OR SUM(family) <> 0',
+  budgetMs: 150,
+);
+
+const moneyQueries = [qProfitAndLoss];
 
 // ---------- running them ----------
 
