@@ -36,6 +36,10 @@ void main() {
       checkFile('lib/features/plots/ui/plot_screen.dart', sql),
       isNotEmpty,
     );
+    // a feature's repository holds SQL, never text a farmer sees
+    const query = "db.customSelect('SELECT name FROM plots WHERE id = ?');\n";
+    expect(checkFile('lib/features/land/data/plots.dart', query), isEmpty);
+    expect(checkFile('lib/features/land/ui/plots.dart', query), isNotEmpty);
   });
 
   test('allows colours and fonts in the theme', () {

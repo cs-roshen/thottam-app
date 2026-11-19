@@ -185,7 +185,7 @@ class History {
       _checkKind(columns[key]!, value, w.table);
     }
     final now = _clock().millisecondsSinceEpoch;
-    final id = (w.values['id'] as String?) ?? _newId();
+    final id = (w.values['id'] as String?) ?? newId();
     final row = <String, Object?>{
       for (final MapEntry(:key, :value) in w.values.entries)
         key: toSqlValue(value),
@@ -307,7 +307,7 @@ class History {
       _Meta m => (m.occurredOn, m.summary),
       _ => throw StateError('meta'),
     };
-    final eventId = _newId();
+    final eventId = newId();
     await db.customStatement(
       'INSERT INTO event_log (id, farm_id, entity, entity_id, "action", '
       'summary, old_values, new_values, occurred_on, created_at, created_by) '
@@ -402,7 +402,12 @@ class History {
     return farmId;
   }
 
-  String _newId() => uuidV7(_clock(), _random);
+  /// A new time-ordered id, for a repository that must know a row's id
+  /// before writing it (a plot under a new farm).
+  String newId() => uuidV7(_clock(), _random);
+
+  /// Today on this history's clock, 'YYYY-MM-DD'.
+  String today() => _today();
 
   static String? _dayOf(String? day) {
     if (day != null && !_day.hasMatch(day)) {

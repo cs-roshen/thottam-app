@@ -164,11 +164,17 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-/// Yellow "last time" or "due" banner.
+/// Yellow "last time" or "due" banner; also for a notice such as "needs a
+/// connection", with its own [icon].
 class LastTimeBanner extends StatelessWidget {
-  const LastTimeBanner({super.key, required this.text});
+  const LastTimeBanner({
+    super.key,
+    required this.text,
+    this.icon = Icons.history,
+  });
 
   final String text;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +189,7 @@ class LastTimeBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.history, color: t.onAccentTint, size: t.iconSize),
+          Icon(icon, color: t.onAccentTint, size: t.iconSize),
           SizedBox(width: t.cardGap),
           Expanded(
             child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
@@ -221,6 +227,20 @@ class StaleDataTag extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Toast without an action; disappears after about 1.9 s.
+void showToast(BuildContext context, String message) {
+  final t = context.tokens;
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: t.toastStay,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
 }
 
 /// Toast with an undo action; disappears after about 1.9 s.

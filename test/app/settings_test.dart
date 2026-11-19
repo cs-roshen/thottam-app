@@ -4,6 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:thottam/app/app.dart';
 import 'package:thottam/app/settings.dart';
 
+import '../helpers/session.dart';
+
 void main() {
   test('language choices map to a locale and the English-names flag', () {
     expect(LanguageChoice.malayalam.locale, const Locale('ml'));
@@ -14,7 +16,7 @@ void main() {
   });
 
   testWidgets('switching language applies at once', (tester) async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(overrides: appOverrides());
     addTearDown(container.dispose);
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -37,7 +39,7 @@ void main() {
   ) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2.0;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    final container = ProviderContainer();
+    final container = ProviderContainer(overrides: appOverrides());
     addTearDown(container.dispose);
 
     double scaleOf10() {

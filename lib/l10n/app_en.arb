@@ -876,5 +876,152 @@
         "type": "int"
       }
     }
+  },
+  "actionContinue": "Continue",
+  "@actionContinue": {
+    "description": "Continue button on the welcome screen and similar single-step screens."
+  },
+  "welcomeTagline": "Your farm, your accounts — all in one place.",
+  "@welcomeTagline": {
+    "description": "Line under the app name on the welcome screen."
+  },
+  "welcomeChooseLanguage": "Choose a language",
+  "@welcomeChooseLanguage": {
+    "description": "Heading above the language choices on the welcome screen."
+  },
+  "welcomeChangeLater": "You can change the language any time",
+  "@welcomeChangeLater": {
+    "description": "Note under the Continue button on the welcome screen."
+  },
+  "languageMalayalamHint": "എല്ലാം മലയാളത്തിൽ",
+  "@languageMalayalamHint": {
+    "description": "Line under the Malayalam choice; always in Malayalam so a Malayalam reader recognises it."
+  },
+  "languageEnglishHint": "Everything in English",
+  "@languageEnglishHint": {
+    "description": "Line under the English choice; always in English so an English reader recognises it."
+  },
+  "languageMixedHint": "Malayalam, with crop names also in English",
+  "@languageMixedHint": {
+    "description": "Line under the mixed language choice."
+  },
+  "nameMixed": "{malayalam} ({english})",
+  "@nameMixed": {
+    "description": "A crop or category name in the mixed language setting: the Malayalam name followed by the English name.",
+    "placeholders": {
+      "malayalam": {
+        "type": "String"
+      },
+      "english": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldOptional": "{field} (optional)",
+  "@fieldOptional": {
+    "description": "Label of a field that can be left empty.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "signInTitle": "Sign in",
+  "@signInTitle": {
+    "description": "Title of the sign-in step."
+  },
+  "signInBody": "Sign in once to keep your records safe and share them with your family or manager. After that the app works without internet.",
+  "@signInBody": {
+    "description": "Explanation on the sign-in step."
+  },
+  "signInTestAccount": "Continue with a test account",
+  "@signInTestAccount": {
+    "description": "Sign-in button while Google sign-in is not yet available."
+  },
+  "signInTestAccountHint": "Google sign-in is coming soon. For now everything stays on this phone.",
+  "@signInTestAccountHint": {
+    "description": "Note under the test-account sign-in button."
+  },
+  "signInNeedsConnection": "Signing in the first time needs an internet connection. It continues by itself once you are online.",
+  "@signInNeedsConnection": {
+    "description": "Shown once on the sign-in step when there is no connection; the step continues by itself."
+  },
+  "signInRestoring": "Bringing your farm to this phone…",
+  "@signInRestoring": {
+    "description": "Shown while the first sync pulls the account's farms."
+  },
+  "signInFailed": "Could not sign in. Please try again.",
+  "@signInFailed": {
+    "description": "Shown when sign-in fails or is cancelled."
+  },
+  "invitesTitle": "You have an invitation",
+  "@invitesTitle": {
+    "description": "Title of the screen that lists open farm invites at sign-in."
+  },
+  "invitesHint": "Join only farms you know. Nothing is shared until you tap Join.",
+  "@invitesHint": {
+    "description": "Explanation on the invites screen."
+  },
+  "inviteRole": "As {role, select, owner{owner} manager{manager} supervisor{supervisor} accountant{accountant} viewer{viewer} other{member}}",
+  "@inviteRole": {
+    "description": "The role an invite offers.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteFrom": "Invited by {name}",
+  "@inviteFrom": {
+    "description": "Who sent an invite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteJoin": "Join",
+  "@inviteJoin": {
+    "description": "Button to accept a farm invite."
+  },
+  "inviteDecline": "Decline",
+  "@inviteDecline": {
+    "description": "Button to decline a farm invite."
+  },
+  "inviteNeedsConnection": "This needs an internet connection. Try again when you are online.",
+  "@inviteNeedsConnection": {
+    "description": "Shown when joining or declining an invite fails for lack of connection."
+  },
+  "setupStepOf": "Step {step} / {total}",
+  "@setupStepOf": {
+    "description": "Progress label in set-up.",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "setupNameRequired": "Enter your name",
+  "@setupNameRequired": {
+    "description": "Error under the name field when it is empty."
+  },
+  "setupFarmNameRequired": "Enter a name for the farm",
+  "@setupFarmNameRequired": {
+    "description": "Error under the farm name field when it is empty."
+  },
+  "setupAreaInvalid": "Enter the area as a number, like 2.5",
+  "@setupAreaInvalid": {
+    "description": "Error under the area field when it is not a number."
+  },
+  "setupAreaUnit": "Unit",
+  "@setupAreaUnit": {
+    "description": "Label for the area unit choices in set-up."
+  },
+  "setupTenure": "Land",
+  "@setupTenure": {
+    "description": "Label for the owned or leased choice in set-up."
   }
 }
