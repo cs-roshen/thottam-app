@@ -1985,5 +1985,205 @@
   "noteTextRequired": "ആദ്യം കുറിപ്പ് എഴുതുക.",
   "@noteTextRequired": {
     "description": "Error when saving an empty note."
+  },
+  "pageLabour": "പണിക്കാർ",
+  "@pageLabour": {
+    "description": "Page name: labour (workers, groups, attendance)."
+  },
+  "pageSelling": "വിൽപ്പന",
+  "@pageSelling": {
+    "description": "Page name: selling and buyers."
+  },
+  "settingsFarms": "കൃഷിയിടങ്ങൾ",
+  "@settingsFarms": {
+    "description": "Settings row and screen title: the farms of this account."
+  },
+  "settingsFarmsHint": "കൃഷിയിടം മാറ്റുക, പുതിയത് ചേർക്കുക",
+  "@settingsFarmsHint": {
+    "description": "Hint under the Farms row."
+  },
+  "settingsMembers": "അംഗങ്ങൾ",
+  "@settingsMembers": {
+    "description": "Settings row and screen title: who can use this farm (owner only)."
+  },
+  "settingsMembersHint": "ഈ കൃഷിയിടം ആർക്കൊക്കെ കാണാം, എഴുതാം",
+  "@settingsMembersHint": {
+    "description": "Hint under the Members row."
+  },
+  "settingsSync": "സിങ്ക് നില",
+  "@settingsSync": {
+    "description": "Settings section: sync status."
+  },
+  "settingsAccount": "അക്കൗണ്ട്",
+  "@settingsAccount": {
+    "description": "Settings section: the signed-in account."
+  },
+  "settingsSignOut": "സൈൻ ഔട്ട്",
+  "@settingsSignOut": {
+    "description": "Button: sign out of this phone."
+  },
+  "signOutWaitingTitle": "ചില മാറ്റങ്ങൾ ഇനിയും സിങ്ക് ചെയ്യാനുണ്ട്",
+  "@signOutWaitingTitle": {
+    "description": "Title of the warning before signing out with changes not yet uploaded."
+  },
+  "signOutWaitingBody": "{count} മാറ്റങ്ങൾ ഇനിയും സെർവറിൽ എത്തിയിട്ടില്ല. ഒന്നും നഷ്ടപ്പെടില്ല: അവ ഈ ഫോണിൽ തന്നെ ഉണ്ടാകും, വീണ്ടും സൈൻ ഇൻ ചെയ്യുമ്പോൾ സിങ്ക് ആകും.",
+  "@signOutWaitingBody": {
+    "description": "Body of the warning before signing out with changes not yet uploaded.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "roleName": "{role, select, owner{ഉടമ} manager{മാനേജർ} supervisor{സൂപ്പർവൈസർ} accountant{അക്കൗണ്ടന്റ്} viewer{കാണാൻ മാത്രം} other{അംഗം}}",
+  "@roleName": {
+    "description": "A role's name.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "farmsOpenNow": "ഇപ്പോൾ തുറന്നത്",
+  "@farmsOpenNow": {
+    "description": "Tag on the farm that is open."
+  },
+  "farmsAdd": "പുതിയ കൃഷിയിടം ചേർക്കുക",
+  "@farmsAdd": {
+    "description": "Button: add another farm (set-up steps 2 and 3)."
+  },
+  "farmsInvites": "ക്ഷണങ്ങൾ",
+  "@farmsInvites": {
+    "description": "Section with open invitations to other farms."
+  },
+  "farmsOpened": "{farm} തുറന്നു",
+  "@farmsOpened": {
+    "description": "Toast after switching farm.",
+    "placeholders": {
+      "farm": {
+        "type": "String"
+      }
+    }
+  },
+  "membersAdd": "ഒരാളെ ചേർക്കുക",
+  "@membersAdd": {
+    "description": "Button: invite a person to this farm."
+  },
+  "membersEmail": "ഗൂഗിൾ ഇമെയിൽ",
+  "@membersEmail": {
+    "description": "Field: the Google email of the person to invite."
+  },
+  "membersEmailInvalid": "ശരിയായ ഇമെയിൽ വിലാസം നൽകുക",
+  "@membersEmailInvalid": {
+    "description": "Error: the email is missing or not an email."
+  },
+  "membersRole": "ചുമതല",
+  "@membersRole": {
+    "description": "Field label: the person's role."
+  },
+  "membersInvited": "ക്ഷണിച്ചു · {role}",
+  "@membersInvited": {
+    "description": "An invitation not yet accepted, with its role (role name formatted in code).",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "membersJoinHint": "അവർ Join അമർത്തുമ്പോൾ ചേരും",
+  "@membersJoinHint": {
+    "description": "Hint under the invite form: nobody joins until they accept."
+  },
+  "membersRemove": "കൃഷിയിടത്തിൽ നിന്ന് നീക്കുക",
+  "@membersRemove": {
+    "description": "Button: remove a member."
+  },
+  "membersRemoveConfirm": "{name} ഇനി ഈ കൃഷിയിടം കാണുകയോ എഴുതുകയോ ഇല്ല.",
+  "@membersRemoveConfirm": {
+    "description": "Confirm before removing a member.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "membersCancelInvite": "ക്ഷണം റദ്ദാക്കുക",
+  "@membersCancelInvite": {
+    "description": "Button: withdraw an invitation."
+  },
+  "membersYou": "{name} (നിങ്ങൾ)",
+  "@membersYou": {
+    "description": "The signed-in person in the members list.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "membersUnknown": "അംഗം",
+  "@membersUnknown": {
+    "description": "A member whose name is not on this phone yet."
+  },
+  "membersPermissions": "അവർക്ക് ചെയ്യാവുന്നത്",
+  "@membersPermissions": {
+    "description": "Section: per-person permissions."
+  },
+  "membersPermissionsHint": "ചുമതല അനുസരിച്ചാണ് തുടക്കം; ഓരോന്നും മാറ്റാം",
+  "@membersPermissionsHint": {
+    "description": "Hint above per-person permissions."
+  },
+  "permissionLevel": "{level, select, none{കാണില്ല} read{കാണാം} write{കാണാം, എഴുതാം} other{കാണാം}}",
+  "@permissionLevel": {
+    "description": "A permission level.",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "accessClassName": "{area, select, setup{കൃഷിയിട ക്രമീകരണം} team{പണിക്കാരും ഗ്രൂപ്പുകളും} daily{ദിവസപ്പണി} stock{സ്റ്റോക്ക്} money{പണം} prices{വില} members{അംഗങ്ങൾ} other{മറ്റുള്ളവ}}",
+  "@accessClassName": {
+    "description": "An area a permission covers.",
+    "placeholders": {
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "myListsCrop": "എല്ലാ വിളകൾക്കും",
+  "@myListsCrop": {
+    "description": "Crop chip in My lists: items used for every crop."
+  },
+  "myListsAcceptUpdate": "ശരി",
+  "@myListsAcceptUpdate": {
+    "description": "Button on the new-items banner: mark the update as seen."
+  },
+  "myListsOwn": "നിങ്ങളുടേത്",
+  "@myListsOwn": {
+    "description": "Tag on an item the farmer added."
+  },
+  "myListsChanged": "മാറ്റിയത് · സാധാരണ ഓൺ",
+  "@myListsChanged": {
+    "description": "Tag on an item the farmer switched off; reset turns it back on."
+  },
+  "myListsNameMl": "മലയാളത്തിൽ പേര്",
+  "@myListsNameMl": {
+    "description": "Field: an own item's Malayalam name."
+  },
+  "myListsNameEn": "ഇംഗ്ലീഷിൽ പേര്",
+  "@myListsNameEn": {
+    "description": "Field: an own item's English name."
+  },
+  "myListsNameRequired": "ഒരു പേര് നൽകുക",
+  "@myListsNameRequired": {
+    "description": "Error: an own item needs a name in one language at least."
+  },
+  "myListsReadOnly": "ഉടമയ്ക്കോ മാനേജർക്കോ മാത്രമേ ലിസ്റ്റുകൾ മാറ്റാനാകൂ.",
+  "@myListsReadOnly": {
+    "description": "Shown on My lists to roles that cannot write set-up."
+  },
+  "myListsResetHint": "ഓഫ് ചെയ്തവ വീണ്ടും ഓൺ ആകും. നിങ്ങളുടെ സ്വന്തം ഇനങ്ങൾ മാറില്ല.",
+  "@myListsResetHint": {
+    "description": "What resetting My lists does."
   }
 }

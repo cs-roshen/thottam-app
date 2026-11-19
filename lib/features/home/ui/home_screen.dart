@@ -125,8 +125,7 @@ class _Header extends ConsumerWidget {
           round(
             key: const Key('home.settings'),
             label: l10n.settingsTitle,
-            // shortcut: More until Settings has its own screen (C10)
-            onTap: () => context.go('/more'),
+            onTap: () => context.go('/more/settings'),
             child: Icon(Icons.tune, color: t.ink),
           ),
         ],

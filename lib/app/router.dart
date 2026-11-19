@@ -20,6 +20,11 @@ import '../features/land/ui/land_screen.dart';
 import '../features/land/ui/plot_detail_screen.dart';
 import '../features/land/ui/plot_form_screen.dart';
 import '../features/onboarding/ui/invites_screen.dart';
+import '../features/settings/ui/farms_screen.dart';
+import '../features/settings/ui/members_screen.dart';
+import '../features/settings/ui/more_screen.dart';
+import '../features/settings/ui/my_lists_screen.dart';
+import '../features/settings/ui/settings_screen.dart';
 import '../features/onboarding/ui/setup_screen.dart';
 import '../features/onboarding/ui/sign_in_screen.dart';
 import '../features/onboarding/ui/welcome_screen.dart';
@@ -188,25 +193,43 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(path: '/money', builder: (_, _) => const MoneyScreen()),
             ],
           ),
-          _branch(
-            '/more',
-            (l) => l.navMore,
-            Icons.more_horiz,
+          StatefulShellBranch(
             routes: [
-              if (kDebugMode)
-                GoRoute(
-                  path: 'gallery',
-                  builder: (context, state) => const WidgetGalleryScreen(),
-                ),
-            ],
-            extra: (context, l) => [
-              if (kDebugMode)
-                ListTile(
-                  key: const Key('more.gallery'),
-                  leading: const Icon(Icons.widgets_outlined),
-                  title: Text(l.debugWidgetGallery),
-                  onTap: () => context.go('/more/gallery'),
-                ),
+              GoRoute(
+                path: '/more',
+                builder: (_, _) => const MoreScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'settings',
+                    builder: (_, _) => const SettingsScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'farms',
+                        builder: (_, _) => const FarmsScreen(),
+                        routes: [
+                          GoRoute(
+                            path: 'new',
+                            builder: (_, _) => const SetupScreen(addFarm: true),
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: 'members',
+                        builder: (_, _) => const MembersScreen(),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'lists',
+                    builder: (_, _) => const MyListsScreen(),
+                  ),
+                  if (kDebugMode)
+                    GoRoute(
+                      path: 'gallery',
+                      builder: (context, state) => const WidgetGalleryScreen(),
+                    ),
+                ],
+              ),
             ],
           ),
         ],
@@ -219,25 +242,6 @@ final routerProvider = Provider<GoRouter>((ref) {
   });
   return router;
 });
-
-StatefulShellBranch _branch(
-  String path,
-  String Function(AppLocalizations) title,
-  IconData icon, {
-  List<RouteBase> routes = const [],
-  List<Widget> Function(BuildContext, AppLocalizations)? extra,
-}) {
-  return StatefulShellBranch(
-    routes: [
-      GoRoute(
-        path: path,
-        builder: (context, state) =>
-            PlaceholderScreen(title: title, icon: icon, extra: extra),
-        routes: routes,
-      ),
-    ],
-  );
-}
 
 /// Stands in for each tab's real screen until its feature task.
 class PlaceholderScreen extends StatelessWidget {

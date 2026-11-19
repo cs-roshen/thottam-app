@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../app/session.dart';
@@ -15,7 +16,11 @@ import '../domain/setup.dart';
 /// farm name are needed; finishing creates the farm, its plot and crop
 /// cycles on the phone and opens Home.
 class SetupScreen extends ConsumerStatefulWidget {
-  const SetupScreen({super.key});
+  const SetupScreen({super.key, this.addFarm = false});
+
+  /// Another farm for a signed-in person (Settings → Farms): the farm and
+  /// crops steps only.
+  final bool addFarm;
 
   @override
   ConsumerState<SetupScreen> createState() => _SetupScreenState();
@@ -23,7 +28,8 @@ class SetupScreen extends ConsumerStatefulWidget {
 
 class _SetupScreenState extends ConsumerState<SetupScreen> {
   static const _steps = 3;
-  int _step = 0;
+  late final int _first = widget.addFarm ? 1 : 0;
+  late int _step = _first;
   final _name = TextEditingController();
   final _phone = TextEditingController();
   final _farm = TextEditingController();
@@ -87,6 +93,13 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         .read(onboardingRepositoryProvider)
         .createFarm(ref.read(userIdProvider), input);
     final session = ref.read(sessionProvider.notifier);
+    if (widget.addFarm) {
+      await session.openFarm(farmId);
+      if (!mounted) return;
+      showToast(context, l10n.farmsOpened(input.farmName.trim()));
+      context.go('/home');
+      return;
+    }
     await session.updateProfile(input.name, input.phone);
     if (mounted) showToast(context, l10n.setupWelcomeDone);
     await session.openFarm(farmId);
@@ -104,11 +117,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       _ => (l10n.setupStepCropsTitle, l10n.setupStepCropsHint),
     };
     return PopScope(
-      canPop: _step == 0,
+      canPop: _step == _first,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) setState(() => _step--);
       },
       child: Scaffold(
+        appBar: widget.addFarm ? AppBar(title: Text(l10n.farmsAdd)) : null,
         body: SafeArea(
           child: Column(
             children: [
@@ -119,8 +133,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                     ExcludeSemantics(
                       child: Row(
                         children: [
-                          for (var i = 0; i < _steps; i++) ...[
-                            if (i > 0) const SizedBox(width: 8),
+                          for (var i = _first; i < _steps; i++) ...[
+                            if (i > _first) const SizedBox(width: 8),
                             Expanded(
                               child: Container(
                                 height: 6,
@@ -136,7 +150,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                     ),
                     SizedBox(height: t.cardGap),
                     Text(
-                      l10n.setupStepOf(_step + 1, _steps),
+                      l10n.setupStepOf(_step - _first + 1, _steps - _first),
                       style: text.bodyLarge!.copyWith(color: t.primary),
                     ),
                     Text(title, style: text.headlineMedium),
@@ -160,7 +174,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 ),
                 child: Row(
                   children: [
-                    if (_step > 0) ...[
+                    if (_step > _first) ...[
                       Expanded(
                         child: SizedBox(
                           height: t.primaryButtonHeight,
