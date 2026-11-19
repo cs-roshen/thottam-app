@@ -59,3 +59,21 @@ dart run drift_dev schema generate --data-classes --companions drift_schemas/app
 ```
 
 SQL in Dart goes in raw strings (`r'...'`), which the string check passes.
+
+## Logo and launcher icons
+
+`design/logo/thottam-logo.svg` is the master mark: a coconut palm against the
+sun on the primary tile. `design/logo/directions/` keeps the three first
+directions the owner chose from. After changing the master, rebuild the
+lockup, the Android icons (legacy, adaptive foreground and monochrome layers)
+and the iOS icon set:
+
+```
+python tool/build_icons.py
+```
+
+It needs fonttools and Google Chrome or Microsoft Edge (set `CHROME` to the
+browser's path if it is not found). `ThottamMark` in
+`lib/app/widgets/thottam_mark.dart` draws the same palm and sun in Flutter;
+keep its paths in step with the SVG and check
+`test/app/widgets/goldens/thottam_mark.png`.

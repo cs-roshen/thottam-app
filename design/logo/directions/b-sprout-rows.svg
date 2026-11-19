@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!-- B. Sprout on rows: a seedling growing out of ruled field rows -->
+  <rect width="96" height="96" rx="24" fill="#1B6B3A"/>
+  <g fill="#F2B01E">
+    <path d="M48 47C48 31 58 21 76 21C76 37 66 47 48 47Z"/>
+    <path d="M48 53C48 41 40 33 22 33C22 45 30 53 48 53Z"/>
+  </g>
+  <path d="M48 66V45" fill="none" stroke="#F2B01E" stroke-width="6" stroke-linecap="round"/>
+  <path d="M20 67H76M30 79H66" fill="none" stroke="#F4F6F1" stroke-width="6" stroke-linecap="round"/>
+</svg>
