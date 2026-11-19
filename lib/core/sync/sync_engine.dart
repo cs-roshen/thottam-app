@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:drift/drift.dart';
 
+import '../access/access.dart';
 import '../db/database.dart';
 import '../db/synced_tables.dart';
 import '../ids/uuid_v7.dart';
@@ -330,11 +331,9 @@ class SyncEngine {
   };
 
   /// A removed member's phone drops the farm; a member whose role or
-  /// permissions changed pulls the farm again from the start, because rows
-  /// they could not see before (money history, other members) lie behind
-  /// their cursors.
-  // shortcut: a narrower role keeps what it already pulled until removal;
-  // dropping per access class waits for the role checks (D3).
+  /// permissions changed drops what they can no longer read, then pulls the
+  /// farm again from the start, because rows they could not see before
+  /// (money history, other members) lie behind their cursors.
   Future<void> _followMemberships(
     Map<String, (String, String, bool)> before,
     Map<String, (String, String, bool)> after,
@@ -345,11 +344,51 @@ class SyncEngine {
       if (now == null || !now.$3) {
         await _dropFarm(farm);
       } else if (now.$1 != was.$1 || now.$2 != was.$2) {
+        await _dropUnreadable(farm, now.$1, now.$2);
         await db.customStatement('DELETE FROM sync_state WHERE farm_id = ?', [
           farm,
         ]);
       }
     }
+  }
+
+  /// What [role] with [permissions] can no longer read leaves the phone, by
+  /// the server's read rules (`my_farms`, `my_entities`): a table by its
+  /// access class (what was taken from a lot by stock), history by its
+  /// table's class, and members other than oneself. The farm row stays for
+  /// any member. A row still in the outbox stays, to go up or be shown as
+  /// refused, never lost unseen.
+  Future<void> _dropUnreadable(
+    String farm,
+    String role,
+    String permissions,
+  ) async {
+    final perms = jsonDecode(permissions) as Map<String, Object?>;
+    bool hidden(String table, AccessClass c) =>
+        table != 'farms' && accessLevel(role, perms, c) == 0;
+    final farmColumn = {for (final (t, c) in syncedTables) t: c};
+    const kept = 'AND id NOT IN (SELECT row_id FROM outbox WHERE entity = ?)';
+    final history = [
+      for (final MapEntry(key: t, value: c) in tableAccess.entries)
+        if (hidden(t, c)) t,
+    ];
+    await db.transaction(() async {
+      for (final MapEntry(key: t, value: c) in tableAccess.entries) {
+        if (!hidden(t, t == 'sale_lots' ? AccessClass.stock : c)) continue;
+        final others = t == 'farm_members' ? 'AND user_id <> ? ' : '';
+        await db.customStatement(
+          'DELETE FROM $t WHERE "${farmColumn[t]}" = ? $others$kept',
+          [farm, if (others.isNotEmpty) userId, t],
+        );
+      }
+      if (history.isEmpty) return;
+      await db.customStatement(
+        'DELETE FROM event_log WHERE farm_id = ? AND entity IN '
+        '(${List.filled(history.length, '?').join(', ')}) $kept',
+        [farm, ...history, 'event_log'],
+      );
+    });
+    _notify({...tableAccess.keys, 'event_log'});
   }
 
   /// Removes a farm this person no longer belongs to from the phone. Only

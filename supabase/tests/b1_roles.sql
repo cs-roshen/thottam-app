@@ -255,6 +255,31 @@ select pg_temp.check('supervisor with money read still cannot write expenses',
 select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
   '{}', pg_temp.fx_id('a', 'm_supervisor')));
 
+-- D3: "write" and "none" override the role too, history included
+select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
+  '{"daily": "write"}', pg_temp.fx_id('a', 'm_accountant')));
+select pg_temp.check('accountant with daily write records a note',
+  pg_temp.try_as(pg_temp.u('accountant_a'), format('insert into public.notes (id, farm_id, noted_on, body) values (%L, %L, current_date, %L)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'a'), 'x')) = 'ok:1');
+select pg_temp.check('accountant with daily write records its history',
+  pg_temp.try_as(pg_temp.u('accountant_a'), format(
+    'insert into public.event_log (id, farm_id, entity, entity_id, action, occurred_on) values (%L, %L, %L, %L, %L, current_date)',
+    gen_random_uuid(), pg_temp.fx_id('farm', 'a'), 'notes', gen_random_uuid(), 'create')) = 'ok:1');
+select pg_temp.check('accountant with daily write still cannot change plots',
+  pg_temp.try_as(pg_temp.u('accountant_a'), format('update public.plots set name = %L where id = %L', 'x', pg_temp.fx_id('a', 'plots'))) = 'ok:0');
+select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
+  '{}', pg_temp.fx_id('a', 'm_accountant')));
+select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
+  '{"money": "none"}', pg_temp.fx_id('a', 'm_manager')));
+select pg_temp.check('manager with money none cannot read expenses',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('select 1 from public.expenses where id = %L', pg_temp.fx_id('a', 'expenses'))) = 'ok:0');
+select pg_temp.check('manager with money none cannot read money history',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('select 1 from public.event_log where id = %L', pg_temp.fx_id('a', 'event_expenses'))) = 'ok:0');
+select pg_temp.check('manager with money none still writes plots',
+  pg_temp.try_as(pg_temp.u('manager_a'), format('update public.plots set name = %L where id = %L', 'x', pg_temp.fx_id('a', 'plots'))) = 'ok:1');
+select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
+  '{}', pg_temp.fx_id('a', 'm_manager')));
+
 -- a member trusted with members cannot make or touch owners
 select pg_temp.run_as(pg_temp.u('owner_a'), format('update public.farm_members set permissions = %L where id = %L',
   '{"members": "write"}', pg_temp.fx_id('a', 'm_manager')));
