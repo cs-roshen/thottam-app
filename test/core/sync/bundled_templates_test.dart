@@ -109,7 +109,12 @@ void main() {
         if (f is! File || name.startsWith('0001') || name.startsWith('0002')) {
           continue;
         }
-        final sql = f.readAsStringSync();
+        // a function body (the admin console's publish) writes templates
+        // when it runs, not when the migration does
+        final sql = f.readAsStringSync().replaceAll(
+          RegExp(r'\$\$.*?\$\$', dotAll: true),
+          '',
+        );
         if (RegExp(r'(insert into|update)\s+public\.(template_items|crops)\b')
             .hasMatch(sql)) {
           expect(tool, contains('("${name.substring(0, 4)}"'), reason: name);
