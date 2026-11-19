@@ -52,11 +52,13 @@ List<String> checkFile(String path, String source) {
   final generated = p.startsWith('lib/l10n/') || p.endsWith('.g.dart');
   final devSeed = p.startsWith('lib/core/dev/');
   // SQL and developer errors only; these layers never show text to a farmer.
-  final dataLayer = const [
-    'lib/core/db/',
-    'lib/core/history/',
-    'lib/core/sync/',
-  ].any(p.startsWith);
+  final dataLayer =
+      const [
+        'lib/core/db/',
+        'lib/core/history/',
+        'lib/core/sync/',
+      ].any(p.startsWith) ||
+      (p.startsWith('lib/features/') && p.contains('/data/'));
   final lines = source.split('\n');
   for (var n = 0; n < lines.length; n++) {
     final raw = lines[n];

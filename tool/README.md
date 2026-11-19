@@ -15,7 +15,7 @@ flutter test
 | `dart format` | CI step |
 | `flutter analyze` (strict) | `analysis_options.yaml` |
 | `flutter test` | `test/` |
-| String check | `tool/check.dart`: text with letters in a string literal in `lib/`, outside `lib/l10n/`, the theme and the debug seed. Codes (`cash`), keys (`more.gallery`), paths (`/home`) and raw strings pass. Put `// gate: not user-facing` at the end of a line, or alone on the line before, for format patterns and assert messages. |
+| String check | `tool/check.dart`: text with letters in a string literal in `lib/`, outside `lib/l10n/`, the theme, the debug seed and the data layers (SQL in `core/db`, `core/history`, `core/sync` and each feature's `data/`). Codes (`cash`), keys (`more.gallery`), paths (`/home`) and raw strings pass. Put `// gate: not user-facing` at the end of a line, or alone on the line before, for format patterns and assert messages. |
 | ARB check | `test/l10n/arb_test.dart`: same keys, a description on every key, same placeholders, no indexed keys or sample data |
 | Token check | `tool/check.dart`: `Color(0x..)`, `Colors.*` (except `transparent`) or a font name outside `lib/app/theme/` |
 | Layering check | `tool/check.dart`: `ui/` importing Drift or Supabase; `domain/` importing Flutter, Drift or Supabase; Supabase outside `lib/core/sync/` and `lib/core/auth/` |

@@ -876,5 +876,152 @@
         "type": "int"
       }
     }
+  },
+  "actionContinue": "തുടരുക",
+  "@actionContinue": {
+    "description": "Continue button on the welcome screen and similar single-step screens."
+  },
+  "welcomeTagline": "നിങ്ങളുടെ കൃഷി, നിങ്ങളുടെ കണക്ക് — എല്ലാം ഒരിടത്ത്.",
+  "@welcomeTagline": {
+    "description": "Line under the app name on the welcome screen."
+  },
+  "welcomeChooseLanguage": "ഭാഷ തിരഞ്ഞെടുക്കുക",
+  "@welcomeChooseLanguage": {
+    "description": "Heading above the language choices on the welcome screen."
+  },
+  "welcomeChangeLater": "ഭാഷ എപ്പോൾ വേണമെങ്കിലും മാറ്റാം",
+  "@welcomeChangeLater": {
+    "description": "Note under the Continue button on the welcome screen."
+  },
+  "languageMalayalamHint": "എല്ലാം മലയാളത്തിൽ",
+  "@languageMalayalamHint": {
+    "description": "Line under the Malayalam choice; always in Malayalam so a Malayalam reader recognises it."
+  },
+  "languageEnglishHint": "Everything in English",
+  "@languageEnglishHint": {
+    "description": "Line under the English choice; always in English so an English reader recognises it."
+  },
+  "languageMixedHint": "മലയാളം; വിളകളുടെ പേര് ഇംഗ്ലീഷിലും",
+  "@languageMixedHint": {
+    "description": "Line under the mixed language choice."
+  },
+  "nameMixed": "{malayalam} ({english})",
+  "@nameMixed": {
+    "description": "A crop or category name in the mixed language setting: the Malayalam name followed by the English name.",
+    "placeholders": {
+      "malayalam": {
+        "type": "String"
+      },
+      "english": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldOptional": "{field} (വേണമെങ്കിൽ)",
+  "@fieldOptional": {
+    "description": "Label of a field that can be left empty.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "signInTitle": "സൈൻ ഇൻ",
+  "@signInTitle": {
+    "description": "Title of the sign-in step."
+  },
+  "signInBody": "ഒരിക്കൽ സൈൻ ഇൻ ചെയ്താൽ കണക്കുകൾ സുരക്ഷിതമായിരിക്കും, കുടുംബത്തിനോ മാനേജർക്കോ പങ്കുവയ്ക്കാം. പിന്നീട് നെറ്റ് ഇല്ലാതെയും ആപ്പ് പ്രവർത്തിക്കും.",
+  "@signInBody": {
+    "description": "Explanation on the sign-in step."
+  },
+  "signInTestAccount": "ടെസ്റ്റ് അക്കൗണ്ടിൽ തുടരുക",
+  "@signInTestAccount": {
+    "description": "Sign-in button while Google sign-in is not yet available."
+  },
+  "signInTestAccountHint": "Google സൈൻ ഇൻ ഉടൻ വരും. ഇപ്പോൾ എല്ലാം ഈ ഫോണിൽ മാത്രം.",
+  "@signInTestAccountHint": {
+    "description": "Note under the test-account sign-in button."
+  },
+  "signInNeedsConnection": "ആദ്യമായി സൈൻ ഇൻ ചെയ്യാൻ ഇന്റർനെറ്റ് വേണം. നെറ്റ് കിട്ടിയാൽ തനിയെ തുടരും.",
+  "@signInNeedsConnection": {
+    "description": "Shown once on the sign-in step when there is no connection; the step continues by itself."
+  },
+  "signInRestoring": "നിങ്ങളുടെ കൃഷിയിടം ഈ ഫോണിലേക്ക് കൊണ്ടുവരുന്നു…",
+  "@signInRestoring": {
+    "description": "Shown while the first sync pulls the account's farms."
+  },
+  "signInFailed": "സൈൻ ഇൻ ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക.",
+  "@signInFailed": {
+    "description": "Shown when sign-in fails or is cancelled."
+  },
+  "invitesTitle": "നിങ്ങൾക്ക് ക്ഷണമുണ്ട്",
+  "@invitesTitle": {
+    "description": "Title of the screen that lists open farm invites at sign-in."
+  },
+  "invitesHint": "അറിയുന്ന കൃഷിയിടങ്ങളിൽ മാത്രം ചേരുക. ചേരുക അമർത്തുന്നതുവരെ ഒന്നും പങ്കുവയ്ക്കില്ല.",
+  "@invitesHint": {
+    "description": "Explanation on the invites screen."
+  },
+  "inviteRole": "{role, select, owner{ഉടമ} manager{മാനേജർ} supervisor{സൂപ്പർവൈസർ} accountant{അക്കൗണ്ടന്റ്} viewer{കാണാൻ മാത്രം} other{അംഗം}} ആയി",
+  "@inviteRole": {
+    "description": "The role an invite offers.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteFrom": "ക്ഷണിച്ചത്: {name}",
+  "@inviteFrom": {
+    "description": "Who sent an invite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteJoin": "ചേരുക",
+  "@inviteJoin": {
+    "description": "Button to accept a farm invite."
+  },
+  "inviteDecline": "വേണ്ട",
+  "@inviteDecline": {
+    "description": "Button to decline a farm invite."
+  },
+  "inviteNeedsConnection": "ഇതിന് ഇന്റർനെറ്റ് വേണം. നെറ്റ് കിട്ടുമ്പോൾ വീണ്ടും ശ്രമിക്കുക.",
+  "@inviteNeedsConnection": {
+    "description": "Shown when joining or declining an invite fails for lack of connection."
+  },
+  "setupStepOf": "ഘട്ടം {step} / {total}",
+  "@setupStepOf": {
+    "description": "Progress label in set-up.",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "setupNameRequired": "പേര് നൽകുക",
+  "@setupNameRequired": {
+    "description": "Error under the name field when it is empty."
+  },
+  "setupFarmNameRequired": "കൃഷിയിടത്തിന് ഒരു പേര് നൽകുക",
+  "@setupFarmNameRequired": {
+    "description": "Error under the farm name field when it is empty."
+  },
+  "setupAreaInvalid": "വിസ്തീർണ്ണം അക്കത്തിൽ നൽകുക, ഉദാ. 2.5",
+  "@setupAreaInvalid": {
+    "description": "Error under the area field when it is not a number."
+  },
+  "setupAreaUnit": "അളവ്",
+  "@setupAreaUnit": {
+    "description": "Label for the area unit choices in set-up."
+  },
+  "setupTenure": "ഭൂമി",
+  "@setupTenure": {
+    "description": "Label for the owned or leased choice in set-up."
   }
 }

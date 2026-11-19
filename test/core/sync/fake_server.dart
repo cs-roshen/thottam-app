@@ -34,6 +34,9 @@ class FakeServer {
   /// Pushes received, for checking what was sent.
   final pushes = <List<PushRow>>[];
 
+  /// Open invites by the invited user, as `my_invites()` lists them.
+  final invites = <String, List<Invite>>{};
+
   /// Which table each reference column points to, for orphan checks.
   static const parents = {
     'plot_id': 'plots',
@@ -351,23 +354,43 @@ class _Session implements SyncServer {
     );
   }
 
-  // shortcut: the fake has no invites; their rules are tested on the server
-  // (supabase/tests/b1_roles.sql). Model them here when a screen needs it.
+  // Like accept_invite and decline_invite: the invite leaves the list, and
+  // only Join adds a membership.
   @override
   Future<List<Invite>> invites() async {
     _check();
-    return const [];
+    return [...?server.invites[user]];
+  }
+
+  Invite? _take(String inviteId) {
+    final mine = server.invites[user] ?? [];
+    final invite = mine.where((i) => i.id == inviteId).firstOrNull;
+    mine.remove(invite);
+    return invite;
   }
 
   @override
   Future<String?> acceptInvite(String inviteId) async {
     _check();
-    return null;
+    final invite = _take(inviteId);
+    if (invite == null) return null;
+    server.put('farm_members', {
+      'id': 'm-$inviteId',
+      'farm_id': invite.farmId,
+      'user_id': user,
+      'role': invite.role,
+      'permissions': <String, Object?>{},
+      'created_at': '2026-11-19T00:00:00Z',
+      'updated_at': '2026-11-19T00:00:00Z',
+      'version': 1,
+      'deleted_at': null,
+    });
+    return invite.farmId;
   }
 
   @override
   Future<String?> declineInvite(String inviteId) async {
     _check();
-    return null;
+    return _take(inviteId)?.farmId;
   }
 }

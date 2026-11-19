@@ -30,7 +30,9 @@ Opens from the centre button on any tab. Voice entry (later phase; show disabled
 
 ### 4. My land, and 18. Plot detail
 List of plots with area, tenure, crop chips, "mixed crop" tag and next task. Tap → plot detail: stats (crops, season cost, yield, today's price), tabs for crops, costs by category, and recent history with a link to full history; quick buttons to add expense or harvest for this plot.
+- Deleting a plot or a crop cycle asks first, saying how many entries sit under it. The entries are kept: they stay in profit and loss and history, shown under the deleted plot or crop cycle, and undo brings it back (owner decision, 2026-11-19).
 - Check: totals on plot detail equal the sum of that plot's crop cycles.
+- Check: deleting a plot that has entries keeps every entry and leaves the farm's profit and loss unchanged; undo restores the plot.
 
 ### 8 and 11. Labour
 Segmented switch: named workers | group (head count).
@@ -71,7 +73,7 @@ Crop chips; activity list with on/off switches; "new items available" banner for
 ### 6. More, and 7. Settings
 More: tiles for every enabled page, then Settings. Settings: language, large text, pages on/off (drives More and quick add), home cards on/off, reset to default, farms, members, account, sync status.
 - Farms: the farms this account belongs to, with its role on each; switch farm; add a farm (set-up steps 2 and 3). An open invite to another farm shows here with Join and Decline (checked at each sign-in and sync); the farm is added only after Join.
-- Members (owner only): add a person by their Google email, choose a role, change per-person permissions, remove a person. The person sees the farm after their next sign-in or sync; a removed person loses access at once on the server.
+- Members (owner only): add a person by their Google email, choose a role, change per-person permissions, remove a person. The person joins once they tap Join on the invite (at sign-in or under Farms); a removed person loses access at once on the server.
 - Sync status: last synced time and items waiting to sync. Never a blocking dialog.
 - Account: the signed-in Google account, and sign out. Signing out with items waiting to sync warns first; those items stay on the phone, tied to that user, until they sync.
 - Check: a supervisor added here cannot open money screens or profit and loss; a removed member can no longer read or write the farm; switching farm shows only that farm's data; signing out with items waiting to sync shows the warning and loses nothing.

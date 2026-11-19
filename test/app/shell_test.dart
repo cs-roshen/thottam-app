@@ -6,10 +6,15 @@ import 'package:thottam/app/app.dart';
 import 'package:thottam/app/router.dart';
 import 'package:thottam/app/widgets/widgets.dart';
 
+import '../helpers/session.dart';
+
 Future<void> pumpApp(WidgetTester tester, {bool canSeeMoney = true}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [canSeeMoneyProvider.overrideWithValue(canSeeMoney)],
+      overrides: [
+        ...appOverrides(),
+        canSeeMoneyProvider.overrideWithValue(canSeeMoney),
+      ],
       child: const ThottamApp(),
     ),
   );
