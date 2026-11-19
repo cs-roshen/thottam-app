@@ -273,35 +273,13 @@ class _LabourScreenState extends ConsumerState<LabourScreen> {
   }
 
   Future<void> _changeRate(String workerId, _Mark mark) async {
-    final l10n = AppLocalizations.of(context);
-    final c = TextEditingController(
-      text: formatPaise(mark.ratePaise).replaceAll('₹', '').replaceAll(',', ''),
+    final paise = await showAmountDialog(
+      context,
+      title: AppLocalizations.of(context).labourChangeRate,
+      paise: mark.ratePaise,
+      fieldKey: const Key('labour.rateField'),
+      saveKey: const Key('labour.rateSave'),
     );
-    final paise = await showDialog<int>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.labourChangeRate),
-        content: TextField(
-          key: const Key('labour.rateField'),
-          controller: c,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(prefixText: '₹ '),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.actionCancel),
-          ),
-          TextButton(
-            key: const Key('labour.rateSave'),
-            onPressed: () => Navigator.pop(context, parseRupeesToPaise(c.text)),
-            child: Text(l10n.actionSave),
-          ),
-        ],
-      ),
-    );
-    c.dispose();
     if (paise != null) setState(() => mark.ratePaise = paise);
   }
 
@@ -666,38 +644,13 @@ class _LabourScreenState extends ConsumerState<LabourScreen> {
     ];
   }
 
-  Future<int?> _askAmount(String title, int paise) async {
-    final l10n = AppLocalizations.of(context);
-    final c = TextEditingController(
-      text: formatPaise(paise).replaceAll('₹', '').replaceAll(',', ''),
-    );
-    final out = await showDialog<int>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          key: const Key('labour.amountField'),
-          controller: c,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(prefixText: '₹ '),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.actionCancel),
-          ),
-          TextButton(
-            key: const Key('labour.amountSave'),
-            onPressed: () => Navigator.pop(context, parseRupeesToPaise(c.text)),
-            child: Text(l10n.actionSave),
-          ),
-        ],
-      ),
-    );
-    c.dispose();
-    return out;
-  }
+  Future<int?> _askAmount(String title, int paise) => showAmountDialog(
+    context,
+    title: title,
+    paise: paise,
+    fieldKey: const Key('labour.amountField'),
+    saveKey: const Key('labour.amountSave'),
+  );
 }
 
 class _WorkerRow extends StatelessWidget {

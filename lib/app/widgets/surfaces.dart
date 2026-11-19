@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../core/money/money_format.dart';
 import '../../core/money/money_parse.dart';
 import '../../l10n/app_localizations.dart';
 import '../theme/tokens.dart';
@@ -284,6 +285,8 @@ void showUndoToast(BuildContext context, String message, VoidCallback onUndo) {
         content: Text(message),
         duration: t.toastStay,
         behavior: SnackBarBehavior.floating,
+        // an action would keep it up for good; the undo toast goes by itself
+        persist: false,
         action: SnackBarAction(
           label: AppLocalizations.of(context).actionUndo,
           textColor: t.accent,
@@ -319,4 +322,73 @@ Future<T?> showThottamSheet<T>(
       ),
     ),
   );
+}
+
+/// Asks for one rupee amount, starting at [paise]; null when cancelled.
+/// The dialog owns its field, so nothing is used after it closes.
+Future<int?> showAmountDialog(
+  BuildContext context, {
+  required String title,
+  int? paise,
+  Key? fieldKey,
+  Key? saveKey,
+}) => showDialog<int>(
+  context: context,
+  builder: (_) =>
+      _AmountDialog(title, paise, fieldKey: fieldKey, saveKey: saveKey),
+);
+
+class _AmountDialog extends StatefulWidget {
+  const _AmountDialog(this.title, this.paise, {this.fieldKey, this.saveKey});
+
+  final String title;
+  final int? paise;
+  final Key? fieldKey;
+  final Key? saveKey;
+
+  @override
+  State<_AmountDialog> createState() => _AmountDialogState();
+}
+
+class _AmountDialogState extends State<_AmountDialog> {
+  late final _c = TextEditingController(
+    text: widget.paise == null
+        ? ''
+        : formatPaise(widget.paise!).replaceAll('₹', '').replaceAll(',', ''),
+  );
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(
+        key: widget.fieldKey,
+        controller: _c,
+        autofocus: true,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+        ],
+        decoration: const InputDecoration(prefixText: '₹ '),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.actionCancel),
+        ),
+        TextButton(
+          key: widget.saveKey,
+          onPressed: () => Navigator.pop(context, parseRupeesToPaise(_c.text)),
+          child: Text(l10n.actionSave),
+        ),
+      ],
+    );
+  }
 }
