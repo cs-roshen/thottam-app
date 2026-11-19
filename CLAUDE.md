@@ -10,7 +10,7 @@ Offline-first, Malayalam-first farm management app for Kerala farmers. It replac
 - `docs/screens.md` — every screen, its fields, behaviour and acceptance checks.
 - `docs/design-tokens.md` — colours, type, spacing, motion. Do not invent new values.
 - `design/prototype/` — the interactive HTML prototype. It is the visual and behavioural reference, not code to port line by line.
-- `supabase/migrations/0001_init.sql` — draft schema. It has NOT been run against a database yet; validate it before relying on it.
+- `supabase/migrations/` — the server schema. 0001 to 0003 are applied to `Thottam-App` (2026-11-19). Never edit an applied migration: add a new one, run `tool/server_tests.py`, then apply it with `supabase db push --remote=<project ref>`.
 
 ## Stack
 
