@@ -1,0 +1,1721 @@
+{
+ "crops": [
+  {
+   "id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "code": "coconut",
+   "name_ml": "തെങ്ങ്",
+   "name_en": "Coconut",
+   "kind": "perennial",
+   "default_unit": "nut"
+  },
+  {
+   "id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "code": "rubber",
+   "name_ml": "റബ്ബർ",
+   "name_en": "Rubber",
+   "kind": "perennial",
+   "default_unit": "kg"
+  },
+  {
+   "id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "code": "pepper",
+   "name_ml": "കുരുമുളക്",
+   "name_en": "Pepper",
+   "kind": "perennial",
+   "default_unit": "kg"
+  },
+  {
+   "id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "code": "banana",
+   "name_ml": "വാഴ",
+   "name_en": "Banana",
+   "kind": "annual",
+   "default_unit": "kg"
+  },
+  {
+   "id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "code": "paddy",
+   "name_ml": "നെല്ല്",
+   "name_en": "Paddy",
+   "kind": "seasonal",
+   "default_unit": "kg"
+  },
+  {
+   "id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "code": "cardamom",
+   "name_ml": "ഏലം",
+   "name_en": "Cardamom",
+   "kind": "perennial",
+   "default_unit": "kg"
+  }
+ ],
+ "template_items": [
+  {
+   "id": "7603156e-297d-c8db-45aa-c51b0364057e",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "kg",
+   "name_ml": "കിലോ",
+   "name_en": "kg",
+   "data": {
+    "dimension": "mass",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "e56ae742-6fd7-0a75-89ac-7c2ce8834a18",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "g",
+   "name_ml": "ഗ്രാം",
+   "name_en": "gram",
+   "data": {
+    "dimension": "mass",
+    "factor": 0.001,
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "61458027-9b94-bac9-fc58-5b5b98100ab6",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "quintal",
+   "name_ml": "ക്വിന്റൽ",
+   "name_en": "quintal",
+   "data": {
+    "dimension": "mass",
+    "factor": 100,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "f6323359-0342-758c-546d-31db843c844f",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "tonne",
+   "name_ml": "ടൺ",
+   "name_en": "tonne",
+   "data": {
+    "dimension": "mass",
+    "factor": 1000,
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "cf68d12d-5705-0a4f-7757-223c34a1cff1",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "litre",
+   "name_ml": "ലിറ്റർ",
+   "name_en": "litre",
+   "data": {
+    "dimension": "volume",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "f6777c02-91c0-13fc-c448-8008755ac12e",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "piece",
+   "name_ml": "എണ്ണം",
+   "name_en": "piece",
+   "data": {
+    "dimension": "count",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "347b46b9-1cb1-abf6-f3ad-47bda39902bf",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "cent",
+   "name_ml": "സെന്റ്",
+   "name_en": "cent",
+   "data": {
+    "dimension": "area",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "64e12511-d843-e5ea-95e3-612ae634f456",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "acre",
+   "name_ml": "ഏക്കർ",
+   "name_en": "acre",
+   "data": {
+    "dimension": "area",
+    "factor": 100,
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "733ad5dd-1f48-8cd4-4a3f-1710b1f09bd3",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "hectare",
+   "name_ml": "ഹെക്ടർ",
+   "name_en": "hectare",
+   "data": {
+    "dimension": "area",
+    "factor": 247.105381,
+    "ml_review": true
+   },
+   "sort_order": 90,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "4648ef05-a5b3-e372-fe4d-8ede87a45393",
+   "crop_id": null,
+   "list_type": "unit",
+   "code": "are",
+   "name_ml": "ആർ",
+   "name_en": "are",
+   "data": {
+    "dimension": "area",
+    "factor": 2.47105381,
+    "ml_review": true
+   },
+   "sort_order": 100,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "ab4ca462-b497-405d-c2b1-0e9291f76a0f",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "unit",
+   "code": "nut",
+   "name_ml": "തേങ്ങ (എണ്ണം)",
+   "name_en": "nut",
+   "data": {
+    "dimension": "count",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 110,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "bbb1ac74-fd77-c50c-243b-91cbb192d2b3",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "unit",
+   "code": "bunch",
+   "name_ml": "കുല",
+   "name_en": "bunch",
+   "data": {
+    "dimension": "count",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 110,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "933ae1d3-ff04-aea8-91d6-3d61cdc05297",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "unit",
+   "code": "sheet",
+   "name_ml": "ഷീറ്റ്",
+   "name_en": "sheet",
+   "data": {
+    "dimension": "count",
+    "factor": 1,
+    "ml_review": true
+   },
+   "sort_order": 110,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "77a7951a-629c-490e-b1d2-b5054b2b94f6",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "unit",
+   "code": "para",
+   "name_ml": "പറ",
+   "name_en": "para",
+   "data": {
+    "dimension": "mass",
+    "factor": null,
+    "ml_review": true
+   },
+   "sort_order": 110,
+   "is_active": false,
+   "template_version": 2
+  },
+  {
+   "id": "bd6da8ec-d2a1-3481-a77b-ec466834de3f",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "fertiliser",
+   "name_ml": "വളം",
+   "name_en": "Fertiliser",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "1434e1e2-4ab5-adb8-4cd9-405baa29b265",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "wages",
+   "name_ml": "കൂലി",
+   "name_en": "Wages",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "cb307324-f28e-981c-46b4-e38aae082e75",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "seeds",
+   "name_ml": "വിത്ത്, തൈ",
+   "name_en": "Seeds and seedlings",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "c559a6d6-6428-1cc3-257f-5ee5bb56d046",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "machinery",
+   "name_ml": "യന്ത്രം",
+   "name_en": "Machinery",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "72a7bae1-cb37-a321-f543-4e6a4765bd8b",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "transport",
+   "name_ml": "ഗതാഗതം",
+   "name_en": "Transport",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "3c13daf6-7cee-24a9-d46e-16c7db647aca",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "plant_protection",
+   "name_ml": "കീടനാശിനി, കുമിൾനാശിനി",
+   "name_en": "Plant protection",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "e64c267f-b756-0055-3fa4-99142a3fc608",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "irrigation",
+   "name_ml": "ജലസേചനം",
+   "name_en": "Irrigation",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "1889b490-8b67-06d1-5266-7369f3b6e283",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "electricity",
+   "name_ml": "വൈദ്യുതി",
+   "name_en": "Electricity",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "91862626-a8d1-a1cd-4458-002fd159faae",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "lease",
+   "name_ml": "പാട്ടം",
+   "name_en": "Lease rent",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 90,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "68e9ea78-5295-6388-ff53-a18de0ad22a9",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "repairs",
+   "name_ml": "അറ്റകുറ്റപ്പണി",
+   "name_en": "Repairs",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 100,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "9999e278-3746-cd87-7d6e-096d8659a92a",
+   "crop_id": null,
+   "list_type": "expense_category",
+   "code": "other",
+   "name_ml": "മറ്റുള്ളവ",
+   "name_en": "Other",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 900,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "4e1fdb50-fdb8-a34e-7ca3-a4cbbbbc1eb3",
+   "crop_id": null,
+   "list_type": "rate_class",
+   "code": "general",
+   "name_ml": "സാധാരണ പണി",
+   "name_en": "General work",
+   "data": {
+    "default_rate_paise": 80000,
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "af123e4e-3868-beff-4cc0-3831ebab14b1",
+   "crop_id": null,
+   "list_type": "rate_class",
+   "code": "climber",
+   "name_ml": "കയറ്റക്കാർ",
+   "name_en": "Climbers",
+   "data": {
+    "default_rate_paise": 120000,
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "bd8b8093-8236-da14-313e-02ab45b0956d",
+   "crop_id": null,
+   "list_type": "labour_task",
+   "code": "general_work",
+   "name_ml": "പൊതുപണി",
+   "name_en": "General work",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "f1bcb2de-450c-ee5f-953b-65dac04f27e3",
+   "crop_id": null,
+   "list_type": "labour_task",
+   "code": "weeding",
+   "name_ml": "കള പറിക്കൽ",
+   "name_en": "Weeding",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "36da6dac-c31a-2217-8c0d-e1262d31a4e5",
+   "crop_id": null,
+   "list_type": "labour_task",
+   "code": "manuring",
+   "name_ml": "വളമിടൽ",
+   "name_en": "Manuring",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "22d7e51a-4517-bc97-5518-97f4ce4549bd",
+   "crop_id": null,
+   "list_type": "labour_task",
+   "code": "spraying",
+   "name_ml": "മരുന്ന് തളിക്കൽ",
+   "name_en": "Spraying",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "1fb0e5e9-33bc-3d17-a7e8-625f79e46f3d",
+   "crop_id": null,
+   "list_type": "labour_task",
+   "code": "irrigation",
+   "name_ml": "നനയ്ക്കൽ",
+   "name_en": "Irrigation",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "49be9310-4e2e-3113-37a4-1cf805ecd77f",
+   "crop_id": null,
+   "list_type": "labour_task",
+   "code": "harvest",
+   "name_ml": "വിളവെടുപ്പ്",
+   "name_en": "Harvest",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "ff48d0a2-ceef-924b-3c84-dabed7a4e9f1",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "labour_task",
+   "code": "palm_climbing",
+   "name_ml": "തെങ്ങ് കയറ്റം",
+   "name_en": "Palm climbing",
+   "data": {
+    "rate_class": "climber",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "60d8186a-7be8-7d7e-64ba-5240438583b5",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "labour_task",
+   "code": "basin_opening",
+   "name_ml": "തടം തുറക്കൽ",
+   "name_en": "Opening basins",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "411b4d26-14c0-3404-588a-4b80a535758c",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "labour_task",
+   "code": "tapping",
+   "name_ml": "ടാപ്പിംഗ്",
+   "name_en": "Tapping",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "d2f492d2-3107-8f54-c85d-c6ef581b9817",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "labour_task",
+   "code": "sheet_rolling",
+   "name_ml": "ഷീറ്റ് അടിക്കൽ",
+   "name_en": "Sheet rolling",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "49d0e6d5-80c3-bdcf-b9be-826ad8b19a4f",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "labour_task",
+   "code": "pepper_picking",
+   "name_ml": "കുരുമുളക് പറിക്കൽ",
+   "name_en": "Pepper picking",
+   "data": {
+    "rate_class": "climber",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "6085cd5b-515e-5f2d-5dd0-ca7e71cd2784",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "labour_task",
+   "code": "tying_vines",
+   "name_ml": "വള്ളി കെട്ടൽ",
+   "name_en": "Tying vines",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "2816f08d-f4e9-cbe6-2dfc-566c220ce433",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "labour_task",
+   "code": "propping",
+   "name_ml": "താങ്ങുകൊടുക്കൽ",
+   "name_en": "Propping",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "b2126f52-e7a7-067d-9556-8ad28983374c",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "labour_task",
+   "code": "desuckering",
+   "name_ml": "കന്ന് നീക്കൽ",
+   "name_en": "Removing suckers",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "45a9ed75-623e-52af-d2a7-54633ca741fc",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "labour_task",
+   "code": "transplanting",
+   "name_ml": "ഞാറുനടീൽ",
+   "name_en": "Transplanting",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "45bd88cf-9ec2-f3b6-8262-38571599f57f",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "labour_task",
+   "code": "reaping",
+   "name_ml": "കൊയ്ത്ത്",
+   "name_en": "Reaping",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "6882c092-203e-62fe-0cef-036e081375d8",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "labour_task",
+   "code": "threshing",
+   "name_ml": "മെതി",
+   "name_en": "Threshing",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 90,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "f3ca621d-9ce0-4707-fc96-124808a3d620",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "labour_task",
+   "code": "cardamom_picking",
+   "name_ml": "ഏലക്ക പറിക്കൽ",
+   "name_en": "Cardamom picking",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "499fb327-8ebb-3260-bd86-ee4eb042b54b",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "labour_task",
+   "code": "trashing",
+   "name_ml": "ചവറ് നീക്കൽ",
+   "name_en": "Trashing",
+   "data": {
+    "rate_class": "general",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "998351be-7066-0b4f-b275-cdd73bcaefc1",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "activity",
+   "code": "tying_vines",
+   "name_ml": "വള്ളി കെട്ടൽ",
+   "name_en": "Tying vines",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "542b30e3-c28a-c431-c3ef-029cd690a5b5",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "activity",
+   "code": "shade_regulation",
+   "name_ml": "തണൽ ക്രമീകരണം",
+   "name_en": "Shade regulation",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "060c81e3-52c5-46d6-551e-110018bbdf91",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "activity",
+   "code": "mulching",
+   "name_ml": "പുതയിടൽ",
+   "name_en": "Mulching",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "0c1ae3e4-07ed-ee93-84f5-b44506baa1c4",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "activity",
+   "code": "bordeaux_spray",
+   "name_ml": "ബോർഡോ തളിക്കൽ",
+   "name_en": "Bordeaux spray",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "a6e89788-9aaf-1298-ef3d-4921db2154c8",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "activity",
+   "code": "harvest",
+   "name_ml": "വിളവെടുപ്പ്",
+   "name_en": "Harvest",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "6ef2f461-2674-13d1-ca70-99d6c6b8504f",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "activity",
+   "code": "drying",
+   "name_ml": "ഉണക്കൽ",
+   "name_en": "Drying",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "8e611ed4-a333-1f0f-ee24-38c41b8d79a5",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "activity",
+   "code": "basin_opening",
+   "name_ml": "തടം തുറക്കൽ",
+   "name_en": "Opening basins",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "df79e8a0-bbfe-c519-cc07-94ca1dc67b39",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "activity",
+   "code": "fertilising",
+   "name_ml": "വളമിടൽ",
+   "name_en": "Fertilising",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "0ef548c2-27c9-565c-400b-69f5f3246cdb",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "activity",
+   "code": "irrigation",
+   "name_ml": "നനയ്ക്കൽ",
+   "name_en": "Irrigation",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "aacdda98-fa05-c63b-3007-75f73c9c2eec",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "activity",
+   "code": "palm_climbing",
+   "name_ml": "തെങ്ങ് കയറ്റം",
+   "name_en": "Palm climbing",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "3a0e5bf6-ede8-f197-7d00-0929e184b53c",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "activity",
+   "code": "copra_drying",
+   "name_ml": "കൊപ്ര ഉണക്കൽ",
+   "name_en": "Copra drying",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "0b31a59a-0b27-e8db-b948-8b6ffe28b3e0",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "activity",
+   "code": "tapping",
+   "name_ml": "ടാപ്പിംഗ്",
+   "name_en": "Tapping",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "dc31b567-88e8-1c94-7078-ba17285ab7b0",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "activity",
+   "code": "sheet_rolling",
+   "name_ml": "ഷീറ്റ് അടിക്കൽ",
+   "name_en": "Sheet rolling",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "16dfde0e-b295-553d-896b-b25823eb99cd",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "activity",
+   "code": "smoking",
+   "name_ml": "പുകയ്ക്കൽ",
+   "name_en": "Smoking",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "ea2413d4-01d2-1394-122d-fff5e57b2b8c",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "activity",
+   "code": "rain_guarding",
+   "name_ml": "റെയിൻ ഗാർഡ്",
+   "name_en": "Rain guarding",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "d57257c1-7d71-1ecd-00bb-0fc448d9c618",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "activity",
+   "code": "weeding",
+   "name_ml": "കള വെട്ടൽ",
+   "name_en": "Weeding",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "20e702ce-f1f7-336a-3cd5-7d2c11edc724",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "activity",
+   "code": "planting",
+   "name_ml": "നടീൽ",
+   "name_en": "Planting",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "2c2d18c4-5261-130e-faae-575df986efed",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "activity",
+   "code": "fertilising",
+   "name_ml": "വളമിടൽ",
+   "name_en": "Fertilising",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "5b7a3640-e253-7b68-9e3f-2c42849c54ee",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "activity",
+   "code": "irrigation",
+   "name_ml": "നനയ്ക്കൽ",
+   "name_en": "Irrigation",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "1f7019a0-3727-d062-ce34-7c5687413d4e",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "activity",
+   "code": "propping",
+   "name_ml": "താങ്ങുകൊടുക്കൽ",
+   "name_en": "Propping",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "6ad26416-86c6-371c-8887-7fed610302fc",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "activity",
+   "code": "desuckering",
+   "name_ml": "കന്ന് നീക്കൽ",
+   "name_en": "Removing suckers",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "414161d1-64b0-828a-d8c2-4a8b5cfee464",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "activity",
+   "code": "harvest",
+   "name_ml": "വിളവെടുപ്പ്",
+   "name_en": "Harvest",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "703668a1-39e4-d9a8-368a-f6bb290376a5",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "activity",
+   "code": "land_preparation",
+   "name_ml": "നിലമൊരുക്കൽ",
+   "name_en": "Land preparation",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "905b1ee5-8ae4-6565-ceaf-66506eaf73e7",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "activity",
+   "code": "sowing",
+   "name_ml": "വിതയ്ക്കൽ",
+   "name_en": "Sowing",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "edb8892a-bfcf-9608-dd54-991d79892f02",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "activity",
+   "code": "transplanting",
+   "name_ml": "ഞാറുനടീൽ",
+   "name_en": "Transplanting",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "ae657a06-a7b3-45e6-7cd0-d6654958c493",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "activity",
+   "code": "weeding",
+   "name_ml": "കള പറിക്കൽ",
+   "name_en": "Weeding",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "94029572-425a-7704-ff84-9a9b2d31ad6e",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "activity",
+   "code": "fertilising",
+   "name_ml": "വളമിടൽ",
+   "name_en": "Fertilising",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "e98a16c4-01ac-d538-a2f9-eb06cca4fc4e",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "activity",
+   "code": "reaping",
+   "name_ml": "കൊയ്ത്ത്",
+   "name_en": "Reaping",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "a955b6c9-96e6-5a52-ad20-85d2fc80a7e2",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "activity",
+   "code": "shade_regulation",
+   "name_ml": "തണൽ ക്രമീകരണം",
+   "name_en": "Shade regulation",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "58fce2f8-47f6-b50a-f07d-982dc1e17660",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "activity",
+   "code": "trashing",
+   "name_ml": "ചവറ് നീക്കൽ",
+   "name_en": "Trashing",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "8794e2d7-8886-ad49-f202-9fce1cbe5042",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "activity",
+   "code": "fertilising",
+   "name_ml": "വളമിടൽ",
+   "name_en": "Fertilising",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "bacb7864-f893-8701-1b61-d067237bb230",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "activity",
+   "code": "spraying",
+   "name_ml": "മരുന്ന് തളിക്കൽ",
+   "name_en": "Spraying",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "77ac6d93-c217-a7f9-410c-ffa0449d9a09",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "activity",
+   "code": "picking",
+   "name_ml": "വിളവെടുപ്പ്",
+   "name_en": "Picking",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "4c048324-9273-fdab-5ae2-d00ca8784bcb",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "activity",
+   "code": "curing",
+   "name_ml": "ഉണക്കൽ",
+   "name_en": "Curing",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "bf5188d9-50a5-1771-1879-edb827a5c983",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "input",
+   "code": "neem_cake",
+   "name_ml": "വേപ്പിൻപിണ്ണാക്ക്",
+   "name_en": "Neem cake",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "7e9f0884-adb1-14f8-6ad1-934ba3be2095",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "input",
+   "code": "bordeaux_mixture",
+   "name_ml": "ബോർഡോ മിശ്രിതം",
+   "name_en": "Bordeaux mixture",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "afc42b3c-53e6-4015-f4e4-6d7f4f5bb874",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "input",
+   "code": "trichoderma",
+   "name_ml": "ട്രൈക്കോഡെർമ",
+   "name_en": "Trichoderma",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "d192ac0d-aeec-647c-0b35-45abf43c40a1",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "input",
+   "code": "organic_manure",
+   "name_ml": "ജൈവവളം",
+   "name_en": "Organic manure",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "eb38f75a-9fa3-ad4d-04a6-14b430c7a34a",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "input",
+   "code": "potash",
+   "name_ml": "പൊട്ടാഷ്",
+   "name_en": "Potash",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "c52453e4-96a6-db1f-f27b-2461fe73a75c",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "input",
+   "code": "lime",
+   "name_ml": "കുമ്മായം",
+   "name_en": "Lime",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "8de4d2df-56bd-1667-b4df-57621a5cfc41",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "input",
+   "code": "rubber_mixture",
+   "name_ml": "റബ്ബർ മിശ്രിത വളം",
+   "name_en": "Rubber mixture fertiliser",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "bfa4a99d-f445-9d1d-b2c7-5a83bdcdcba8",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "input",
+   "code": "formic_acid",
+   "name_ml": "ഫോർമിക് ആസിഡ്",
+   "name_en": "Formic acid",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "162dd2d3-01c6-53e0-7a92-7a60826ac38f",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "input",
+   "code": "rain_guard",
+   "name_ml": "റെയിൻ ഗാർഡ്",
+   "name_en": "Rain guard",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "8b21ef51-2c70-53d4-0b5f-26fd88f9b621",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "grade",
+   "code": "garbled",
+   "name_ml": "ഗാർബിൾഡ്",
+   "name_en": "Garbled",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "b20e1406-be01-6e07-30c5-805e9de5e83e",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "grade",
+   "code": "ungarbled",
+   "name_ml": "അൺഗാർബിൾഡ്",
+   "name_en": "Ungarbled",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "5e185fa8-1795-03da-b219-6566acd9aff7",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "grade",
+   "code": "green",
+   "name_ml": "പച്ച",
+   "name_en": "Green",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "f51bcb43-2126-e0bc-b656-b12527a9e61f",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "grade",
+   "code": "whole_nut",
+   "name_ml": "തേങ്ങ",
+   "name_en": "Whole nut",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "76ecd7c6-40bf-7c9a-97de-6ef699788dcf",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "grade",
+   "code": "copra",
+   "name_ml": "കൊപ്ര",
+   "name_en": "Copra",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "1f9ec31a-19d0-41e1-da86-42e85e1f7a10",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "grade",
+   "code": "tender_coconut",
+   "name_ml": "ഇളനീർ",
+   "name_en": "Tender coconut",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "e8873839-7c44-b3a1-73dd-a24a771e556b",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "grade",
+   "code": "rss4",
+   "name_ml": "RSS-4",
+   "name_en": "RSS-4",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "c89554a9-f27c-8669-0d9e-c0bd61403070",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "grade",
+   "code": "rss5",
+   "name_ml": "RSS-5",
+   "name_en": "RSS-5",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "70cd0df8-f1cc-2da0-0e31-c64784e3cc93",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "grade",
+   "code": "latex",
+   "name_ml": "ലാറ്റെക്സ്",
+   "name_en": "Latex",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "47237320-c685-eb10-0a1d-1d3271ddc3d8",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "grade",
+   "code": "scrap",
+   "name_ml": "ഒട്ടുപാൽ",
+   "name_en": "Scrap",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "fa403bd8-890c-7d02-8901-7a83424d159b",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "grade",
+   "code": "grade_a",
+   "name_ml": "എ ഗ്രേഡ്",
+   "name_en": "Grade A",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "a42219f5-e030-7669-c0ea-f157af46a6b9",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "grade",
+   "code": "grade_b",
+   "name_ml": "ബി ഗ്രേഡ്",
+   "name_en": "Grade B",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "3de1bb85-115b-9a78-d24b-54d560a94ac1",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "grade",
+   "code": "raw",
+   "name_ml": "പച്ചനെല്ല്",
+   "name_en": "Raw paddy",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "44ec6d5d-4e33-9ab0-bb4e-872483a0cba1",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "grade",
+   "code": "dried",
+   "name_ml": "ഉണക്കനെല്ല്",
+   "name_en": "Dried paddy",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "da99d6c6-6497-1b4d-26a1-cb133f78b631",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "grade",
+   "code": "size_8mm",
+   "name_ml": "8 മി.മീ.ക്ക് മുകളിൽ",
+   "name_en": "8 mm and above",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "bf2d34bf-3246-ef43-6cd8-b6a7da668819",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "grade",
+   "code": "size_7mm",
+   "name_ml": "7–8 മി.മീ.",
+   "name_en": "7 to 8 mm",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "30d29f0d-155c-0ef5-a7fb-5739f7ba3128",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "grade",
+   "code": "size_6mm",
+   "name_ml": "6–7 മി.മീ.",
+   "name_en": "6 to 7 mm",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "70794c53-9d2f-cb29-a85f-3165fb21cdc8",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "grade",
+   "code": "below_6mm",
+   "name_ml": "6 മി.മീ.ക്ക് താഴെ",
+   "name_en": "Below 6 mm",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "ba1e6554-78c6-8a4b-a2ec-ef9032dc4146",
+   "crop_id": null,
+   "list_type": "setting",
+   "code": "overtime_rate_paise",
+   "name_ml": "ഓവർടൈം നിരക്ക് (മണിക്കൂറിന്)",
+   "name_en": "Overtime rate per hour",
+   "data": {
+    "value": 15000,
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "756a25f7-d89a-9449-8982-7515295585d6",
+   "crop_id": null,
+   "list_type": "setting",
+   "code": "labour_split",
+   "name_ml": "കൂലി വീതിക്കൽ",
+   "name_en": "Labour cost split",
+   "data": {
+    "value": "like_expense",
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "9cf5cb75-8965-471b-9773-83e1200435da",
+   "crop_id": "8cef95ee-f8f5-7064-ea94-87a3472a9df3",
+   "list_type": "setting",
+   "code": "split_weight",
+   "name_ml": "ചെലവ് വിഹിതം",
+   "name_en": "Default cost share",
+   "data": {
+    "value": 60,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "d733a99f-0502-7a23-e49b-702cf816f7d1",
+   "crop_id": "cf4a88d1-e763-4c91-24b8-396ef55d481d",
+   "list_type": "setting",
+   "code": "split_weight",
+   "name_ml": "ചെലവ് വിഹിതം",
+   "name_en": "Default cost share",
+   "data": {
+    "value": 60,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "97836f18-f2ca-bcf0-84b6-de40db0db932",
+   "crop_id": "865569b8-fe57-ef60-1151-bf4b96d3453f",
+   "list_type": "setting",
+   "code": "split_weight",
+   "name_ml": "ചെലവ് വിഹിതം",
+   "name_en": "Default cost share",
+   "data": {
+    "value": 30,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "ea1116dd-4e50-86f8-9868-3a3152fdc63a",
+   "crop_id": "5bf7a0c5-ae07-dfd7-8c06-26356d5253ce",
+   "list_type": "setting",
+   "code": "split_weight",
+   "name_ml": "ചെലവ് വിഹിതം",
+   "name_en": "Default cost share",
+   "data": {
+    "value": 10,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "4a098e03-05df-d2ab-21f9-541b274d572a",
+   "crop_id": "e246a918-f2bb-eb9d-b0be-030096af2752",
+   "list_type": "setting",
+   "code": "split_weight",
+   "name_ml": "ചെലവ് വിഹിതം",
+   "name_en": "Default cost share",
+   "data": {
+    "value": 60,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  },
+  {
+   "id": "7e2db6dc-19ec-8ef3-148c-f9976d539a4d",
+   "crop_id": "b9e96945-2ae6-f203-f2ea-130c537b7218",
+   "list_type": "setting",
+   "code": "split_weight",
+   "name_ml": "ചെലവ് വിഹിതം",
+   "name_en": "Default cost share",
+   "data": {
+    "value": 60,
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 1
+  }
+ ]
+}
