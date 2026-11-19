@@ -143,6 +143,11 @@ class Overrides {
   /// `farms.accepted_template_version`.
   final int acceptedVersion;
 
+  /// The newest template version on the phone; above [acceptedVersion],
+  /// My lists says new items are available.
+  int get latestVersion =>
+      _items.fold(0, (m, i) => i.templateVersion > m ? i.templateVersion : m);
+
   /// The value of data [field] of item [listType]/[code] in [scope], or null
   /// when no level sets it. A non-null [entryValue] (the value typed on the
   /// entry itself) wins over every other level.
