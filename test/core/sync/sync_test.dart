@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:thottam/core/access/access.dart';
 import 'package:thottam/core/db/database.dart';
 import 'package:thottam/core/history/write_with_history.dart';
 import 'package:thottam/core/sync/sync_engine.dart';
@@ -861,6 +862,67 @@ void main() {
     });
     await s.sync();
     expect(await s.count(money), greaterThan(0));
+  });
+
+  test('narrower access drops what can no longer be read', () async {
+    await setUpFarm();
+    await b.write([
+      const CreateRow('notes', {
+        'id': 'n11',
+        'farm_id': farm,
+        'noted_on': '2026-11-18',
+        'body': 'daily',
+      }),
+    ]);
+    await b.sync();
+    expect(await b.row('expenses', 'e1'), isNotNull);
+    expect(await b.row('farm_members', 'm-owner'), isNotNull);
+    // the owner makes the manager a supervisor while their phone is offline,
+    // with a money entry of theirs still waiting
+    server.down = true;
+    await b.write([
+      const CreateRow('other_income', {
+        'id': 'i1',
+        'farm_id': farm,
+        'received_on': '2026-11-18',
+        'source_code': 'subsidy',
+        'amount_paise': 100000,
+      }),
+    ]);
+    server.down = false;
+    server.put('farm_members', {
+      ...server.row('farm_members', 'm-manager')!,
+      'role': 'supervisor',
+      'version': 2,
+    });
+    server.denied[manager] = {'other_income'};
+    bool money(String t) => tableAccess[t] == AccessClass.money;
+    server.hidden = (user, table, row) =>
+        user == manager &&
+        (money(table) ||
+            (table == 'event_log' && money(row['entity']! as String)) ||
+            (table == 'farm_members' && row['user_id'] != manager));
+    await b.sync();
+    // money, its history and the other members leave the phone
+    expect(await b.row('expenses', 'e1'), isNull);
+    expect(
+      await b.count(
+        "SELECT COUNT(*) FROM event_log WHERE entity = 'expenses'",
+      ),
+      0,
+    );
+    expect(await b.row('farm_members', 'm-owner'), isNull);
+    // daily work, set-up, their own membership and its history stay
+    expect(await b.row('notes', 'n11'), isNotNull);
+    expect(await b.row('plots', 'p1'), isNotNull);
+    expect((await b.row('farm_members', 'm-manager'))!['role'], 'supervisor');
+    expect(
+      await b.count("SELECT COUNT(*) FROM event_log WHERE entity = 'notes'"),
+      greaterThan(0),
+    );
+    // the refused entry stays, shown as refused, not lost unseen
+    expect(await b.row('other_income', 'i1'), isNotNull);
+    expect((await b.engine.watchStatus().first).rejected, 1);
   });
 
   test('an upload for one person is never sent as another', () async {
