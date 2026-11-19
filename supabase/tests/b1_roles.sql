@@ -412,6 +412,14 @@ select pg_temp.check('every seeded crop has activities, grades and labour tasks'
   (select count(*) from public.crops c where c.owner_farm_id is null and
      (select count(distinct t.list_type) from public.template_items t
       where t.crop_id = c.id and t.list_type in ('activity', 'grade', 'labour_task', 'setting')) = 4) = 6);
+select pg_temp.check('only standard units are offered',
+  (select array_agg(code order by code) from public.template_items
+   where list_type = 'unit' and is_active)
+  = array['acre', 'are', 'bunch', 'cent', 'g', 'hectare', 'kg', 'litre', 'nut', 'piece',
+          'quintal', 'sheet', 'tonne']);
+select pg_temp.check('a retired unit is kept for entries that used it',
+  exists (select 1 from public.template_items where list_type = 'unit' and code = 'para'
+          and not is_active and template_version = 2));
 select pg_temp.check('viewer reads templates',
   pg_temp.try_as(pg_temp.u('viewer_a'), 'select 1 from public.template_items limit 1') = 'ok:1');
 select pg_temp.check('clients cannot write templates',
@@ -587,6 +595,20 @@ select pg_temp.check('a table added later cannot be truncated or hard-deleted by
   and not has_table_privilege('authenticated', 'public.zz_later_table', 'delete'));
 select pg_temp.check('a function added later is closed to signed-out users',
   not has_function_privilege('anon', 'public.zz_later_function()', 'execute'));
+select pg_temp.check('a function added later is closed to signed-in users until granted',
+  not has_function_privilege('authenticated', 'public.zz_later_function()', 'execute'));
+select pg_temp.check('signed-in users call only the functions granted to them',
+  (select array_agg(p.proname::text order by p.proname) from pg_proc p
+   join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public' and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
+     and has_function_privilege('authenticated', p.oid, 'execute'))
+  = array['accept_invite', 'access_level', 'create_farm', 'decline_invite', 'farm_exists',
+          'is_money_or_quantity', 'my_co_members', 'my_entities', 'my_farms', 'my_invites',
+          'my_owned_farms', 'sync_columns', 'sync_insert', 'sync_push', 'sync_write'],
+  (select string_agg(p.proname, ', ' order by p.proname) from pg_proc p
+   join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public' and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
+     and has_function_privilege('authenticated', p.oid, 'execute')));
 
 -- ---------- a removed member loses access at once ----------
 select pg_temp.check('owner removes the supervisor',

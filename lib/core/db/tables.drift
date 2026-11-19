@@ -633,6 +633,7 @@ CREATE TABLE outbox (
   row_id TEXT NOT NULL,
   base_version INTEGER NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending', -- pending, sending, rejected
+  batch_id TEXT,               -- set when sent; a retry resends the same batch
   attempts INTEGER NOT NULL DEFAULT 0,
   last_error TEXT,
   created_at INTEGER NOT NULL,
@@ -641,6 +642,7 @@ CREATE TABLE outbox (
 
 CREATE INDEX outbox_queue ON outbox (status, created_at);
 CREATE UNIQUE INDEX outbox_pending ON outbox (entity, row_id) WHERE status = 'pending';
+CREATE INDEX outbox_row ON outbox (entity, row_id, status);
 
 -- The last server_seq pulled, per farm and table ('' farm for master data).
 CREATE TABLE sync_state (

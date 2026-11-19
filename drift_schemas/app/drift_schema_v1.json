@@ -5548,6 +5548,16 @@
             "dsl_features": []
           },
           {
+            "name": "batch_id",
+            "getter_name": "batchId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
             "name": "attempts",
             "getter_name": "attempts",
             "moor_type": "int",
@@ -5623,6 +5633,20 @@
     },
     {
       "id": 84,
+      "references": [
+        81
+      ],
+      "type": "index",
+      "data": {
+        "on": 81,
+        "name": "outbox_row",
+        "sql": "CREATE INDEX outbox_row ON outbox (entity, row_id, status);",
+        "unique": false,
+        "columns": []
+      }
+    },
+    {
+      "id": 85,
       "references": [],
       "type": "table",
       "data": {
@@ -5682,7 +5706,7 @@
       }
     },
     {
-      "id": 85,
+      "id": 86,
       "references": [],
       "type": "table",
       "data": {
@@ -5808,13 +5832,13 @@
       }
     },
     {
-      "id": 86,
+      "id": 87,
       "references": [
-        85
+        86
       ],
       "type": "index",
       "data": {
-        "on": 85,
+        "on": 86,
         "name": "conflicts_open",
         "sql": "CREATE INDEX conflicts_open ON conflicts (farm_id, created_at) WHERE resolved_at IS NULL;",
         "unique": false,
@@ -5822,7 +5846,7 @@
       }
     },
     {
-      "id": 87,
+      "id": 88,
       "references": [],
       "type": "table",
       "data": {
@@ -5928,13 +5952,13 @@
       }
     },
     {
-      "id": 88,
+      "id": 89,
       "references": [
-        87
+        88
       ],
       "type": "index",
       "data": {
-        "on": 87,
+        "on": 88,
         "name": "photo_uploads_queue",
         "sql": "CREATE INDEX photo_uploads_queue ON photo_uploads (status, created_at);",
         "unique": false,
@@ -5942,7 +5966,7 @@
       }
     },
     {
-      "id": 89,
+      "id": 90,
       "references": [],
       "type": "table",
       "data": {
@@ -6713,7 +6737,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"outbox\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"farm_id\" TEXT NOT NULL, \"entity\" TEXT NOT NULL, \"row_id\" TEXT NOT NULL, \"base_version\" INTEGER NOT NULL, \"status\" TEXT NOT NULL DEFAULT 'pending', \"attempts\" INTEGER NOT NULL DEFAULT 0, \"last_error\" TEXT, \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"outbox\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"farm_id\" TEXT NOT NULL, \"entity\" TEXT NOT NULL, \"row_id\" TEXT NOT NULL, \"base_version\" INTEGER NOT NULL, \"status\" TEXT NOT NULL DEFAULT 'pending', \"batch_id\" TEXT, \"attempts\" INTEGER NOT NULL DEFAULT 0, \"last_error\" TEXT, \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL);"
         }
       ]
     },
@@ -6732,6 +6756,15 @@
         {
           "dialect": "sqlite",
           "sql": "CREATE UNIQUE INDEX outbox_pending ON outbox (entity, row_id) WHERE status = 'pending'"
+        }
+      ]
+    },
+    {
+      "name": "outbox_row",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX outbox_row ON outbox (entity, row_id, status)"
         }
       ]
     },

@@ -1,8 +1,9 @@
 """Runs the server tests in supabase/tests against a Supabase project, safely.
 
-Each test file runs in one transaction together with every migration, and ends by
-raising its TEST SUMMARY as an error, so nothing is ever kept in the project, even
-on an empty one. Needs the Supabase CLI, signed in with an account that can run SQL
+Each test file runs in one transaction together with every migration the project
+has not applied yet, and ends by raising its TEST SUMMARY as an error, so nothing
+is ever kept in the project. Applied migrations are never edited (add a new one),
+so the project's schema is what they made. Needs the Supabase CLI, signed in with an account that can run SQL
 on the project (SUPABASE_CLI points at it when it is not on PATH).
 
     python tool/server_tests.py <project ref>
@@ -15,12 +16,29 @@ import sys
 import tempfile
 
 
+def applied(cli: str, ref: str) -> set:
+    """Versions in the project's migration history; none on an empty project."""
+    run = subprocess.run([cli, 'db', 'query', f'--remote={ref}', '--yes',
+                          "select coalesce(string_agg(version, ','), '') as v "
+                          'from supabase_migrations.schema_migrations'],
+                         capture_output=True, text=True, encoding='utf-8')
+    m = re.search(r'"v": "([^"]*)"', run.stdout + run.stderr)
+    if m:
+        return set(filter(None, m[1].split(',')))
+    if 'does not exist' in run.stdout + run.stderr:
+        return set()
+    sys.exit(f'could not read the migration history:\n{(run.stdout + run.stderr)[-2000:]}')
+
+
 def main(ref: str) -> int:
     cli = os.environ.get('SUPABASE_CLI', 'supabase')
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    migrations = ''.join(
-        open(p, encoding='utf-8').read() + '\n'
-        for p in sorted(glob.glob(os.path.join(root, 'supabase', 'migrations', '*.sql'))))
+    done = applied(cli, ref)
+    files = sorted(glob.glob(os.path.join(root, 'supabase', 'migrations', '*.sql')))
+    pending = [p for p in files if os.path.basename(p).split('_', 1)[0] not in done]
+    print(f'applied in the project: {len(files) - len(pending)}; '
+          f'run with the tests: {", ".join(os.path.basename(p) for p in pending) or "none"}')
+    migrations = ''.join(open(p, encoding='utf-8').read() + '\n' for p in pending)
     failed = False
     for test in sorted(glob.glob(os.path.join(root, 'supabase', 'tests', '*.sql'))):
         body = open(test, encoding='utf-8').read()
