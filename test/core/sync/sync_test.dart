@@ -751,6 +751,63 @@ void main() {
     expect((await b.engine.watchStatus().first).rejected, 0);
   });
 
+  test('a row made offline and changed after a failed try is not a conflict '
+      'with itself', () async {
+    await setUpFarm();
+    server.down = true;
+    await a.write([
+      const CreateRow('expenses', {
+        'id': 'e2',
+        'farm_id': farm,
+        'spent_on': '2026-11-18',
+        'category_code': 'seeds',
+        'amount_paise': 1000,
+      }),
+      const CreateRow('expenses', {
+        'id': 'e3',
+        'farm_id': farm,
+        'spent_on': '2026-11-18',
+        'category_code': 'seeds',
+        'amount_paise': 500,
+      }),
+    ]);
+    await expectLater(a.sync(), throwsA(isA<SyncUnavailable>()));
+    await a.write([
+      const UpdateRow('expenses', 'e2', {'amount_paise': 2000}),
+    ]);
+    await a.write([const DeleteRow('expenses', 'e3')]);
+    server.down = false;
+    await a.sync();
+    expect(await a.count('SELECT COUNT(*) FROM conflicts'), 0);
+    expect(server.row('expenses', 'e2')!['amount_paise'], 2000);
+    expect(server.row('expenses', 'e3')!['deleted_at'], isNotNull);
+    expect(await a.count('SELECT COUNT(*) FROM outbox'), 0);
+  });
+
+  test('a split saved and undone before it synced needs no choice', () async {
+    await setUpFarm();
+    final saved = await a.write([
+      const CreateRow('expenses', {
+        'id': 'e4',
+        'farm_id': farm,
+        'spent_on': '2026-11-18',
+        'category_code': 'seeds',
+        'amount_paise': 1000,
+      }),
+      const CreateRow('expense_allocations', {
+        'id': 'ea4',
+        'farm_id': farm,
+        'expense_id': 'e4',
+        'crop_cycle_id': 'c1',
+        'amount_paise': 1000,
+      }),
+    ]);
+    await a.history.undo(saved);
+    await a.sync();
+    expect(await a.count('SELECT COUNT(*) FROM conflicts'), 0);
+    expect(server.row('expense_allocations', 'ea4')!['deleted_at'], isNotNull);
+  });
+
   test('a refused change gives way to the server row', () async {
     await setUpFarm();
     await a.write([

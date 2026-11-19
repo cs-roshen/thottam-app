@@ -7,18 +7,23 @@ import '../money/money.dart';
 /// `lib/core/db/tables.drift` (timestamps as DateTime, JSON as maps and lists).
 typedef SeedTables = Map<String, List<Map<String, Object?>>>;
 
-/// Three years of realistic data for one farm (implementation plan section
-/// 14), for benchmarks and tests only; never shipped to farmers. The same
-/// [seed] always gives the same rows. B2 inserts these into Drift.
-SeedTables generateBenchmarkSeed({int seed = 42, DateTime? until}) =>
-    _Seed(Random(seed), until ?? DateTime.utc(2026, 11, 17)).build();
+/// [years] of realistic data for one farm, three by default (implementation
+/// plan section 14), for benchmarks and tests only; never shipped to
+/// farmers. The same [seed] always gives the same rows. B2 inserts these into
+/// Drift. Entry counts grow with [years] at the same pace per year.
+SeedTables generateBenchmarkSeed({
+  int seed = 42,
+  DateTime? until,
+  int years = 3,
+}) => _Seed(Random(seed), until ?? DateTime.utc(2026, 11, 17), years).build();
 
 class _Seed {
-  _Seed(this.r, this.until)
-    : from = until.subtract(const Duration(days: 3 * 365));
+  _Seed(this.r, this.until, this.years)
+    : from = until.subtract(Duration(days: years * 365));
 
   final Random r;
   final DateTime until;
+  final int years;
   final DateTime from;
   final SeedTables t = {};
   final String user = '00000000-0000-7000-8000-000000000001';
@@ -31,7 +36,10 @@ class _Seed {
       day.add(Duration(hours: 7, milliseconds: _clock++));
 
   DateTime _day(int i, int count) =>
-      from.add(Duration(days: (i * 3 * 365) ~/ count));
+      from.add(Duration(days: (i * years * 365) ~/ count));
+
+  /// [perThreeYears] scaled to [years].
+  int _n(int perThreeYears) => perThreeYears * years ~/ 3;
 
   String _date(DateTime d) => d.toIso8601String().substring(0, 10);
 
@@ -153,8 +161,8 @@ class _Seed {
         }),
     ];
 
-    for (var i = 0; i < 15000; i++) {
-      final day = _day(i, 15000);
+    for (var i = 0; i < _n(15000); i++) {
+      final day = _day(i, _n(15000));
       final cycle = _pick(cycles);
       final byGroup = r.nextInt(5) == 0;
       final heads = byGroup ? 3 + r.nextInt(8) : 1;
@@ -189,8 +197,8 @@ class _Seed {
       _maybeEdit('labour_entries', entry, 'rate_paise', rate + 5000, day);
     }
 
-    for (var i = 0; i < 6000; i++) {
-      final day = _day(i, 6000);
+    for (var i = 0; i < _n(6000); i++) {
+      final day = _day(i, _n(6000));
       final plot = _pick(plots);
       final amount = (50 + r.nextInt(5000)) * 100 + r.nextInt(100);
       final expense = _row('expenses', day, {
@@ -218,8 +226,8 @@ class _Seed {
     }
 
     final lots = <Map<String, Object?>>[];
-    for (var i = 0; i < 1500; i++) {
-      final day = _day(i, 1500);
+    for (var i = 0; i < _n(1500); i++) {
+      final day = _day(i, _n(1500));
       final cycle = _pick(cycles);
       final qty = (20 + r.nextInt(400)) * 1000; // thousandths of a kg
       final harvest = _row('harvests', day, {
@@ -258,8 +266,8 @@ class _Seed {
     }
 
     final stockLeft = <String, int>{};
-    for (var i = 0; i < 1200; i++) {
-      final lotIndex = (i * 1500) ~/ 1200;
+    for (var i = 0; i < _n(1200); i++) {
+      final lotIndex = (i * _n(1500)) ~/ _n(1200);
       final lot = lots[lotIndex];
       final day = DateTime.parse(
         (t['harvests']![lotIndex]['harvested_on'])! as String,
@@ -287,7 +295,7 @@ class _Seed {
       stockLeft[lot['id']! as String] = left - qty;
     }
     // what each worker and group was paid, about once a month
-    for (var month = 0; month < 36; month++) {
+    for (var month = 0; month < 12 * years; month++) {
       final day = from.add(Duration(days: month * 30 + 29));
       for (final payee in [...workers, ...groups]) {
         final isWorker = workers.contains(payee);
@@ -302,8 +310,8 @@ class _Seed {
       }
     }
 
-    for (var i = 0; i < 1000; i++) {
-      final day = _day(i, 1000);
+    for (var i = 0; i < _n(1000); i++) {
+      final day = _day(i, _n(1000));
       final cycle = _pick(cycles);
       _row('notes', day, {
         'noted_on': _date(day),
@@ -313,8 +321,8 @@ class _Seed {
       });
     }
 
-    for (var i = 0; i < 1500; i++) {
-      final day = _day(i, 1500);
+    for (var i = 0; i < _n(1500); i++) {
+      final day = _day(i, _n(1500));
       final cycle = _pick(cycles);
       final task = _row('tasks', day, {
         'title': 'task_${i + 1}',
@@ -324,7 +332,7 @@ class _Seed {
         'source': _pick(['manual', 'calendar']),
       });
       // most past tasks were ticked off; the last few weeks' are open
-      if (i < 1450) {
+      if (i < _n(1500) - 50) {
         final at = _at(day);
         task['done_at'] = at;
         _event(
@@ -338,8 +346,8 @@ class _Seed {
       }
     }
 
-    for (var i = 0; i < 150; i++) {
-      final day = _day(i, 150);
+    for (var i = 0; i < _n(150); i++) {
+      final day = _day(i, _n(150));
       _row('other_income', day, {
         'received_on': _date(day),
         'source_code': _pick(['subsidy', 'rent', 'other']),

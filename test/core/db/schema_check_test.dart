@@ -7,7 +7,15 @@ import 'package:thottam/core/db/synced_tables.dart';
 /// migrations and the phone's schema agree on every synced table's columns,
 /// apart from the server-only server_seq.
 void main() {
-  const serverOnlyTables = {'sync_tables', 'sync_batches', 'sync_row_versions'};
+  const serverOnlyTables = {
+    'sync_tables',
+    'sync_batches',
+    'sync_row_versions',
+    // the admin console's (0006): never on a phone
+    'app_admins',
+    'template_drafts',
+    'template_releases',
+  };
   const phoneOnlyTables = {
     'outbox',
     'sync_state',
