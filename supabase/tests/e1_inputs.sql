@@ -100,13 +100,12 @@ select pg_temp.check('a movement of nothing is refused',
   pg_temp.try_as(pg_temp.id('user:owner_a'), format(
     'insert into public.stock_movements (id, farm_id, item_id, moved_on, kind, quantity) values (%L, %L, %L, %L, %L, 0)',
     gen_random_uuid(), pg_temp.id('farm:a'), pg_temp.id('a:potash'), '2026-06-02', 'adjustment')) like 'err:23514%');
-select pg_temp.check('a waiting period without its source is refused',
+select pg_temp.check('the farmer''s own waiting period is kept, with no source asked',
   pg_temp.try_as(pg_temp.id('user:owner_a'), format(
-    'update public.input_items set waiting_days = 15 where id = %L', pg_temp.id('a:potash'))) like 'err:23514%');
-select pg_temp.check('a waiting period with its source is kept',
+    'update public.input_items set waiting_days = 15 where id = %L', pg_temp.id('a:potash'))) = 'ok:1');
+select pg_temp.check('a negative waiting period is refused',
   pg_temp.try_as(pg_temp.id('user:owner_a'), format(
-    'update public.input_items set waiting_days = 15, waiting_source = %L where id = %L',
-    'Product label', pg_temp.id('a:potash'))) = 'ok:1');
+    'update public.input_items set waiting_days = -1 where id = %L', pg_temp.id('a:potash'))) like 'err:23514%');
 select pg_temp.check('an item with no name and no template item is refused',
   pg_temp.try_as(pg_temp.id('user:owner_a'), format(
     'insert into public.input_items (id, farm_id) values (%L, %L)', gen_random_uuid(), pg_temp.id('farm:a'))) like 'err:23514%');
@@ -129,26 +128,17 @@ select pg_temp.check('a supervisor uploads an application and its movement',
    from pg_temp.push(pg_temp.id('user:supervisor_a'), 'batch:apply', pg_temp.id('farm:a'), jsonb_build_array(
      pg_temp.r('input_applications', pg_temp.id('a:apply'), pg_temp.id('farm:a'), jsonb_build_object(
        'applied_on', '2026-06-15', 'item_id', pg_temp.id('a:potash'), 'plot_id', pg_temp.id('a:plot'),
-       'crop_cycle_id', pg_temp.id('a:cycle'), 'waiting_days', 15)),
+       'crop_cycle_id', pg_temp.id('a:cycle'), 'waiting_days', 15, 'dose', '2 ml per litre')),
      pg_temp.r('stock_movements', pg_temp.id('a:used'), pg_temp.id('farm:a'), jsonb_build_object(
        'item_id', pg_temp.id('a:potash'), 'moved_on', '2026-06-15', 'kind', 'application', 'quantity', -30000,
-       'application_id', pg_temp.id('a:apply'))))) v));
+       'application_id', pg_temp.id('a:apply'))))) v)
+  and (select dose from public.input_applications where id = pg_temp.id('a:apply')) = '2 ml per litre');
 select pg_temp.check('an accountant cannot upload an application (daily work)',
   (select jsonb_array_length(v -> 'rejected') = 1
    from pg_temp.push(pg_temp.id('user:accountant_a'), 'batch:accountant', pg_temp.id('farm:a'), jsonb_build_array(
      pg_temp.r('input_applications', pg_temp.id('a:apply2'), pg_temp.id('farm:a'), jsonb_build_object(
        'applied_on', '2026-06-16', 'item_id', pg_temp.id('a:potash'), 'plot_id', pg_temp.id('a:plot'),
        'crop_cycle_id', pg_temp.id('a:cycle'))))) v));
-select pg_temp.check('a supervisor cannot upload an edited cost (money)',
-  (select jsonb_array_length(v -> 'rejected') = 1
-   from pg_temp.push(pg_temp.id('user:supervisor_a'), 'batch:cost', pg_temp.id('farm:a'), jsonb_build_array(
-     pg_temp.r('input_application_costs', pg_temp.id('a:apply'), pg_temp.id('farm:a'),
-       jsonb_build_object('cost_paise', 90000)))) v));
-select pg_temp.check('the owner uploads an edited cost',
-  (select jsonb_array_length(v -> 'accepted') = 1
-   from pg_temp.push(pg_temp.id('user:owner_a'), 'batch:cost2', pg_temp.id('farm:a'), jsonb_build_array(
-     pg_temp.r('input_application_costs', pg_temp.id('a:apply'), pg_temp.id('farm:a'),
-       jsonb_build_object('cost_paise', 90000)))) v));
 select pg_temp.check('a harvest keeps its reason for harvesting inside a waiting period',
   (select jsonb_array_length(v -> 'accepted') = 1
    from pg_temp.push(pg_temp.id('user:supervisor_a'), 'batch:harvest', pg_temp.id('farm:a'), jsonb_build_array(
@@ -165,6 +155,9 @@ select pg_temp.check('the history of an application is daily work, so a supervis
 select pg_temp.check('release 3 brings four input methods and twelve soil parameters',
   (select count(*) from public.template_items where list_type = 'input_method' and template_version = 3) = 4
   and (select count(*) from public.template_items where list_type = 'soil_parameter' and template_version = 3) = 12);
+select pg_temp.check('release 3 brings ml, a thousandth of a litre',
+  (select count(*) from public.template_items where list_type = 'unit' and code = 'ml' and crop_id is null
+     and template_version = 3 and data = '{"dimension": "volume", "factor": 0.001}'::jsonb) = 1);
 select pg_temp.check('no template item carries a waiting period or dose',
   not exists (select 1 from public.template_items where data ? 'waiting_days' or data ? 'dose'));
 

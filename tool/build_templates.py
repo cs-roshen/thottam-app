@@ -30,7 +30,7 @@ OUT = os.path.join(ROOT, "assets", "templates", "standard.json")
 # Later migrations that add template items, in the same VALUES form as 0002,
 # with the template release they belong to.
 ADDITIONS = [
-    ("0007", 3),  # 0007_inputs_stock.sql: input methods and soil parameters
+    ("0007", 3),  # 0007_inputs_stock.sql: input methods, soil parameters, ml
 ]
 
 # (migration, list type, crop code or None, item code, changes)

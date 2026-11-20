@@ -1,15 +1,18 @@
 -- Phase 7: inputs and stock (task E1; docs/product-spec.md "Inputs and stock",
 -- docs/screens.md screen 19). Additive only: new tables, one new nullable column on
--- harvests, two new template list types and their items. Conventions as in 0001.
+-- harvests, two new template list types and their items, and the unit ml. Conventions as
+-- in 0001.
 --
--- Who reads and writes what (product spec rule 7):
+-- Owner decisions, 2026-11-20: an input's cost counts when it is bought, as the purchase's
+-- expense, so a use carries a quantity and no cost; the farmer chooses waiting periods and
+-- doses; ml joins the standard units.
+--
+-- Who reads and writes what (product spec, Inputs and stock, rule 10):
 -- * input_items and stock_movements are stock, like lots: everyone reads them, and both
 --   daily-work and money roles write them, since purchases add stock and applications
 --   take it away. A purchase's price lives only on its expense (money), so a supervisor
 --   sees how much was bought, never what it cost.
 -- * input_applications and soil_tests are daily work.
--- * input_application_costs is money: a cost the farmer edited by hand. A worked-out cost
---   is never stored (product spec, Inputs and stock).
 
 -- ---------- tables ----------
 -- The farm's own list of inputs. A row made from a template item keeps the link, and its
@@ -24,8 +27,7 @@ create table public.input_items (
   unit text not null default 'kg',
   pack_size bigint check (pack_size > 0),            -- thousandths of unit
   reorder_level bigint check (reorder_level >= 0),   -- thousandths of unit
-  waiting_days integer check (waiting_days >= 0),
-  waiting_source text,                               -- label or authority the waiting period is from
+  waiting_days integer check (waiting_days >= 0),    -- the farmer's own default for a use
   notes text,
   created_at timestamptz not null default now(),
   created_by uuid,
@@ -34,13 +36,11 @@ create table public.input_items (
   version integer not null default 1,
   deleted_at timestamptz,
   server_seq bigint not null default 0,
-  check (template_item_id is not null or name_ml is not null or name_en is not null),
-  -- safety information always carries where it came from
-  check (waiting_days is null or nullif(btrim(waiting_source), '') is not null)
+  check (template_item_id is not null or name_ml is not null or name_en is not null)
 );
 
 -- Applying an input to one crop cycle. Its quantity is on its stock movement (kind
--- 'application'), saved with it; its cost is worked out from the item's purchases.
+-- 'application'), saved with it. It has no cost: the money counted when it was bought.
 create table public.input_applications (
   id uuid primary key,
   farm_id uuid not null references public.farms (id) on delete cascade deferrable initially deferred,
@@ -52,6 +52,7 @@ create table public.input_applications (
   worker_id uuid references public.workers (id) deferrable initially deferred,
   group_id uuid references public.labour_groups (id) deferrable initially deferred,
   waiting_days integer check (waiting_days >= 0),    -- copied from the item, editable on the entry
+  dose text,                                         -- as the farmer writes it: "2 ml per litre"
   notes text,
   created_at timestamptz not null default now(),
   created_by uuid,
@@ -88,21 +89,6 @@ create table public.stock_movements (
   check (kind <> 'adjustment' or (expense_id is null and application_id is null))
 );
 
--- A cost the farmer edited by hand on one application (money). Its id is the
--- application's id, so every phone writes the same row; reset deletes it.
-create table public.input_application_costs (
-  id uuid primary key references public.input_applications (id) deferrable initially deferred,
-  farm_id uuid not null references public.farms (id) on delete cascade deferrable initially deferred,
-  cost_paise bigint not null check (cost_paise >= 0),
-  created_at timestamptz not null default now(),
-  created_by uuid,
-  updated_at timestamptz not null default now(),
-  updated_by uuid,
-  version integer not null default 1,
-  deleted_at timestamptz,
-  server_seq bigint not null default 0
-);
-
 -- results: parameter code (template list soil_parameter) to its value in thousandths.
 create table public.soil_tests (
   id uuid primary key,
@@ -130,15 +116,13 @@ insert into public.sync_tables (name, access_class, farm_column, sort_order) val
   ('input_items', 'stock', 'farm_id', 265),
   ('input_applications', 'daily', 'farm_id', 270),
   ('stock_movements', 'stock', 'farm_id', 275),
-  ('input_application_costs', 'money', 'farm_id', 280),
-  ('soil_tests', 'daily', 'farm_id', 285);
+  ('soil_tests', 'daily', 'farm_id', 280);
 
 do $$
 declare r record;
 begin
   for r in select name, access_class, farm_column from public.sync_tables
-    where name in ('input_items', 'input_applications', 'stock_movements', 'input_application_costs',
-      'soil_tests')
+    where name in ('input_items', 'input_applications', 'stock_movements', 'soil_tests')
   loop
     execute format('create trigger %1$I_sync before insert or update on public.%1$I for each row execute function public.sync_row(%2$L)',
       r.name, r.farm_column);
@@ -170,7 +154,7 @@ begin
     join pg_catalog.pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
     join public.sync_tables p on c.confrelid = format('public.%I', p.name)::regclass and p.farm_column = 'farm_id'
     join public.sync_tables ch on c.conrelid = format('public.%I', ch.name)::regclass and ch.farm_column = 'farm_id'
-    where c.contype = 'f' and cardinality(c.conkey) = 1 and ch.sort_order between 265 and 285
+    where c.contype = 'f' and cardinality(c.conkey) = 1 and ch.sort_order between 265 and 280
   loop
     execute format('alter table %s drop constraint %I', r.child, r.conname);
     execute format('alter table %s add constraint %I foreign key (%I, farm_id) references %s (id, farm_id) '
@@ -179,10 +163,10 @@ begin
 end $$;
 
 -- ---------- templates: release 3 ----------
--- How an input is applied, and what a soil test reports (the Soil Health Card's twelve
--- parameters; data.unit is how labs print them). No waiting periods or doses: those are
--- safety information and come only from labels or an agricultural authority, with the
--- source shown, once the owner has had them reviewed.
+-- How an input is applied, what a soil test reports (the Soil Health Card's twelve
+-- parameters; data.unit is how labs print them), and ml, since pesticides are sold and
+-- mixed by the millilitre. No waiting periods or doses: the farmer chooses them, from the
+-- label or their own practice.
 alter table public.template_items drop constraint template_items_list_type_check;
 alter table public.template_items add constraint template_items_list_type_check check (list_type in
   ('activity', 'input', 'expense_category', 'unit', 'grade', 'process_step', 'labour_task',
@@ -198,6 +182,9 @@ from (values
   (null, 'input_method', 'soil', 'മണ്ണിൽ ചേർക്കൽ', 'Soil application', 20, '{}'),
   (null, 'input_method', 'drench', 'ചുവട്ടിൽ ഒഴിക്കൽ', 'Drench at the base', 30, '{}'),
   (null, 'input_method', 'other', 'മറ്റുള്ളവ', 'Other', 900, '{}'),
+
+  -- unit, beside litre (0002)
+  (null, 'unit', 'ml', 'മില്ലി', 'ml', 55, '{"dimension": "volume", "factor": 0.001}'),
 
   -- soil test parameters
   (null, 'soil_parameter', 'ph', 'അമ്ലത (pH)', 'pH', 10, '{"unit": ""}'),

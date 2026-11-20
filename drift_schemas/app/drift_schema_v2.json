@@ -5444,16 +5444,6 @@
             "dsl_features": []
           },
           {
-            "name": "waiting_source",
-            "getter_name": "waitingSource",
-            "moor_type": "string",
-            "nullable": true,
-            "customConstraints": "",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
             "name": "notes",
             "getter_name": "notes",
             "moor_type": "string",
@@ -5527,8 +5517,7 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "CHECK(template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL)",
-          "CHECK(waiting_days IS NULL OR TRIM(COALESCE(waiting_source, '')) <> '')"
+          "CHECK(template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL)"
         ]
       }
     },
@@ -5650,6 +5639,16 @@
             "name": "waiting_days",
             "getter_name": "waitingDays",
             "moor_type": "int",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "dose",
+            "getter_name": "dose",
+            "moor_type": "string",
             "nullable": true,
             "customConstraints": "",
             "default_dart": null,
@@ -6011,112 +6010,6 @@
       "references": [],
       "type": "table",
       "data": {
-        "name": "input_application_costs",
-        "was_declared_in_moor": true,
-        "columns": [
-          {
-            "name": "id",
-            "getter_name": "id",
-            "moor_type": "string",
-            "nullable": false,
-            "customConstraints": "NOT NULL PRIMARY KEY",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": [
-              "primary-key"
-            ]
-          },
-          {
-            "name": "farm_id",
-            "getter_name": "farmId",
-            "moor_type": "string",
-            "nullable": false,
-            "customConstraints": "NOT NULL",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "cost_paise",
-            "getter_name": "costPaise",
-            "moor_type": "int",
-            "nullable": false,
-            "customConstraints": "NOT NULL",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "created_at",
-            "getter_name": "createdAt",
-            "moor_type": "int",
-            "nullable": false,
-            "customConstraints": "NOT NULL",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "created_by",
-            "getter_name": "createdBy",
-            "moor_type": "string",
-            "nullable": true,
-            "customConstraints": "",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "updated_at",
-            "getter_name": "updatedAt",
-            "moor_type": "int",
-            "nullable": false,
-            "customConstraints": "NOT NULL",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "updated_by",
-            "getter_name": "updatedBy",
-            "moor_type": "string",
-            "nullable": true,
-            "customConstraints": "",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "version",
-            "getter_name": "version",
-            "moor_type": "int",
-            "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT 1",
-            "default_dart": "const CustomExpression('1')",
-            "default_client_dart": null,
-            "dsl_features": []
-          },
-          {
-            "name": "deleted_at",
-            "getter_name": "deletedAt",
-            "moor_type": "int",
-            "nullable": true,
-            "customConstraints": "",
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
-          }
-        ],
-        "is_virtual": false,
-        "without_rowid": false,
-        "constraints": []
-      }
-    },
-    {
-      "id": 89,
-      "references": [],
-      "type": "table",
-      "data": {
         "name": "soil_tests",
         "was_declared_in_moor": true,
         "columns": [
@@ -6269,13 +6162,13 @@
       }
     },
     {
-      "id": 90,
+      "id": 89,
       "references": [
-        89
+        88
       ],
       "type": "index",
       "data": {
-        "on": 89,
+        "on": 88,
         "name": "soil_tests_plot_day",
         "sql": "CREATE INDEX soil_tests_plot_day ON soil_tests (plot_id, tested_on) WHERE deleted_at IS NULL;",
         "unique": false,
@@ -6283,7 +6176,7 @@
       }
     },
     {
-      "id": 91,
+      "id": 90,
       "references": [],
       "type": "table",
       "data": {
@@ -6409,13 +6302,13 @@
       }
     },
     {
-      "id": 92,
+      "id": 91,
       "references": [
-        91
+        90
       ],
       "type": "index",
       "data": {
-        "on": 91,
+        "on": 90,
         "name": "event_log_farm_day",
         "sql": "CREATE INDEX event_log_farm_day ON event_log (farm_id, occurred_on, created_at, id);",
         "unique": false,
@@ -6423,13 +6316,13 @@
       }
     },
     {
-      "id": 93,
+      "id": 92,
       "references": [
-        91
+        90
       ],
       "type": "index",
       "data": {
-        "on": 91,
+        "on": 90,
         "name": "event_log_entity",
         "sql": "CREATE INDEX event_log_entity ON event_log (entity, entity_id, created_at);",
         "unique": false,
@@ -6437,7 +6330,7 @@
       }
     },
     {
-      "id": 94,
+      "id": 93,
       "references": [],
       "type": "table",
       "data": {
@@ -6563,13 +6456,13 @@
       }
     },
     {
-      "id": 95,
+      "id": 94,
       "references": [
-        94
+        93
       ],
       "type": "index",
       "data": {
-        "on": 94,
+        "on": 93,
         "name": "outbox_queue",
         "sql": "CREATE INDEX outbox_queue ON outbox (status, created_at);",
         "unique": false,
@@ -6577,13 +6470,13 @@
       }
     },
     {
-      "id": 96,
+      "id": 95,
       "references": [
-        94
+        93
       ],
       "type": "index",
       "data": {
-        "on": 94,
+        "on": 93,
         "name": "outbox_pending",
         "sql": "CREATE UNIQUE INDEX outbox_pending ON outbox (entity, row_id) WHERE status = 'pending';",
         "unique": true,
@@ -6591,13 +6484,13 @@
       }
     },
     {
-      "id": 97,
+      "id": 96,
       "references": [
-        94
+        93
       ],
       "type": "index",
       "data": {
-        "on": 94,
+        "on": 93,
         "name": "outbox_row",
         "sql": "CREATE INDEX outbox_row ON outbox (entity, row_id, status);",
         "unique": false,
@@ -6605,7 +6498,7 @@
       }
     },
     {
-      "id": 98,
+      "id": 97,
       "references": [],
       "type": "table",
       "data": {
@@ -6665,7 +6558,7 @@
       }
     },
     {
-      "id": 99,
+      "id": 98,
       "references": [],
       "type": "table",
       "data": {
@@ -6791,13 +6684,13 @@
       }
     },
     {
-      "id": 100,
+      "id": 99,
       "references": [
-        99
+        98
       ],
       "type": "index",
       "data": {
-        "on": 99,
+        "on": 98,
         "name": "conflicts_open",
         "sql": "CREATE INDEX conflicts_open ON conflicts (farm_id, created_at) WHERE resolved_at IS NULL;",
         "unique": false,
@@ -6805,7 +6698,7 @@
       }
     },
     {
-      "id": 101,
+      "id": 100,
       "references": [],
       "type": "table",
       "data": {
@@ -6911,13 +6804,13 @@
       }
     },
     {
-      "id": 102,
+      "id": 101,
       "references": [
-        101
+        100
       ],
       "type": "index",
       "data": {
-        "on": 101,
+        "on": 100,
         "name": "photo_uploads_queue",
         "sql": "CREATE INDEX photo_uploads_queue ON photo_uploads (status, created_at);",
         "unique": false,
@@ -6925,7 +6818,7 @@
       }
     },
     {
-      "id": 103,
+      "id": 102,
       "references": [],
       "type": "table",
       "data": {
@@ -7669,7 +7562,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"input_items\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"template_item_id\" TEXT, \"name_ml\" TEXT, \"name_en\" TEXT, \"category_code\" TEXT NOT NULL DEFAULT 'fertiliser', \"unit\" TEXT NOT NULL DEFAULT 'kg', \"pack_size\" INTEGER, \"reorder_level\" INTEGER, \"waiting_days\" INTEGER, \"waiting_source\" TEXT, \"notes\" TEXT, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER, CHECK(template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL), CHECK(waiting_days IS NULL OR TRIM(COALESCE(waiting_source, '')) <> ''));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"input_items\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"template_item_id\" TEXT, \"name_ml\" TEXT, \"name_en\" TEXT, \"category_code\" TEXT NOT NULL DEFAULT 'fertiliser', \"unit\" TEXT NOT NULL DEFAULT 'kg', \"pack_size\" INTEGER, \"reorder_level\" INTEGER, \"waiting_days\" INTEGER, \"notes\" TEXT, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER, CHECK(template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL));"
         }
       ]
     },
@@ -7687,7 +7580,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"input_applications\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"applied_on\" TEXT NOT NULL, \"item_id\" TEXT NOT NULL, \"plot_id\" TEXT NOT NULL, \"crop_cycle_id\" TEXT NOT NULL, \"method_code\" TEXT, \"worker_id\" TEXT, \"group_id\" TEXT, \"waiting_days\" INTEGER, \"notes\" TEXT, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"input_applications\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"applied_on\" TEXT NOT NULL, \"item_id\" TEXT NOT NULL, \"plot_id\" TEXT NOT NULL, \"crop_cycle_id\" TEXT NOT NULL, \"method_code\" TEXT, \"worker_id\" TEXT, \"group_id\" TEXT, \"waiting_days\" INTEGER, \"dose\" TEXT, \"notes\" TEXT, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
         }
       ]
     },
@@ -7751,15 +7644,6 @@
         {
           "dialect": "sqlite",
           "sql": "CREATE INDEX stock_movements_application ON stock_movements (application_id) WHERE deleted_at IS NULL"
-        }
-      ]
-    },
-    {
-      "name": "input_application_costs",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"input_application_costs\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"farm_id\" TEXT NOT NULL, \"cost_paise\" INTEGER NOT NULL, \"created_at\" INTEGER NOT NULL, \"created_by\" TEXT, \"updated_at\" INTEGER NOT NULL, \"updated_by\" TEXT, \"version\" INTEGER NOT NULL DEFAULT 1, \"deleted_at\" INTEGER);"
         }
       ]
     },

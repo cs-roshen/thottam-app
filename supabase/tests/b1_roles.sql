@@ -131,14 +131,10 @@ begin
   insert into public.input_items (id, farm_id, name_en, unit) values (pg_temp.fx_id(t, 'input_items'), f, 'Potash', 'kg');
   insert into public.input_applications (id, farm_id, applied_on, item_id, plot_id, crop_cycle_id) values
     (pg_temp.fx_id(t, 'input_applications'), f, current_date, pg_temp.fx_id(t, 'input_items'),
-      pg_temp.fx_id(t, 'plots'), pg_temp.fx_id(t, 'crop_cycles')),
-    (pg_temp.fx_id(t, 'application_spare'), f, current_date, pg_temp.fx_id(t, 'input_items'),
       pg_temp.fx_id(t, 'plots'), pg_temp.fx_id(t, 'crop_cycles'));
   insert into public.stock_movements (id, farm_id, item_id, moved_on, kind, quantity, expense_id)
     values (pg_temp.fx_id(t, 'stock_movements'), f, pg_temp.fx_id(t, 'input_items'), current_date, 'purchase', 50000,
       pg_temp.fx_id(t, 'expenses'));
-  insert into public.input_application_costs (id, farm_id, cost_paise)
-    values (pg_temp.fx_id(t, 'input_applications'), f, 105000);
   insert into public.soil_tests (id, farm_id, plot_id, tested_on, results)
     values (pg_temp.fx_id(t, 'soil_tests'), f, pg_temp.fx_id(t, 'plots'), current_date, '{"ph": 5600}');
   insert into public.market_prices (id, farm_id, crop_id, market, price_paise, source, published_at)
@@ -194,17 +190,15 @@ begin
     where t.name not in ('template_items', 'farms', 'farm_members', 'farm_invites', 'crops', 'event_log', 'price_alerts')
     order by t.sort_order
   loop
-    -- a lot's cost row has its lot's id; an application's edited cost, its application's
-    v_id := pg_temp.fx_id('a', case r.name when 'lot_costs' then 'lots'
-      when 'input_application_costs' then 'input_applications' else r.name end);
+    -- a lot's cost row has its lot's id
+    v_id := pg_temp.fx_id('a', case when r.name = 'lot_costs' then 'lots' else r.name end);
     execute format('select to_jsonb(x) from public.%I x where id = %L', r.name, v_id) into v_json;
     if v_json is null then
       perform pg_temp.check(r.name || ' fixture exists', false);
       continue;
     end if;
     v_json := v_json || jsonb_build_object('id',
-      case r.name when 'lot_costs' then pg_temp.fx_id('a', 'lot_spare')
-        when 'input_application_costs' then pg_temp.fx_id('a', 'application_spare') else gen_random_uuid() end);
+      case when r.name = 'lot_costs' then pg_temp.fx_id('a', 'lot_spare') else gen_random_uuid() end);
     foreach v_role in array array['owner', 'manager', 'supervisor', 'accountant', 'viewer'] loop
       v_user := pg_temp.u(v_role || '_a');
       select level into v_exp from expected where cls = r.access_class and role = v_role;

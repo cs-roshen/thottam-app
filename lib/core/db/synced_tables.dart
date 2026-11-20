@@ -35,7 +35,6 @@ const syncedTables = <(String, String?)>[
   ('input_items', 'farm_id'),
   ('input_applications', 'farm_id'),
   ('stock_movements', 'farm_id'),
-  ('input_application_costs', 'farm_id'),
   ('soil_tests', 'farm_id'),
   ('event_log', 'farm_id'),
 ];

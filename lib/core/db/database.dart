@@ -27,7 +27,6 @@ class AppDatabase extends _$AppDatabase {
           inputItems,
           inputApplications,
           stockMovements,
-          inputApplicationCosts,
           soilTests,
         ]) {
           await m.createTable(t);

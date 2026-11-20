@@ -2343,15 +2343,6 @@
       }
     }
   },
-  "inputsStockValue": "Stock on hand worth {amount}, not yet in crop costs",
-  "@inputsStockValue": {
-    "description": "Value of unused stock on Inputs, money roles only (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "inputsSafeDaysLeft": "{days, plural, =1{1 more day until safe to harvest} other{{days} more days until safe to harvest}}",
   "@inputsSafeDaysLeft": {
     "description": "Safe-to-harvest card: days left in the waiting period.",
@@ -2432,6 +2423,14 @@
   "soilTestPhoto": "Photo of the report",
   "@soilTestPhoto": {
     "description": "Soil test: photo of the lab report."
+  },
+  "soilTestPhotoCamera": "Take photo",
+  "@soilTestPhotoCamera": {
+    "description": "Button: take the report photo with the camera."
+  },
+  "soilTestPhotoGallery": "Choose from gallery",
+  "@soilTestPhotoGallery": {
+    "description": "Button: pick the report photo from the gallery."
   },
   "soilTestSaved": "Soil test saved",
   "@soilTestSaved": {
@@ -2551,6 +2550,14 @@
   "@applyWho": {
     "description": "Field: worker or group who applied (optional)."
   },
+  "applyDose": "Dose",
+  "@applyDose": {
+    "description": "Field: how much was mixed or given, typed by the farmer."
+  },
+  "applyDoseHint": "For example 2 ml per litre",
+  "@applyDoseHint": {
+    "description": "Hint inside the dose field."
+  },
   "inputWaiting": "Waiting period before harvest",
   "@inputWaiting": {
     "description": "Field: days to wait after applying before harvest."
@@ -2564,58 +2571,13 @@
       }
     }
   },
-  "inputWaitingFrom": "From: {source}",
-  "@inputWaitingFrom": {
-    "description": "Where a waiting period comes from (label or authority).",
-    "placeholders": {
-      "source": {
-        "type": "String"
-      }
-    }
+  "applySafeDate": "Safe to harvest on",
+  "@applySafeDate": {
+    "description": "Field: pick the safe-to-harvest date instead of typing the waiting days."
   },
-  "inputWaitingSource": "Source: product label or agricultural authority",
-  "@inputWaitingSource": {
-    "description": "Item field: source of the waiting period."
-  },
-  "inputWaitingSourceNeeded": "Add where this waiting period comes from",
-  "@inputWaitingSourceNeeded": {
-    "description": "Error: a waiting period needs its source."
-  },
-  "inputWaitingNote": "Take it from the product label. Thottam does not suggest waiting periods.",
+  "inputWaitingNote": "You choose it, for example from the product label. Thottam does not suggest one.",
   "@inputWaitingNote": {
     "description": "Note under the waiting period field."
-  },
-  "applyCost": "{amount}: {quantity} × {rate} average",
-  "@applyCost": {
-    "description": "Cost of an application at average cost, money roles only (all formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "quantity": {
-        "type": "String"
-      },
-      "rate": {
-        "type": "String"
-      }
-    }
-  },
-  "applyCostEdited": "Edited by hand",
-  "@applyCostEdited": {
-    "description": "Mark on a cost edited by hand."
-  },
-  "applyCostReset": "Reset to {amount}",
-  "@applyCostReset": {
-    "description": "Reset an edited cost to the worked-out one (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "applyCostUnknown": "Cost not known yet: no purchase recorded",
-  "@applyCostUnknown": {
-    "description": "Shown when the item has no purchase to work out a cost from."
   },
   "applySavedSafe": "Saved. Safe to harvest from {date}",
   "@applySavedSafe": {
@@ -2655,27 +2617,6 @@
   "stockReasonFound": "Found when using",
   "@stockReasonFound": {
     "description": "Reason saved on found stock added while logging a use."
-  },
-  "itemAverageCost": "Average cost {rate} per {unit}",
-  "@itemAverageCost": {
-    "description": "Item detail: average cost per unit, money roles only (rate formatted in code).",
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      }
-    }
-  },
-  "itemStockValue": "Worth {amount}",
-  "@itemStockValue": {
-    "description": "Item detail: value of stock on hand, money roles only (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
   },
   "itemReorderLevel": "Remind me at or below",
   "@itemReorderLevel": {
@@ -2780,19 +2721,6 @@
   "plotLogInput": "Log input",
   "@plotLogInput": {
     "description": "Plot detail button: log an input used on this plot."
-  },
-  "moneyInputsInStock": "Inputs in stock {amount}",
-  "@moneyInputsInStock": {
-    "description": "Money screen line: value of unused inputs (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "moneyInputsInStockNote": "Counted in crop costs when used",
-  "@moneyInputsInStockNote": {
-    "description": "Note under the inputs in stock line."
   },
   "moneyInputLosses": "Inputs lost or adjusted",
   "@moneyInputLosses": {
