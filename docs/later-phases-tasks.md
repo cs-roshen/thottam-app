@@ -22,42 +22,45 @@ reviews it before the phase's build tasks start.
 - [ ] E1. Docs, schema and strings: `product-spec.md` Inputs and stock, `screens.md` screen 19,
   migration `0007_inputs_stock.sql` with `supabase/tests/e1_inputs.sql`, Drift schema 2 with
   the copy-before-upgrade and integrity check (the review follow-up "before schema version
-  2"), template release 3 (input methods, soil parameters), strings.
+  2"), template release 3 (input methods, soil parameters, ml), strings. Merged in #30; the
+  owner's answers below follow in a second pull request. The server tests wait for the CLI
+  sign-in to Thottam-App.
 - [ ] E2. Domain, pure functions with the spec's worked examples as tests: stock on hand,
-  running average cost (with edited costs and stock below zero), safe-to-harvest date and
-  days left, low stock, expiry (oldest used first).
-- [ ] E3. Items, purchases and the stock list (19, 19a, 19c): a purchase saves its expense and
-  movement in one `writeWithHistory`; an expense made by a purchase opens as it; adjust stock;
-  Inputs page switch and More tile; benchmark seed extended with items, purchases and
-  applications, every budget re-run; query-plan tests for the stock queries.
-- [ ] E4. Applications and cost posting (19b): found-stock offer; edited costs; quick add tile
-  and plot detail button; profit and loss leaves purchases out, counts applications and
-  adjustments out, and shows stock on hand; History filter and titles.
+  safe-to-harvest date and days left (from days or a picked date), low stock, expiry (oldest
+  used first, only purchases with an expiry date).
+- [ ] E3. Items, purchases and the stock list (19, 19a, 19c): a purchase saves its expense
+  (with the expense screen's plot and crop split) and its movement in one `writeWithHistory`;
+  an expense made by a purchase opens as it; adjust stock; Inputs page switch and More tile;
+  benchmark seed extended with items, purchases and applications, every budget re-run;
+  query-plan tests for the stock queries.
+- [ ] E4. Applications (19b): found-stock offer; dose and waiting period (days or date) with
+  their defaults; quick add tile and plot detail button; History filter and titles.
 - [ ] E5. Safe to harvest and alerts: countdown on 19 and plot detail, harvest banner and
   reason, Low, Expires soon, Expired and Check stock tags.
-- [ ] E6. Soil tests (19d), with the photo once the package is chosen.
+- [ ] E6. Soil tests (19d) with the report photo: add `image_picker` at its current stable
+  version (checked on pub.dev then), made smaller with its own `maxWidth` and `imageQuality`
+  options; a storage bucket and policies for farm photos in a new migration (phase 9 uses the
+  same); upload from the outbox when online.
 
 Exit check (plan section 11): a scripted season with purchases and applications gives the
-expected stock, crop costs and safe dates; profit and loss matches the phase 1 result plus
-input costs.
+expected stock and safe dates; profit and loss matches the phase 1 result plus the purchases.
 
-### Open for the owner (phase 7)
+### Owner answers (phase 7, 2026-11-20)
 
-Answer in the E1 review; the build tasks follow the answers.
-
-1. When an input's cost reaches a crop: at use (proposed, as the plan recommends) or at
-   purchase.
-2. Average cost: the running weighted average in `product-spec.md` Inputs rule 5, with found
-   or opening stock coming in at no value (proposed), or at the current average.
-3. One crop per application (proposed), or splitting one application across a mixed plot's
-   crops by their shares.
-4. Whether the harvest warning stays when the Inputs page is switched off (proposed: yes, it
-   is safety information).
-5. Waiting periods and label doses: who reviews them and from which source (product labels,
-   Kerala Agricultural University, the agriculture department). Until then the templates carry
-   none and the farmer enters the period from the label, with its source.
-6. Millilitre: pesticides are measured in ml, which is not in the standard units decided on
-   2026-11-19. Add `ml` (0.001 litre)? Until then 250 ml is entered as 0.25 litre.
-7. Expiry warning window: 30 days (proposed), changeable per farm.
-8. A package for the soil test photo (camera or gallery picker, and image compression): which
-   one, if any. E6 ships without the photo until then.
+1. **When an input's money counts:** when it is bought. The purchase is an expense like any
+   other, on its date and crops; a use carries no cost (Inputs rule 4).
+2. **Which price a use carries:** none. A purchase records its cost and quantity; a use takes a
+   quantity from the item's stock without naming a purchase or lot (Inputs rule 4). So there
+   is no average cost, no edited cost and no stock value: `input_application_costs` is gone
+   from 0007.
+3. **Mixed plot:** one crop per application (Inputs rule 5).
+4. **Harvest warning with the Inputs page off:** it still shows (Inputs rule 11).
+5. **Waiting periods and doses:** the farmer chooses them. The app ships none and asks for no
+   source (Inputs rule 7): `input_items.waiting_source` is gone from 0007 and
+   `input_applications.dose` holds the dose as the farmer writes it.
+6. **Millilitre:** both ml and litre. `ml` (0.001 litre) is a standard unit in template
+   release 3.
+7. **Expiry warning:** 30 days, only when an expiry date is recorded (Inputs rule 8).
+8. **Photo packages:** approved, at stable versions. Only `image_picker` (Flutter team) is
+   needed: on Android and iOS it resizes and recompresses the photo itself, so no separate
+   compression package is added. E6 adds it; the crop doctor (phase 9) uses the same.

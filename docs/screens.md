@@ -91,47 +91,46 @@ Implementation plan phases 7 to 13, started ahead of the closed beta (owner deci
 
 ## Phase 7: inputs and stock
 
-Rules, roles and worked examples: `product-spec.md`, Inputs and stock. Page code `inputs`; the page needs stock read. A supervisor never sees a price, a cost or a stock value on any of these screens.
+Rules, roles and worked examples: `product-spec.md`, Inputs and stock. Page code `inputs`; the page needs stock read. A supervisor never sees a price on any of these screens. An input's money is counted once, as the purchase's expense; using it records a quantity only.
 
 ### 19. Inputs and stock
 More → Inputs. Title and subtitle ("Stock and use").
 - Safe-to-harvest card for each crop cycle still inside a waiting period, soonest first: days left in large type, the crop and plot, the item and how long ago it was applied, a bar of the period gone by. No card when nothing is waiting.
 - Stock: one row per item, name and stock on hand with unit; tags Low, Expires soon, Expired, Check stock (below zero), each a word with its colour, never colour alone. Two buttons on each row: Used (opens 19b for this item) and Bought (opens 19a; hidden from a role that cannot write money). Tapping the row opens 19c.
-- For a role that can see money: "Stock on hand worth ₹X, not yet in crop costs".
 - Soil test row: the latest test (main values and how long ago) with Add new (19d), or "No soil test yet".
 - Empty state: what the screen is for, and Add a purchase (or Add an item for a role that cannot write money).
-- Check: the stock list shows the average-cost example's 60 kg after its purchases and applications, worth ₹2,280; the low-stock example is tagged Low; the expiry example is tagged Expires soon on 5 Jun; two phones taking stock below zero show Check stock after sync.
+- Check: the input stock example shows 68 kg after its purchases, use and count; the low-stock example is tagged Low; the expiry example is tagged Expires soon on 5 Jun; two phones taking stock below zero show Check stock after sync.
 - Check: a supervisor sees the quantities and no amount anywhere on the screen.
 
 ### 19a. Add purchase
-Item (search the farm's items, with the crop templates' input items offered as new items; "New item" adds name, category, unit and pack size in line), quantity (pack chips when the item has a pack size: "2 × 50 kg"), total amount (large input), price per unit worked out and shown, vendor (optional), date (today), payment mode (cash, UPI, bank, credit), and under More details batch and expiry date. Save with undo.
+Item (search the farm's items, with the crop templates' input items offered as new items; "New item" adds name, category, unit and pack size in line), quantity (pack chips when the item has a pack size: "2 × 50 kg"), total amount (large input), price per unit worked out and shown, plot and crop split as on the expense screen (default: last plot), vendor (optional), date (today), payment mode (cash, UPI, bank, credit), and under More details batch and expiry date. Save with undo.
 - Check: one save makes one expense in the item's category and one purchase movement; the expense shows once in the expense list and opens as this purchase; undo removes both; deleting either removes both.
-- Check: profit and loss is unchanged by a purchase; the stock on hand rises by its quantity and its value by its amount.
+- Check: profit and loss counts the purchase on its date and crops like any expense (the profit and loss example with inputs); the stock on hand rises by its quantity.
 - Check: a credit purchase shows as a payable.
 
 ### 19b. Log input used
-Opens from the Used button, the quick add tile and plot detail. Item (default: last used), quantity with unit, with "In stock: 40 kg" beside it; plot (default: last plot) and crop (chips on a mixed plot; default per `product-spec.md` rule 7 of Inputs); date (today); method chips (template list); who applied (optional worker or group); waiting period in days, prefilled from the item with its source shown, editable; note. For a role that can see money: cost at average ("₹1,050: 30 kg × ₹35.00 average") with edit, and "Cost not known yet" when the item has no purchase. Save with undo; the toast gives the safe-to-harvest date when there is one.
-- Check: the average-cost, rounding and edited-cost examples give their costs to the paisa; an edited cost is marked and resets to the worked-out value.
+Opens from the Used button, the quick add tile and plot detail. Item (default: last used), quantity with unit (ml, litre, kg or the item's own unit), with "In stock: 40 kg" beside it; plot (default: last plot) and crop (chips on a mixed plot; default per `product-spec.md` Inputs rule 5); date (today); method chips (template list); dose as typed ("2 ml per litre"; default: this item's last dose); who applied (optional worker or group); waiting period as days or as a safe-to-harvest date, prefilled from the item, either one editable; note. No price or cost on this screen. Save with undo; the toast gives the safe-to-harvest date when there is one.
 - Check: using more than is in stock offers "record the rest as found stock and save" or changing the quantity, and never saves below zero without that choice.
-- Check: the waiting period comes from the item, can be changed on the entry, and the source shows beside it.
-- Check: a supervisor logs an application and sees no cost; an accountant cannot open this screen (daily work).
+- Check: the waiting period comes from the item and can be changed on the entry; picking the date 18 Nov on a 3 Nov entry saves 15 days; the dose defaults to the item's last one.
+- Check: an application changes stock and nothing in profit and loss.
+- Check: a supervisor logs an application; an accountant cannot open this screen (daily work).
 
 ### 19c. Item detail
-Stock on hand, average cost per unit and stock value (money roles), unit, pack size, reorder level, waiting period with source (edit: a period cannot be saved without its source), and every movement newest first: bought (+quantity, amount for money roles, vendor), used (−quantity, crop and plot), adjusted (± quantity, reason). Adjust stock: enter the counted stock; the difference is saved as an adjustment with a reason.
-- Check: the movements add up to the stock on hand; an adjustment to a counted 58 kg from 60 kg saves −2 kg with its reason and costs ₹76 at the example's ₹38 average.
-- Check: a waiting period without a source is refused next to the field.
+Stock on hand, unit, pack size, reorder level, the farmer's default waiting period (optional), and every movement newest first: bought (+quantity, amount and price per unit for money roles, vendor), used (−quantity, crop, plot and dose), adjusted (± quantity, reason). Adjust stock: enter the counted stock; the difference is saved as an adjustment with a reason.
+- Check: the movements add up to the stock on hand; counting 68 kg from 70 kg saves −2 kg with its reason and changes nothing in profit and loss.
 
 ### 19d. Soil test
-Plot (default: last plot), date, lab, a number field for each parameter in the template list with its unit (all optional), photo of the report (once the photo package is chosen), note. Save with undo. The plot shows its tests newest first.
+Plot (default: last plot), date, lab, a number field for each parameter in the template list with its unit (all optional), photo of the report (camera or gallery; made smaller on the phone before it is saved), note. Save with undo. The plot shows its tests newest first.
 - Check: a test with only pH saves; the latest test shows on 19 and on plot detail with its age.
+- Check: a photo is saved smaller than the camera's original and opens from the test; saving works offline and the photo uploads later.
 
 ### Changes to phase 1 screens
 - **3. Quick add:** an Inputs tile (opens 19b), shown when the page is on and the role can write daily work.
 - **18. Plot detail:** the safe-to-harvest countdown on each crop cycle inside a waiting period; a Log input button (19b with this plot); the latest soil test.
-- **12. Harvest:** when the chosen crop cycle is inside a waiting period on the harvest date, a banner names the item, the application date, the period and its source, and the safe date. Saving asks for a reason (required) and keeps it on the harvest.
-- **5. Profit and loss:** purchases are not counted; applications count on their crop cycle at their cost; adjustments out count as a farm cost on no crop; a line shows stock on hand at its value, apart from profit.
-- **15. History:** an Inputs filter chip; purchases, applications, adjustments, item changes, edited costs and soil tests appear with their quantities. A supervisor sees purchases and applications as quantities only; edited costs are money and hidden from them. A harvest saved inside a waiting period shows its reason.
-- **7. Settings:** an Inputs page switch (`product-spec.md`, Inputs rule 13).
-- Check: the profit and loss example with inputs (`product-spec.md`): expense ₹98,770, profit ₹85,730, stock on hand ₹2,280.
+- **12. Harvest:** when the chosen crop cycle is inside a waiting period on the harvest date, a banner names the item, the application date, the period and the safe date. Saving asks for a reason (required) and keeps it on the harvest.
+- **5. Profit and loss:** no change: a purchase is an expense like any other; applications and adjustments add nothing.
+- **15. History:** an Inputs filter chip; purchases, applications (with dose), adjustments, item changes and soil tests appear with their quantities. A supervisor sees purchases as quantities only. A harvest saved inside a waiting period shows its reason.
+- **7. Settings:** an Inputs page switch (`product-spec.md`, Inputs rule 11).
+- Check: the profit and loss example with inputs (`product-spec.md`): expense ₹99,700, profit ₹84,800, unchanged after the 30 kg use.
 - Check: the safe-to-harvest example: on 15 Nov the plot shows 3 more days; a harvest dated 17 Nov needs a reason and history shows it; one dated 18 Nov saves without asking.
-- Check: with the Inputs page off there is no tile on More or quick add, no plot button and no Money line; a harvest inside a recorded waiting period still warns.
+- Check: with the Inputs page off there is no tile on More or quick add and no plot button; saved purchases stay in expenses; a harvest inside a recorded waiting period still warns.

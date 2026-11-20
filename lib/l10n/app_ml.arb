@@ -2343,15 +2343,6 @@
       }
     }
   },
-  "inputsStockValue": "കൈവശമുള്ള സ്റ്റോക്കിന്റെ വില {amount}; ഇതുവരെ വിളച്ചെലവിൽ ചേർത്തിട്ടില്ല",
-  "@inputsStockValue": {
-    "description": "Value of unused stock on Inputs, money roles only (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "inputsSafeDaysLeft": "{days, plural, =1{വിളവെടുക്കാൻ 1 ദിവസം കൂടി} other{വിളവെടുക്കാൻ {days} ദിവസം കൂടി}}",
   "@inputsSafeDaysLeft": {
     "description": "Safe-to-harvest card: days left in the waiting period.",
@@ -2432,6 +2423,14 @@
   "soilTestPhoto": "റിപ്പോർട്ടിന്റെ ഫോട്ടോ",
   "@soilTestPhoto": {
     "description": "Soil test: photo of the lab report."
+  },
+  "soilTestPhotoCamera": "ഫോട്ടോ എടുക്കുക",
+  "@soilTestPhotoCamera": {
+    "description": "Button: take the report photo with the camera."
+  },
+  "soilTestPhotoGallery": "ഗാലറിയിൽ നിന്ന്",
+  "@soilTestPhotoGallery": {
+    "description": "Button: pick the report photo from the gallery."
   },
   "soilTestSaved": "മണ്ണ് പരിശോധന സേവ് ചെയ്തു",
   "@soilTestSaved": {
@@ -2551,6 +2550,14 @@
   "@applyWho": {
     "description": "Field: worker or group who applied (optional)."
   },
+  "applyDose": "അളവ് (ഡോസ്)",
+  "@applyDose": {
+    "description": "Field: how much was mixed or given, typed by the farmer."
+  },
+  "applyDoseHint": "ഉദാഹരണം: ലിറ്ററിന് 2 മില്ലി",
+  "@applyDoseHint": {
+    "description": "Hint inside the dose field."
+  },
   "inputWaiting": "വിളവെടുപ്പിന് മുമ്പുള്ള കാത്തിരിപ്പ് കാലം",
   "@inputWaiting": {
     "description": "Field: days to wait after applying before harvest."
@@ -2564,58 +2571,13 @@
       }
     }
   },
-  "inputWaitingFrom": "ഉറവിടം: {source}",
-  "@inputWaitingFrom": {
-    "description": "Where a waiting period comes from (label or authority).",
-    "placeholders": {
-      "source": {
-        "type": "String"
-      }
-    }
+  "applySafeDate": "വിളവെടുക്കാൻ സുരക്ഷിതമായ ദിവസം",
+  "@applySafeDate": {
+    "description": "Field: pick the safe-to-harvest date instead of typing the waiting days."
   },
-  "inputWaitingSource": "ഉറവിടം: ഉൽപ്പന്ന ലേബൽ അല്ലെങ്കിൽ കൃഷി വകുപ്പ്",
-  "@inputWaitingSource": {
-    "description": "Item field: source of the waiting period."
-  },
-  "inputWaitingSourceNeeded": "ഈ കാത്തിരിപ്പ് കാലം എവിടെ നിന്നാണെന്ന് ചേർക്കുക",
-  "@inputWaitingSourceNeeded": {
-    "description": "Error: a waiting period needs its source."
-  },
-  "inputWaitingNote": "ഉൽപ്പന്നത്തിന്റെ ലേബലിൽ നിന്ന് എടുക്കുക. തോട്ടം കാത്തിരിപ്പ് കാലം നിർദ്ദേശിക്കുന്നില്ല.",
+  "inputWaitingNote": "നിങ്ങൾ തീരുമാനിക്കുക, ഉദാഹരണം ഉൽപ്പന്നത്തിന്റെ ലേബലിൽ നിന്ന്. തോട്ടം കാത്തിരിപ്പ് കാലം നിർദ്ദേശിക്കുന്നില്ല.",
   "@inputWaitingNote": {
     "description": "Note under the waiting period field."
-  },
-  "applyCost": "{amount}: {quantity} × ശരാശരി {rate}",
-  "@applyCost": {
-    "description": "Cost of an application at average cost, money roles only (all formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "quantity": {
-        "type": "String"
-      },
-      "rate": {
-        "type": "String"
-      }
-    }
-  },
-  "applyCostEdited": "കൈകൊണ്ട് മാറ്റിയത്",
-  "@applyCostEdited": {
-    "description": "Mark on a cost edited by hand."
-  },
-  "applyCostReset": "കണക്കാക്കിയ {amount} ആക്കുക",
-  "@applyCostReset": {
-    "description": "Reset an edited cost to the worked-out one (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "applyCostUnknown": "ചെലവ് അറിയില്ല: വാങ്ങിയത് ചേർത്തിട്ടില്ല",
-  "@applyCostUnknown": {
-    "description": "Shown when the item has no purchase to work out a cost from."
   },
   "applySavedSafe": "സേവ് ചെയ്തു. {date} മുതൽ വിളവെടുക്കാം",
   "@applySavedSafe": {
@@ -2655,27 +2617,6 @@
   "stockReasonFound": "ഉപയോഗിക്കുമ്പോൾ കണ്ടെത്തി",
   "@stockReasonFound": {
     "description": "Reason saved on found stock added while logging a use."
-  },
-  "itemAverageCost": "{unit}-ന് ശരാശരി {rate}",
-  "@itemAverageCost": {
-    "description": "Item detail: average cost per unit, money roles only (rate formatted in code).",
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      }
-    }
-  },
-  "itemStockValue": "വില {amount}",
-  "@itemStockValue": {
-    "description": "Item detail: value of stock on hand, money roles only (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
   },
   "itemReorderLevel": "ഇത്രയോ അതിൽ കുറവോ ആയാൽ ഓർമ്മിപ്പിക്കുക",
   "@itemReorderLevel": {
@@ -2780,19 +2721,6 @@
   "plotLogInput": "വളം / മരുന്ന്",
   "@plotLogInput": {
     "description": "Plot detail button: log an input used on this plot."
-  },
-  "moneyInputsInStock": "സ്റ്റോക്കിലുള്ള വളം / മരുന്ന് {amount}",
-  "@moneyInputsInStock": {
-    "description": "Money screen line: value of unused inputs (amount formatted in code).",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "moneyInputsInStockNote": "ഉപയോഗിക്കുമ്പോൾ വിളച്ചെലവിൽ ചേരും",
-  "@moneyInputsInStockNote": {
-    "description": "Note under the inputs in stock line."
   },
   "moneyInputLosses": "നഷ്ടപ്പെട്ടതോ ശരിയാക്കിയതോ ആയ വളം / മരുന്ന്",
   "@moneyInputLosses": {

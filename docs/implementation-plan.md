@@ -595,19 +595,19 @@ phase with its own exit check and owner checkpoint.
 ### Phase 7: inputs and stock (screen 19)
 
 **Goal:** the farmer knows what fertiliser, pesticide and seed is on hand, what was applied
-where, what it cost each crop, and when it is safe to harvest after a spray.
+where, and when it is safe to harvest after a spray. Its money counts once, when it is
+bought (owner, 2026-11-20).
 
 **Schema additions** (as built in migration 0007, task E1)
 
 - `input_items` (farm's own list, linked to a template item where one exists; unit, pack size,
-  reorder level, waiting period in days with its source).
+  reorder level, the farmer's default waiting period in days).
 - A purchase is its expense row plus a `stock_movements` row of kind `purchase` (quantity,
   batch, expiry date, link to the expense), so the price is entered once, on the expense, and
   a supervisor can see stock without seeing money. There is no separate purchases table.
-- `input_applications` (item, method, plot, crop cycle, worker or group, date, waiting days);
-  its quantity is its `application` movement. The cost is worked out from the item's
-  purchases when shown, never stored; `input_application_costs` keeps a cost edited by hand
-  (money). The link to a disease record comes with phase 9.
+- `input_applications` (item, method, dose as typed, plot, crop cycle, worker or group,
+  date, waiting days); its quantity is its `application` movement, and it has no cost. The
+  link to a disease record comes with phase 9.
 - `stock_movements` (one row per purchase, application or adjustment; the stock level is
   the sum of movements, never a stored number that can drift).
 - `soil_tests` (plot, date, results, lab, photo of the report).
@@ -615,13 +615,11 @@ where, what it cost each crop, and when it is safe to harvest after a spray.
 
 **Rules and tests**
 
-- A purchase creates one expense, so money is never entered twice. Decide and document when
-  the cost reaches a crop: recommended is at application, not at purchase, with unapplied
-  stock shown as an asset.
-- Cost of an application: weighted average cost of the item at that date. Hand-worked example
-  in the spec: two purchases at different prices, then an application.
+- A purchase creates one expense, so money is never entered twice. The owner decided on
+  2026-11-20 that the cost counts when bought, as that expense; an application records a
+  quantity taken from stock, with no lot and no cost.
 - Stock cannot go negative without the farmer confirming an adjustment.
-- Safe-to-harvest date = application date plus the item's waiting period, per crop cycle,
+- Safe-to-harvest date = application date plus the waiting period the farmer chose, per crop cycle,
   taking the latest of all recent applications. Logging a harvest inside the period shows a
   warning that can be overridden with a reason, and the override is recorded in history.
 - Low-stock and expiry alerts are computed locally and work offline.
@@ -633,9 +631,8 @@ safe-to-harvest countdown on plot detail and on the harvest screen.
 **Performance notes:** index `stock_movements (item_id, moved_on)`. Stock level per item is an
 aggregate; cache it in a summary table only if the stock list misses its budget.
 
-**Tasks:** E1 docs and schema; E2 domain (average cost, stock, waiting period) with tests;
-E3 purchases and stock list; E4 applications and cost posting; E5 safe-to-harvest and alerts;
-E6 soil tests.
+**Tasks:** E1 docs and schema; E2 domain (stock, waiting period, alerts) with tests;
+E3 purchases and stock list; E4 applications; E5 safe-to-harvest and alerts; E6 soil tests.
 
 **Owner decisions:** source and review of waiting periods and label doses (these are safety
 information; they must come from product labels or an agricultural authority, with the source
