@@ -301,7 +301,9 @@ CREATE TABLE harvests (
   updated_at INTEGER NOT NULL,
   updated_by TEXT,
   version INTEGER NOT NULL DEFAULT 1,
-  deleted_at INTEGER
+  deleted_at INTEGER,
+  -- schema 2 (phase 7): why the farmer harvested inside a waiting period
+  waiting_override_reason TEXT
 ) AS HarvestRow;
 
 CREATE INDEX harvests_farm_day ON harvests (farm_id, harvested_on, id) WHERE deleted_at IS NULL;
@@ -603,6 +605,116 @@ CREATE TABLE price_alerts (
 ) AS PriceAlertRow;
 
 CREATE INDEX price_alerts_crop ON price_alerts (crop_id) WHERE deleted_at IS NULL;
+
+-- ---------- inputs and stock (schema 2, phase 7) ----------
+-- Stock on hand is the sum of stock_movements.quantity; a purchase's price is its expense's
+-- amount; an application's quantity is its movement's; a worked-out cost is never stored.
+CREATE TABLE input_items (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  template_item_id TEXT,
+  name_ml TEXT,
+  name_en TEXT,
+  category_code TEXT NOT NULL DEFAULT 'fertiliser',
+  unit TEXT NOT NULL DEFAULT 'kg',
+  pack_size INTEGER,
+  reorder_level INTEGER,
+  waiting_days INTEGER,
+  waiting_source TEXT,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER,
+  CHECK (template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL),
+  CHECK (waiting_days IS NULL OR TRIM(COALESCE(waiting_source, '')) <> '')
+) AS InputItemRow;
+
+CREATE INDEX input_items_farm ON input_items (farm_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE input_applications (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  applied_on TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  plot_id TEXT NOT NULL,
+  crop_cycle_id TEXT NOT NULL,
+  method_code TEXT,
+  worker_id TEXT,
+  group_id TEXT,
+  waiting_days INTEGER,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS InputApplicationRow;
+
+CREATE INDEX input_applications_farm_day ON input_applications (farm_id, applied_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX input_applications_cycle_day ON input_applications (crop_cycle_id, applied_on) WHERE deleted_at IS NULL;
+
+CREATE TABLE stock_movements (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  moved_on TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  quantity INTEGER NOT NULL CHECK (quantity <> 0),
+  expense_id TEXT,
+  application_id TEXT,
+  batch TEXT,
+  expires_on TEXT,
+  reason TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER,
+  CHECK (kind <> 'purchase' OR (quantity > 0 AND expense_id IS NOT NULL)),
+  CHECK (kind <> 'application' OR (quantity < 0 AND application_id IS NOT NULL)),
+  CHECK (kind <> 'adjustment' OR (expense_id IS NULL AND application_id IS NULL))
+) AS StockMovementRow;
+
+CREATE INDEX stock_movements_item_day ON stock_movements (item_id, moved_on) WHERE deleted_at IS NULL;
+CREATE INDEX stock_movements_farm_day ON stock_movements (farm_id, moved_on, id) WHERE deleted_at IS NULL;
+CREATE INDEX stock_movements_expense ON stock_movements (expense_id) WHERE deleted_at IS NULL;
+CREATE INDEX stock_movements_application ON stock_movements (application_id) WHERE deleted_at IS NULL;
+
+CREATE TABLE input_application_costs (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  cost_paise INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS InputApplicationCostRow;
+
+CREATE TABLE soil_tests (
+  id TEXT NOT NULL PRIMARY KEY,
+  farm_id TEXT NOT NULL,
+  plot_id TEXT NOT NULL,
+  tested_on TEXT NOT NULL,
+  lab TEXT,
+  results TEXT NOT NULL DEFAULT '{}',
+  photo_path TEXT,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  created_by TEXT,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT,
+  version INTEGER NOT NULL DEFAULT 1,
+  deleted_at INTEGER
+) AS SoilTestRow;
+
+CREATE INDEX soil_tests_plot_day ON soil_tests (plot_id, tested_on) WHERE deleted_at IS NULL;
 
 -- ---------- history ----------
 CREATE TABLE event_log (

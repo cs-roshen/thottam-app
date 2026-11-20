@@ -85,8 +85,8 @@ void main() {
     final farm = (await phone.rows('SELECT * FROM farms')).single;
     expect(farm['id'], farmId);
     expect(farm['name'], 'Home farm');
-    // the templates on the phone are release 2 (migration 0005)
-    expect(farm['accepted_template_version'], 2);
+    // the templates on the phone are release 3 (migration 0007)
+    expect(farm['accepted_template_version'], 3);
 
     final member = (await phone.rows('SELECT * FROM farm_members')).single;
     expect(member['farm_id'], farmId);

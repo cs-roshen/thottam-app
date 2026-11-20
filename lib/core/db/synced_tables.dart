@@ -1,6 +1,7 @@
 /// The synced tables in dependency order (parents first), with the column
 /// that holds each row's farm. Mirrors `public.sync_tables` in
-/// `supabase/migrations/0001_init.sql`; the schema check test keeps them equal.
+/// `supabase/migrations/0001_init.sql` and later migrations; the schema check
+/// test keeps them equal.
 const syncedTables = <(String, String?)>[
   ('template_items', null),
   ('farms', 'id'),
@@ -31,6 +32,11 @@ const syncedTables = <(String, String?)>[
   ('expense_payments', 'farm_id'),
   ('sale_payments', 'farm_id'),
   ('other_income', 'farm_id'),
+  ('input_items', 'farm_id'),
+  ('input_applications', 'farm_id'),
+  ('stock_movements', 'farm_id'),
+  ('input_application_costs', 'farm_id'),
+  ('soil_tests', 'farm_id'),
   ('event_log', 'farm_id'),
 ];
 

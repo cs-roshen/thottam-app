@@ -1716,6 +1716,242 @@
    "sort_order": 30,
    "is_active": true,
    "template_version": 1
+  },
+  {
+   "id": "0a684203-f382-5d71-7e29-083d142fbe4a",
+   "crop_id": null,
+   "list_type": "input_method",
+   "code": "spray",
+   "name_ml": "തളിക്കൽ",
+   "name_en": "Spray",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "cce9342f-4165-35f3-49ff-b414389660d0",
+   "crop_id": null,
+   "list_type": "input_method",
+   "code": "soil",
+   "name_ml": "മണ്ണിൽ ചേർക്കൽ",
+   "name_en": "Soil application",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "6be1dc9e-295d-1ad7-e117-a0f2e21cc0c7",
+   "crop_id": null,
+   "list_type": "input_method",
+   "code": "drench",
+   "name_ml": "ചുവട്ടിൽ ഒഴിക്കൽ",
+   "name_en": "Drench at the base",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "985c356c-ca66-0683-960e-0e21e1679e30",
+   "crop_id": null,
+   "list_type": "input_method",
+   "code": "other",
+   "name_ml": "മറ്റുള്ളവ",
+   "name_en": "Other",
+   "data": {
+    "ml_review": true
+   },
+   "sort_order": 900,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "a55dd955-fdac-3a69-e178-1d79f1ce5f79",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "ph",
+   "name_ml": "അമ്ലത (pH)",
+   "name_en": "pH",
+   "data": {
+    "unit": "",
+    "ml_review": true
+   },
+   "sort_order": 10,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "4a88bef2-a3d2-9c0a-e6e4-d860d52f2bbc",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "ec",
+   "name_ml": "വൈദ്യുത ചാലകത (EC)",
+   "name_en": "Electrical conductivity (EC)",
+   "data": {
+    "unit": "dS/m",
+    "ml_review": true
+   },
+   "sort_order": 20,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "919555e1-b269-9aa8-2b9e-c33b80e74fb6",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "oc",
+   "name_ml": "ജൈവ കാർബൺ",
+   "name_en": "Organic carbon",
+   "data": {
+    "unit": "%",
+    "ml_review": true
+   },
+   "sort_order": 30,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "3f6219ba-22b3-c567-aab0-0e00796b1784",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "n",
+   "name_ml": "നൈട്രജൻ",
+   "name_en": "Nitrogen (N)",
+   "data": {
+    "unit": "kg/ha",
+    "ml_review": true
+   },
+   "sort_order": 40,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "c3530935-0b0d-fa7b-0695-0056e1c00283",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "p",
+   "name_ml": "ഫോസ്ഫറസ്",
+   "name_en": "Phosphorus (P)",
+   "data": {
+    "unit": "kg/ha",
+    "ml_review": true
+   },
+   "sort_order": 50,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "f40e899f-37bb-bd5c-3d1d-95d693d1210f",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "k",
+   "name_ml": "പൊട്ടാസ്യം",
+   "name_en": "Potassium (K)",
+   "data": {
+    "unit": "kg/ha",
+    "ml_review": true
+   },
+   "sort_order": 60,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "f692ec47-990b-de8c-46d6-814a1e97a3e6",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "s",
+   "name_ml": "സൾഫർ",
+   "name_en": "Sulphur (S)",
+   "data": {
+    "unit": "ppm",
+    "ml_review": true
+   },
+   "sort_order": 70,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "e7ef009d-a27f-b198-2ec0-293fb40967ed",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "zn",
+   "name_ml": "സിങ്ക്",
+   "name_en": "Zinc (Zn)",
+   "data": {
+    "unit": "ppm",
+    "ml_review": true
+   },
+   "sort_order": 80,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "1ed78950-cf88-7c57-94ad-ddedd4a75a6c",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "fe",
+   "name_ml": "ഇരുമ്പ്",
+   "name_en": "Iron (Fe)",
+   "data": {
+    "unit": "ppm",
+    "ml_review": true
+   },
+   "sort_order": 90,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "1e623238-d310-cfa4-ad60-770fdff5c46b",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "cu",
+   "name_ml": "ചെമ്പ്",
+   "name_en": "Copper (Cu)",
+   "data": {
+    "unit": "ppm",
+    "ml_review": true
+   },
+   "sort_order": 100,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "1fcf44f1-e6b7-46f7-780a-cb0ba647f80b",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "mn",
+   "name_ml": "മാംഗനീസ്",
+   "name_en": "Manganese (Mn)",
+   "data": {
+    "unit": "ppm",
+    "ml_review": true
+   },
+   "sort_order": 110,
+   "is_active": true,
+   "template_version": 3
+  },
+  {
+   "id": "b16ed9d4-d209-706d-fad1-c22c7e980df9",
+   "crop_id": null,
+   "list_type": "soil_parameter",
+   "code": "b",
+   "name_ml": "ബോറോൺ",
+   "name_en": "Boron (B)",
+   "data": {
+    "unit": "ppm",
+    "ml_review": true
+   },
+   "sort_order": 120,
+   "is_active": true,
+   "template_version": 3
   }
  ]
 }

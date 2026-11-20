@@ -2281,5 +2281,552 @@
         "type": "String"
       }
     }
+  },
+  "pageInputs": "Inputs",
+  "@pageInputs": {
+    "description": "Inputs page (phase 7): More tile, Settings page switch, screen 19 title."
+  },
+  "inputsSubtitle": "Stock and use",
+  "@inputsSubtitle": {
+    "description": "Subtitle of the Inputs screen."
+  },
+  "quickAddInput": "Input used",
+  "@quickAddInput": {
+    "description": "Quick add tile: log an input used (screen 19b)."
+  },
+  "inputsStock": "Stock",
+  "@inputsStock": {
+    "description": "Heading of the stock list on Inputs."
+  },
+  "inputsEmpty": "Add the fertilisers, pesticides and seeds you buy to see what is in stock and what each crop used.",
+  "@inputsEmpty": {
+    "description": "Empty state of the Inputs screen."
+  },
+  "inputsAddPurchase": "Add a purchase",
+  "@inputsAddPurchase": {
+    "description": "Empty-state action on Inputs: add the first purchase."
+  },
+  "inputsAddItem": "Add an item",
+  "@inputsAddItem": {
+    "description": "Action on Inputs for a role that cannot write money: add an item."
+  },
+  "inputsUsed": "Used",
+  "@inputsUsed": {
+    "description": "Button on a stock row: log this item used."
+  },
+  "inputsBought": "Bought",
+  "@inputsBought": {
+    "description": "Button on a stock row: add a purchase of this item."
+  },
+  "inputsTagLow": "Low",
+  "@inputsTagLow": {
+    "description": "Tag on a stock row: at or below the reorder level."
+  },
+  "inputsTagExpiresSoon": "Expires soon",
+  "@inputsTagExpiresSoon": {
+    "description": "Tag on a stock row: stock on hand expires within the warning window."
+  },
+  "inputsTagExpired": "Expired",
+  "@inputsTagExpired": {
+    "description": "Tag on a stock row: stock on hand is past its expiry date."
+  },
+  "inputsTagCheckStock": "Check stock",
+  "@inputsTagCheckStock": {
+    "description": "Tag on a stock row: stock went below zero; count it."
+  },
+  "inputsOnHand": "{quantity} in stock",
+  "@inputsOnHand": {
+    "description": "Stock on hand of an item (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "inputsStockValue": "Stock on hand worth {amount}, not yet in crop costs",
+  "@inputsStockValue": {
+    "description": "Value of unused stock on Inputs, money roles only (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "inputsSafeDaysLeft": "{days, plural, =1{1 more day until safe to harvest} other{{days} more days until safe to harvest}}",
+  "@inputsSafeDaysLeft": {
+    "description": "Safe-to-harvest card: days left in the waiting period.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inputsSafeContext": "{crop} · {plot} · {item} {days, plural, =0{applied today} =1{applied yesterday} other{applied {days} days ago}}",
+  "@inputsSafeContext": {
+    "description": "Safe-to-harvest card: crop, plot, the item and how long ago it was applied.",
+    "placeholders": {
+      "crop": {
+        "type": "String"
+      },
+      "plot": {
+        "type": "String"
+      },
+      "item": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inputsSafeFrom": "Safe to harvest from {date}",
+  "@inputsSafeFrom": {
+    "description": "Safe-to-harvest date (date formatted in code).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "soilTestTitle": "Soil test",
+  "@soilTestTitle": {
+    "description": "Soil test: row title on Inputs and screen 19d title."
+  },
+  "soilTestLatest": "Soil test · {values} · {age}",
+  "@soilTestLatest": {
+    "description": "Latest soil test row: main values and age (both formatted in code).",
+    "placeholders": {
+      "values": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "soilTestAge": "{months, plural, =0{this month} =1{1 month ago} other{{months} months ago}}",
+  "@soilTestAge": {
+    "description": "How long ago a soil test was done, in months.",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "soilTestNone": "No soil test yet",
+  "@soilTestNone": {
+    "description": "Shown when the farm has no soil test."
+  },
+  "soilTestAdd": "Add new",
+  "@soilTestAdd": {
+    "description": "Button: add a soil test."
+  },
+  "soilTestLab": "Lab",
+  "@soilTestLab": {
+    "description": "Soil test field: the lab that tested the sample."
+  },
+  "soilTestResults": "Results",
+  "@soilTestResults": {
+    "description": "Soil test: heading of the parameter values."
+  },
+  "soilTestPhoto": "Photo of the report",
+  "@soilTestPhoto": {
+    "description": "Soil test: photo of the lab report."
+  },
+  "soilTestSaved": "Soil test saved",
+  "@soilTestSaved": {
+    "description": "Toast after saving a soil test."
+  },
+  "purchaseTitle": "Add purchase",
+  "@purchaseTitle": {
+    "description": "Title of the add purchase screen (19a)."
+  },
+  "inputItem": "Item",
+  "@inputItem": {
+    "description": "Field: the input item."
+  },
+  "inputItemSearch": "Search items",
+  "@inputItemSearch": {
+    "description": "Hint of the item search."
+  },
+  "inputNewItem": "New item",
+  "@inputNewItem": {
+    "description": "Action: add a new input item."
+  },
+  "inputItemName": "Name",
+  "@inputItemName": {
+    "description": "Item field: name."
+  },
+  "inputItemCategory": "Kind",
+  "@inputItemCategory": {
+    "description": "Item field: the expense category its purchases go to."
+  },
+  "inputItemUnit": "Unit",
+  "@inputItemUnit": {
+    "description": "Item field: unit."
+  },
+  "inputItemPackSize": "Pack size",
+  "@inputItemPackSize": {
+    "description": "Item field: quantity in one pack, such as a 50 kg bag."
+  },
+  "inputQuantity": "Quantity",
+  "@inputQuantity": {
+    "description": "Field: quantity of an input."
+  },
+  "inputPacks": "{count} × {size}",
+  "@inputPacks": {
+    "description": "Pack chip: number of packs times pack size with unit (formatted in code).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseAmount": "Total amount",
+  "@purchaseAmount": {
+    "description": "Purchase field: total amount paid."
+  },
+  "purchaseRate": "{amount} per {unit}",
+  "@purchaseRate": {
+    "description": "Price per unit worked out from amount and quantity (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseVendor": "Shop or vendor",
+  "@purchaseVendor": {
+    "description": "Purchase field: vendor (optional)."
+  },
+  "purchaseMore": "More details",
+  "@purchaseMore": {
+    "description": "Purchase: shows batch and expiry fields."
+  },
+  "purchaseBatch": "Batch number",
+  "@purchaseBatch": {
+    "description": "Purchase field: batch number from the pack."
+  },
+  "purchaseExpiry": "Expiry date",
+  "@purchaseExpiry": {
+    "description": "Purchase field: expiry date from the pack."
+  },
+  "purchaseAsExpense": "Saved once, as a {category} expense",
+  "@purchaseAsExpense": {
+    "description": "Hint on the purchase screen: the purchase is also its expense (category name).",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseSaved": "Purchase saved",
+  "@purchaseSaved": {
+    "description": "Toast after saving a purchase."
+  },
+  "applyTitle": "Log input used",
+  "@applyTitle": {
+    "description": "Title of the log input used screen (19b)."
+  },
+  "applyInStock": "In stock: {quantity}",
+  "@applyInStock": {
+    "description": "Stock on hand beside the quantity field (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "applyMethod": "How",
+  "@applyMethod": {
+    "description": "Field: application method chips."
+  },
+  "applyWho": "Who applied",
+  "@applyWho": {
+    "description": "Field: worker or group who applied (optional)."
+  },
+  "inputWaiting": "Waiting period before harvest",
+  "@inputWaiting": {
+    "description": "Field: days to wait after applying before harvest."
+  },
+  "inputWaitingDays": "{days, plural, =1{1 day} other{{days} days}}",
+  "@inputWaitingDays": {
+    "description": "A waiting period in days.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inputWaitingFrom": "From: {source}",
+  "@inputWaitingFrom": {
+    "description": "Where a waiting period comes from (label or authority).",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "inputWaitingSource": "Source: product label or agricultural authority",
+  "@inputWaitingSource": {
+    "description": "Item field: source of the waiting period."
+  },
+  "inputWaitingSourceNeeded": "Add where this waiting period comes from",
+  "@inputWaitingSourceNeeded": {
+    "description": "Error: a waiting period needs its source."
+  },
+  "inputWaitingNote": "Take it from the product label. Thottam does not suggest waiting periods.",
+  "@inputWaitingNote": {
+    "description": "Note under the waiting period field."
+  },
+  "applyCost": "{amount}: {quantity} × {rate} average",
+  "@applyCost": {
+    "description": "Cost of an application at average cost, money roles only (all formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "applyCostEdited": "Edited by hand",
+  "@applyCostEdited": {
+    "description": "Mark on a cost edited by hand."
+  },
+  "applyCostReset": "Reset to {amount}",
+  "@applyCostReset": {
+    "description": "Reset an edited cost to the worked-out one (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "applyCostUnknown": "Cost not known yet: no purchase recorded",
+  "@applyCostUnknown": {
+    "description": "Shown when the item has no purchase to work out a cost from."
+  },
+  "applySavedSafe": "Saved. Safe to harvest from {date}",
+  "@applySavedSafe": {
+    "description": "Toast after logging an input with a waiting period (date formatted in code).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "applyOverStock": "Only {quantity} in stock",
+  "@applyOverStock": {
+    "description": "Using more than is in stock (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "applyAddFound": "Record {quantity} as found stock and save",
+  "@applyAddFound": {
+    "description": "Action: add the missing quantity as found stock, then save.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "applyChangeQuantity": "Change the quantity",
+  "@applyChangeQuantity": {
+    "description": "Action: go back and change the quantity."
+  },
+  "applyReadOnly": "Only the owner, a manager or a supervisor can record inputs used.",
+  "@applyReadOnly": {
+    "description": "Shown to roles that cannot write daily work."
+  },
+  "stockReasonFound": "Found when using",
+  "@stockReasonFound": {
+    "description": "Reason saved on found stock added while logging a use."
+  },
+  "itemAverageCost": "Average cost {rate} per {unit}",
+  "@itemAverageCost": {
+    "description": "Item detail: average cost per unit, money roles only (rate formatted in code).",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "itemStockValue": "Worth {amount}",
+  "@itemStockValue": {
+    "description": "Item detail: value of stock on hand, money roles only (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "itemReorderLevel": "Remind me at or below",
+  "@itemReorderLevel": {
+    "description": "Item field: reorder level for the Low tag."
+  },
+  "movementBought": "Bought {quantity}",
+  "@movementBought": {
+    "description": "Item history row: a purchase (quantity with unit, formatted in code).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "movementUsed": "Used {quantity} · {crop}",
+  "@movementUsed": {
+    "description": "Item history row: an application with its crop.",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "crop": {
+        "type": "String"
+      }
+    }
+  },
+  "movementAdjusted": "Adjusted {quantity} · {reason}",
+  "@movementAdjusted": {
+    "description": "Item history row: an adjustment with its reason (quantity with sign).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustTitle": "Adjust stock",
+  "@adjustTitle": {
+    "description": "Action and title: adjust the stock of an item to a count."
+  },
+  "adjustCounted": "Counted stock",
+  "@adjustCounted": {
+    "description": "Adjust field: the stock counted now."
+  },
+  "adjustReason": "Reason",
+  "@adjustReason": {
+    "description": "Adjust field: why the stock differs."
+  },
+  "adjustDifference": "Saves {quantity} as an adjustment",
+  "@adjustDifference": {
+    "description": "Adjust: the difference that will be saved (quantity with sign and unit).",
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestWaitingBanner": "Not safe to harvest until {date}: {item} applied on {applied}, {period}, from {source}",
+  "@harvestWaitingBanner": {
+    "description": "Harvest banner inside a waiting period (dates and period formatted in code).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "item": {
+        "type": "String"
+      },
+      "applied": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "harvestWaitingReason": "Why harvest now?",
+  "@harvestWaitingReason": {
+    "description": "Field: reason for harvesting inside a waiting period."
+  },
+  "harvestWaitingReasonNeeded": "Write a reason to save inside the waiting period",
+  "@harvestWaitingReasonNeeded": {
+    "description": "Error when the reason is empty."
+  },
+  "harvestWaitingSave": "Save with reason",
+  "@harvestWaitingSave": {
+    "description": "Button: save a harvest inside a waiting period."
+  },
+  "historyWaitingReason": "Harvested inside a waiting period: {reason}",
+  "@historyWaitingReason": {
+    "description": "History line on a harvest saved inside a waiting period.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "plotLogInput": "Log input",
+  "@plotLogInput": {
+    "description": "Plot detail button: log an input used on this plot."
+  },
+  "moneyInputsInStock": "Inputs in stock {amount}",
+  "@moneyInputsInStock": {
+    "description": "Money screen line: value of unused inputs (amount formatted in code).",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyInputsInStockNote": "Counted in crop costs when used",
+  "@moneyInputsInStockNote": {
+    "description": "Note under the inputs in stock line."
+  },
+  "moneyInputLosses": "Inputs lost or adjusted",
+  "@moneyInputLosses": {
+    "description": "Money screen: cost of adjustments out, on no crop."
+  },
+  "historyFilterInputs": "Inputs",
+  "@historyFilterInputs": {
+    "description": "History filter chip: inputs."
+  },
+  "historyPurchase": "Bought {item}",
+  "@historyPurchase": {
+    "description": "History title: a purchase.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "historyApplication": "{item} used",
+  "@historyApplication": {
+    "description": "History title: an application.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "historyAdjustment": "{item} stock adjusted",
+  "@historyAdjustment": {
+    "description": "History title: an adjustment.",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
   }
 }

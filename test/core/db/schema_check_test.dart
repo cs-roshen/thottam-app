@@ -31,19 +31,28 @@ void main() {
   final server = <String, List<String>>{};
   final serverNotNull = <String, Set<String>>{};
   for (final f in migrations) {
-    server.addAll(parseTables(f.readAsStringSync()));
-    serverNotNull.addAll(parseNotNull(f.readAsStringSync()));
+    final sql = f.readAsStringSync();
+    server.addAll(parseTables(sql));
+    serverNotNull.addAll(parseNotNull(sql));
+    for (final m in _addColumn.allMatches(sql)) {
+      final (table, column) = (m.group(1)!.toLowerCase(), m.group(2)!);
+      server[table]!.add(column.toLowerCase());
+      if (_required.hasMatch(m.group(3)!)) {
+        serverNotNull[table]!.add(column.toLowerCase());
+      }
+    }
   }
   final drift = File('lib/core/db/tables.drift').readAsStringSync();
   final phone = parseTables(drift);
   final phoneNotNull = parseNotNull(drift);
 
-  test('migrations change columns only inside CREATE TABLE', () {
-    // This check reads CREATE TABLE only. A migration that adds, drops or
-    // renames a column needs the check taught about it first.
+  test('migrations change columns only by CREATE TABLE and ADD COLUMN', () {
+    // This check reads CREATE TABLE and ALTER TABLE ... ADD COLUMN only
+    // (schema changes are additive). A migration that drops or renames a
+    // column needs the check taught about it first.
     final alter = RegExp(
-      r'alter\s+table\s+[\w."]+\s+(add\s+column|drop\s+column|rename\s+column|'
-      r'alter\s+column|rename\s+to|add\s+(?!constraint|unique|primary|foreign|check)\w+\s+\w+)',
+      r'alter\s+table\s+[\w."]+\s+(drop\s+column|rename\s+column|'
+      r'alter\s+column|rename\s+to|add\s+(?!column|constraint|unique|primary|foreign|check)\w+\s+\w+)',
       caseSensitive: false,
     );
     for (final f in migrations) {
@@ -65,16 +74,15 @@ void main() {
   });
 
   test('the phone lists the synced tables in the server order', () {
-    final sql = File('supabase/migrations/0001_init.sql').readAsStringSync();
-    final block = sql.substring(
-      sql.indexOf('insert into public.sync_tables'),
-      sql.indexOf(';', sql.indexOf('insert into public.sync_tables')),
-    );
     final rows = [
-      for (final m in RegExp(
-        r"\('(\w+)', (?:'\w+'|null), (?:'(\w+)'|null), (\d+)\)",
-      ).allMatches(block))
-        (m.group(1)!, m.group(2), int.parse(m.group(3)!)),
+      for (final f in migrations)
+        for (final block in RegExp(
+          r'insert into public\.sync_tables[^;]*;',
+        ).allMatches(f.readAsStringSync()))
+          for (final m in RegExp(
+            r"\('(\w+)', (?:'\w+'|null), (?:'(\w+)'|null), (\d+)\)",
+          ).allMatches(block.group(0)!))
+            (m.group(1)!, m.group(2), int.parse(m.group(3)!)),
     ]..sort((a, b) => a.$3.compareTo(b.$3));
     expect([for (final r in rows) (r.$1, r.$2)], syncedTables);
   });
@@ -119,6 +127,10 @@ Map<String, List<String>> parseTables(String sql) => {
     ],
 };
 final _required = RegExp(r'\bnot null\b|\bprimary key\b', caseSensitive: false);
+final _addColumn = RegExp(
+  r'alter table (?:public\.)?(\w+) add column (\w+)([^;]*);',
+  caseSensitive: false,
+);
 
 /// Table name to the columns that cannot be null (NOT NULL or PRIMARY KEY).
 Map<String, Set<String>> parseNotNull(String sql) => {

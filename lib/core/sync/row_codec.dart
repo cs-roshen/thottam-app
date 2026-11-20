@@ -24,6 +24,7 @@ const jsonColumns = {
   'summary',
   'old_values',
   'new_values',
+  'results',
 };
 
 /// Turns a phone row into the server's JSON form.

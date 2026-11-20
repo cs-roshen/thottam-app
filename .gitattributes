@@ -1,0 +1,9 @@
+# CI runs on Windows, where Git checks text out with CRLF. The tests and gates read
+# these files with '\n' (migrations, Drift schema, ARB, templates, sources), so they
+# keep LF on every machine.
+*.sql text eol=lf
+*.dart text eol=lf
+*.drift text eol=lf
+*.arb text eol=lf
+*.py text eol=lf
+assets/templates/*.json text eol=lf

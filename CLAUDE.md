@@ -58,6 +58,6 @@ Each feature folder: `data/` (drift tables, repositories), `domain/` (models, ru
 - If a doc and the prototype disagree, the doc wins; if the doc is silent, ask rather than guess.
 - Do not add analytics, ads or third-party SDKs without asking.
 
-## Out of scope for phase 1
+## Later phases
 
-Everything in implementation plan phases 7 to 13: inputs and stock, processing, crop doctor (including the photo diagnosis model), loans and full money, voice entry, bill OCR, organisations and the web dashboard, community feed, schemes, documents, equipment, livestock, custom records. The admin template console is phase 1 but may start as seed SQL plus a minimal web page.
+Phase 1 covers none of implementation plan phases 7 to 13. The owner decided on 2026-11-20 to start phases 7 (inputs and stock), 8 (processing), 9 (crop doctor), 11 (voice entry and bill scan), 12 (organisations and the web dashboard) and 13 (community, schemes, documents, equipment, livestock, custom records) now, ahead of the closed beta, beside phase 1 group D. Phase 10 (loans and full money) is still out of scope. Their backlog is `docs/later-phases-tasks.md`; each phase starts with a docs pull request the owner reviews before its build tasks. Ask the owner before adding any package, model or outside service these phases need (camera, image compression, diagnosis, speech recognition, bill OCR, web stack, moderation). The admin template console is phase 1 but may start as seed SQL plus a minimal web page.
