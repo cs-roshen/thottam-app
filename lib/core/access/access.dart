@@ -39,7 +39,6 @@ const tableAccess = {
   'input_items': AccessClass.stock,
   'input_applications': AccessClass.daily,
   'stock_movements': AccessClass.stock,
-  'input_application_costs': AccessClass.money,
   'soil_tests': AccessClass.daily,
 };
 

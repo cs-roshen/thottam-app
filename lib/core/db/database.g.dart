@@ -24103,17 +24103,6 @@ class InputItems extends Table with TableInfo<InputItems, InputItemRow> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  static const VerificationMeta _waitingSourceMeta = const VerificationMeta(
-    'waitingSource',
-  );
-  late final GeneratedColumn<String> waitingSource = GeneratedColumn<String>(
-    'waiting_source',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
     'notes',
@@ -24202,7 +24191,6 @@ class InputItems extends Table with TableInfo<InputItems, InputItemRow> {
     packSize,
     reorderLevel,
     waitingDays,
-    waitingSource,
     notes,
     createdAt,
     createdBy,
@@ -24293,15 +24281,6 @@ class InputItems extends Table with TableInfo<InputItems, InputItemRow> {
         waitingDays.isAcceptableOrUnknown(
           data['waiting_days']!,
           _waitingDaysMeta,
-        ),
-      );
-    }
-    if (data.containsKey('waiting_source')) {
-      context.handle(
-        _waitingSourceMeta,
-        waitingSource.isAcceptableOrUnknown(
-          data['waiting_source']!,
-          _waitingSourceMeta,
         ),
       );
     }
@@ -24400,10 +24379,6 @@ class InputItems extends Table with TableInfo<InputItems, InputItemRow> {
         DriftSqlType.int,
         data['${effectivePrefix}waiting_days'],
       ),
-      waitingSource: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}waiting_source'],
-      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -24443,7 +24418,6 @@ class InputItems extends Table with TableInfo<InputItems, InputItemRow> {
   @override
   List<String> get customConstraints => const [
     'CHECK(template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL)',
-    'CHECK(waiting_days IS NULL OR TRIM(COALESCE(waiting_source, \'\')) <> \'\')',
   ];
   @override
   bool get dontWriteConstraints => true;
@@ -24460,7 +24434,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
   final int? packSize;
   final int? reorderLevel;
   final int? waitingDays;
-  final String? waitingSource;
   final String? notes;
   final int createdAt;
   final String? createdBy;
@@ -24479,7 +24452,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
     this.packSize,
     this.reorderLevel,
     this.waitingDays,
-    this.waitingSource,
     this.notes,
     required this.createdAt,
     this.createdBy,
@@ -24512,9 +24484,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
     }
     if (!nullToAbsent || waitingDays != null) {
       map['waiting_days'] = Variable<int>(waitingDays);
-    }
-    if (!nullToAbsent || waitingSource != null) {
-      map['waiting_source'] = Variable<String>(waitingSource);
     }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
@@ -24558,9 +24527,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
       waitingDays: waitingDays == null && nullToAbsent
           ? const Value.absent()
           : Value(waitingDays),
-      waitingSource: waitingSource == null && nullToAbsent
-          ? const Value.absent()
-          : Value(waitingSource),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -24595,7 +24561,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
       packSize: serializer.fromJson<int?>(json['pack_size']),
       reorderLevel: serializer.fromJson<int?>(json['reorder_level']),
       waitingDays: serializer.fromJson<int?>(json['waiting_days']),
-      waitingSource: serializer.fromJson<String?>(json['waiting_source']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<int>(json['created_at']),
       createdBy: serializer.fromJson<String?>(json['created_by']),
@@ -24619,7 +24584,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
       'pack_size': serializer.toJson<int?>(packSize),
       'reorder_level': serializer.toJson<int?>(reorderLevel),
       'waiting_days': serializer.toJson<int?>(waitingDays),
-      'waiting_source': serializer.toJson<String?>(waitingSource),
       'notes': serializer.toJson<String?>(notes),
       'created_at': serializer.toJson<int>(createdAt),
       'created_by': serializer.toJson<String?>(createdBy),
@@ -24641,7 +24605,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
     Value<int?> packSize = const Value.absent(),
     Value<int?> reorderLevel = const Value.absent(),
     Value<int?> waitingDays = const Value.absent(),
-    Value<String?> waitingSource = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     int? createdAt,
     Value<String?> createdBy = const Value.absent(),
@@ -24662,9 +24625,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
     packSize: packSize.present ? packSize.value : this.packSize,
     reorderLevel: reorderLevel.present ? reorderLevel.value : this.reorderLevel,
     waitingDays: waitingDays.present ? waitingDays.value : this.waitingDays,
-    waitingSource: waitingSource.present
-        ? waitingSource.value
-        : this.waitingSource,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
@@ -24693,9 +24653,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
       waitingDays: data.waitingDays.present
           ? data.waitingDays.value
           : this.waitingDays,
-      waitingSource: data.waitingSource.present
-          ? data.waitingSource.value
-          : this.waitingSource,
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
@@ -24719,7 +24676,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
           ..write('packSize: $packSize, ')
           ..write('reorderLevel: $reorderLevel, ')
           ..write('waitingDays: $waitingDays, ')
-          ..write('waitingSource: $waitingSource, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('createdBy: $createdBy, ')
@@ -24743,7 +24699,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
     packSize,
     reorderLevel,
     waitingDays,
-    waitingSource,
     notes,
     createdAt,
     createdBy,
@@ -24766,7 +24721,6 @@ class InputItemRow extends DataClass implements Insertable<InputItemRow> {
           other.packSize == this.packSize &&
           other.reorderLevel == this.reorderLevel &&
           other.waitingDays == this.waitingDays &&
-          other.waitingSource == this.waitingSource &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.createdBy == this.createdBy &&
@@ -24787,7 +24741,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
   final Value<int?> packSize;
   final Value<int?> reorderLevel;
   final Value<int?> waitingDays;
-  final Value<String?> waitingSource;
   final Value<String?> notes;
   final Value<int> createdAt;
   final Value<String?> createdBy;
@@ -24807,7 +24760,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
     this.packSize = const Value.absent(),
     this.reorderLevel = const Value.absent(),
     this.waitingDays = const Value.absent(),
-    this.waitingSource = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -24828,7 +24780,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
     this.packSize = const Value.absent(),
     this.reorderLevel = const Value.absent(),
     this.waitingDays = const Value.absent(),
-    this.waitingSource = const Value.absent(),
     this.notes = const Value.absent(),
     required int createdAt,
     this.createdBy = const Value.absent(),
@@ -24852,7 +24803,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
     Expression<int>? packSize,
     Expression<int>? reorderLevel,
     Expression<int>? waitingDays,
-    Expression<String>? waitingSource,
     Expression<String>? notes,
     Expression<int>? createdAt,
     Expression<String>? createdBy,
@@ -24873,7 +24823,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
       if (packSize != null) 'pack_size': packSize,
       if (reorderLevel != null) 'reorder_level': reorderLevel,
       if (waitingDays != null) 'waiting_days': waitingDays,
-      if (waitingSource != null) 'waiting_source': waitingSource,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (createdBy != null) 'created_by': createdBy,
@@ -24896,7 +24845,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
     Value<int?>? packSize,
     Value<int?>? reorderLevel,
     Value<int?>? waitingDays,
-    Value<String?>? waitingSource,
     Value<String?>? notes,
     Value<int>? createdAt,
     Value<String?>? createdBy,
@@ -24917,7 +24865,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
       packSize: packSize ?? this.packSize,
       reorderLevel: reorderLevel ?? this.reorderLevel,
       waitingDays: waitingDays ?? this.waitingDays,
-      waitingSource: waitingSource ?? this.waitingSource,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
@@ -24962,9 +24909,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
     if (waitingDays.present) {
       map['waiting_days'] = Variable<int>(waitingDays.value);
     }
-    if (waitingSource.present) {
-      map['waiting_source'] = Variable<String>(waitingSource.value);
-    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -25005,7 +24949,6 @@ class InputItemsCompanion extends UpdateCompanion<InputItemRow> {
           ..write('packSize: $packSize, ')
           ..write('reorderLevel: $reorderLevel, ')
           ..write('waitingDays: $waitingDays, ')
-          ..write('waitingSource: $waitingSource, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('createdBy: $createdBy, ')
@@ -25127,6 +25070,15 @@ class InputApplications extends Table
     requiredDuringInsert: false,
     $customConstraints: '',
   );
+  static const VerificationMeta _doseMeta = const VerificationMeta('dose');
+  late final GeneratedColumn<String> dose = GeneratedColumn<String>(
+    'dose',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
     'notes',
@@ -25215,6 +25167,7 @@ class InputApplications extends Table
     workerId,
     groupId,
     waitingDays,
+    dose,
     notes,
     createdAt,
     createdBy,
@@ -25308,6 +25261,12 @@ class InputApplications extends Table
           data['waiting_days']!,
           _waitingDaysMeta,
         ),
+      );
+    }
+    if (data.containsKey('dose')) {
+      context.handle(
+        _doseMeta,
+        dose.isAcceptableOrUnknown(data['dose']!, _doseMeta),
       );
     }
     if (data.containsKey('notes')) {
@@ -25405,6 +25364,10 @@ class InputApplications extends Table
         DriftSqlType.int,
         data['${effectivePrefix}waiting_days'],
       ),
+      dose: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dose'],
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -25457,6 +25420,7 @@ class InputApplicationRow extends DataClass
   final String? workerId;
   final String? groupId;
   final int? waitingDays;
+  final String? dose;
   final String? notes;
   final int createdAt;
   final String? createdBy;
@@ -25475,6 +25439,7 @@ class InputApplicationRow extends DataClass
     this.workerId,
     this.groupId,
     this.waitingDays,
+    this.dose,
     this.notes,
     required this.createdAt,
     this.createdBy,
@@ -25503,6 +25468,9 @@ class InputApplicationRow extends DataClass
     }
     if (!nullToAbsent || waitingDays != null) {
       map['waiting_days'] = Variable<int>(waitingDays);
+    }
+    if (!nullToAbsent || dose != null) {
+      map['dose'] = Variable<String>(dose);
     }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
@@ -25542,6 +25510,7 @@ class InputApplicationRow extends DataClass
       waitingDays: waitingDays == null && nullToAbsent
           ? const Value.absent()
           : Value(waitingDays),
+      dose: dose == null && nullToAbsent ? const Value.absent() : Value(dose),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -25576,6 +25545,7 @@ class InputApplicationRow extends DataClass
       workerId: serializer.fromJson<String?>(json['worker_id']),
       groupId: serializer.fromJson<String?>(json['group_id']),
       waitingDays: serializer.fromJson<int?>(json['waiting_days']),
+      dose: serializer.fromJson<String?>(json['dose']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<int>(json['created_at']),
       createdBy: serializer.fromJson<String?>(json['created_by']),
@@ -25599,6 +25569,7 @@ class InputApplicationRow extends DataClass
       'worker_id': serializer.toJson<String?>(workerId),
       'group_id': serializer.toJson<String?>(groupId),
       'waiting_days': serializer.toJson<int?>(waitingDays),
+      'dose': serializer.toJson<String?>(dose),
       'notes': serializer.toJson<String?>(notes),
       'created_at': serializer.toJson<int>(createdAt),
       'created_by': serializer.toJson<String?>(createdBy),
@@ -25620,6 +25591,7 @@ class InputApplicationRow extends DataClass
     Value<String?> workerId = const Value.absent(),
     Value<String?> groupId = const Value.absent(),
     Value<int?> waitingDays = const Value.absent(),
+    Value<String?> dose = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     int? createdAt,
     Value<String?> createdBy = const Value.absent(),
@@ -25638,6 +25610,7 @@ class InputApplicationRow extends DataClass
     workerId: workerId.present ? workerId.value : this.workerId,
     groupId: groupId.present ? groupId.value : this.groupId,
     waitingDays: waitingDays.present ? waitingDays.value : this.waitingDays,
+    dose: dose.present ? dose.value : this.dose,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
@@ -25664,6 +25637,7 @@ class InputApplicationRow extends DataClass
       waitingDays: data.waitingDays.present
           ? data.waitingDays.value
           : this.waitingDays,
+      dose: data.dose.present ? data.dose.value : this.dose,
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
@@ -25687,6 +25661,7 @@ class InputApplicationRow extends DataClass
           ..write('workerId: $workerId, ')
           ..write('groupId: $groupId, ')
           ..write('waitingDays: $waitingDays, ')
+          ..write('dose: $dose, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('createdBy: $createdBy, ')
@@ -25710,6 +25685,7 @@ class InputApplicationRow extends DataClass
     workerId,
     groupId,
     waitingDays,
+    dose,
     notes,
     createdAt,
     createdBy,
@@ -25732,6 +25708,7 @@ class InputApplicationRow extends DataClass
           other.workerId == this.workerId &&
           other.groupId == this.groupId &&
           other.waitingDays == this.waitingDays &&
+          other.dose == this.dose &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.createdBy == this.createdBy &&
@@ -25752,6 +25729,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
   final Value<String?> workerId;
   final Value<String?> groupId;
   final Value<int?> waitingDays;
+  final Value<String?> dose;
   final Value<String?> notes;
   final Value<int> createdAt;
   final Value<String?> createdBy;
@@ -25771,6 +25749,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
     this.workerId = const Value.absent(),
     this.groupId = const Value.absent(),
     this.waitingDays = const Value.absent(),
+    this.dose = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -25791,6 +25770,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
     this.workerId = const Value.absent(),
     this.groupId = const Value.absent(),
     this.waitingDays = const Value.absent(),
+    this.dose = const Value.absent(),
     this.notes = const Value.absent(),
     required int createdAt,
     this.createdBy = const Value.absent(),
@@ -25818,6 +25798,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
     Expression<String>? workerId,
     Expression<String>? groupId,
     Expression<int>? waitingDays,
+    Expression<String>? dose,
     Expression<String>? notes,
     Expression<int>? createdAt,
     Expression<String>? createdBy,
@@ -25838,6 +25819,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
       if (workerId != null) 'worker_id': workerId,
       if (groupId != null) 'group_id': groupId,
       if (waitingDays != null) 'waiting_days': waitingDays,
+      if (dose != null) 'dose': dose,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (createdBy != null) 'created_by': createdBy,
@@ -25860,6 +25842,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
     Value<String?>? workerId,
     Value<String?>? groupId,
     Value<int?>? waitingDays,
+    Value<String?>? dose,
     Value<String?>? notes,
     Value<int>? createdAt,
     Value<String?>? createdBy,
@@ -25880,6 +25863,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
       workerId: workerId ?? this.workerId,
       groupId: groupId ?? this.groupId,
       waitingDays: waitingDays ?? this.waitingDays,
+      dose: dose ?? this.dose,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
@@ -25924,6 +25908,9 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
     if (waitingDays.present) {
       map['waiting_days'] = Variable<int>(waitingDays.value);
     }
+    if (dose.present) {
+      map['dose'] = Variable<String>(dose.value);
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -25964,6 +25951,7 @@ class InputApplicationsCompanion extends UpdateCompanion<InputApplicationRow> {
           ..write('workerId: $workerId, ')
           ..write('groupId: $groupId, ')
           ..write('waitingDays: $waitingDays, ')
+          ..write('dose: $dose, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('createdBy: $createdBy, ')
@@ -26922,575 +26910,6 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovementRow> {
           ..write('batch: $batch, ')
           ..write('expiresOn: $expiresOn, ')
           ..write('reason: $reason, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('createdBy: $createdBy, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('updatedBy: $updatedBy, ')
-          ..write('version: $version, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class InputApplicationCosts extends Table
-    with TableInfo<InputApplicationCosts, InputApplicationCostRow> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  InputApplicationCosts(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL PRIMARY KEY',
-  );
-  static const VerificationMeta _farmIdMeta = const VerificationMeta('farmId');
-  late final GeneratedColumn<String> farmId = GeneratedColumn<String>(
-    'farm_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _costPaiseMeta = const VerificationMeta(
-    'costPaise',
-  );
-  late final GeneratedColumn<int> costPaise = GeneratedColumn<int>(
-    'cost_paise',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _createdByMeta = const VerificationMeta(
-    'createdBy',
-  );
-  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
-    'created_by',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _updatedByMeta = const VerificationMeta(
-    'updatedBy',
-  );
-  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
-    'updated_by',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _versionMeta = const VerificationMeta(
-    'version',
-  );
-  late final GeneratedColumn<int> version = GeneratedColumn<int>(
-    'version',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 1',
-    defaultValue: const CustomExpression('1'),
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    farmId,
-    costPaise,
-    createdAt,
-    createdBy,
-    updatedAt,
-    updatedBy,
-    version,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'input_application_costs';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<InputApplicationCostRow> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('farm_id')) {
-      context.handle(
-        _farmIdMeta,
-        farmId.isAcceptableOrUnknown(data['farm_id']!, _farmIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_farmIdMeta);
-    }
-    if (data.containsKey('cost_paise')) {
-      context.handle(
-        _costPaiseMeta,
-        costPaise.isAcceptableOrUnknown(data['cost_paise']!, _costPaiseMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_costPaiseMeta);
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('created_by')) {
-      context.handle(
-        _createdByMeta,
-        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
-      );
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('updated_by')) {
-      context.handle(
-        _updatedByMeta,
-        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
-      );
-    }
-    if (data.containsKey('version')) {
-      context.handle(
-        _versionMeta,
-        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
-      );
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  InputApplicationCostRow map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return InputApplicationCostRow(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      farmId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}farm_id'],
-      )!,
-      costPaise: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}cost_paise'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}created_at'],
-      )!,
-      createdBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}created_by'],
-      ),
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      updatedBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}updated_by'],
-      ),
-      version: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}version'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  InputApplicationCosts createAlias(String alias) {
-    return InputApplicationCosts(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class InputApplicationCostRow extends DataClass
-    implements Insertable<InputApplicationCostRow> {
-  final String id;
-  final String farmId;
-  final int costPaise;
-  final int createdAt;
-  final String? createdBy;
-  final int updatedAt;
-  final String? updatedBy;
-  final int version;
-  final int? deletedAt;
-  const InputApplicationCostRow({
-    required this.id,
-    required this.farmId,
-    required this.costPaise,
-    required this.createdAt,
-    this.createdBy,
-    required this.updatedAt,
-    this.updatedBy,
-    required this.version,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['farm_id'] = Variable<String>(farmId);
-    map['cost_paise'] = Variable<int>(costPaise);
-    map['created_at'] = Variable<int>(createdAt);
-    if (!nullToAbsent || createdBy != null) {
-      map['created_by'] = Variable<String>(createdBy);
-    }
-    map['updated_at'] = Variable<int>(updatedAt);
-    if (!nullToAbsent || updatedBy != null) {
-      map['updated_by'] = Variable<String>(updatedBy);
-    }
-    map['version'] = Variable<int>(version);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<int>(deletedAt);
-    }
-    return map;
-  }
-
-  InputApplicationCostsCompanion toCompanion(bool nullToAbsent) {
-    return InputApplicationCostsCompanion(
-      id: Value(id),
-      farmId: Value(farmId),
-      costPaise: Value(costPaise),
-      createdAt: Value(createdAt),
-      createdBy: createdBy == null && nullToAbsent
-          ? const Value.absent()
-          : Value(createdBy),
-      updatedAt: Value(updatedAt),
-      updatedBy: updatedBy == null && nullToAbsent
-          ? const Value.absent()
-          : Value(updatedBy),
-      version: Value(version),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory InputApplicationCostRow.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return InputApplicationCostRow(
-      id: serializer.fromJson<String>(json['id']),
-      farmId: serializer.fromJson<String>(json['farm_id']),
-      costPaise: serializer.fromJson<int>(json['cost_paise']),
-      createdAt: serializer.fromJson<int>(json['created_at']),
-      createdBy: serializer.fromJson<String?>(json['created_by']),
-      updatedAt: serializer.fromJson<int>(json['updated_at']),
-      updatedBy: serializer.fromJson<String?>(json['updated_by']),
-      version: serializer.fromJson<int>(json['version']),
-      deletedAt: serializer.fromJson<int?>(json['deleted_at']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'farm_id': serializer.toJson<String>(farmId),
-      'cost_paise': serializer.toJson<int>(costPaise),
-      'created_at': serializer.toJson<int>(createdAt),
-      'created_by': serializer.toJson<String?>(createdBy),
-      'updated_at': serializer.toJson<int>(updatedAt),
-      'updated_by': serializer.toJson<String?>(updatedBy),
-      'version': serializer.toJson<int>(version),
-      'deleted_at': serializer.toJson<int?>(deletedAt),
-    };
-  }
-
-  InputApplicationCostRow copyWith({
-    String? id,
-    String? farmId,
-    int? costPaise,
-    int? createdAt,
-    Value<String?> createdBy = const Value.absent(),
-    int? updatedAt,
-    Value<String?> updatedBy = const Value.absent(),
-    int? version,
-    Value<int?> deletedAt = const Value.absent(),
-  }) => InputApplicationCostRow(
-    id: id ?? this.id,
-    farmId: farmId ?? this.farmId,
-    costPaise: costPaise ?? this.costPaise,
-    createdAt: createdAt ?? this.createdAt,
-    createdBy: createdBy.present ? createdBy.value : this.createdBy,
-    updatedAt: updatedAt ?? this.updatedAt,
-    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
-    version: version ?? this.version,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  InputApplicationCostRow copyWithCompanion(
-    InputApplicationCostsCompanion data,
-  ) {
-    return InputApplicationCostRow(
-      id: data.id.present ? data.id.value : this.id,
-      farmId: data.farmId.present ? data.farmId.value : this.farmId,
-      costPaise: data.costPaise.present ? data.costPaise.value : this.costPaise,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
-      version: data.version.present ? data.version.value : this.version,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('InputApplicationCostRow(')
-          ..write('id: $id, ')
-          ..write('farmId: $farmId, ')
-          ..write('costPaise: $costPaise, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('createdBy: $createdBy, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('updatedBy: $updatedBy, ')
-          ..write('version: $version, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    farmId,
-    costPaise,
-    createdAt,
-    createdBy,
-    updatedAt,
-    updatedBy,
-    version,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is InputApplicationCostRow &&
-          other.id == this.id &&
-          other.farmId == this.farmId &&
-          other.costPaise == this.costPaise &&
-          other.createdAt == this.createdAt &&
-          other.createdBy == this.createdBy &&
-          other.updatedAt == this.updatedAt &&
-          other.updatedBy == this.updatedBy &&
-          other.version == this.version &&
-          other.deletedAt == this.deletedAt);
-}
-
-class InputApplicationCostsCompanion
-    extends UpdateCompanion<InputApplicationCostRow> {
-  final Value<String> id;
-  final Value<String> farmId;
-  final Value<int> costPaise;
-  final Value<int> createdAt;
-  final Value<String?> createdBy;
-  final Value<int> updatedAt;
-  final Value<String?> updatedBy;
-  final Value<int> version;
-  final Value<int?> deletedAt;
-  final Value<int> rowid;
-  const InputApplicationCostsCompanion({
-    this.id = const Value.absent(),
-    this.farmId = const Value.absent(),
-    this.costPaise = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.createdBy = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.updatedBy = const Value.absent(),
-    this.version = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  InputApplicationCostsCompanion.insert({
-    required String id,
-    required String farmId,
-    required int costPaise,
-    required int createdAt,
-    this.createdBy = const Value.absent(),
-    required int updatedAt,
-    this.updatedBy = const Value.absent(),
-    this.version = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       farmId = Value(farmId),
-       costPaise = Value(costPaise),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<InputApplicationCostRow> custom({
-    Expression<String>? id,
-    Expression<String>? farmId,
-    Expression<int>? costPaise,
-    Expression<int>? createdAt,
-    Expression<String>? createdBy,
-    Expression<int>? updatedAt,
-    Expression<String>? updatedBy,
-    Expression<int>? version,
-    Expression<int>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (farmId != null) 'farm_id': farmId,
-      if (costPaise != null) 'cost_paise': costPaise,
-      if (createdAt != null) 'created_at': createdAt,
-      if (createdBy != null) 'created_by': createdBy,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (updatedBy != null) 'updated_by': updatedBy,
-      if (version != null) 'version': version,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  InputApplicationCostsCompanion copyWith({
-    Value<String>? id,
-    Value<String>? farmId,
-    Value<int>? costPaise,
-    Value<int>? createdAt,
-    Value<String?>? createdBy,
-    Value<int>? updatedAt,
-    Value<String?>? updatedBy,
-    Value<int>? version,
-    Value<int?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return InputApplicationCostsCompanion(
-      id: id ?? this.id,
-      farmId: farmId ?? this.farmId,
-      costPaise: costPaise ?? this.costPaise,
-      createdAt: createdAt ?? this.createdAt,
-      createdBy: createdBy ?? this.createdBy,
-      updatedAt: updatedAt ?? this.updatedAt,
-      updatedBy: updatedBy ?? this.updatedBy,
-      version: version ?? this.version,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (farmId.present) {
-      map['farm_id'] = Variable<String>(farmId.value);
-    }
-    if (costPaise.present) {
-      map['cost_paise'] = Variable<int>(costPaise.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<int>(createdAt.value);
-    }
-    if (createdBy.present) {
-      map['created_by'] = Variable<String>(createdBy.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<int>(updatedAt.value);
-    }
-    if (updatedBy.present) {
-      map['updated_by'] = Variable<String>(updatedBy.value);
-    }
-    if (version.present) {
-      map['version'] = Variable<int>(version.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<int>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('InputApplicationCostsCompanion(')
-          ..write('id: $id, ')
-          ..write('farmId: $farmId, ')
-          ..write('costPaise: $costPaise, ')
           ..write('createdAt: $createdAt, ')
           ..write('createdBy: $createdBy, ')
           ..write('updatedAt: $updatedAt, ')
@@ -31581,8 +31000,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'stock_movements_application',
     'CREATE INDEX stock_movements_application ON stock_movements (application_id) WHERE deleted_at IS NULL',
   );
-  late final InputApplicationCosts inputApplicationCosts =
-      InputApplicationCosts(this);
   late final SoilTests soilTests = SoilTests(this);
   late final Index soilTestsPlotDay = Index(
     'soil_tests_plot_day',
@@ -31715,7 +31132,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     stockMovementsFarmDay,
     stockMovementsExpense,
     stockMovementsApplication,
-    inputApplicationCosts,
     soilTests,
     soilTestsPlotDay,
     eventLog,
@@ -42997,7 +42413,6 @@ typedef $InputItemsCreateCompanionBuilder = InputItemsCompanion Function({
   Value<int?> packSize,
   Value<int?> reorderLevel,
   Value<int?> waitingDays,
-  Value<String?> waitingSource,
   Value<String?> notes,
   required int createdAt,
   Value<String?> createdBy,
@@ -43018,7 +42433,6 @@ typedef $InputItemsUpdateCompanionBuilder = InputItemsCompanion Function({
   Value<int?> packSize,
   Value<int?> reorderLevel,
   Value<int?> waitingDays,
-  Value<String?> waitingSource,
   Value<String?> notes,
   Value<int> createdAt,
   Value<String?> createdBy,
@@ -43084,11 +42498,6 @@ class $InputItemsFilterComposer extends Composer<_$AppDatabase, InputItems> {
 
   ColumnFilters<int> get waitingDays => $composableBuilder(
     column: $table.waitingDays,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get waitingSource => $composableBuilder(
-    column: $table.waitingSource,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -43186,11 +42595,6 @@ class $InputItemsOrderingComposer extends Composer<_$AppDatabase, InputItems> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get waitingSource => $composableBuilder(
-    column: $table.waitingSource,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -43274,11 +42678,6 @@ class $InputItemsAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get waitingSource => $composableBuilder(
-    column: $table.waitingSource,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
@@ -43342,7 +42741,6 @@ class $InputItemsTableManager
                 Value<int?> packSize = const Value.absent(),
                 Value<int?> reorderLevel = const Value.absent(),
                 Value<int?> waitingDays = const Value.absent(),
-                Value<String?> waitingSource = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -43362,7 +42760,6 @@ class $InputItemsTableManager
                 packSize: packSize,
                 reorderLevel: reorderLevel,
                 waitingDays: waitingDays,
-                waitingSource: waitingSource,
                 notes: notes,
                 createdAt: createdAt,
                 createdBy: createdBy,
@@ -43384,7 +42781,6 @@ class $InputItemsTableManager
                 Value<int?> packSize = const Value.absent(),
                 Value<int?> reorderLevel = const Value.absent(),
                 Value<int?> waitingDays = const Value.absent(),
-                Value<String?> waitingSource = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 required int createdAt,
                 Value<String?> createdBy = const Value.absent(),
@@ -43404,7 +42800,6 @@ class $InputItemsTableManager
                 packSize: packSize,
                 reorderLevel: reorderLevel,
                 waitingDays: waitingDays,
-                waitingSource: waitingSource,
                 notes: notes,
                 createdAt: createdAt,
                 createdBy: createdBy,
@@ -43457,6 +42852,7 @@ typedef $InputApplicationsCreateCompanionBuilder =
       Value<String?> workerId,
       Value<String?> groupId,
       Value<int?> waitingDays,
+      Value<String?> dose,
       Value<String?> notes,
       required int createdAt,
       Value<String?> createdBy,
@@ -43478,6 +42874,7 @@ typedef $InputApplicationsUpdateCompanionBuilder =
       Value<String?> workerId,
       Value<String?> groupId,
       Value<int?> waitingDays,
+      Value<String?> dose,
       Value<String?> notes,
       Value<int> createdAt,
       Value<String?> createdBy,
@@ -43544,6 +42941,11 @@ class $InputApplicationsFilterComposer
 
   ColumnFilters<int> get waitingDays => $composableBuilder(
     column: $table.waitingDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dose => $composableBuilder(
+    column: $table.dose,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -43642,6 +43044,11 @@ class $InputApplicationsOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get dose => $composableBuilder(
+    column: $table.dose,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -43723,6 +43130,9 @@ class $InputApplicationsAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get dose =>
+      $composableBuilder(column: $table.dose, builder: (column) => column);
+
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
@@ -43790,6 +43200,7 @@ class $InputApplicationsTableManager
                 Value<String?> workerId = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
                 Value<int?> waitingDays = const Value.absent(),
+                Value<String?> dose = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -43809,6 +43220,7 @@ class $InputApplicationsTableManager
                 workerId: workerId,
                 groupId: groupId,
                 waitingDays: waitingDays,
+                dose: dose,
                 notes: notes,
                 createdAt: createdAt,
                 createdBy: createdBy,
@@ -43830,6 +43242,7 @@ class $InputApplicationsTableManager
                 Value<String?> workerId = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
                 Value<int?> waitingDays = const Value.absent(),
+                Value<String?> dose = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 required int createdAt,
                 Value<String?> createdBy = const Value.absent(),
@@ -43849,6 +43262,7 @@ class $InputApplicationsTableManager
                 workerId: workerId,
                 groupId: groupId,
                 waitingDays: waitingDays,
+                dose: dose,
                 notes: notes,
                 createdAt: createdAt,
                 createdBy: createdBy,
@@ -44329,303 +43743,6 @@ typedef $StockMovementsProcessedTableManager =
         BaseReferences<_$AppDatabase, StockMovements, StockMovementRow>,
       ),
       StockMovementRow,
-      PrefetchHooks Function()
-    >;
-typedef $InputApplicationCostsCreateCompanionBuilder =
-    InputApplicationCostsCompanion Function({
-      required String id,
-      required String farmId,
-      required int costPaise,
-      required int createdAt,
-      Value<String?> createdBy,
-      required int updatedAt,
-      Value<String?> updatedBy,
-      Value<int> version,
-      Value<int?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $InputApplicationCostsUpdateCompanionBuilder =
-    InputApplicationCostsCompanion Function({
-      Value<String> id,
-      Value<String> farmId,
-      Value<int> costPaise,
-      Value<int> createdAt,
-      Value<String?> createdBy,
-      Value<int> updatedAt,
-      Value<String?> updatedBy,
-      Value<int> version,
-      Value<int?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $InputApplicationCostsFilterComposer
-    extends Composer<_$AppDatabase, InputApplicationCosts> {
-  $InputApplicationCostsFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get farmId => $composableBuilder(
-    column: $table.farmId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get costPaise => $composableBuilder(
-    column: $table.costPaise,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get createdBy => $composableBuilder(
-    column: $table.createdBy,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get updatedBy => $composableBuilder(
-    column: $table.updatedBy,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get version => $composableBuilder(
-    column: $table.version,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $InputApplicationCostsOrderingComposer
-    extends Composer<_$AppDatabase, InputApplicationCosts> {
-  $InputApplicationCostsOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get farmId => $composableBuilder(
-    column: $table.farmId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get costPaise => $composableBuilder(
-    column: $table.costPaise,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get createdBy => $composableBuilder(
-    column: $table.createdBy,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get updatedBy => $composableBuilder(
-    column: $table.updatedBy,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get version => $composableBuilder(
-    column: $table.version,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $InputApplicationCostsAnnotationComposer
-    extends Composer<_$AppDatabase, InputApplicationCosts> {
-  $InputApplicationCostsAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get farmId =>
-      $composableBuilder(column: $table.farmId, builder: (column) => column);
-
-  GeneratedColumn<int> get costPaise =>
-      $composableBuilder(column: $table.costPaise, builder: (column) => column);
-
-  GeneratedColumn<int> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<String> get createdBy =>
-      $composableBuilder(column: $table.createdBy, builder: (column) => column);
-
-  GeneratedColumn<int> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<String> get updatedBy =>
-      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
-
-  GeneratedColumn<int> get version =>
-      $composableBuilder(column: $table.version, builder: (column) => column);
-
-  GeneratedColumn<int> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $InputApplicationCostsTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          InputApplicationCosts,
-          InputApplicationCostRow,
-          $InputApplicationCostsFilterComposer,
-          $InputApplicationCostsOrderingComposer,
-          $InputApplicationCostsAnnotationComposer,
-          $InputApplicationCostsCreateCompanionBuilder,
-          $InputApplicationCostsUpdateCompanionBuilder,
-          (
-            InputApplicationCostRow,
-            BaseReferences<
-              _$AppDatabase,
-              InputApplicationCosts,
-              InputApplicationCostRow
-            >,
-          ),
-          InputApplicationCostRow,
-          PrefetchHooks Function()
-        > {
-  $InputApplicationCostsTableManager(
-    _$AppDatabase db,
-    InputApplicationCosts table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $InputApplicationCostsFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $InputApplicationCostsOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $InputApplicationCostsAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> farmId = const Value.absent(),
-                Value<int> costPaise = const Value.absent(),
-                Value<int> createdAt = const Value.absent(),
-                Value<String?> createdBy = const Value.absent(),
-                Value<int> updatedAt = const Value.absent(),
-                Value<String?> updatedBy = const Value.absent(),
-                Value<int> version = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => InputApplicationCostsCompanion(
-                id: id,
-                farmId: farmId,
-                costPaise: costPaise,
-                createdAt: createdAt,
-                createdBy: createdBy,
-                updatedAt: updatedAt,
-                updatedBy: updatedBy,
-                version: version,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String farmId,
-                required int costPaise,
-                required int createdAt,
-                Value<String?> createdBy = const Value.absent(),
-                required int updatedAt,
-                Value<String?> updatedBy = const Value.absent(),
-                Value<int> version = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => InputApplicationCostsCompanion.insert(
-                id: id,
-                farmId: farmId,
-                costPaise: costPaise,
-                createdAt: createdAt,
-                createdBy: createdBy,
-                updatedAt: updatedAt,
-                updatedBy: updatedBy,
-                version: version,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable<InputApplicationCosts, InputApplicationCostRow>(
-                    table,
-                  ),
-                  BaseReferences<
-                    _$AppDatabase,
-                    InputApplicationCosts,
-                    InputApplicationCostRow
-                  >(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $InputApplicationCostsProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      InputApplicationCosts,
-      InputApplicationCostRow,
-      $InputApplicationCostsFilterComposer,
-      $InputApplicationCostsOrderingComposer,
-      $InputApplicationCostsAnnotationComposer,
-      $InputApplicationCostsCreateCompanionBuilder,
-      $InputApplicationCostsUpdateCompanionBuilder,
-      (
-        InputApplicationCostRow,
-        BaseReferences<
-          _$AppDatabase,
-          InputApplicationCosts,
-          InputApplicationCostRow
-        >,
-      ),
-      InputApplicationCostRow,
       PrefetchHooks Function()
     >;
 typedef $SoilTestsCreateCompanionBuilder = SoilTestsCompanion Function({
@@ -46607,8 +45724,6 @@ class $AppDatabaseManager {
       $InputApplicationsTableManager(_db, _db.inputApplications);
   $StockMovementsTableManager get stockMovements =>
       $StockMovementsTableManager(_db, _db.stockMovements);
-  $InputApplicationCostsTableManager get inputApplicationCosts =>
-      $InputApplicationCostsTableManager(_db, _db.inputApplicationCosts);
   $SoilTestsTableManager get soilTests =>
       $SoilTestsTableManager(_db, _db.soilTests);
   $EventLogTableManager get eventLog =>

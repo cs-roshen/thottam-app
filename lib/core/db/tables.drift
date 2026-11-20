@@ -608,7 +608,7 @@ CREATE INDEX price_alerts_crop ON price_alerts (crop_id) WHERE deleted_at IS NUL
 
 -- ---------- inputs and stock (schema 2, phase 7) ----------
 -- Stock on hand is the sum of stock_movements.quantity; a purchase's price is its expense's
--- amount; an application's quantity is its movement's; a worked-out cost is never stored.
+-- amount; an application's quantity is its movement's, and it has no cost of its own.
 CREATE TABLE input_items (
   id TEXT NOT NULL PRIMARY KEY,
   farm_id TEXT NOT NULL,
@@ -620,7 +620,6 @@ CREATE TABLE input_items (
   pack_size INTEGER,
   reorder_level INTEGER,
   waiting_days INTEGER,
-  waiting_source TEXT,
   notes TEXT,
   created_at INTEGER NOT NULL,
   created_by TEXT,
@@ -628,8 +627,7 @@ CREATE TABLE input_items (
   updated_by TEXT,
   version INTEGER NOT NULL DEFAULT 1,
   deleted_at INTEGER,
-  CHECK (template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL),
-  CHECK (waiting_days IS NULL OR TRIM(COALESCE(waiting_source, '')) <> '')
+  CHECK (template_item_id IS NOT NULL OR name_ml IS NOT NULL OR name_en IS NOT NULL)
 ) AS InputItemRow;
 
 CREATE INDEX input_items_farm ON input_items (farm_id) WHERE deleted_at IS NULL;
@@ -645,6 +643,7 @@ CREATE TABLE input_applications (
   worker_id TEXT,
   group_id TEXT,
   waiting_days INTEGER,
+  dose TEXT,
   notes TEXT,
   created_at INTEGER NOT NULL,
   created_by TEXT,
@@ -684,18 +683,6 @@ CREATE INDEX stock_movements_item_day ON stock_movements (item_id, moved_on) WHE
 CREATE INDEX stock_movements_farm_day ON stock_movements (farm_id, moved_on, id) WHERE deleted_at IS NULL;
 CREATE INDEX stock_movements_expense ON stock_movements (expense_id) WHERE deleted_at IS NULL;
 CREATE INDEX stock_movements_application ON stock_movements (application_id) WHERE deleted_at IS NULL;
-
-CREATE TABLE input_application_costs (
-  id TEXT NOT NULL PRIMARY KEY,
-  farm_id TEXT NOT NULL,
-  cost_paise INTEGER NOT NULL,
-  created_at INTEGER NOT NULL,
-  created_by TEXT,
-  updated_at INTEGER NOT NULL,
-  updated_by TEXT,
-  version INTEGER NOT NULL DEFAULT 1,
-  deleted_at INTEGER
-) AS InputApplicationCostRow;
 
 CREATE TABLE soil_tests (
   id TEXT NOT NULL PRIMARY KEY,
